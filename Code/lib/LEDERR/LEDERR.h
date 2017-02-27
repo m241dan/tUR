@@ -3,7 +3,8 @@
 
 #include <Arduino.h>
 
-class LEDERR{
+class LEDERR
+{
    //Default constructor
    public:
    LEDERR();
