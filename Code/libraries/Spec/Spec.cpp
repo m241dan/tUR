@@ -1,4 +1,4 @@
-#include "specSensor.h"
+#include "Spec.h"
 
 Spec::Spec( specType s_type, int g, int r, int t ) : type(s_type), vgas_pin(g), vref_pin(r), vtmp_pin(t)
 {

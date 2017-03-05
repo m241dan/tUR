@@ -1,3 +1,8 @@
+/*****************************************
+ * Arduino Spec Library for Arduino Mega *
+ * Written by Daniel R. Koris            *
+ *****************************************/
+
 #ifndef spec_sensor_h
 #define spec_sensor_h
 
@@ -22,6 +27,8 @@ class Spec
       int vgas_pin;
       int vref_pin;
       int vtmp_pin;
+      int pow_one;
+      int pow_two;
 
 };
 
