@@ -22,7 +22,7 @@ String Spec::generateReading()
       case SPEC_SO2:
          reading += "SO2 ";
          break;
-      case SPEC_03:
+      case SPEC_O3:
          reading += "O3 ";
          break;
       case SPEC_NO2:
@@ -30,9 +30,17 @@ String Spec::generateReading()
          break;
    }
 
-   reading += "| " + analogRead( vgas_pin ) + " ";
-   reading += "| " + analogRead( vref_pin ) + " ";
-   reading += "| " + analogRead( vtmp_pin ) + " ";
+   reading += "| Vgas: ";
+   reading += analogRead( vgas_pin );
+   reading += " ";
 
-   return reading + "\r\n";
+   reading += "| Vref: ";
+   reading += analogRead( vref_pin );
+   reading += " ";
+
+   reading += "| Vtmp: ";
+   reading += analogRead( vtmp_pin );
+   reading += " ";
+
+   return reading;
 }
