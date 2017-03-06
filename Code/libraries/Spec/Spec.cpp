@@ -15,6 +15,7 @@ Spec::~Spec()
 String Spec::generateReading()
 {
    String reading = "| Type: ";
+   double v[3];
 
    switch( type )
    {
@@ -30,17 +31,13 @@ String Spec::generateReading()
          break;
    }
 
-   reading += "| Vgas: ";
-   reading += analogRead( vgas_pin );
-   reading += " ";
+   v[0] = analogRead( vgas_pin ) * ( 5.0 / 1024.0 );
+   v[1] = analogRead( vref_pin );
+   v[2] = analogRead( vtmp_pin );
 
-   reading += "| Vref: ";
-   reading += analogRead( vref_pin );
-   reading += " ";
-
-   reading += "| Vtmp: ";
-   reading += analogRead( vtmp_pin );
-   reading += " ";
+   reading += String( v[0] );
+   reading += String( v[1] );
+   reading += String( v[2] );
 
    return reading;
 }
