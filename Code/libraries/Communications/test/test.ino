@@ -1,8 +1,10 @@
 #include "Arduino.h"
+#include "Hasp_Types.h"
 
 std::array<String, 5> hasp_commands;
 std::array<String, 5> slave_messages;
 
+byte hasp_rx_buffer[256];
 
 void setup()
 {
@@ -21,9 +23,7 @@ void loop()
 
 void serialEvent()
 {
-   while( Serial.available() )
-   {
-   }
+   
 }
 
 void serialEvent1()
