@@ -15,5 +15,7 @@ void loop()
 {
    delay(2000);
    if( Serial.available() )
-      Serial.println( sulfur_sensor->generateReading() );
+      Serial.println( sulfur_sensor->generateReading());
+
+      
 }
