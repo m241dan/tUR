@@ -9,6 +9,10 @@
 #include <SPI.h>
 #include <SD.h>
 #include <Custom/Adafruit_BME280.h>
+#include "Adafruit_BLE.h"
+#include "Adafruit_BluefruitLE_SPI.h"
+#include "Adafruit_BluefruitLE_UART.h"
+#include "BluefruitConfig.h"
 
 /****************************
  * Config / Globals Section *
@@ -17,9 +21,20 @@
 //Dynamic Pins
 #define BME_PIN	53
 #define SD_PIN 49
+#define BLE_CS 35
+
+
+
+
 
 //Sample Rate
 #define SAMPLE_RATE 1 		//In Hz, this basically just sets our delay between readings
+
+
+//Initialize the bluefruit
+Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_SCK, BLUEFRUIT_SPI_MISO,
+                             BLUEFRUIT_SPI_MOSI, BLUEFRUIT_SPI_CS,
+                             BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
 
 Adafruit_BME280 bme( BME_PIN );		//Handler for the BME sesnor, setup for hardwire SPI using an software CS pin
 File hasp_log;				//This is the handle for the file we will open
@@ -31,7 +46,6 @@ String log_name;
 void setup()
 {
    file_iteration = 0;
-
    Serial.begin( 9600 );		//standard setup for baudrate
    while( !Serial );  			//waiting for serial to connect (not really needed when not hooked to laptop)
    
@@ -73,6 +87,8 @@ void loop()
 
    hasp_log.println( buf.c_str() );
    hasp_log.close();
+   //Send the data check for bytes Max is 24 bytes
+   ble.println( buf.c_str() );
 }
 
 String getNextFile()
