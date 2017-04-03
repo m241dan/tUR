@@ -23,7 +23,7 @@
  #include "WProgram.h"
 #endif
 
-#include <Adafruit_Sensor.h>
+#include <Custom/Adafruit_Sensor.h>
 #include <Wire.h>
 
 /*=========================================================================

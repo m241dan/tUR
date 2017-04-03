@@ -8,7 +8,7 @@
 
 #include <SPI.h>
 #include <SD.h>
-#include <Adafruit_BME280.h>
+#include <Custom/Adafruit_BME280.h>
 
 /****************************
  * Config / Globals Section *
