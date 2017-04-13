@@ -9,16 +9,12 @@
 #include <SPI.h>
 #include <SD.h>
 #include <Wire.h>
-<<<<<<< HEAD
-#include <Custom/Adafruit_BME280.h>
 #include "Adafruit_BLE.h"
 #include "Adafruit_BluefruitLE_SPI.h"
 #include "Adafruit_BluefruitLE_UART.h"
 #include "BluefruitConfig.h"
 #include <Adafruit_SI5351.h>
-=======
 #include <Adafruit_BME280.h>
->>>>>>> 9feda545fc61d2e1f4a48c01aa6fee6e0ffbbc97
 
 /****************************
  * Config / Globals Section *
@@ -81,6 +77,7 @@ void loop()
    buf = String( time_since_start ) + " " + String( pressure ) + " " + String( temperature ) + " " + String( humidity );
 
    hasp_log.println( buf.c_str() );
+   Serial1.println( buf.c_str() );
    hasp_log.close();
    //Send the data check for bytes Max is 24 bytes
    ble.println( buf.c_str() );
