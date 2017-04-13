@@ -8,11 +8,17 @@
 
 #include <SPI.h>
 #include <SD.h>
+#include <Wire.h>
+<<<<<<< HEAD
 #include <Custom/Adafruit_BME280.h>
 #include "Adafruit_BLE.h"
 #include "Adafruit_BluefruitLE_SPI.h"
 #include "Adafruit_BluefruitLE_UART.h"
 #include "BluefruitConfig.h"
+#include <Adafruit_SI5351.h>
+=======
+#include <Adafruit_BME280.h>
+>>>>>>> 9feda545fc61d2e1f4a48c01aa6fee6e0ffbbc97
 
 /****************************
  * Config / Globals Section *
@@ -31,12 +37,10 @@
 #define SAMPLE_RATE 1 		//In Hz, this basically just sets our delay between readings
 
 
-//Initialize the bluefruit
-Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_SCK, BLUEFRUIT_SPI_MISO,
-                             BLUEFRUIT_SPI_MOSI, BLUEFRUIT_SPI_CS,
-                             BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
 
 Adafruit_BME280 bme( BME_PIN );		//Handler for the BME sesnor, setup for hardwire SPI using an software CS pin
+//Initialzed the clock
+Adafruit_SI5351 haspClock = Adafruit_SI5351();
 File hasp_log;				//This is the handle for the file we will open
 float temperature, pressure, humidity;	//In a regular program, this would urk me, but I don't want the stack to reallocate everytime it loops
 int time_since_start;
@@ -48,21 +52,12 @@ void setup()
    file_iteration = 0;
    Serial.begin( 9600 );		//standard setup for baudrate
    while( !Serial );  			//waiting for serial to connect (not really needed when not hooked to laptop)
+
+   if(!initSensors()){
+    Serial.println("Error initializng sensors");
+    return;
+   }
    
-   if( !SD.begin( SD_PIN ) ) 		//this uses the static implementation of the SD library
-   {
-      Serial.println( "Initialization of SD failed." );
-      return;
-   }
-   Serial.println( "SD Initialized." );
-
-   if( !bme.begin() )			//This initializes the sensor with default x16 sampling rates, no high-pass filter, normal mode, .5 delay between readings
-   {
-      Serial.println( "Initialization of BME280 failed." );
-      return;
-   }
-   Serial.println( "BME280 initialized" );
-
    time_since_start = 0;
    log_name = getNextFile();
 }
@@ -101,5 +96,41 @@ String getNextFile()
       file_name = "run" + String( file_iteration ) + ".txt";
 
    return file_name;
+}
+
+//Initialize the sensors
+boolean initSensors(){
+  boolean stat = true;
+
+  if( !SD.begin( SD_PIN ) )     //this uses the static implementation of the SD library
+   {
+      Serial.println( "Initialization of SD failed." );
+        stat = false;
+   }
+
+   if( !bme.begin() )     //This initializes the sensor with default x16 sampling rates, no high-pass filter, normal mode, .5 delay between readings
+   {
+      Serial.println( "Initialization of BME280 failed." );
+      stat = false
+      return;
+   }
+
+   if (haspClock.begin() != ERROR_NONE)
+  {
+    
+    Serial.print("Ooops, no Si5351 detected ... Check your wiring or I2C ADDR!");
+    stat = false;
+    return;
+  }
+  else{
+      
+  Serial.println("Set PLLA to 900MHz");
+  haspClock.setupPLLInt(SI5351_PLL_A, 36);
+  Serial.println("Set Output #0 to 112.5MHz");  
+  //Divider 4/8/16 etc
+  haspClock.setupMultisynthInt(0, SI5351_PLL_A, SI5351_MULTISYNTH_DIV_8);
+  haspClock.enableOutputs(true);
+  }
+   
 }
 
