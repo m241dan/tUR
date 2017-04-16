@@ -96,13 +96,14 @@ String getNextFile()
 }
 
 //Initialize the sensors
-boolean initSensors(){
-  boolean stat = true;
+boolean initSensors()
+{
+   boolean stat = true;
 
-  if( !SD.begin( SD_PIN ) )     //this uses the static implementation of the SD library
+   if( !SD.begin( SD_PIN ) )     //this uses the static implementation of the SD library
    {
       Serial.println( "Initialization of SD failed." );
-        stat = false;
+      stat = false;
    }
 
    if( !bme.begin() )     //This initializes the sensor with default x16 sampling rates, no high-pass filter, normal mode, .5 delay between readings
@@ -113,21 +114,19 @@ boolean initSensors(){
    }
 
    if (haspClock.begin() != ERROR_NONE)
-  {
-    
-    Serial.print("Ooops, no Si5351 detected ... Check your wiring or I2C ADDR!");
-    stat = false;
-    return;
-  }
-  else{
-      
-  Serial.println("Set PLLA to 900MHz");
-  haspClock.setupPLLInt(SI5351_PLL_A, 36);
-  Serial.println("Set Output #0 to 112.5MHz");  
-  //Divider 4/8/16 etc
-  haspClock.setupMultisynthInt(0, SI5351_PLL_A, SI5351_MULTISYNTH_DIV_8);
-  haspClock.enableOutputs(true);
-  }
-   
+   {
+      Serial.print("Ooops, no Si5351 detected ... Check your wiring or I2C ADDR!");
+      stat = false;
+      return;
+   }
+   else
+   {
+      Serial.println("Set PLLA to 900MHz");
+      haspClock.setupPLLInt(SI5351_PLL_A, 36);
+      Serial.println("Set Output #0 to 112.5MHz");  
+      //Divider 4/8/16 etc
+      haspClock.setupMultisynthInt(0, SI5351_PLL_A, SI5351_MULTISYNTH_DIV_8);
+      haspClock.enableOutputs(true);
+   }
 }
 
