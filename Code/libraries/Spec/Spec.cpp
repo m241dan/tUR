@@ -19,15 +19,15 @@ String Spec::generateReading()
 
    switch( type )
    {
-      default: reading += "Unknown "; break;
+      default: reading += "Unknown"; break;
       case SPEC_SO2:
-         reading += "SO2 ";
+         reading += "SO2";
          break;
       case SPEC_O3:
-         reading += "O3 ";
+         reading += "O3";
          break;
       case SPEC_NO2:
-         reading += "NO2 ";
+         reading += "NO2";
          break;
    }
 
@@ -35,9 +35,8 @@ String Spec::generateReading()
    v[1] = analogRead( vref_pin );
    v[2] = analogRead( vtmp_pin );
 
-   reading += String( v[0] );
-   reading += String( v[1] );
-   reading += String( v[2] );
+   for( unsigned int x = 0; x < 3; x++ )
+      reading += " " + String( v[x] );
 
    return reading;
 }
