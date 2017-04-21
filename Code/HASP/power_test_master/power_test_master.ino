@@ -1,6 +1,7 @@
 /*
  *  HASP GOAT: Power Test
  *  Author: Daniel R. Koris
+ *  Goal of Program: 
  */
 
 void setup()
