@@ -147,7 +147,13 @@ bool initSensors()
     
     if( !bme.begin() )
     {
-        reportError( "BME280 faied to initialize." );
+        reportError( "BME280 failed to initialize." );
+        return false;
+    }
+
+    if( !am2315.begin() )
+    {
+        reportErrior( "AM2315 failed to initialize." );
         return false;
     }
 
