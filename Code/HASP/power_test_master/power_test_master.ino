@@ -54,6 +54,7 @@ SDClass SD1;
 SDClass SD2;
 
 Adafruit_BME280 bme( BME_CS );
+Adafruit_AM2315 am2315;
 Adafruit_SI5351 hasp_clock = Adafruit_SI5351();
 File hasp_log;
 String log_name;
@@ -80,7 +81,32 @@ void setup()
 
 void loop()
 {
+    String reading;
+    if( !( hasp_log = SD1.open( log_name.c_str(), FILE_WRITE ) )
+    {
+        reportError( "Loop(): Failed to open hasp_log." );
+        return;
+    }
+    if( !( hasp_log_bak = SD2.open( log_name_bak.c_str(), FILE_WRITE ) )
+    {
+        reportError( "Loop(): Failed to open hasp_log_bak." );
+        return;
+    }
+
+    reading += " " + String( bme.readPressure() / 100.0F );
+    reading += " " + String( bme.readTemperature() );
+    reading += " " + String( bme.readHumidity() );
+    reading += " " + SO2_sensor.generateReading();
+    reading += " " + NO2_sensor.generateReading();
+    reading += " " + O3_sensor.generateReading();
+
+    hasp_log.println( reading.c_str() );
+    hasp_log_bak.println( reading.c_str() );
+
+    hasp_log.close();
+    hasp_log_bak.close();
     
+
 }
 
 bool initSerials() //the fact that this is a boolean function is purely symbolic at the moment
