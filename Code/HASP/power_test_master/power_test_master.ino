@@ -18,6 +18,7 @@
 #include <Wire.h>                   //For the dreaded I2C stuff
 #include <Adafruit_SI5351.h>        //Oscillator
 #include <Adafruit_BME280.h>        //BME280 Temp/Humidity/Pressure sensor
+#include <Adafruit_AM2315.h>        //AM2315 External Temp/Humidity sensor
 #include "Spec.h"                   //For the Spec sensors
 
 /*
@@ -82,12 +83,12 @@ void setup()
 void loop()
 {
     String reading;
-    if( !( hasp_log = SD1.open( log_name.c_str(), FILE_WRITE ) )
+    if( !( hasp_log = SD1.open( log_name.c_str(), FILE_WRITE ) ) )
     {
         reportError( "Loop(): Failed to open hasp_log." );
         return;
     }
-    if( !( hasp_log_bak = SD2.open( log_name_bak.c_str(), FILE_WRITE ) )
+    if( !( hasp_log_bak = SD2.open( log_name_bak.c_str(), FILE_WRITE ) ) )
     {
         reportError( "Loop(): Failed to open hasp_log_bak." );
         return;
@@ -99,6 +100,8 @@ void loop()
     reading += " " + SO2_sensor.generateReading();
     reading += " " + NO2_sensor.generateReading();
     reading += " " + O3_sensor.generateReading();
+    reading += " " + String( am2315.readHumidity() );
+    reading += " " + String( am2315.readTemperature() );
 
     hasp_log.println( reading.c_str() );
     hasp_log_bak.println( reading.c_str() );
@@ -153,7 +156,7 @@ bool initSensors()
 
     if( !am2315.begin() )
     {
-        reportErrior( "AM2315 failed to initialize." );
+        reportError( "AM2315 failed to initialize." );
         return false;
     }
 
