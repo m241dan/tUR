@@ -11,7 +11,7 @@
 #define SO2_TIA = 100
 #define O3_TIA  = 499
 #define NO2_TIA = 499
-const double TIA_E = 10.0^-9.0;
+const double TIA_E = 10^(-9);
 
 typedef enum : byte
 {

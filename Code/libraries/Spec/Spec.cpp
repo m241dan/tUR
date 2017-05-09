@@ -9,10 +9,14 @@ Spec::Spec( specType s_type, int g, int r, int t, double code ) : type(s_type), 
    pinMode( vref_pin, INPUT );
    pinMode( vtmp_pin, INPUT );
 
+   vgas_reading = 0;
+   vref_reading = 0;
+   vtmp_reading = 0;
+
    //janky but it is what it is
    if( type == SPEC_SO2 )
       TIA = 100.00;
-   M = ( ( sensitivity_code * (TIA * TIE_E ) ) * 1000 )^-1;
+   M = 1.00 / ( ( sensitivity_code * (TIA * TIA_E ) ) * 1000 );
 }
 
 Spec::~Spec()
@@ -37,12 +41,13 @@ String Spec::generateRawVerboseReading()
          reading += "NO2";
          break;
    }
-
+   reading += " | ";
    takeReading();
 
    reading += "VGAS: " + String( vgas_reading ) + " ";
-   reading += "VREF: " + String( vref_reading ) + " " ;
-   reading += "VTMP: " + String( vtmp_reading ) + "\r\n";
+   reading += "VREF: " + String( vref_reading ) + " ";
+   reading += "VTMP: " + String( vtmp_reading ) + " ";
+   reading += "%ERR: " + String( ( vgas_reading - vref_reading ) / vref_reading ) + "\r\n";
 
    return reading;
 }
@@ -58,7 +63,7 @@ String Spec::generateReadingPPM()
     return String( reading_ppm );
 }
 
-void takeReading()
+void Spec::takeReading()
 {
     vgas_reading = analogRead( vgas_pin ) * ( 5.0 / 1024.0 );
     vref_reading = analogRead( vref_pin ) * ( 5.0 / 1024.0 );
