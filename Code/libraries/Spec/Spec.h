@@ -24,6 +24,7 @@ class Spec
       Spec( specType s_type, int g, int r, int t, double code );
       ~Spec();
 
+      String generateRawReading();
       String generateRawVerboseReading();
       String generateReadingPPM();
    private:

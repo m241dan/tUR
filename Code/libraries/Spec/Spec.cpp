@@ -24,6 +24,17 @@ Spec::~Spec()
 
 }
 
+String Spec::generateRawReading()
+{
+   String reading = "";
+   takeReading();
+   reading += String( vgas_reading ) + ",";
+   reading += String( vref_reading ) + ",";
+   reading += String( vtmp_reading ) + ",";
+   reading += String( ( vgas_reading - vref_reading ) / vref_reading );
+   return reading + "\r\n";
+}
+
 String Spec::generateRawVerboseReading()
 {
    String reading = "| Sensor: ";

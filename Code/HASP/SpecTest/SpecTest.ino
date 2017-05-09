@@ -10,7 +10,7 @@ void setup()
 
 void loop()
 {
-    Serial.print( SO2_sensor.generateRawVerboseReading() );
+    Serial.print( SO2_sensor.generateRawReading() );
     delay( 1000);
 }
 
