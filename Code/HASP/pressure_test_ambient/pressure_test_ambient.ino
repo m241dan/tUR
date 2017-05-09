@@ -16,8 +16,8 @@
  ****************************/
 
 //Dynamic Pins
-#define BMP_PIN	53
-#define SD_PIN 49
+#define BMP_PIN	41
+#define SD_PIN 40
 
 //Sample Rate
 #define SAMPLE_RATE 1 		//In Hz, this basically just sets our delay between readings
@@ -32,7 +32,7 @@ String log_name;
 
 void setup()
 {
-   file_iteration = 0;
+   file_iteration =  0;
 
    Serial.begin( 9600 );		//standard setup for baudrate
    while( !Serial );  			//waiting for serial to connect (not really needed when not hooked to laptop)
