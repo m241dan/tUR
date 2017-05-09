@@ -1,10 +1,18 @@
 #include "Spec.h"
 
-Spec::Spec( specType s_type, int g, int r, int t ) : type(s_type), vgas_pin(g), vref_pin(r), vtmp_pin(t)
+Spec::Spec( specType s_type, int g, int r, int t, double code ) : type(s_type), vgas_pin(g), vref_pin(r), vtmp_pin(t), sensitivity_code(code)
 {
+   //O3 and NO2 are the same
+   double TIA = 499.00;
+
    pinMode( vgas_pin, INPUT );
    pinMode( vref_pin, INPUT );
    pinMode( vtmp_pin, INPUT );
+
+   //janky but it is what it is
+   if( type == SPEC_SO2 )
+      TIA = 100.00;
+   M = ( ( sensitivity_code * (TIA * TIE_E ) ) * 1000 )^-1;
 }
 
 Spec::~Spec()
@@ -12,10 +20,9 @@ Spec::~Spec()
 
 }
 
-String Spec::generateReading()
+String Spec::generateRawVerboseReading()
 {
-   String reading = "| Type: ";
-   double v[3];
+   String reading = "| Sensor: ";
 
    switch( type )
    {
@@ -31,12 +38,29 @@ String Spec::generateReading()
          break;
    }
 
-   v[0] = analogRead( vgas_pin ) * ( 5.0 / 1024.0 );
-   v[1] = analogRead( vref_pin );
-   v[2] = analogRead( vtmp_pin );
+   takeReading();
 
-   for( unsigned int x = 0; x < 3; x++ )
-      reading += " " + String( v[x] );
+   reading += "VGAS: " + String( vgas_reading ) + " ";
+   reading += "VREF: " + String( vref_reading ) + " " ;
+   reading += "VTMP: " + String( vtmp_reading ) + "\r\n";
 
    return reading;
+}
+
+String Spec::generateReadingPPM()
+{
+    double reading_ppm;
+
+    takeReading();
+
+    reading_ppm = M * (vgas_reading - vref_reading );
+
+    return String( reading_ppm );
+}
+
+void takeReading()
+{
+    vgas_reading = analogRead( vgas_pin ) * ( 5.0 / 1024.0 );
+    vref_reading = analogRead( vref_pin ) * ( 5.0 / 1024.0 );
+    vtmp_reading = analogRead( vtmp_pin ) * ( 5.0 / 1024.0 );
 }
