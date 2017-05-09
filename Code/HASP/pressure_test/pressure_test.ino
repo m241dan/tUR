@@ -21,8 +21,8 @@
  ****************************/
 
 //Dynamic Pins
-#define BME_PIN	53
-#define SD_PIN 49
+#define BME_PIN	10
+#define SD_PIN 9
 //#define BLE_CS 35
 
 
@@ -49,8 +49,8 @@ void setup()
    Serial.begin( 9600 );		//standard setup for baudrate
    while( !Serial );  			//waiting for serial to connect (not really needed when not hooked to laptop)
 
-   Serial1.begin( 9600 );
-   while( !Serial1 );
+   //Serial1.begin( 9600 );
+   //while( !Serial1 );
 
    if(!initSensors()){
     Serial.println("Error initializng sensors");
@@ -78,9 +78,9 @@ void loop()
 
 
    buf = String( time_since_start ) + " " + String( pressure ) + " " + String( temperature ) + " " + String( humidity );
-
+   Serial.println( buf );
    hasp_log.println( buf.c_str() );
-   Serial1.println( buf.c_str() );
+   //Serial1.println( buf.c_str() );
    hasp_log.close();
    //Send the data check for bytes Max is 24 bytes
    //ble.println( buf.c_str() );
