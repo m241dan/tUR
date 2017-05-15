@@ -24,15 +24,21 @@ Spec::~Spec()
 
 }
 
-String Spec::generateRawReading()
+String Spec::generateRawReading( char delim, bool perr, bool newline )
 {
    String reading = "";
    takeReading();
-   reading += String( vgas_reading ) + ",";
-   reading += String( vref_reading ) + ",";
-   reading += String( vtmp_reading ) + ",";
-   reading += String( ( vgas_reading - vref_reading ) / vref_reading );
-   return reading + "\r\n";
+   reading += String( vgas_reading ) + delim;
+   reading += String( vref_reading ) + delim;
+   reading += String( vtmp_reading ) + delim;
+
+   //options
+   if( perr )
+       reading += String( ( vgas_reading - vref_reading ) / vref_reading );
+   if( newline )
+      reading += "\r\n";
+
+   return reading;
 }
 
 String Spec::generateRawVerboseReading()
