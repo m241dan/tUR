@@ -1,4 +1,4 @@
-/*
+ /*
  * HASP ST: Simple Thermometer Test Rig
  * Author: Daniel R. Koris
  * Goal of Program: To get two temperature readings from two thermometers
@@ -36,6 +36,6 @@ void loop()
     Serial.print( "Requesting Reading..." );
     sensors.requestTemperatures();
     Serial.println( "DONE" );
-    Serial.println( "Thermo #1: " + String( sensors.getTempCByIndex(0) ) + " Thermo #2: " + String( sensors.getTempCByIndex(1) ) );
+    Serial.println( "Thermo #1: " + String( sensors.getTempCByIndex(0) ) + " Thermo #2: " + String( sensors.getTempCByIndex(1) ) + " Thermo #3: " + String( sensors.getTempCByIndex(2) ) );
 }
 

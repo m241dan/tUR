@@ -2,10 +2,16 @@
 #include <SD.h>
 #include <SPI.h>
 #include <Adafruit_BME280.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
 
 #define BME_PIN 40
 #define SD_PIN 41
 #define SAMPLE_RATE 1000
+#define BUS_ONE 30
+#define BUS_TWO 31
+#define BUS_THREE 32
+
 
 String buf;
 int iteration, time_schedule;
@@ -13,6 +19,12 @@ Spec SO2_sensor( SPEC_SO2, A0, A1, A2, 48.45 );
 Spec O3_sensor( SPEC_O3, A3, A4, A5, 48.45 );
 Spec NO2_sensor( SPEC_NO2, A6, A7, A8, 48.45 );
 Adafruit_BME280 bme( BME_PIN );
+OneWire bus_one( BUS_ONE );
+OneWire bus_two( BUS_TWO );
+OneWire bus_three( BUS_THREE );
+DallasTemperature temp_one( &bus_one );
+DallasTemperature temp_two( &bus_two );
+DallasTemperature temp_three( &bus_three );
 
 String log_name;
 File hasp_log;
