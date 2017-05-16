@@ -29,7 +29,7 @@ void setup()
     Serial.begin( 9600 );
     while( !Serial );
 
-    if( !SD.begin( 48 ) )
+    if( !SD.begin( SD_PIN ) )
     {
         Serial.println( "SD failed to initialize." );
         return; 
@@ -48,7 +48,7 @@ void loop()
         return; 
     }
 
-    reading = SO2_sensor.generateRawReading();
+    reading = SO2_sensor.generateRawReading( ' ', false, false);
     
     SO2_log.println( reading.c_str() );
     SO2_log.close();
@@ -59,7 +59,7 @@ void loop()
         last_blu = millis();
         Serial.println( reading );
     }
-    delay( 100 );
+    delay( 1000 );
 }
 
 String getNextFileName()
@@ -68,9 +68,9 @@ String getNextFileName()
     int file_iteration = 0;
 
     //This loop will basically find us a free file append up to 2.1 billion
-    file_name = "SO2_RUN_" + String( file_iteration ) + ".txt";
+    file_name = "SO2RUN" + String( file_iteration ) + ".txt";
     for( ; SD.exists( file_name ); file_iteration++ )
-        file_name + "SO2_RUN" + String( file_iteration ) + ".txt";
+        file_name + "SO2RUN" + String( file_iteration ) + ".txt";
 
     return file_name;
 }

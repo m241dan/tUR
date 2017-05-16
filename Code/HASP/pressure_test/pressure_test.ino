@@ -24,7 +24,7 @@
 
 Adafruit_BME280 bme( BME_PIN );		//Handler for the BME sesnor, setup for hardwire SPI using a software CS pin
 int iteration;
-int time_schedule;
+unsigned long long time_schedule;
 String log_name;
 
 
@@ -50,6 +50,7 @@ void loop()
         takeReadings( true, true );
         time_schedule = millis();
     }
+ //   Serial.println( "Branding..." );
 }
 
 void takeReadings( bool sd_write, bool blu_write )

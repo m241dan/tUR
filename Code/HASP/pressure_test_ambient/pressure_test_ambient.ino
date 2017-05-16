@@ -10,6 +10,8 @@
 #include <SD.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BMP183.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
 
 /****************************
  * Config / Globals Section *
@@ -18,6 +20,8 @@
 //Dynamic Pins
 #define BMP_PIN	41
 #define SD_PIN 40
+#define BUS_ONE 30
+#define BUS_TWO 31
 
 //Sample Rate
 #define SAMPLE_RATE 1 		//In Hz, this basically just sets our delay between readings
@@ -29,6 +33,11 @@ int time_since_start;
 int file_iteration;
 String buf;
 String log_name;
+OneWire bus_one( BUS_ONE );
+OneWire bus_two( BUS_TWO );
+DallasTemperature temp_one( &bus_one );
+DallasTemperature temp_two( &bus_two );
+
 
 void setup()
 {
@@ -53,6 +62,8 @@ void setup()
 
    time_since_start = 0;
    log_name = getNextFile();
+   temp_one.begin();
+   temp_two.begin();
 }
 
 void loop()
@@ -68,8 +79,17 @@ void loop()
 					//A sample program divided this reading by 100.0F, so I am too
    pressure = bmp.getPressure() / 100.0F;
    temperature = bmp.getTemperature();
-
+   temp_one.requestTemperatures();
+   temp_two.requestTemperatures();
+   
    buf = String( time_since_start ) + " " + String( pressure ) + " " + String( temperature );
+   buf += " " + String( temp_one.getTempCByIndex(0) );
+   buf += " " + String( temp_one.getTempCByIndex(1) );
+   buf += " " + String( temp_one.getTempCByIndex(2) );
+   buf += " " + String( temp_two.getTempCByIndex(0) );
+   buf += " " + String( temp_two.getTempCByIndex(1) );
+
+
    Serial.println( buf ); 
    hasp_log.println( buf.c_str() );
    hasp_log.close();
