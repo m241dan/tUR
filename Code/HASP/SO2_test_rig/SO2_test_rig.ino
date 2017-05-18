@@ -70,7 +70,7 @@ String getNextFileName()
     //This loop will basically find us a free file append up to 2.1 billion
     file_name = "SO2RUN" + String( file_iteration ) + ".txt";
     for( ; SD.exists( file_name ); file_iteration++ )
-        file_name + "SO2RUN" + String( file_iteration ) + ".txt";
+        file_name = "SO2RUN" + String( file_iteration ) + ".txt";
 
     return file_name;
 }
