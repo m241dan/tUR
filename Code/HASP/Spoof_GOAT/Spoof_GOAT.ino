@@ -20,7 +20,7 @@ void loop()
     if( ( time_schedule + 2000 ) < millis() )
     {
         assignEntry( reading.time, String( millis() ).c_str(), sizeof( reading.time ) );
-        Serial.print( String( millis() ) );
+        Serial.println( String( millis() ).c_str() );
 //        reading.bank = "1 ";
   //      reading.so2_reading = "20.00";
     //    reading.o3_reading = "15.00";
@@ -31,14 +31,26 @@ void loop()
        // reading.peltier_status = "OFF";
        // reading.sd_status = "GOOD";
        // reading.reading_status = " ACTIVE";
-        Serial.write( (byte [])&reading, 133 ); 
+        byte *ptr;
+        ptr = (byte *)&reading;
+        for( int x = 0; x < 133; x++ )
+        {
+            Serial.write( *ptr );
+            ptr++;
+        }
+        Serial.println();
     }
 
 }
 
 void assignEntry( char *dst, const char *src, int length )
 {
+    Serial.println( "Length is " + String( length ) );
     for( int x = 0; x < length; x++ )
+    {
         *dst = *src;
+        dst++;
+        src++;
+    }
 }
 
