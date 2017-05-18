@@ -27,10 +27,10 @@ typedef struct sensor_readings
    unsigned char pressure_reading[10];
    unsigned char humidity_reading[10];
    unsigned char pump_status[10];
-   unsigned char peltier_stuats[30];
+   unsigned char peltier_status[30];
    unsigned char sd_status[10];
    unsigned char reading_status[10];
-   unsigned char terminator[2] = "\x3\xD";
-}
+   const unsigned char terminator[2] = "\x3\xD";
+} SENSOR_READING;
 
 #endif
