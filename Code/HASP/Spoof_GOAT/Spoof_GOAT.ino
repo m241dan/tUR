@@ -20,8 +20,8 @@ void loop()
     if( ( time_schedule + 2000 ) < millis() )
     {
         assignEntry( reading.time, String( millis() ).c_str(), sizeof( reading.time ) );
-        Serial.println( String( millis() ).c_str() );
-//        reading.bank = "1 ";
+        assignEntry( reading.bank, "12", sizeof( reading.bank ) );
+        assignEntry( reading.so2_reading, "20.00", sizeof( reading.so2_reading ) );
   //      reading.so2_reading = "20.00";
     //    reading.o3_reading = "15.00";
       //  reading.no2_reading = "35.00";
@@ -51,6 +51,16 @@ void assignEntry( char *dst, const char *src, int length )
         *dst = *src;
         dst++;
         src++;
+        if( *src == '\0' )
+        {
+            for( int y = 0; y < ( (length-1) - x ); y++ )
+            {
+               *dst = ' ';
+               dst++;
+            }
+            break;
+        }
     }
+    *(dst-1) = ',';
 }
 
