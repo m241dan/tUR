@@ -100,9 +100,9 @@ String getNextFile()
    String file_name;
    
    //This loop will basically find us a free file appended 1-2.1 billion, which should be plenty
-   file_name = "run" + String( file_iteration ) + ".txt";
+   file_name = "cold" + String( file_iteration ) + ".txt";
    for( file_iteration = 1; SD.exists( file_name ); file_iteration++ )
-      file_name = "run" + String( file_iteration ) + ".txt";
+      file_name = "cold" + String( file_iteration ) + ".txt";
 
    return file_name;
 }

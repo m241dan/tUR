@@ -7,14 +7,14 @@
 
 #include <SD.h>
 #include <SPI.h>
-
+#include "hasp_types.h"
 
 //Telemetry Rate
-#define TELE_RATE ( 1000 * 60 )
+#define TELE_RATE 60000
 #define SD_PIN 10
 
 //GPS Telemetry
-static String GPS = "";
+GTP_DATA spoof_gps;
 
 //Global Variables
 unsigned long long time_schedule;
@@ -26,25 +26,26 @@ void setup()
     Serial.begin( 1200 );
     while( !Serial );
 
-    Serial1.begin( 9600 );
-    while( !Serial1 );
+    if( !SD.begin( 10 ) )
+        Serial.println( "SD did not init." );
 
     time_schedule = 0;
-    log_name = getNextFile();    
+    log_name = getNextFile( "simData" );    
 }
 
 void loop()
 {
-    /*if( ( time_scedule + TELE_RATE ) < millis() )
+    if( ( time_schedule + TELE_RATE ) < millis() )
     {
         //Send telemetry data every minute
-        sendTelemetry(gps, time_schedule)
+        sendData( (byte *)&spoof_gps, sizeof( spoof_gps ) );
+        time_schedule = millis();
     }
-    else()
-    {*/
+    else
+    {
         //Check for received data
         checkReceiveData();    
-    //}
+    }
 }
 
 void checkReceiveData()
@@ -54,7 +55,7 @@ void checkReceiveData()
     {
         if( !( sim_log = SD.open( log_name, FILE_WRITE ) ) )
         {
-            Serial1.println( "File cannot be opened." );
+            Serial.println( "File cannot be opened." );
             return;
         }
         while( Serial.available() )
@@ -62,22 +63,3 @@ void checkReceiveData()
         sim_log.close();
     }
 }
-
-String getNextFile()
-{
-   String file_name;
-   int file_iteration = 1;
-   
-   //This loop will basically find us a free file appended 1-2.1 billion, which should be plenty
-   file_name = "simulatorData   " + String( file_iteration ) + ".txt";
-   for( ; SD.exists( file_name ); file_iteration++ )
-      file_name = "run" + String( file_iteration ) + ".txt";
-
-   return file_name;  
-}
-/*
-void sendTelemetry(String tel, long long time_schedule)
-{
-    
-    Serial.write("TEL: " + tel + " Tim: " + time_schedule);
-}*/
