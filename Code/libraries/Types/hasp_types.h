@@ -3,17 +3,17 @@
 
 typedef struct ground_command
 {
-   static const char header[2] = "\x1\x2";
+   const unsigned char header[2] = "\x1\x2";
    unsigned char checksum;
    unsigned char command[2];
-   static const char terminator[3] = "\x3\xD\xA";
+   const unsigned char terminator[3] = "\x3\xD\xA";
 } GROUND_COMMAND;
 
 typedef struct gps_time_position
 {
-   static const unsigned char header[2] = "\x1\x30";
+   const unsigned char header[2] = "\x1\x30";
    unsigned char data[119] = "1234470131.649,$GPGGA,202212.00,3024.7205,N,09110.7264,W,1,06,1.69,00061,M,-025,M,,*51,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
-   static const unsigned char terminator[3] = "\x3\xD\xA";
+   const unsigned char terminator[3] = "\x3\xD\xA";
 } GTP_DATA;
 
 typedef struct sensor_readings
