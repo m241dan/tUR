@@ -35,7 +35,7 @@ typedef struct sensor_readings
 
 //functions
 void sendData( byte *data, int length );
-void assignEntry( char *dst, const char *src, int length );
+void assignEntry( char *dst, const char *src, int length, bool from_uplink );
 String getNextFile( String name );
 
 #endif

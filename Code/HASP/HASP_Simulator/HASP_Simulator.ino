@@ -15,9 +15,12 @@
 
 //GPS Telemetry
 GTP_DATA spoof_gps;
+GROUND_COMMAND spoof_command;
+
 
 //Global Variables
 unsigned long long time_schedule;
+unsigned long long time_command;
 String log_name;
 
 void setup()
@@ -30,6 +33,7 @@ void setup()
         Serial.println( "SD did not init." );
 
     time_schedule = 0;
+    time_command = 70000;
     log_name = getNextFile( "simData" );    
 }
 
@@ -40,6 +44,14 @@ void loop()
         //Send telemetry data every minute
         sendData( (byte *)&spoof_gps, sizeof( spoof_gps ) );
         time_schedule = millis();
+    }
+    else if( ( time_command + 20000 ) < millis () )
+    {
+        //Send command
+        spoof_command.command[0] = random(0, 10);
+        spoof_command.command[1] = random(40,60);
+        sendData( (byte *)&spoof_command, sizeof( spoof_command ) );
+        time_command = millis();
     }
     else
     {

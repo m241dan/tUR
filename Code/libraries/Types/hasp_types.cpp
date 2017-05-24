@@ -13,7 +13,7 @@ void sendData( byte *data, int length )
 }
 
 //this function is specifically designed to fill in our readings entries with proper space padding and terminating each with a ','
-void assignEntry( char *dst, const char *src, int length )
+void assignEntry( char *dst, const char *src, int length, bool from_uplink )
 {
     for( int x = 0; x < length; x++ )
     {
@@ -33,7 +33,8 @@ void assignEntry( char *dst, const char *src, int length )
         }
     }
     //terminate with ','
-    *(dst-1) = ',';
+    if( !from_uplink )
+        *(dst-1) = ',';
 }
 
 
