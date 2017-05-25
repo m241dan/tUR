@@ -14,7 +14,7 @@ extern Spec no2( SPEC_NO2, A3, A4, A5, 43.53 );
 extern Spec o3( SPEC_O3, A6, A7, A8, 43.56 );
 extern Adafruit_BME280 bme( BME_PIN );
 extern GROUND_COMMAND current_command;
-extern SENSOR_READING;
+extern SENSOR_READING reading;
 extern byte receive_buffer[MAX_BUF];
 
 #endif

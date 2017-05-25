@@ -11,7 +11,7 @@
 
 //GOAT master globals
 
-extern Spec so2( SPEC_O2, A0, A1, A2, 43.54 );
+extern Spec so2( SPEC_SO2, A0, A1, A2, 43.54 );
 extern Spec no2( SPEC_NO2, A3, A4, A5, 43.54 );
 extern Spec o3( SPEC_O3, A6, A7, A8, 43.54 );
 extern Adafruit_BME280 bme( BME_PIN );

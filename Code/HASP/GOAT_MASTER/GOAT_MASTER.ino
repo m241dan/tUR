@@ -19,7 +19,7 @@
 #include <Adafruit_AM2315.h>
 #include "Spec.h"
 #include "hasp_types.h"
-#include "goat_funcs.h"
+#include "goat_master_funcs.h"
 #include "master_globals.h"
 
 void setup()
@@ -34,6 +34,8 @@ void setup()
 
     //block until we get a response from slave
     while( !Serial1.available() );
+
+    receiveFromSlave();
 
 }
 

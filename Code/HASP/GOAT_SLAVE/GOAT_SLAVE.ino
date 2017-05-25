@@ -6,7 +6,7 @@
 #include <Adafruit_AM2315.h>
 #include "Spec.h"
 #include "hasp_types.h"
-#include "goat_funcs.h"
+#include "goat_slave_funcs.h"
 #include "slave_globals.h"
 
 void setup()
@@ -15,7 +15,7 @@ void setup()
     setupSlaveGlobals();
     setupSlaveSensors();
 
-    delay( 4000 );
+    delay( 10000 );
     assignEntry( reading.time, C_TIME(), sizeof( reading.time ) );
     sendData( (byte *)&reading, sizeof( reading ) );
 
