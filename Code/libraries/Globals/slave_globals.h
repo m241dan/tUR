@@ -16,5 +16,5 @@ extern Adafruit_BME280 bme( BME_PIN );
 extern GROUND_COMMAND current_command;
 extern SENSOR_READING reading;
 extern byte receive_buffer[MAX_BUF];
-
+extern int  index;
 #endif

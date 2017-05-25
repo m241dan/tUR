@@ -20,6 +20,8 @@ void setup()
     sendData( (byte *)&reading, sizeof( reading ) );
 
     while( !Serial.available() ); //block and wait for acknowledgement
+    while( !acknowledged )
+        receiveFromMaster();
 }
 
 void loop()

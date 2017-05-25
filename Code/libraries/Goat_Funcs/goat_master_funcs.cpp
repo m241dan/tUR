@@ -20,6 +20,8 @@ void setupMasterGlobals( void )
     log_name = getNextFile( "GOAT" );
     pump_on = false;
     take_readings = true;
+    ground_index = 0;
+    slave_index = 0;
 
     //clear these out appropriately
     memset( &current_gtp.data[0], 0, sizeof( current_gtp.data ) );
@@ -60,5 +62,24 @@ void setupMasterSensors( void )
 
 void receiveFromSlave( void )
 {
+    while( Serial1.available() )
+    {
+       byte c = Serial1.read();
+       receive_buffer_slave[slave_index++] = c
+       if( ( c == '\n' && receive_buffer_slave[slave_index-1] == '\r' ) || slave_index == MAX_BUF )
+       {
+          memcpy( &slave_reading[0], &receive_buffer_slave[0], slave_index - 2 );
+          slave_index = 0;
+          memset( &receive_buffer_slave[0], 0, MAX_BUF );
+          sendAcknowledge();
+          break;
+       }
+    }
+}
 
+void sendAcknowledge( void )
+{
+    slave_command.command[0] = '\x30';
+    slave_command.command[1] = '\x00';
+    sendData1( (byte *)&slave_command, sizeof( slave_command ) );
 }
