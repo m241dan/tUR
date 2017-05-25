@@ -11,37 +11,34 @@
  *                      Thermoelectric Modules
  */
 
-//THIS IS MOSTLY PSEUDO-CODE
-//THIS IS MOSTLY PSEUDO-CODE
-//THIS IS MOSTLY PSEUDO-CODE
-//THIS IS MOSTLY PSEUDO-CODE
-//THIS IS MOSTLY PSEUDO-CODE
-
-#include "Spec.h"
-#include <Adafruit_BME280.h>
 #include <SPI.h>
 #include <SD.h>
 #include <Wire.h>
 #include <Adafruit_SI5351.h>
-
-//sensor rig
-
-Spec so2( SPEC_O2, pin, pin, pin );
-Spec no2( SPEC_NO2, pin, pin, pin );
-Spec o3( SPEC_O3, pin, pin, pin );
-Adafruit_BME280 bme( pin );
-Adafruit_SI5351 clockgen();
-File hasp_log1;
-File hasp_log2;
-
-//
+#include <Adafruit_BME280.h>
+#include <Adafruit_AM2315.h>
+#include "Spec.h"
+#include "hasp_types.h"
+#include "goat_funcs.h"
 
 void setup()
 {
+    setupMasterSerials();
+    setupMasterGlobals();
+    setupMasterSensors();
 
+    delay( 2000 );
+    assignEntry( master_reading.time, C_TIME(), sizeof( master_reading.time ) );
+    sendData( (byte *)&master_reading, sizeof( master_reading ) );
+
+    //block until we get a response from slave
+    while( !Serial1.available() );
+
+    
 }
 
 void loop()
 {
 
 }
+

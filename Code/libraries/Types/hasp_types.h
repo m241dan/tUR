@@ -4,8 +4,8 @@
 typedef struct ground_command
 {
    const unsigned char header[2] = "\x1\x2";
-   unsigned char checksum;
-   unsigned char command[2];
+   unsigned char checksum = 0;
+   unsigned char command[2] = { 0, 0 };
    const unsigned char terminator[3] = "\x3\xD\xA";
 } GROUND_COMMAND;
 
@@ -23,9 +23,11 @@ typedef struct sensor_readings
    unsigned char so2_reading[10];
    unsigned char o3_reading[10];
    unsigned char no2_reading[10];
-   unsigned char temp_reading[10];
+   unsigned char temp_reading[5];
+   unsigned char extt_reading[5];
    unsigned char pressure_reading[10];
-   unsigned char humidity_reading[10];
+   unsigned char humidity_reading[5];
+   unsigned char ext_humidity_reading[5];
    unsigned char pump_status[10];
    unsigned char peltier_status[30];
    unsigned char sd_status[10];
