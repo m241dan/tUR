@@ -14,6 +14,12 @@ void setup()
     setupSlaveSerials();
     setupSlaveGlobals();
     setupSlaveSensors();
+
+    delay( 4000 );
+    assignEntry( reading.time, C_TIME(), sizeof( reading.time ) );
+    sendData( (byte *)&reading, sizeof( reading ) );
+
+    while( !Serial.available() ); //block and wait for acknowledgement
 }
 
 void loop()

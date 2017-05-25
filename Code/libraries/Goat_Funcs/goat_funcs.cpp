@@ -13,6 +13,15 @@ void sendData( byte *data, int length )
     }
 }
 
+void sendData1( byte *data, int length )
+{
+    for( int x = 0; x < length; x++ )
+    {
+       Serial1.write( *data );
+       data++;
+    }
+}
+
 //this function is specifically designed to fill in our readings entries with proper space padding and terminating each with a ','
 void assignEntry( char *dst, const char *src, int length, bool from_uplink = false )
 {
