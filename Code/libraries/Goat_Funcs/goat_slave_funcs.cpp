@@ -42,5 +42,10 @@ void receiveFromMaster( void )
     {
         byte c = Serial.read();
         receive_buffer[index++] = c;
+        if( c == '\x0A' )
+        {
+            assignEntry( current_command.checksum, &receive_buffer[2], sizeof( current_command.checksum ), true );
+            assignEntry( current_command.command, &receive_buffer[3], sizeof( current_command.command ), true);
+        }
     }
 }

@@ -18,6 +18,7 @@ typedef struct gps_time_position
 
 typedef struct sensor_readings
 {
+   const unsigned char header[2] = "\x1\x21";
    unsigned char time[9];
    unsigned char bank[2];
    unsigned char so2_reading[10];
@@ -29,7 +30,7 @@ typedef struct sensor_readings
    unsigned char humidity_reading[5];
    unsigned char ext_humidity_reading[5];
    unsigned char pump_status[10];
-   unsigned char peltier_status[30];
+   unsigned char peltier_status[28];
    unsigned char sd_status[10];
    unsigned char reading_status[10];
    const unsigned char terminator[2] = "\r\n";
