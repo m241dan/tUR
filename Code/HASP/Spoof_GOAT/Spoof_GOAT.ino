@@ -3,14 +3,16 @@
  */
 
 #include "hasp_types.h"
+#include "goat_funcs.h"
 
-#define BUF_SIZE 256    //A bit excessive, but better safe than sorry
+#define MAX_BUF 256    //A bit excessive, but better safe than sorry
 SENSOR_READING reading;
 GROUND_COMMAND current_command;
 GTP_DATA current_gtp;
 
 unsigned long long time_schedule;
-unsigned int index;
+byte receive_buffer[MAX_BUF];
+unsigned int buffer_index;
 
 void setup()
 {
@@ -18,44 +20,20 @@ void setup()
     while( !Serial );
 
     time_schedule = 0;
-    index = 0;
+    buffer_index = 0;
 }
 
 void loop()
 {
-    while( Serial.available() )
+    if( Serial.available() )
     {
-        static byte receive_buffer[BUF_SIZE];
-        byte c = Serial.read();
-
-        if( c == '\x1' )
+        switch( receiveData( Serial, receive_buffer, buffer_index, &reading, &current_command, &current_gtp ) )
         {
-            memset( &receive_buffer[0], 0, BUF_SIZE );
-            index = 0;
+            case TRANS_INCOMPLETE: Serial.println( "Incomplete" ); break;
+            case TRANS_COMMAND: Serial.println( "Command" ); break;
+            case TRANS_DATA: Serial.println( "Data" ); break;
+            case TRANS_GTP: Serial.println( "GTP" ); break;
         }
-
-        receive_buffer[index++] = c;
-
-        if( c == '\x0A' )
-        {
-            if( receive_buffer[1] == '\x02' ) //then it's a command
-            {
-                Serial.println( "Command received" );
-                memset( &current_command.command[0], 0, sizeof( current_command.command ) );
-                assignEntry( current_command.checksum, &receive_buffer[2], sizeof( current_command.checksum ), true );
-                assignEntry( current_command.command, &receive_buffer[3], sizeof( current_command.command ), true);
-                Serial.println( String( (int)current_command.command[0] ) );
-                Serial.println( String( (int)current_command.command[1] ) );
-            }
-            else if( receive_buffer[1] == '\x30' ) //then it's a gps
-            {
-                Serial.println( "GPS received" );
-                memset( &current_gtp.data[0], 0, sizeof( current_gtp.data ) );
-                assignEntry( current_gtp.data, &receive_buffer[2], sizeof( current_gtp.data ), true );
-                Serial.println( (char *)current_gtp.data );
-            }            
-        }
-        
     }
     if( ( time_schedule + 1000 ) < millis() )
     {
@@ -73,7 +51,7 @@ void loop()
         assignEntry( reading.sd_status, "GOOD", sizeof( reading.sd_status ), false );
         assignEntry( reading.reading_status, " ACTIVE", sizeof( reading.reading_status ), false );
         //downlinking -- this is the logic to send data down to gondola (simple, works, beautiful)
-        sendData( (byte *)&reading, sizeof( reading ) );
+        sendData( Serial, (byte *)&reading, sizeof( reading ) );
         time_schedule = millis();
     }
 

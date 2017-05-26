@@ -1,6 +1,25 @@
 #ifndef hasp_types_h
 #define hasp_types_h
 
+#define ACKNOWLEDGE '\x06'
+#define ARD_RESET '\x20'
+#define DOWNLINK_OFF '\x21'
+#define DOWNLINK_ON '\x22'
+#define STOP_SENSORS '\x23'
+#define START_SENSORS '\x24'
+#define PUMP_ON '\x25'
+#define PUMP_OFF '\x26'
+#define DISABLE_SD '\x29'
+#define ENABLE_SD '\x2A'
+#define REINIT_SD '\x2B'
+#define BANK_ONE '\x2E'
+#define BANK_TWO '\x2F'
+
+typedef enum
+{
+   TRANS_INCOMPLETE = 0, TRANS_COMMAND, TRANS_DATA, TRANS_GTP
+} TRANS_TYPE;
+
 typedef struct ground_command
 {
    const unsigned char header[2] = "\x1\x2";
@@ -35,11 +54,6 @@ typedef struct sensor_readings
    unsigned char reading_status[10];
    const unsigned char terminator[2] = "\r\n";
 } SENSOR_READING;
-
-//functions
-void sendData( byte *data, int length );
-void assignEntry( char *dst, const char *src, int length, bool from_uplink );
-String getNextFile( String name );
 
 #endif
 

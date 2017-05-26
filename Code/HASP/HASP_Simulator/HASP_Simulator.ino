@@ -8,6 +8,7 @@
 #include <SD.h>
 #include <SPI.h>
 #include "hasp_types.h"
+#include "goat_funcs.h"
 
 //Telemetry Rate
 #define TELE_RATE 60000
@@ -42,7 +43,7 @@ void loop()
     if( ( time_schedule + TELE_RATE ) < millis() )
     {
         //Send telemetry data every minute
-        sendData( (byte *)&spoof_gps, sizeof( spoof_gps ) );
+        sendData( Serial, (byte *)&spoof_gps, sizeof( spoof_gps ) );
         time_schedule = millis();
     }
     else if( ( time_command + 20000 ) < millis () )
@@ -50,7 +51,7 @@ void loop()
         //Send command
         spoof_command.command[0] = random(0, 10);
         spoof_command.command[1] = random(40,60);
-        sendData( (byte *)&spoof_command, sizeof( spoof_command ) );
+        sendData( Serial, (byte *)&spoof_command, sizeof( spoof_command ) );
         time_command = millis();
     }
     else

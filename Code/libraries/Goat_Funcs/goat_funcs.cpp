@@ -1,3 +1,4 @@
+#include <SD.h>
 #include "goat_funcs.h"
 
 void sendData( HardwareSerial &serial, byte *data, int length )
@@ -48,9 +49,9 @@ String getNextFile( String name )
    return file_name;
 }
 
-bool receiveData( HardwareSerial &serial, byte (&buffer)[MAX_BUF], int &index, SENSOR_READING *reading, GROUND_COMMAND *com, GTP_DATA *gtp )
+TRANS_TYPE receiveData( HardwareSerial &serial, byte (&buffer)[256], unsigned int &index, SENSOR_READING *reading, GROUND_COMMAND *com, GTP_DATA *gtp )
 {
-    bool complete_transmission = false;
+    TRANS_TYPE type = TRANS_INCOMPLETE;
     while( serial.available() )
     {
         byte c = serial.read();
@@ -58,7 +59,7 @@ bool receiveData( HardwareSerial &serial, byte (&buffer)[MAX_BUF], int &index, S
         //we're receiving the start of a new transmission, whatever was in there is no longer relevant
         if( c == '\x1' )
         {
-            memset( &buffer[0], 0, MAX_BUF );
+            memset( &buffer[0], 0, 256 );
             index = 0;
         }
 
@@ -66,36 +67,42 @@ bool receiveData( HardwareSerial &serial, byte (&buffer)[MAX_BUF], int &index, S
         buffer[index++] = c;
 
         //check if its a command or gtp
-        if( c == '\x0A' && buffer[index-1] == '\xD' && buffer[index-2] = '\x3' )
+        if( c == '\x0A' && buffer[index-2] == '\x0D' && buffer[index-3] == '\x03' )
         {
             if( buffer[1] == '\x02' && com ) //then it's a command
             {
                 assignEntry( com->checksum, &buffer[2], 1, true );
                 assignEntry( com->command, &buffer[3], 2, true);
                 //executeCMD();
-                complete_transmission = true;
+                type = TRANS_COMMAND;
             }
             else if( buffer[1] == '\x30' && gtp ) //then it's a gps
             {
                 assignEntry( gtp->data, &buffer[2], sizeof( gtp->data ), true );
                 //parseGTP();
-                complete_transmission = true;
+                type = TRANS_GTP;
             }
         }
         //check if its data our data (like, from Slave)
         else if( c == '\n' && buffer[index-1] == '\r' && reading )
         {
              //just going to do memcpy here because otherwise its a million assign statements....
-             memcpy( &buffer[2], reading, sizeof( SENSOR_READING ) - 2 ); 
-             complete_transmission = true;
+             memcpy( &buffer[2], reading, sizeof( SENSOR_READING ) - 2 );
+             type = TRANS_DATA;
         }
         //something has gone terribly wrong, just reset
-        else if( index == MAX_BUF )
+        else if( index == 256 )
         {
-            memset( &buffer[0], 0, MAX_BUF );
+            memset( &buffer[0], 0, 256 );
             index = 0;
         }
 
     }
-    return complete_transmission;
+    return type;
+}
+
+//simply a wrapper function
+inline void sendCommand( HardwareSerial &serial, GROUND_COMMAND &com )
+{
+   sendData( serial, (byte *)&com, sizeof( com ) );
 }
