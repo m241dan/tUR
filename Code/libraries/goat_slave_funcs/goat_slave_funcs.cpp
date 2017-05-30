@@ -8,13 +8,13 @@
 void setupSlaveSerials( void )
 {
    //Serial to Master
-   Serial.begin( 9600 );
+   Serial.begin( 300 );
    while( !Serial );
 }
 
 void setupSlaveGlobals( void )
 {
-    memset( &reading, ' ', sizeof( reading ) -2 );
+    memset( &reading.time[0], ' ', sizeof( reading ) - 4 );
     memset( &receive_buffer[0], 0, MAX_BUF );
     buffer_index = 0;
 

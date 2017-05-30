@@ -10,6 +10,6 @@ void assignEntry( char *dst, const char *src, int length, bool from_uplink = fal
 TRANS_TYPE receiveData( HardwareSerial &serial, byte (&buffer)[256], unsigned int &index, SENSOR_READING *reading, GROUND_COMMAND *com, GTP_DATA *gtp );
 String getNextFile( String name );
 
-inline void sendCommand( HardwareSerial &serial, GROUND_COMMAND &com );
+void sendCommand( HardwareSerial &serial, GROUND_COMMAND &com );
 
 #endif

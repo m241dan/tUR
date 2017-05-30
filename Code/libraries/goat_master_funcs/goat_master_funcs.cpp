@@ -14,7 +14,7 @@ void setupMasterSerials( void )
     while( !Serial );
 
     //Serial to Slave
-    Serial1.begin( 9600 );
+    Serial1.begin( 300 );
     while( !Serial1 );
 }
 
@@ -28,8 +28,8 @@ void setupMasterGlobals( void )
 
     //clear these out appropriately
     memset( &current_gtp.data[0], 0, sizeof( current_gtp.data ) );
-    memset( &master_reading, ' ', sizeof( master_reading ) - 2 );
-    memset( &slave_reading, ' ', sizeof( slave_reading ) - 2 );
+    memset( &master_reading.time[0], ' ', sizeof( master_reading ) - 4 );
+    memset( &slave_reading.time[0], ' ', sizeof( slave_reading ) - 4 );
     memset( &receive_buffer_ground[0], 0, MAX_BUF );
     memset( &receive_buffer_slave[0], 0, MAX_BUF );
 

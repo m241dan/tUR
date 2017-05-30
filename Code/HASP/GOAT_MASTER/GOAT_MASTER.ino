@@ -45,13 +45,11 @@ void setup()
 
     //block until we get a response from slave
     while( !Serial1.available() );
-    while( !receiveData( Serial1, receive_buffer_slave, slave_index, &slave_reading, nullptr, nullptr ) )
-
+    while( receiveData( Serial1, receive_buffer_slave, slave_index, &slave_reading, nullptr, nullptr ) != TRANS_DATA );
+    
     slave_command.command[0] = ACKNOWLEDGE;
     sendCommand( Serial1, slave_command );
     sendData( Serial, (byte *)&slave_reading, sizeof( slave_reading ) );
-    
-
 }
 
 void loop()

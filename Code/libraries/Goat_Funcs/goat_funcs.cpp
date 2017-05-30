@@ -84,10 +84,10 @@ TRANS_TYPE receiveData( HardwareSerial &serial, byte (&buffer)[256], unsigned in
             }
         }
         //check if its data our data (like, from Slave)
-        else if( c == '\n' && buffer[index-1] == '\r' && reading )
+        else if( c == '\n' && buffer[index-2] == '\r' && reading )
         {
              //just going to do memcpy here because otherwise its a million assign statements....
-             memcpy( &buffer[2], reading, sizeof( SENSOR_READING ) - 2 );
+             memcpy( &reading->time[0], &buffer[2], sizeof( SENSOR_READING ) - 4 );
              type = TRANS_DATA;
         }
         //something has gone terribly wrong, just reset
@@ -102,7 +102,7 @@ TRANS_TYPE receiveData( HardwareSerial &serial, byte (&buffer)[256], unsigned in
 }
 
 //simply a wrapper function
-inline void sendCommand( HardwareSerial &serial, GROUND_COMMAND &com )
+void sendCommand( HardwareSerial &serial, GROUND_COMMAND &com )
 {
    sendData( serial, (byte *)&com, sizeof( com ) );
 }
