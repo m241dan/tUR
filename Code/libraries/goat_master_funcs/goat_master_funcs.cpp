@@ -30,6 +30,8 @@ void setupMasterGlobals( void )
     which_bank = 1;
     reading_status = "";
     sd_status = "";
+    bme_status = "";
+    am2315_status = "";
 
     //clear these out appropriately
     memset( &current_gtp.data[0], 0, sizeof( current_gtp.data ) );
@@ -49,21 +51,24 @@ void setupMasterSensors( void )
 {
     //Setup the SD
     if( !SD.begin( SD_PIN ) )
-       assignEntry( master_reading.sd_status, "SD FAILED", sizeof( master_reading.sd_status ) );
+        sd_status = "SD INIT F";
     else
-       assignEntry( master_reading.sd_status, "SD GOOD", sizeof( master_reading.sd_status ) );
+        sd_status = "SD INIT G";
+    assignEntry( master_reading.sd_status, sd_status.c_str(), sizeof( master_reading.sd_status ) );
 
     //Setup the BME
     if( !bme.begin() )
-       assignEntry( master_reading.temp_reading, "BFAIL", sizeof( master_reading.temp_reading ) );
+        bme_status = "BIFD";
     else
-       assignEntry( master_reading.temp_reading, "BGOOD", sizeof( master_reading.temp_reading ) );
+        bme_status = "BIGD";
+    assignEntry( master_reading.temp_reading, bme_status.c_str(), sizeof( master_reading.temp_reading ) );
 
 
     //Setup the AM2315
     if( !dongle.begin() )
-       assignEntry( master_reading.extt_reading, "AFAIL", sizeof( master_reading.extt_reading ) );
+        am2315_status = "AIFD";
     else
-       assignEntry( master_reading.extt_reading, "AGOOD", sizeof( master_reading.extt_reading ) );
+        am2315_status = "AIGD";
+    assignEntry( master_reading.extt_reading, am2315.c_str(), sizeof( master_reading.extt_reading ) );
 
 }

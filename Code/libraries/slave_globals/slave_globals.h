@@ -23,5 +23,6 @@ extern GROUND_COMMAND current_command;
 extern SENSOR_READING reading;
 extern byte receive_buffer[MAX_BUF];
 extern unsigned int buffer_index;
+extern String bme_status;
 
 #endif

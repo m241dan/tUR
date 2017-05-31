@@ -39,6 +39,7 @@ extern bool new_slave_reading;
 extern byte which_bank;
 extern String reading_status;
 extern String sd_status;
-
+extern String bme_status;
+extern String am2315_status;
 
 #endif

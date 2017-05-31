@@ -99,7 +99,6 @@ void ckeckGround( void )
     if( !Serial.available() )
         return;
 
-    //I wonder if I should block here... gonna start with blocking... if it proves bad, will switch to an if statement/return
     if( ( transmission = receiveData( Serial, receive_buffer_ground, ground_index, nullptr, &master_command, &current_gtp ) ) == TRANS_INCOMPLETE )
         return;
 
@@ -128,6 +127,14 @@ void checkSlave( void )
 
 void downlinkToHasp( void )
 {
+    switch( which_bank )
+    {
+        case 1:
+            prepareMasterReading();
+            break;
+        case 2:
+            break;    
+    }
     prepareReading();
     
 }
@@ -150,11 +157,6 @@ void sample( void )
     sample_set.ext_temp_count++;
     sample_set.ext_humidity_total += dongle.readHumidity();
     sample_set.ext_humidity_count++;
-}
-
-void prepareReading( void )
-{
-    
 }
 
 void prepareMasterReading( void )
@@ -186,11 +188,17 @@ void prepareMasterReading( void )
     assignEntry( master_reading.so2_reading, String( so2_ppm ).c_str(), sizeof( master_reading.so2_reading ) );
     assignEntry( master_reading.no2_reading, String( no2_ppm ).c_str(), sizeof( master_reading.no2_reading ) );
     assignEntry( master_reading.o3_reading, String( o3_ppm ).c_str(), sizeof( master_reading.03 ) );
-    assignEntry( master_reading.temp_reading, String( temp ).c_str(), sizeof( master_reading.temp_reaindg ) );
-    assignEntry( master_reading.extt_reading, String( ext_temp ).c_str(), sizeof( master_reading.extt_reading ) );
-    assignEntry( master_reading.pressure_reading, String( pressure ).c_str(), sizeof( master_reading.pressure_reading ) );
-    assignEntry( master_reading.humidity_reading, String( humidity ).c_str(), sizeof( master_reading.humidity_reading ) );
-    assignEntry( master_reading.ext_humidity_reading, String( ext_humidity ).c_str(), sizeof( master_reading.ext_humidity_reading ) );
+    if( bme_status != "BIFD" )
+    {
+       assignEntry( master_reading.temp_reading, String( temp ).c_str(), sizeof( master_reading.temp_reaindg ) );
+       assignEntry( master_reading.pressure_reading, String( pressure ).c_str(), sizeof( master_reading.pressure_reading ) );
+       assignEntry( master_reading.humidity_reading, String( humidity ).c_str(), sizeof( master_reading.humidity_reading ) );
+    }
+    if( am2315_status != "AIFD" )
+    {
+        assignEntry( master_reading.extt_reading, String( ext_temp ).c_str(), sizeof( master_reading.extt_reading ) );
+        assignEntry( master_reading.ext_humidity_reading, String( ext_humidity ).c_str(), sizeof( master_reading.ext_humidity_reading ) );
+    }
     assignEntry( master_reading.pump_status, pump_on ? "PUMP ON" : "PUMP OFF", sizeof( master_reading.pump_status ) );
     //place holder for peltier 
     assignEntry( master_reading.sd_status, sd_status.c_str(), sizeof( master_reading.sd_status ) );

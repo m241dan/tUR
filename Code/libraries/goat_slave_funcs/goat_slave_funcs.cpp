@@ -30,7 +30,8 @@ void setupSlaveGlobals( void )
 void setupSlaveSensors( void )
 {
     if( !bme.begin() )
-        assignEntry( reading.temp_reading, "BFAIL", sizeof( reading.temp_reading ) );
+       bme_status = "BIFD";
     else
-        assignEntry( reading.temp_reading, "BGOOD", sizeof( reading.temp_reading ) );
+       bme_status = "BIGD";
+    assignEntry( reading.temp_reading, bme_status.c_str(), sizeof( reading.temp_reading ) );
 }
