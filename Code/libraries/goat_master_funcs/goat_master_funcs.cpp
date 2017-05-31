@@ -20,7 +20,6 @@ void setupMasterSerials( void )
 
 void setupMasterGlobals( void )
 {
-    log_name = getNextFile( "GOAT" );
     pump_on = false;
     take_readings = true;
     ground_index = 0;
@@ -53,7 +52,10 @@ void setupMasterSensors( void )
     if( !SD.begin( SD_PIN ) )
         sd_status = "SD INIT F";
     else
+    {
         sd_status = "SD INIT G";
+        log_name = getNextFile( "GOAT" );
+    }
     assignEntry( master_reading.sd_status, sd_status.c_str(), sizeof( master_reading.sd_status ) );
 
     //Setup the BME

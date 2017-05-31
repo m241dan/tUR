@@ -92,7 +92,7 @@ void loop()
     sample();
 }
 
-void ckeckGround( void )
+void checkGround( void )
 {
     TRANS_TYPE transmission;
     
@@ -127,16 +127,30 @@ void checkSlave( void )
 
 void downlinkToHasp( void )
 {
+    SENSOR_READING *to_send;
+
+    //if we don't haev a new slave reading, send master again
+    if( !new_slave_reading )
+        which_bank = 1;
+    
     switch( which_bank )
     {
         case 1:
             prepareMasterReading();
+            to_send = &master_reading;
             break;
         case 2:
+            to_send = &slave_reading;
+            new_slave_reading = false;
             break;    
     }
-    prepareReading();
-    
+    which_bank = which_bank == 1 ? 2 : 1;
+    sendData( Serial, (byte *)to_send, sizeof( SENSOR_READING ) );
+    writeSD( *to_send );
+
+    //I need to figure out how I want to handle this logic switching...
+               slave_command.command[0] = REQUEST_READING
+            sendCommand( Serial1, slave_command );
 }
 
 void sample( void )
@@ -205,7 +219,7 @@ void prepareMasterReading( void )
     assignEntry( master_reading.reading_status, reading_status.c_str(), sizeof( master_reading.reading_status ) );
 }
 
-void writeSD( void )
+void writeSD( SENSOR_READING &reading )
 {
     
 }
