@@ -41,8 +41,8 @@ typedef struct sensor_readings
    unsigned char time[9];
    unsigned char bank[2];
    unsigned char so2_reading[10];
-   unsigned char o3_reading[10];
    unsigned char no2_reading[10];
+   unsigned char o3_reading[10];
    unsigned char temp_reading[5];
    unsigned char extt_reading[5];
    unsigned char pressure_reading[10];

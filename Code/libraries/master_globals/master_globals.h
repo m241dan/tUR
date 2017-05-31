@@ -34,5 +34,11 @@ extern byte receive_buffer_ground[MAX_BUF];
 extern unsigned int ground_index;
 extern byte receive_buffer_slave[MAX_BUF];
 extern unsigned int slave_index;
+extern unsigned long long downlink_schedule;
+extern bool new_slave_reading;
+extern byte which_bank;
+extern String reading_status;
+extern String sd_status;
+
 
 #endif

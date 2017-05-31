@@ -33,4 +33,31 @@ void setup()
 
 void loop()
 {
+
 }
+
+void checkMaster( void )
+{
+    
+}
+
+void downlinkToMaster( void )
+{
+    
+}
+
+void sample( void )
+{
+    
+}
+
+void prepareReading( void )
+{
+    
+}
+
+void prepareSlaveSample( void )
+{
+    
+}
+

@@ -25,6 +25,11 @@ void setupMasterGlobals( void )
     take_readings = true;
     ground_index = 0;
     slave_index = 0;
+    downlink_schedule = 0;
+    new_slave_reading = false;
+    which_bank = 1;
+    reading_status = "";
+    sd_status = "";
 
     //clear these out appropriately
     memset( &current_gtp.data[0], 0, sizeof( current_gtp.data ) );

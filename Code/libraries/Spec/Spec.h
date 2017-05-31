@@ -26,7 +26,7 @@ class Spec
 
       String generateRawReading( char delim, bool perr, bool newline );
       String generateRawVerboseReading();
-      String generateReadingPPM();
+      int generateReadingPPM();
    private:
       //Functions
       double rawReadingToPPM( int vgas, int vref, int vtmp );

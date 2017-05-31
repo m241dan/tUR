@@ -69,7 +69,7 @@ String Spec::generateRawVerboseReading()
    return reading;
 }
 
-String Spec::generateReadingPPM()
+int Spec::generateReadingPPM()
 {
     double reading_ppm;
 
@@ -77,7 +77,7 @@ String Spec::generateReadingPPM()
 
     reading_ppm = M * (vgas_reading - vref_reading );
 
-    return String( reading_ppm );
+    return reading_ppm;
 }
 
 void Spec::takeReading()
