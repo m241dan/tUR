@@ -129,10 +129,10 @@ void downlinkToHasp( void )
 {
     SENSOR_READING *to_send;
 
-    //if we don't haev a new slave reading, send master again
-    if( !new_slave_reading )
-        which_bank = 1;
-    
+    //if we are supposed to send bank 2 but don't have a new reading, skip downlinking
+    if( which_bank == 2 && !new_slave_reading )
+        return;
+        
     switch( which_bank )
     {
         case 1:
@@ -144,13 +144,18 @@ void downlinkToHasp( void )
             new_slave_reading = false;
             break;    
     }
-    which_bank = which_bank == 1 ? 2 : 1;
-    sendData( Serial, (byte *)to_send, sizeof( SENSOR_READING ) );
-    writeSD( *to_send );
 
-    //I need to figure out how I want to handle this logic switching...
-               slave_command.command[0] = REQUEST_READING
-            sendCommand( Serial1, slave_command );
+    //write and send
+    writeSD( *to_send );
+    sendData( Serial, (byte *)to_send, sizeof( SENSOR_READING ) );
+
+    //clean up to get ready for next round
+    which_bank = which_bank == 1 ? 2 : 1;
+    if( which_bank == 2 )
+    {
+        slave_command.command[0] = REQUEST_READING;
+        sendCommand( Serial1, slave_command );
+    }
 }
 
 void sample( void )
