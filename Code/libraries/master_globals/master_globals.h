@@ -3,6 +3,7 @@
 
 #include <Adafruit_BME280.h>
 #include <Adafruit_AM2315.h>
+#include <SD.h>
 #include "Spec.h"
 #include "hasp_types.h"
 #include "Arduino.h"
@@ -13,6 +14,7 @@
 #define BME_PIN 41
 #define TEMP_BUS 42
 #define MAX_BUF 256
+#define LOG_NAME "GOAT"
 #define C_TIME() ( String( millis() / 1000.0F ).c_str() )
 
 //GOAT master globals
