@@ -11,6 +11,7 @@ GROUND_COMMAND current_command;
 SENSOR_READING reading;
 byte receive_buffer[MAX_BUF];
 unsigned int buffer_index;
+String bme_status;
 
 void setup()
 {

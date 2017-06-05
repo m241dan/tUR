@@ -37,6 +37,8 @@ bool new_slave_reading;
 byte which_bank;
 String reading_status;
 String sd_status;
+String bme_status;
+String am2315_status;
 
 typedef struct data_set
 {
@@ -68,7 +70,7 @@ void setup()
     setupMasterSensors();
 
     delay( 2000 );
-    assignEntry( master_reading.time, C_TIME(), sizeof( master_reading.time ) );
+  //  assignEntry( master_reading.time, C_TIME(), sizeof( master_reading.time ) );
     sendData( Serial, (byte *)&master_reading, sizeof( master_reading ) );
 
     //block until we get a response from slave
@@ -81,7 +83,7 @@ void setup()
 }
 
 void loop()
-{
+{  
     checkGround();
     checkSlave();
     if( ( downlink_schedule + 1000 ) < millis() )
@@ -92,6 +94,7 @@ void loop()
     sample();
 }
 
+
 void checkGround( void )
 {
     TRANS_TYPE transmission;
@@ -99,7 +102,8 @@ void checkGround( void )
     if( !Serial.available() )
         return;
 
-    if( ( transmission = receiveData( Serial, receive_buffer_ground, ground_index, nullptr, &master_command, &current_gtp ) ) == TRANS_INCOMPLETE )
+    //receiveData takes slave_reading here due to some really weird, what I believe to be, Arduino error
+    if( ( transmission = receiveData( Serial, receive_buffer_ground, ground_index, &slave_reading, &master_command, &current_gtp ) ) == TRANS_INCOMPLETE )
         return;
 
     switch( transmission )
@@ -119,7 +123,7 @@ void checkSlave( void )
 
     if( !Serial1.available() )
         return;
-
+             
     if( ( transmission = receiveData( Serial1, receive_buffer_slave, slave_index, &slave_reading, nullptr, nullptr ) ) != TRANS_DATA )
         return;
     new_slave_reading = true;
@@ -132,7 +136,7 @@ void downlinkToHasp( void )
     //if we are supposed to send bank 2 but don't have a new reading, skip downlinking
     if( which_bank == 2 && !new_slave_reading )
         return;
-        
+
     switch( which_bank )
     {
         case 1:
