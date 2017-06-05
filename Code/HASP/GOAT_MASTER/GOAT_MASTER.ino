@@ -49,7 +49,7 @@ typedef struct data_set
     double temp_total = 0;
     double temp_count = 0;
     double humidity_total = 0;
-    double humitiy_count = 0;
+    double humidity_count = 0;
     double pressure_total = 0;
     double pressure_count = 0;
     double ext_temp_total = 0;
@@ -146,7 +146,7 @@ void downlinkToHasp( void )
     }
 
     //write and send
-    writeSD( *to_send );
+    writeSD( to_send );
     sendData( Serial, (byte *)to_send, sizeof( SENSOR_READING ) );
 
     //clean up to get ready for next round
@@ -187,7 +187,7 @@ void prepareMasterReading( void )
     double humidity;
     double pressure;
     double ext_temp;
-    double ext_humidty;
+    double ext_humidity;
 
     so2_ppm = sample_set.so2_total / sample_set.so2_count;
     no2_ppm = sample_set.no2_total / sample_set.no2_count;
@@ -203,13 +203,13 @@ void prepareMasterReading( void )
     memset( &sample_set, 0, sizeof( sample_set ) );
 
     assignEntry( master_reading.time, C_TIME(), sizeof( master_reading.time ) );
-    assignEntry( master_reading.bank, "1", sizeof( master_reaindg.bank ) );
+    assignEntry( master_reading.bank, "1", sizeof( master_reading.bank ) );
     assignEntry( master_reading.so2_reading, String( so2_ppm ).c_str(), sizeof( master_reading.so2_reading ) );
     assignEntry( master_reading.no2_reading, String( no2_ppm ).c_str(), sizeof( master_reading.no2_reading ) );
-    assignEntry( master_reading.o3_reading, String( o3_ppm ).c_str(), sizeof( master_reading.03 ) );
+    assignEntry( master_reading.o3_reading, String( o3_ppm ).c_str(), sizeof( master_reading.o3_reading ) );
     if( bme_status != "BIFD" )
     {
-       assignEntry( master_reading.temp_reading, String( temp ).c_str(), sizeof( master_reading.temp_reaindg ) );
+       assignEntry( master_reading.temp_reading, String( temp ).c_str(), sizeof( master_reading.temp_reading ) );
        assignEntry( master_reading.pressure_reading, String( pressure ).c_str(), sizeof( master_reading.pressure_reading ) );
        assignEntry( master_reading.humidity_reading, String( humidity ).c_str(), sizeof( master_reading.humidity_reading ) );
     }
@@ -224,8 +224,25 @@ void prepareMasterReading( void )
     assignEntry( master_reading.reading_status, reading_status.c_str(), sizeof( master_reading.reading_status ) );
 }
 
-void writeSD( SENSOR_READING &reading )
+void writeSD( SENSOR_READING *reading )
 {
+    File goat_log;
+    byte *ptr;
+
+    if( !( goat_log = SD.open( log_name ,FILE_WRITE ) ) )
+    {
+        sd_status = "WRITEFAIL";
+        return;         
+    }
+    
+    ptr = (byte *)&reading->time[0];
+    
+    for( int x = 0; x < sizeof( SENSOR_READING ); x++ )
+    {
+        goat_log.write(*ptr++);
+    }
+
+    goat_log.close();
     
 }
 

@@ -31,6 +31,7 @@ void setupMasterGlobals( void )
     sd_status = "";
     bme_status = "";
     am2315_status = "";
+    log_name = getNextFile( LOG_NAME );
 
     //clear these out appropriately
     memset( &current_gtp.data[0], 0, sizeof( current_gtp.data ) );
@@ -39,7 +40,7 @@ void setupMasterGlobals( void )
     memset( &receive_buffer_ground[0], 0, MAX_BUF );
     memset( &receive_buffer_slave[0], 0, MAX_BUF );
 
-    //setup the sensor reading message as its how we communicate 
+    //setup the sensor reading message as its how we communicate
     assignEntry( master_reading.time, C_TIME(), sizeof( master_reading.time ) );
     assignEntry( master_reading.bank, "1", sizeof( master_reading.bank ) );
     assignEntry( master_reading.pump_status, "PUMP OFF", sizeof( master_reading.pump_status ) );
@@ -71,6 +72,6 @@ void setupMasterSensors( void )
         am2315_status = "AIFD";
     else
         am2315_status = "AIGD";
-    assignEntry( master_reading.extt_reading, am2315.c_str(), sizeof( master_reading.extt_reading ) );
+    assignEntry( master_reading.extt_reading, am2315_status.c_str(), sizeof( master_reading.extt_reading ) );
 
 }
