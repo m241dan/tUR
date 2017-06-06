@@ -12,6 +12,7 @@ SENSOR_READING slave_reading;
 byte receive_buffer_slave[MAX_BUF];
 unsigned int buffer_index;
 String reading_status = "GOOD";
+String bme_status;
 
 //Data set struct that holds our data
 typedef struct data_set

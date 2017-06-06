@@ -12,12 +12,12 @@
  */
 #include <SPI.h>
 #include <SD.h>
-#include <Spec.h>
+#include "Spec.h"
 
 /*
  * globals/config
  */
-#define SD_PIN 48
+#define SD_PIN 10
 
 String log_name;
 File SO2_log;
