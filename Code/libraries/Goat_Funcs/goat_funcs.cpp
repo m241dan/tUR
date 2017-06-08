@@ -65,7 +65,7 @@ TRANS_TYPE receiveData( HardwareSerial &serial, byte (&buffer)[256], unsigned in
 
         //store what we got
         buffer[index++] = c;
-
+        Serial.println( c );
         //check if its a command or gtp
         if( c == '\x0A' && buffer[index-2] == '\x0D' && buffer[index-3] == '\x03' )
         {
