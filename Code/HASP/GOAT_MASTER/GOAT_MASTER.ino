@@ -78,13 +78,13 @@ void setup()
     while( receiveData( Serial1, receive_buffer_slave, slave_index, &slave_reading, nullptr, nullptr ) != TRANS_DATA );
     
     slave_command.command[0] = ACKNOWLEDGE;
-    sendCommand( Serial1, slave_command );
+    //sendCommand( Serial1, slave_command );
     sendData( Serial, (byte *)&slave_reading, sizeof( slave_reading ) );
 }
 
 void loop()
 {  
-    checkGround();
+  //  checkGround();
     checkSlave();
     if( ( downlink_schedule + 1000 ) < millis() )
     {
@@ -94,7 +94,7 @@ void loop()
     sample();
 }
 
-
+/*
 void checkGround( void )
 {
     TRANS_TYPE transmission;
@@ -116,13 +116,15 @@ void checkGround( void )
             break;
     }
 }
-
+*/
 void checkSlave( void )
 {
     TRANS_TYPE transmission;
 
     if( !Serial1.available() )
         return;
+
+  Serial.println( "reading" );
              
     if( ( transmission = receiveData( Serial1, receive_buffer_slave, slave_index, &slave_reading, nullptr, nullptr ) ) != TRANS_DATA )
         return;
@@ -135,7 +137,10 @@ void downlinkToHasp( void )
 
     //if we are supposed to send bank 2 but don't have a new reading, skip downlinking
     if( which_bank == 2 && !new_slave_reading )
-        return;
+    {
+      Serial.println( "looping..." );
+      return;
+    }
 
     switch( which_bank )
     {
@@ -158,7 +163,8 @@ void downlinkToHasp( void )
     if( which_bank == 2 )
     {
         slave_command.command[0] = REQUEST_READING;
-        sendCommand( Serial1, slave_command );
+        sendData( Serial1, (byte *)&slave_command, sizeof( slave_command ) );
+        //sendCommand( Serial1, slave_command );
     }
 }
 

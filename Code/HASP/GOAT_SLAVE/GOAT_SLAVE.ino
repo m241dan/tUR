@@ -9,7 +9,7 @@ Spec o3( SPEC_O3, A6, A7, A8, 43.56 );
 Adafruit_BME280 bme( BME_PIN );
 GROUND_COMMAND current_command;
 SENSOR_READING slave_reading;
-byte receive_buffer_slave[MAX_BUF];
+byte receive_buffer[MAX_BUF];
 unsigned int buffer_index;
 String reading_status = "GOOD";
 String bme_status;
@@ -42,8 +42,8 @@ void setup()
     setupSlaveSensors();
 
     delay( 10000 );
-    assignEntry( reading.time, C_TIME(), sizeof( reading.time ) );
-    sendData( Serial, (byte *)&reading, sizeof( reading ) );
+    assignEntry( slave_reading.time, C_TIME(), sizeof( slave_reading.time ) );
+    sendData( Serial, (byte *)&slave_reading, sizeof( slave_reading ) );
 
     while( !Serial.available() ); //block and wait for acknowledgement
     while( 1 ) 
@@ -56,7 +56,7 @@ void setup()
 
 void loop()
 {
-  
+    checkMaster();
     //Begin sampling
     sample();
 }
@@ -67,14 +67,13 @@ void checkMaster( void )
     if( !Serial.available() )
         return;
 
-    if( ( transmission = receiveData( Serial1, receive_buffer_slave, buffer_index, &slave_reading, nullptr, nullptr ) ) == TRANS_INCOMPLETE )
+    if( ( transmission = receiveData( Serial1, receive_buffer, buffer_index, nullptr, &current_command, nullptr ) ) == TRANS_INCOMPLETE )
         return;
     else if( transmission == TRANS_COMMAND )
     {        
         if( current_command.command[0] == REQUEST_READING )
         {
             //Prepare to initiate slave readings
-            prepareReading();
             downlinkToMaster();
         }
     }
@@ -84,7 +83,7 @@ void downlinkToMaster( void )
 {
    prepareReading();
    //Send the data
-   
+   sendData( Serial, (byte *)&slave_reading, sizeof( slave_reading ) );
 }
 
 void sample( void )
