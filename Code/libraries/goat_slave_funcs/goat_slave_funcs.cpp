@@ -14,17 +14,17 @@ void setupSlaveSerials( void )
 
 void setupSlaveGlobals( void )
 {
-    memset( &reading.time[0], ' ', sizeof( reading ) - 4 );
+    memset( &slave_reading.time[0], ' ', sizeof( slave_reading ) - 4 );
     memset( &receive_buffer[0], 0, MAX_BUF );
     buffer_index = 0;
 
-    assignEntry( reading.time, C_TIME(), sizeof( reading.time ) );
-    assignEntry( reading.bank, "2", sizeof( reading.bank ) );
-    assignEntry( reading.extt_reading, "DNA", sizeof( reading.extt_reading ) );
-    assignEntry( reading.ext_humidity_reading, "DNA", sizeof( reading.ext_humidity_reading ) );
-    assignEntry( reading.pump_status, "DNA", sizeof( reading.pump_status ) );
-    assignEntry( reading.sd_status, "DNA", sizeof( reading.sd_status ) );
-    assignEntry( reading.reading_status, "FIRST", sizeof( reading.reading_status ) );
+    assignEntry( slave_reading.time, C_TIME(), sizeof( slave_reading.time ) );
+    assignEntry( slave_reading.bank, "2", sizeof( slave_reading.bank ) );
+    assignEntry( slave_reading.extt_reading, "DNA", sizeof( slave_reading.extt_reading ) );
+    assignEntry( slave_reading.ext_humidity_reading, "DNA", sizeof( slave_reading.ext_humidity_reading ) );
+    assignEntry( slave_reading.pump_status, "DNA", sizeof( slave_reading.pump_status ) );
+    assignEntry( slave_reading.sd_status, "DNA", sizeof( slave_reading.sd_status ) );
+    assignEntry( slave_reading.reading_status, "FIRST", sizeof( slave_reading.reading_status ) );
 }
 
 void setupSlaveSensors( void )
@@ -33,5 +33,5 @@ void setupSlaveSensors( void )
        bme_status = "BIFD";
     else
        bme_status = "BIGD";
-    assignEntry( reading.temp_reading, bme_status.c_str(), sizeof( reading.temp_reading ) );
+    assignEntry( slave_reading.temp_reading, bme_status.c_str(), sizeof( slave_reading.temp_reading ) );
 }
