@@ -20,7 +20,7 @@ extern Spec no2;
 extern Spec o3;
 extern Adafruit_BME280 bme;
 extern GROUND_COMMAND current_command;
-extern SENSOR_READING reading;
+extern SENSOR_READING slave_reading;
 extern byte receive_buffer[MAX_BUF];
 extern unsigned int buffer_index;
 extern String bme_status;
