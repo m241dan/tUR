@@ -17,6 +17,8 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
+#define FIFTEEN_MINUTES ( 60000 * 15 )
+
 Spec so2( SPEC_SO2, A0, A1, A2, 43.54 );
 Spec no2( SPEC_NO2, A3, A4, A5, 43.54 );
 Spec o3( SPEC_O3, A6, A7, A8, 43.54 );
@@ -46,6 +48,7 @@ unsigned long long gtp_received_at = 0;
 int slave_wait_sanity = 0;
 OneWire bus_one( 4 );
 DallasTemperature temp_one( &bus_one );
+unsigned long long pump_timer;
 
 typedef struct data_set
 {
@@ -75,6 +78,11 @@ void setup()
     setupMasterSerials();
     setupMasterGlobals();
     setupMasterSensors();
+
+    pinMode( 47, OUTPUT );
+    digitalWrite( 47, LOW );
+    pump_timer = millis();
+    
     Serial2.begin( 9600 );
     while( !Serial2 );
     temp_one.begin();
@@ -103,6 +111,20 @@ void loop()
         downlink_schedule = millis();
     }
     sample();
+    if( ( pump_timer + FIFTEEN_MINUTES ) > millis() )
+    {
+        if( pump_on )
+        {
+            pinMode( 47, LOW );
+            pump_on = false;
+        }
+        else
+        {
+            pinMode( 47, HIGH );
+            pump_on = true;
+        }
+        pump_timer = millis();
+    }
 }
 
 
