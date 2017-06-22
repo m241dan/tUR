@@ -40,7 +40,7 @@ void setup()
     setupSlaveSerials();
     setupSlaveGlobals();
     setupSlaveSensors();
-
+    
     delay( 10000 );
     assignEntry( slave_reading.time, C_TIME(), sizeof( slave_reading.time ) );
     sendData( Serial, (byte *)&slave_reading, sizeof( slave_reading ) );
@@ -48,7 +48,7 @@ void setup()
     while( !Serial.available() ); //block and wait for acknowledgement
     while( 1 ) 
     {
-        while( !receiveData( Serial, receive_buffer, buffer_index, nullptr, &current_command, nullptr ) ); //block until we get the something
+        while( receiveData( Serial, receive_buffer, buffer_index, nullptr, &current_command, nullptr ) == TRANS_INCOMPLETE ); //block until we get the something
         if( current_command.command[0] == ACKNOWLEDGE )
            break;
     }
@@ -67,7 +67,7 @@ void checkMaster( void )
     if( !Serial.available() )
         return;
 
-    if( ( transmission = receiveData( Serial1, receive_buffer, buffer_index, nullptr, &current_command, nullptr ) ) == TRANS_INCOMPLETE )
+    if( ( transmission = receiveData( Serial, receive_buffer, buffer_index, nullptr, &current_command, nullptr ) ) == TRANS_INCOMPLETE )
         return;
     else if( transmission == TRANS_COMMAND )
     {        

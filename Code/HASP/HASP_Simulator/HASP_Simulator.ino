@@ -68,7 +68,7 @@ void checkReceiveData()
     {
         if( !( sim_log = SD.open( log_name, FILE_WRITE ) ) )
         {
-            Serial.println( "File cannot be opened." );
+    //        Serial.println( "File cannot be opened." );
             return;
         }
         while( Serial.available() )

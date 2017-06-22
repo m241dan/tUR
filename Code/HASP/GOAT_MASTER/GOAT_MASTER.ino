@@ -14,6 +14,8 @@
 #include "goat_master_funcs.h"
 #include "master_globals.h"
 #include "goat_funcs.h"
+#include <OneWire.h>
+#include <DallasTemperature.h>
 
 Spec so2( SPEC_SO2, A0, A1, A2, 43.54 );
 Spec no2( SPEC_NO2, A3, A4, A5, 43.54 );
@@ -39,6 +41,11 @@ String reading_status;
 String sd_status;
 String bme_status;
 String am2315_status;
+double gtp_time = 0;
+unsigned long long gtp_received_at = 0;
+int slave_wait_sanity = 0;
+OneWire bus_one( 4 );
+DallasTemperature temp_one( &bus_one );
 
 typedef struct data_set
 {
@@ -68,23 +75,27 @@ void setup()
     setupMasterSerials();
     setupMasterGlobals();
     setupMasterSensors();
-
+    Serial2.begin( 9600 );
+    while( !Serial2 );
+    temp_one.begin();
+    
     delay( 2000 );
   //  assignEntry( master_reading.time, C_TIME(), sizeof( master_reading.time ) );
     sendData( Serial, (byte *)&master_reading, sizeof( master_reading ) );
-
+    sendData( Serial2, (byte *)&master_reading, sizeof( master_reading ) );
     //block until we get a response from slave
     while( !Serial1.available() );
     while( receiveData( Serial1, receive_buffer_slave, slave_index, &slave_reading, nullptr, nullptr ) != TRANS_DATA );
-    
+    new_slave_reading = false;
     slave_command.command[0] = ACKNOWLEDGE;
-    //sendCommand( Serial1, slave_command );
+    sendCommand( Serial1, slave_command );
     sendData( Serial, (byte *)&slave_reading, sizeof( slave_reading ) );
+    sendData( Serial2, (byte *)&slave_reading, sizeof( slave_reading ) );
 }
 
 void loop()
 {  
-  //  checkGround();
+    checkGround();
     checkSlave();
     if( ( downlink_schedule + 1000 ) < millis() )
     {
@@ -94,7 +105,7 @@ void loop()
     sample();
 }
 
-/*
+
 void checkGround( void )
 {
     TRANS_TYPE transmission;
@@ -116,18 +127,17 @@ void checkGround( void )
             break;
     }
 }
-*/
+
 void checkSlave( void )
 {
     TRANS_TYPE transmission;
 
     if( !Serial1.available() )
         return;
-
-  Serial.println( "reading" );
              
     if( ( transmission = receiveData( Serial1, receive_buffer_slave, slave_index, &slave_reading, nullptr, nullptr ) ) != TRANS_DATA )
         return;
+
     new_slave_reading = true;
 }
 
@@ -138,10 +148,16 @@ void downlinkToHasp( void )
     //if we are supposed to send bank 2 but don't have a new reading, skip downlinking
     if( which_bank == 2 && !new_slave_reading )
     {
-      Serial.println( "looping..." );
-      return;
+        if( slave_wait_sanity++ > 10 )
+        {
+            slave_command.command[0] = REQUEST_READING;
+            sendCommand( Serial1, slave_command );
+            slave_wait_sanity = 0;
+        }
+        Serial.println( "Waiting for Slave" );
+        return;
     }
-
+    
     switch( which_bank )
     {
         case 1:
@@ -157,6 +173,7 @@ void downlinkToHasp( void )
     //write and send
     writeSD( to_send );
     sendData( Serial, (byte *)to_send, sizeof( SENSOR_READING ) );
+    sendData( Serial2, (byte *)to_send, sizeof( SENSOR_READING ) );
 
     //clean up to get ready for next round
     which_bank = which_bank == 1 ? 2 : 1;
@@ -212,7 +229,8 @@ void prepareMasterReading( void )
 
     memset( &sample_set, 0, sizeof( sample_set ) );
 
-    assignEntry( master_reading.time, C_TIME(), sizeof( master_reading.time ) );
+
+    assignEntry( master_reading.time, String( gtp_time +  ( ( millis() - gtp_received_at ) / 1000.0F ) ).c_str(), sizeof( master_reading.time ) );
     assignEntry( master_reading.bank, "1", sizeof( master_reading.bank ) );
     assignEntry( master_reading.so2_reading, String( so2_ppm ).c_str(), sizeof( master_reading.so2_reading ) );
     assignEntry( master_reading.no2_reading, String( no2_ppm ).c_str(), sizeof( master_reading.no2_reading ) );
@@ -229,7 +247,7 @@ void prepareMasterReading( void )
         assignEntry( master_reading.ext_humidity_reading, String( ext_humidity ).c_str(), sizeof( master_reading.ext_humidity_reading ) );
     }
     assignEntry( master_reading.pump_status, pump_on ? "PUMP ON" : "PUMP OFF", sizeof( master_reading.pump_status ) );
-    //place holder for peltier 
+    assignEntry( master_reading.peltier_status, ( String( temp_one.getTempCByIndex( 0 ) ) + " " + String( temp_one.getTempCByIndex( 1 ) ) + " " + String( temp_one.getTempCByIndex( 2 ) ) ).c_str(), sizeof( master_reading.peltier_status ) );
     assignEntry( master_reading.sd_status, sd_status.c_str(), sizeof( master_reading.sd_status ) );
     assignEntry( master_reading.reading_status, reading_status.c_str(), sizeof( master_reading.reading_status ) );
 }
@@ -258,11 +276,14 @@ void writeSD( SENSOR_READING *reading )
 
 void doCommand( void )
 {
-    
+    Serial.println( "Command received." );   
 }
 
 void parseGTP( void )
 {
-    
+    Serial.println( "GPS received." );
+    char buf[256];
+    gtp_received_at = millis();
+    sscanf( current_gtp.data, "%f,%s", &gtp_time, buf );
 }
 

@@ -10,8 +10,8 @@
 
 //GOAT macros
 
-#define SD_PIN 40
-#define BME_PIN 41
+#define SD_PIN 49
+#define BME_PIN 53
 #define TEMP_BUS 42
 #define MAX_BUF 256
 #define LOG_NAME "GOAT"
