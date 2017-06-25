@@ -40,6 +40,7 @@ void setup()
     setupSlaveSerials();
     setupSlaveGlobals();
     setupSlaveSensors();
+
     delay( 10000 );
     assignEntry( slave_reading.time, C_TIME(), sizeof( slave_reading.time ) );
     sendData( Serial, (byte *)&slave_reading, sizeof( slave_reading ) );

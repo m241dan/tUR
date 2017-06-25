@@ -1,3 +1,6 @@
+
+
+
 /*
  * HASP GOAT: Master Arduino
  * Author: Daniel R. Koris
@@ -49,6 +52,8 @@ int slave_wait_sanity = 0;
 OneWire bus_one( 4 );
 DallasTemperature temp_one( &bus_one );
 unsigned long long pump_timer;
+unsigned long long prev_timer;
+
 
 typedef struct data_set
 {
@@ -81,7 +86,7 @@ void setup()
 
     pinMode( 47, OUTPUT );
     digitalWrite( 47, LOW );
-    pump_timer = millis();
+    prev_timer = 0;
     
     Serial2.begin( 9600 );
     while( !Serial2 );
@@ -99,6 +104,7 @@ void setup()
     sendCommand( Serial1, slave_command );
     sendData( Serial, (byte *)&slave_reading, sizeof( slave_reading ) );
     sendData( Serial2, (byte *)&slave_reading, sizeof( slave_reading ) );
+
 }
 
 void loop()
@@ -111,22 +117,26 @@ void loop()
         downlink_schedule = millis();
     }
     sample();
-    if( ( pump_timer + FIFTEEN_MINUTES ) > millis() )
+
+    // KIERAN: I changed the place where pump_timer was assigned its value and I made another timer called prev_timer.
+    
+    pump_timer = millis();
+    if( ( pump_timer - prev_timer ) >= FIFTEEN_MINUTES )
     {
+        prev_timer = pump_timer;
         if( pump_on )
         {
-            pinMode( 47, LOW );
+            digitalWrite( 47, LOW );
             pump_on = false;
         }
         else
         {
-            pinMode( 47, HIGH );
+            digitalWrite( 47, HIGH );
             pump_on = true;
         }
-        pump_timer = millis();
     }
-}
 
+}
 
 void checkGround( void )
 {
