@@ -17,40 +17,66 @@
 #include "goat_master_funcs.h"
 #include "master_globals.h"
 #include "goat_funcs.h"
-#include <OneWire.h>
-#include <DallasTemperature.h>
 
 #define FIFTEEN_MINUTES ( 60000 * 15 )
 
-Spec so2( SPEC_SO2, A0, A1, A2, 43.54 );
-Spec no2( SPEC_NO2, A3, A4, A5, 43.54 );
-Spec o3( SPEC_O3, A6, A7, A8, 43.54 );
-Adafruit_BME280 bme( BME_PIN );
-Adafruit_AM2315 dongle;
-String log_name;
-GROUND_COMMAND master_command;
-GROUND_COMMAND slave_command;
-GTP_DATA current_gtp;
-SENSOR_READING master_reading;
-SENSOR_READING slave_reading;
-bool pump_on;
-bool take_readings;
+typedef struct sensor_table
+{
+    sensor_table() : so2( SPEC_SO2, A0, A1, A2, 43.54 ),
+                     no2( SPEC_NO2, A3, A4, A5, 43.53 ),
+                     o3( SPEC_O3, A6, A7, A8, 43.54 ),
+                     bme( BME_PIN ) {}
+    Spec so2;
+    Spec no2;
+    Spec o3;
+    Adafruit_BME280 bme;
+    Adafruit_AM2315 dongle;                     
+} SENSOR_TABLE;
+
+SENSOR_TABLE sensors();
+
+typedef struct readings_table
+{
+    readings_table() { memset( &master, 0, sizeof( master ) );
+                       memset( &slave, 0, sizeof( slave ) );
+                       memset( &gtp, 0, sizeof( gtp ) ); }
+    SENSOR_READING master;
+    SENSOR_READING slave;
+    GTP_DATA gtp;
+} READINGS_TABLE;
+
+READINGS_TABLE readings();
+
+typedef struct status_table
+{
+    status_table() : log_name(""), pump_on(false), pump_auto(true),
+                     reading_status(""), reading_auto(true), sd_status(""),
+                     bme_status(""), am2315_status(""), which_bank(1) {}
+    String log_name;
+    bool pump_on;
+    bool pump_auto;
+    String reading_status;
+    bool reading_auto;
+    String sd_status;
+    String bme_status;
+    String am2315_status;
+    byte which_bank;
+     
+} STATUS_TABLE;
+
+STATUS_TABLE statuses();
+
+typedef struct receive_buffers {
+    
+}
 byte receive_buffer_ground[MAX_BUF];
 unsigned int ground_index;
 byte receive_buffer_slave[MAX_BUF];
 unsigned int slave_index;
 unsigned long long downlink_schedule;
-bool new_slave_reading;
-byte which_bank;
-String reading_status;
-String sd_status;
-String bme_status;
-String am2315_status;
 double gtp_time = 0;
 unsigned long long gtp_received_at = 0;
 int slave_wait_sanity = 0;
-OneWire bus_one( 4 );
-DallasTemperature temp_one( &bus_one );
 unsigned long long pump_timer;
 unsigned long long prev_timer;
 
@@ -80,6 +106,7 @@ DATA_SET sample_set;
 
 void setup()
 {
+    TRANS_TYPE type;
     setupMasterSerials();
     setupMasterGlobals();
     setupMasterSensors();
@@ -90,7 +117,6 @@ void setup()
     
     Serial2.begin( 9600 );
     while( !Serial2 );
-    temp_one.begin();
     
     delay( 2000 );
   //  assignEntry( master_reading.time, C_TIME(), sizeof( master_reading.time ) );
@@ -98,7 +124,8 @@ void setup()
     sendData( Serial2, (byte *)&master_reading, sizeof( master_reading ) );
     //block until we get a response from slave
     while( !Serial1.available() );
-    while( receiveData( Serial1, receive_buffer_slave, slave_index, &slave_reading, nullptr, nullptr ) != TRANS_DATA );
+    while( ( type = receiveData( Serial1, receive_buffer_slave, slave_index ) ) != TRANS_DATA );
+    bufferToReading( receive_buffer_slave, &slave_reading );
     new_slave_reading = false;
     slave_command.command[0] = ACKNOWLEDGE;
     sendCommand( Serial1, slave_command );
@@ -146,15 +173,17 @@ void checkGround( void )
         return;
 
     //receiveData takes slave_reading here due to some really weird, what I believe to be, Arduino error
-    if( ( transmission = receiveData( Serial, receive_buffer_ground, ground_index, &slave_reading, &master_command, &current_gtp ) ) == TRANS_INCOMPLETE )
+    if( ( transmission = receiveData( Serial, receive_buffer_ground, ground_index ) ) == TRANS_INCOMPLETE )
         return;
 
     switch( transmission )
     {
         case TRANS_COMMAND:
+            bufferToCommand( receive_buffer_ground, &master_command );
             doCommand();
             break;
         case TRANS_GTP:
+            bufferToGTP( receive_buffer_ground, &current_gtp );
             parseGTP();
             break;
     }
@@ -167,8 +196,9 @@ void checkSlave( void )
     if( !Serial1.available() )
         return;
              
-    if( ( transmission = receiveData( Serial1, receive_buffer_slave, slave_index, &slave_reading, nullptr, nullptr ) ) != TRANS_DATA )
+    if( ( transmission = receiveData( Serial1, receive_buffer_slave, slave_index ) ) != TRANS_DATA )
         return;
+    bufferToReading( receive_buffer_slave, &slave_reading ); 
 
     new_slave_reading = true;
 }
@@ -279,7 +309,7 @@ void prepareMasterReading( void )
         assignEntry( master_reading.ext_humidity_reading, String( ext_humidity ).c_str(), sizeof( master_reading.ext_humidity_reading ) );
     }
     assignEntry( master_reading.pump_status, pump_on ? "PUMP ON" : "PUMP OFF", sizeof( master_reading.pump_status ) );
-    assignEntry( master_reading.peltier_status, ( String( temp_one.getTempCByIndex( 0 ) ) + " " + String( temp_one.getTempCByIndex( 1 ) ) + " " + String( temp_one.getTempCByIndex( 2 ) ) ).c_str(), sizeof( master_reading.peltier_status ) );
+    //assignEntry( master_reading.peltier_status, ( String( temp_one.getTempCByIndex( 0 ) ) + " " + String( temp_one.getTempCByIndex( 1 ) ) + " " + String( temp_one.getTempCByIndex( 2 ) ) ).c_str(), sizeof( master_reading.peltier_status ) );
     assignEntry( master_reading.sd_status, sd_status.c_str(), sizeof( master_reading.sd_status ) );
     assignEntry( master_reading.reading_status, reading_status.c_str(), sizeof( master_reading.reading_status ) );
 }
