@@ -64,46 +64,44 @@ typedef struct status_table
      
 } STATUS_TABLE;
 
-STATUS_TABLE statuses();
+STATUS_TABLE statuss();
 
-typedef struct receive_buffers {
+typedef struct receive_buffers
+{
     receive_buffers() : ground_index(0), slave_index(0) {
                         memset( &ground[0], 0, MAX_BUF );
                         memset( &slave[0], 0, MAX_BUF ); }
     byte ground[MAX_BUF];
+    unsigned int ground_index;
+    byte slave[MAX_BUF];
+    unsigned int slave_index;
      
 } RECEIVE_BUFFERS;
-byte receive_buffer_ground[MAX_BUF];
-unsigned int ground_index;
-byte receive_buffer_slave[MAX_BUF];
-unsigned int slave_index;
-unsigned long long downlink_schedule;
-double gtp_time = 0;
-unsigned long long gtp_received_at = 0;
-int slave_wait_sanity = 0;
-unsigned long long pump_timer;
-unsigned long long prev_timer;
 
+RECEIVE_BUFFERS buffers();
+
+typedef struct timer_table
+{
+    unsigned long long downlink_schedule = 0;
+    unsigned long long gtp_time = 0;
+    unsigned long long gtp_received_at = 0;
+    unsigned long long pump_timer = 0;
+    int slave_wait_sanity = 0;
+} TIMER_TABLE;
+
+TIMER_TABLE timers;
 
 typedef struct data_set
 {
     double so2_total = 0;
-    double so2_count = 0;
     double no2_total = 0;
-    double no2_count = 0;
     double o3_total = 0;
-    double o3_count = 0;
     double temp_total = 0;
-    double temp_count = 0;
     double humidity_total = 0;
-    double humidity_count = 0;
     double pressure_total = 0;
-    double pressure_count = 0;
     double ext_temp_total = 0;
-    double ext_temp_count = 0;
     double ext_humidity_total = 0;
-    double ext_humidity_count = 0;
-    
+    unsigned int super_sample = 0;
 } DATA_SET;
 
 DATA_SET sample_set;
