@@ -5,7 +5,7 @@
 #include "HardwareSerial.h"
 #include "hasp_types.h"
 #include "goat_funcs.h"
-#include "master_globals.h"
+#include "master_types.h"
 
 
 void setupMasterSerials( void )

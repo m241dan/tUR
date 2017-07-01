@@ -15,7 +15,7 @@
  */
 
 #include "goat_master_funcs.h"
-#include "master_globals.h"
+#include "master_types.h"
 #include "goat_funcs.h"
 
 #define FIFTEEN_MINUTES ( 60000 * 15 )
