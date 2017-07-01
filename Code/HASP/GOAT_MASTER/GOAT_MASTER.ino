@@ -67,8 +67,12 @@ typedef struct status_table
 STATUS_TABLE statuses();
 
 typedef struct receive_buffers {
-    
-}
+    receive_buffers() : ground_index(0), slave_index(0) {
+                        memset( &ground[0], 0, MAX_BUF );
+                        memset( &slave[0], 0, MAX_BUF ); }
+    byte ground[MAX_BUF];
+     
+} RECEIVE_BUFFERS;
 byte receive_buffer_ground[MAX_BUF];
 unsigned int ground_index;
 byte receive_buffer_slave[MAX_BUF];

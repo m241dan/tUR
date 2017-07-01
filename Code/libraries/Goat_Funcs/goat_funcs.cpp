@@ -50,7 +50,7 @@ String getNextFile( String name )
    return file_name;
 }
 
-TRANS_TYPE receiveData( HardwareSerial &serial, byte (&buffer)[256], unsigned int &index )
+TRANS_TYPE receiveData( HardwareSerial &serial, byte (&buffer)[MAX_BUF], unsigned int &index )
 {
     TRANS_TYPE type = TRANS_INCOMPLETE;
     while( serial.available() && type == TRANS_INCOMPLETE )
@@ -75,7 +75,7 @@ TRANS_TYPE receiveData( HardwareSerial &serial, byte (&buffer)[256], unsigned in
         else if( c == '\n' && buffer[index-2] == '\r' )
             type = TRANS_DATA;
         //something has gone terribly wrong, just reset
-        else if( index == 256 )
+        else if( index == MAX_BUF )
            resetBuffer( buffer, index );
     }
     return type;
@@ -86,25 +86,27 @@ TRANS_TYPE receiveData( HardwareSerial &serial, byte (&buffer)[256], unsigned in
  * plan would be to do a straight memcpy on them and then test certain known
  * values a long the way, like terminators.
  */
-void bufferToReading( byte (&buffer)[256], SENSOR_READING *reading )
+void bufferToReading( byte (&buffer)[MAX_BUF], SENSOR_READING *reading )
 {
     memcpy( &reading->time[0], &buffer[2], sizeof( SENSOR_READING ) - 4 );
 }
 
-void bufferToCommand( byte (&buffer)[256], GROUND_COMMAND *com )
+void bufferToCommand( byte (&buffer)[MAX_BUF], GROUND_COMMAND *com )typedef struct status_table {
+     status_table() : log_name(""), 
+} STATUS_TABLE;
 {
     assignEntry( com->checksum, &buffer[2], 1, true );
     assignEntry( com->command, &buffer[3], 2, true);
 }
 
-void bufferToGTP( byte (&buffer)[256], GTP_DATA *gtp )
+void bufferToGTP( byte (&buffer)[MAX_BUF], GTP_DATA *gtp )
 {
     assignEntry( gtp->data, &buffer[2], sizeof( gtp->data ), true );
 }
 
-void resetBuffer( byte (&buffer)[256], unsigned int &index )
+void resetBuffer( byte (&buffer)[MAX_BUF], unsigned int &index )
 {
-   memset( &buffer[0], 0, 256 );
+   memset( &buffer[0], 0, MAX_BUF );
    index = 0;
 }
 
