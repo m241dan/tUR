@@ -35,7 +35,7 @@ HardwareSerial &slave_serial = Serial1;
 pump_controller pump( PUMP_PIN );
 
 state state_machine[MAX_STATE] = { 
-    receive_ground( ground_command_handle, readings.gtp, Serial ),
+                                   receive_ground( ground_command_handle, readings.gtp, Serial ),
                                    receive_slave( readings.slave, Serial1 ),
                                    downlink_ground( readings, sample_set, Serial ),
                                    request_slave_reading( Serial1 ),
@@ -43,16 +43,8 @@ state state_machine[MAX_STATE] = {
                                    timer_handler( timers ),
                                    sample( sample_set, sensors )                                                 
 };
-/*
-state_machine[RECEIVE_GROUND] = receive_ground( ground_command_handle, readings.gtp, Serial );
-state_machine[RECEIVE_SLAVE] = receive_slave( readings.slave, Serial1 );
-state_machine[DOWNLINK_GROUND] = downlink_ground( readings, sample_set, Serial );
-state_machine[REQUEST_SLAVE_READING] = request_slave_reading( Serial1 );
-state_machine[COMMAND_HANDLER] = command_handler( ground_command_handle );
-state_machine[TIMER_HANDLER] = timer_handler( timers );
-state_machine[SAMPLE] = sample( sample_set, sensors );
-*/
-state *current_state;
+
+STATE_ID current_state;
 
 /********************
  *  Local Functions *
@@ -109,9 +101,12 @@ void setupMasterSensors( void )
         statuss.am2315_status = "AIGD";
 }
 
+/*
+ * I know, it's a dumb one-liner but it used to be more complicated lol
+ */
 void initStateMachine()
 {
-    current_state = 
+    current_state = &state_machine[SAMPLE];
 }
 
 /******************
@@ -194,7 +189,10 @@ void setup()
 }
 
 void loop()
-{  
+{
+    current_state = state_machine[current_state].run();
+    if( current_state == NONE_SPECIFIC )
+        current_state = determineTransition();
 }
 
 /*

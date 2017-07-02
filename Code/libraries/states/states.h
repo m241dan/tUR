@@ -12,12 +12,12 @@ typedef enum : byte
     COMMAND_HANDLER, TIMER_HANDLER, SAMPLE, NONE_SPECIFIC
 } STATE_ID;
 
-#define MAX_STATE (NONE_SPECIFIC-1)
+#define MAX_STATE (NONE_SPECIFIC)
 
 class state
 {
     public:
-        virtual void run();
+        virtual void run() { return; }
         virtual STATE_ID transition() { return NONE_SPECIFIC; }
 };
 
@@ -25,12 +25,13 @@ class receive_ground : public state
 {
     public:
         //functions
-        receive_ground( GROUND_COMMAND &handle, HardwareSerial &serial ) : command_handle(handle),
-            ground_serial(serial) {}
+        receive_ground( GROUND_COMMAND &handle, GTP_DATA &gps, HardwareSerial &serial ) : command_handle(handle),
+            gtp(gps), ground_serial(serial) {}
         virtual void run();
     private:
         //vars
         GROUND_COMMAND &command_handle;
+        GTP_DATA &gtp;
         HardwareSerial &ground_serial;
 };
 
