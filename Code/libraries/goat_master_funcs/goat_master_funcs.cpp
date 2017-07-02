@@ -20,25 +20,8 @@ void setupMasterSerials( void )
 
 void setupMasterGlobals( void )
 {
-    pump_on = false;
-    take_readings = true;
-    ground_index = 0;
-    slave_index = 0;
-    downlink_schedule = 0;
-    new_slave_reading = false;
-    which_bank = 1;
-    reading_status = "";
-    sd_status = "";
-    bme_status = "";
-    am2315_status = "";
     log_name = getNextFile( LOG_NAME );
 
-    //clear these out appropriately
-    memset( &current_gtp.data[0], 0, sizeof( current_gtp.data ) );
-    memset( &master_reading.time[0], ' ', sizeof( master_reading ) - 4 );
-    memset( &slave_reading.time[0], ' ', sizeof( slave_reading ) - 4 );
-    memset( &receive_buffer_ground[0], 0, MAX_BUF );
-    memset( &receive_buffer_slave[0], 0, MAX_BUF );
 
     //setup the sensor reading message as its how we communicate
     assignEntry( master_reading.time, C_TIME(), sizeof( master_reading.time ) );

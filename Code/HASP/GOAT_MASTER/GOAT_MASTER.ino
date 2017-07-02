@@ -17,9 +17,9 @@
 #include "goat_master_funcs.h"
 #include "master_types.h"
 #include "goat_funcs.h"
+#include "states.h"
 
-#define FIFTEEN_MINUTES ( 60000 * 15 )
-
+//the globals
 SENSOR_TABLE sensors();
 READINGS_TABLE readings();
 GROUND_COMMAND ground_command_handle();
@@ -29,26 +29,103 @@ TIMER_TABLE timers;
 DATA_SET sample_set;
 HardwareSerial ground_serial;
 HardwareSerial slave_serial;
-pump_controller pump();
+pump_controller pump( PUMP_PIN );
 state state_machine[MAX_STATE];
 
+/********************
+ *  Local Functions *
+ ********************/
+
+void setupMasterSerials()
+{
+    //Serial to HASP
+    Serial.begin( 1200 );
+    while( !Serial );
+
+    //Serial to Slave
+    Serial1.begin( 300 );
+    while( !Serial1 );
+}
+
+//any additional tweaking can be done here
+void setupMasterGlobals()
+{
+    statuss.log_name = getNextFile( LOG_NAME );
+    timers.pump_timer = millis() + ( 30 * 1000 ) //Start the pump 30 seconds after start
+}
+
+void setupMasterSensors( void )
+{
+    //Setup the SD
+    if( !SD.begin( SD_PIN ) )
+        statuss.sd_status = "SD INIT F";
+    else
+        statuss.sd_status = "SD INIT G";
+      
+    //Setup the BME
+    if( !bme.begin() )
+        statuss.bme_status = "BIFD";
+    else
+        statuss.bme_status = "BIGD";
+
+    //Setup the AM2315
+    if( !dongle.begin() )
+        statuss.am2315_status = "AIFD";
+    else
+        statuss.am2315_status = "AIGD";
+}
+
+void initStateMachine()
+{
+    state_machine[RECEIVE_GROUND] = new receive_ground( ground_command_handle, Serial );
+    state_machine[RECEIVE_SLAVE] = new receive_slave( readings.slave, Serial1 );
+    state_machine[DOWNLINK_GROUND] = new downlink_ground( readings, sample_set, Serial );
+    state_machine[REQUEST_SLAVE_READING] = new request_slave_reading( Serial1 );
+    state_machine[COMMAND_HANDLER] = new command_handler( ground_command_handle );
+    state_machine[TIMER_HANDLER] = new timer_handler( timers );
+    state_machine[SAMPLE] = new sample( sample_set, sensors );
+}
+
+/******************
+ * Main Execution *
+ ******************/
 
 void setup()
 {
-    TRANS_TYPE type;
     setupMasterSerials();
     setupMasterGlobals();
     setupMasterSensors();
+    initStateMachine();
 
-    pinMode( 47, OUTPUT );
-    digitalWrite( 47, LOW );
-    prev_timer = 0;
-    
+    //this is the bluetooth hack, gonna leave all serial2 stuff in for now
     Serial2.begin( 9600 );
     while( !Serial2 );
-    
+
+    /*
+     * This delay is in place to give slave time to boot, essentially both Arduinos will
+     * be started at the same time. 
+     */
     delay( 2000 );
-  //  assignEntry( master_reading.time, C_TIME(), sizeof( master_reading.time ) );
+ 
+    /*
+     * This next part could easilly be its own function, but I didn't think it was worth it.
+     * It will only ever be done once right here, it's a unique operation. 
+     * 
+     * TL;DR: prepareInitialDownlink()
+     */
+     {
+         readings.master.header = "\x1\x21";
+         readings.master.terminator = "\r\n";
+         assignEntry( readings.master.time, C_TIME(), sizeof( readings.master.time ) );
+         assignEntry( readings.master.bank, "1", sizeof( readings.master.bank ) );
+         assignEntry( readings.master.so2_reading, "0.00", sizeof( readings.master.so2_reading ) );
+         assignEntry( readings.master.no2_reading, "0.00", sizeof( readings.master.no2_reading ) );
+         assignEntry( readings.master.o3_reading, "0.00", sizeof( readings.master.o3_reading ) );
+         assignEntry( readings.master.temp_reading, statuss.bme_status.c_str(), sizeof( readings.master.temp_reading ) );
+         assignEntry( readings.master.extt_readings, statuss.am2315_status.c_str(), sizeof( readings.master.extt_readings ) );
+         assignEntry( 
+         
+     }
     sendData( Serial, (byte *)&master_reading, sizeof( master_reading ) );
     sendData( Serial2, (byte *)&master_reading, sizeof( master_reading ) );
     //block until we get a response from slave

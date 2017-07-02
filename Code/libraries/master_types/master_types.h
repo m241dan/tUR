@@ -15,6 +15,7 @@
 #define PUMP_PIN 47
 #define MAX_BUF 256
 #define LOG_NAME "GOAT"
+#define FIFTEEN_MINUTES ( 60000 * 15 )
 #define C_TIME() ( String( millis() / 1000.0F ).c_str() )
 
 //GOAT master types
