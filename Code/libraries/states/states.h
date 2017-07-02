@@ -73,13 +73,13 @@ class request_slave_reading : public state
     private:
         //vars
         HardwareSerial &slave_serial;
-}
+};
 
 class command_handler : public state
 {
     public:
         //functions
-        commander_handle( GROUND_COMMAND &hand ) : handle(hand) {}
+        command_handler( GROUND_COMMAND &hand ) : handle(hand) {}
         virtual void run();
     private:
         //vars
@@ -108,7 +108,7 @@ class sample : public state
         //vars
         SENSOR_TABLE &sensors;
         DATA_SET &data;
-}
+};
 
 #endif
 

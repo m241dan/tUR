@@ -18,6 +18,7 @@
 #include "master_types.h"
 #include "goat_funcs.h"
 #include "states.h"
+#include "pump_controller.h"
 
 /*
  * Organized Globals (hopefully, they seem organized \(o.o)/ )
@@ -29,8 +30,8 @@ STATUS_TABLE statuss();
 RECEIVE_BUFFERS buffers();
 TIMER_TABLE timers;
 DATA_SET sample_set;
-HardwareSerial ground_serial;
-HardwareSerial slave_serial;
+HardwareSerial &ground_serial = Serial;
+HardwareSerial &slave_serial = Serial1;
 pump_controller pump( PUMP_PIN );
 state state_machine[MAX_STATE];
 
