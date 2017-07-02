@@ -161,8 +161,12 @@ void resetBuffer( byte (&buffer)[MAX_BUF], unsigned int &index )
 }
 
 
-//simply a wrapper function
-void sendCommand( HardwareSerial &serial, GROUND_COMMAND &com )
+/*
+ * This will create and send a command with the given passed values
+ */
+void sendCommand( HardwareSerial &serial, unsigned char command )
 {
+   GROUND_COMMAND com;
+   com.command[0] = command;
    sendData( serial, (byte *)&com, sizeof( com ) );
 }

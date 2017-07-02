@@ -19,7 +19,9 @@
 #include "goat_funcs.h"
 #include "states.h"
 
-//the globals
+/*
+ * Organized Globals (hopefully, they seem organized \(o.o)/ )
+ */
 SENSOR_TABLE sensors();
 READINGS_TABLE readings();
 GROUND_COMMAND ground_command_handle();
@@ -47,7 +49,10 @@ void setupMasterSerials()
     while( !Serial1 );
 }
 
-//any additional tweaking can be done here
+/*
+ * A simple function but...
+ * any additional tweaking can be done here
+ */
 void setupMasterGlobals()
 {
     statuss.log_name = getNextFile( LOG_NAME );
@@ -56,19 +61,28 @@ void setupMasterGlobals()
 
 void setupMasterSensors( void )
 {
-    //Setup the SD
+    /*
+     * Setup the SD
+     * Update status message accordingly
+     */
     if( !SD.begin( SD_PIN ) )
         statuss.sd_status = "SD INIT F";
     else
         statuss.sd_status = "SD INIT G";
       
-    //Setup the BME
+    /*
+     * Setup the BME
+     * Update status message accordingly
+     */
     if( !bme.begin() )
         statuss.bme_status = "BIFD";
     else
         statuss.bme_status = "BIGD";
 
-    //Setup the AM2315
+    /*
+     * Setup the AM2315
+     * Update status message accordingly
+     */
     if( !dongle.begin() )
         statuss.am2315_status = "AIFD";
     else
@@ -149,10 +163,13 @@ void setup()
      */
     while( !Serial1.available() );
     while( ( type = receiveData( Serial1, buffers.slave, buffers.slave_index ) ) != TRANS_DATA );
-    bufferToReading( buffers.slave, &readings.slave );
-
     
-    slave_command.command[0] = ACKNOWLEDGE;
+    /*
+     * I don't want to check the boolean here, if we got anything from slave it must have initialized
+     * and later we will simply throw out corrupt readings and request new ones
+     */
+    bufferToReading( buffers.slave, &readings.slave );
+  
     sendCommand( Serial1, slave_command );
     sendData( Serial, (byte *)&slave_reading, sizeof( slave_reading ) );
     sendData( Serial2, (byte *)&slave_reading, sizeof( slave_reading ) );

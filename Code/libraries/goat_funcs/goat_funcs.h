@@ -14,6 +14,6 @@ bool bufferToGTP( byte (&buffer)[MAX_BUF], GTP_DATA &gtp );
 void resetBuffer( byte (&buffer)[MAX_BUF], unsigned int &index );
 String getNextFile( String name );
 
-void sendCommand( HardwareSerial &serial, GROUND_COMMAND &com );
+void sendCommand( HardwareSerial &serial, unsigned char command );
 
 #endif

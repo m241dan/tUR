@@ -23,15 +23,16 @@ typedef enum
 
 typedef struct ground_command
 {
-   ground_command() { memset( &header[0], 0, sizeof( ground_command ) ); }
-   unsigned char header[2];
-   unsigned char checksum;
-   unsigned char command[2];
-   unsigned char terminator[3];
+   ground_command() : { memset( &header[0], 0, sizeof( ground_command ) ); }
+   unsigned char header[2] = "\x1\x2";
+   unsigned char checksum = 0;
+   unsigned char command[2] = { 0, 0 };
+   unsigned char terminator[3] = "\x3\xD\xA";
 } GROUND_COMMAND;
 
 typedef struct gps_time_position
 {
+   gps_time_position() { memset( &header[0], 0, sizeof( gps_time_position ) ); }
    unsigned char header[2] = "\x1\x30";
    unsigned char data[119] = "1234470131.649,$GPGGA,202212.00,3024.7205,N,09110.7264,W,1,06,1.69,00061,M,-025,M,,*51,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
    unsigned char terminator[3] = "\x3\xD\xA";
@@ -39,6 +40,7 @@ typedef struct gps_time_position
 
 typedef struct sensor_readings
 {
+   sensor_readings() { memset( &header[0], 0, sizeof( sensor_readings ) ); }
    unsigned char header[2] = "\x1\x21";
    unsigned char time[15];
    unsigned char bank[2];
