@@ -23,11 +23,11 @@
 /*
  * Organized Globals (hopefully, they seem organized \(o.o)/ )
  */
-SENSOR_TABLE sensors();
-READINGS_TABLE readings();
-GROUND_COMMAND ground_command_handle();
-STATUS_TABLE statuss();
-RECEIVE_BUFFERS buffers();
+SENSOR_TABLE sensors;
+READINGS_TABLE readings;
+GROUND_COMMAND ground_command_handle;
+STATUS_TABLE statuss;
+RECEIVE_BUFFERS buffers;
 TIMER_TABLE timers;
 DATA_SET sample_set;
 HardwareSerial &ground_serial = Serial;
@@ -42,11 +42,11 @@ state state_machine[MAX_STATE];
 void setupMasterSerials()
 {
     //Serial to HASP
-    Serial.begin( 1200 );
+    ground_serial.begin( 1200 );
     while( !Serial );
 
     //Serial to Slave
-    Serial1.begin( 300 );
+    slave_serial.begin( 300 );
     while( !Serial1 );
 }
 
@@ -57,7 +57,7 @@ void setupMasterSerials()
 void setupMasterGlobals()
 {
     statuss.log_name = getNextFile( LOG_NAME );
-    timers.pump_timer = millis() + ( 30 * 1000 ) //Start the pump 30 seconds after start
+    timers.pump_timer = millis() + ( 30 * 1000 ); //Start the pump 30 seconds after start
 }
 
 void setupMasterSensors( void )
