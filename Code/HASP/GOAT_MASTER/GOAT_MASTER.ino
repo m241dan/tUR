@@ -22,10 +22,13 @@
 
 SENSOR_TABLE sensors();
 READINGS_TABLE readings();
+GROUND_COMMAND ground_command_handle();
 STATUS_TABLE statuss();
 RECEIVE_BUFFERS buffers();
 TIMER_TABLE timers;
 DATA_SET sample_set;
+HardwareSerial ground_serial;
+HardwareSerial slave_serial;
 
 void setup()
 {

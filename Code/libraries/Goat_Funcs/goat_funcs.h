@@ -1,4 +1,4 @@
- #ifndef goat_funcs_h
+#ifndef goat_funcs_h
 #define goat_funcs_h
 
 #include "Arduino.h"

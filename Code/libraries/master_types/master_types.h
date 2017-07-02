@@ -91,4 +91,22 @@ typedef struct data_set
     unsigned int super_sample = 0;
 } DATA_SET;
 
+typedef class pump_controller
+{
+    public:
+        //functions
+        pump_controller( uint8_t pin ) : pump_pin(pin)
+            {
+                pinMode( pump_pin, OUTPUT );
+                digitalWrite( pump_pin, LOW );
+            }
+        bool pump_on()
+            {
+                digitalWrite(
+            }
+        bool pmup_off();
+    private:
+        //vars
+        uint8_t pump_pin;
+} PUMP_CONTROLLER;
 #endif

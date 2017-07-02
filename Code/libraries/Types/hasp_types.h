@@ -23,6 +23,7 @@ typedef enum
 
 typedef struct ground_command
 {
+   ground_command() { memset( &header[0], 0, sizeof( ground_command ) ); }
    unsigned char header[2] = "\x1\x2";
    unsigned char checksum = 0;
    unsigned char command[2] = { 0, 0 };
