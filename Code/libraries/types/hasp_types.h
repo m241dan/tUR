@@ -24,10 +24,10 @@ typedef enum
 typedef struct ground_command
 {
    ground_command() { memset( &header[0], 0, sizeof( ground_command ) ); }
-   unsigned char header[2] = "\x1\x2";
-   unsigned char checksum = 0;
-   unsigned char command[2] = { 0, 0 };
-   unsigned char terminator[3] = "\x3\xD\xA";
+   unsigned char header[2];
+   unsigned char checksum;
+   unsigned char command[2];
+   unsigned char terminator[3];
 } GROUND_COMMAND;
 
 typedef struct gps_time_position
@@ -50,8 +50,9 @@ typedef struct sensor_readings
    unsigned char pressure_reading[10];
    unsigned char humidity_reading[5];
    unsigned char ext_humidity_reading[5];
-   unsigned char pump_status[10];
-   unsigned char peltier_status[22];
+   unsigned char pump_status[12];
+   unsigned char bme_status[10];
+   unsigned char am2315_status[10];
    unsigned char sd_status[10];
    unsigned char reading_status[10];
    unsigned char terminator[2] = "\r\n";

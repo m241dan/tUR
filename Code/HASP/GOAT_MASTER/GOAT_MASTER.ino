@@ -97,7 +97,9 @@ void setup()
     setupMasterSensors();
     initStateMachine();
 
-    //this is the bluetooth hack, gonna leave all serial2 stuff in for now
+    /*
+     * this is the bluetooth hack, gonna leave all serial2 stuff in for now
+     */
     Serial2.begin( 9600 );
     while( !Serial2 );
 
@@ -121,18 +123,35 @@ void setup()
          assignEntry( readings.master.so2_reading, "0.00", sizeof( readings.master.so2_reading ) );
          assignEntry( readings.master.no2_reading, "0.00", sizeof( readings.master.no2_reading ) );
          assignEntry( readings.master.o3_reading, "0.00", sizeof( readings.master.o3_reading ) );
-         assignEntry( readings.master.temp_reading, statuss.bme_status.c_str(), sizeof( readings.master.temp_reading ) );
-         assignEntry( readings.master.extt_readings, statuss.am2315_status.c_str(), sizeof( readings.master.extt_readings ) );
-         assignEntry( 
-         
+         assignEntry( readings.master.temp_reading, "0.00", sizeof( readings.master.temp_reading ) );
+         assignEntry( readings.master.extt_reading, "0.00", sizeof( readings.master.extt_readings ) );
+         assignEntry( readings.master.pressure_reading, "0.00", sizeof( readings.master.pressure_reading ) );
+         assignEntry( readings.master.humidity_reading, "0.00", sizeof( readings.master.humidity_reading ) );
+         assignEntry( readings.master.ext_humidity_reading, "0.00", sizeof( readings.master.ext_humidity_reading ) );
+         assignEntry( readings.master.pump_status, "P: OFF AUTO", sizeof( readings.master.pump_status ) );
+         assignEntry( readings.master.bme_status, statuss.bme_status.c_str(), sizeof( readings.master.bme_status ) );
+         assignEntry( readings.master.am2315_status, statuss.am2315_status.c_str(), sizeof( readings.master.am2315_status ) );
+         assignEntry( readings.master.sd_status, statuss.sd_status.c_str(), sizeof( readings.master.sd_status ) );
+         assignEntry( readings.master.reading_status, "FIRST", sizeof( readings.master.reading_status ) );
      }
-    sendData( Serial, (byte *)&master_reading, sizeof( master_reading ) );
-    sendData( Serial2, (byte *)&master_reading, sizeof( master_reading ) );
-    //block until we get a response from slave
+
+     /*
+      * Downlink the prepared reading to two possible places:
+      * 1.) Downlink to HASP
+      * 2.) Downlink to Bluetooth (if the BT hack is still in place )
+      */
+    sendData( Serial, (byte *)&readings.master, sizeof( readings.master ) );
+    sendData( Serial2, (byte *)&readings.master, sizeof( readings.master ) );
+
+    /*
+     * Once the data has been downlinked...
+     * Wait for Slave to send its initial prepared readings (like Master does)
+     */
     while( !Serial1.available() );
-    while( ( type = receiveData( Serial1, receive_buffer_slave, slave_index ) ) != TRANS_DATA );
-    bufferToReading( receive_buffer_slave, &slave_reading );
-    new_slave_reading = false;
+    while( ( type = receiveData( Serial1, buffers.slave, buffers.slave_index ) ) != TRANS_DATA );
+    bufferToReading( buffers.slave, &readings.slave );
+
+    
     slave_command.command[0] = ACKNOWLEDGE;
     sendCommand( Serial1, slave_command );
     sendData( Serial, (byte *)&slave_reading, sizeof( slave_reading ) );

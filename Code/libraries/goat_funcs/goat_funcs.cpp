@@ -81,27 +81,77 @@ TRANS_TYPE receiveData( HardwareSerial &serial, byte (&buffer)[MAX_BUF], unsigne
     return type;
 }
 
-/*
- * I would like to add a bit more voracity to these conversions. Maybe, a good
- * plan would be to do a straight memcpy on them and then test certain known
- * values a long the way, like terminators.
- */
-void bufferToReading( byte (&buffer)[MAX_BUF], SENSOR_READING *reading )
+bool bufferToReading( byte (&buffer)[MAX_BUF], SENSOR_READING &reading )
 {
-    memcpy( &reading->time[0], &buffer[2], sizeof( SENSOR_READING ) - 4 );
+    bool data_good = false;
+    /*
+     * Using memset first here may be redundant...
+     * Clear out the given reading
+     */
+    memset( &reading, 0, sizeof( SENSOR_READING ) );
+    /*
+     * Copy the buffer into reading raw
+     */
+    memcpy( &reading, &buffer[0], sizeof( SENSOR_READING ) );
+    /*
+     * Check the header and the terminators for data corruption
+     */
+    if( reading.header[0] == '\x1' && reading.header[1] == '\x21' &&
+        reading.terminator[0] == '\r' && reading.terminator[1] == '\n' )
+    {
+       data_good = true;
+    }
+
+    return data_good;
 }
 
-void bufferToCommand( byte (&buffer)[MAX_BUF], GROUND_COMMAND *com )typedef struct status_table {
-     status_table() : log_name(""), 
-} STATUS_TABLE;
+bool bufferToCommand( byte (&buffer)[MAX_BUF], GROUND_COMMAND &com )
 {
-    assignEntry( com->checksum, &buffer[2], 1, true );
-    assignEntry( com->command, &buffer[3], 2, true);
+    bool com_good = false;
+    /*
+     * Using memset first here may be redundant...
+     * Clear out the given com
+     */
+    memset( &com, 0, sizeof( GROUND_COMMAND ) );
+    /*
+     * Copy the buffer into reading raw
+     */
+    memcpy( &com, &buffer[0], sizeof( GROUND_COMMAND ) );
+    /* 
+     * Check the header and the terminators for data corruption
+     */
+    if( com.header[0] == '\x1' && com.header[1] == '\x2' &&
+        com.terminator[0] == '\x3' && com.terminator[1] == '\xD' &&
+        com.terminator[2] == '\xA' )
+    {
+        com_good = true;
+    }
+
+    return com_good;
 }
 
-void bufferToGTP( byte (&buffer)[MAX_BUF], GTP_DATA *gtp )
+void bufferToGTP( byte (&buffer)[MAX_BUF], GTP_DATA &gtp )
 {
-    assignEntry( gtp->data, &buffer[2], sizeof( gtp->data ), true );
+    bool gtp_good = false;
+    /*
+     * Using memset first here may be redundant...
+     * Clear out the given gtp
+     */
+    memset( &gtp, 0, sizeof( GTP_DATA) );
+    /*
+     * Copy the buffer into reading raw
+     */
+    memcpy( &gtp, &buffer[0], sizeof( GTP_DATA ) );
+    /*
+     * Check the header and the terminators for data corruption
+     */
+    if( gtp.header[0] == '\x1' && gtp.header[1] == '\x30' &&
+        gtp.terminator[0] == '\x3' && gtp.terminator[1] == '\xD' &&
+        gtp.terminator[2] == '\xA' )
+    {
+       gtp_good = true;
+    }
+    return gtp_good;
 }
 
 void resetBuffer( byte (&buffer)[MAX_BUF], unsigned int &index )
