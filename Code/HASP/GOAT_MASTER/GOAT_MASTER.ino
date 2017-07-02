@@ -75,7 +75,7 @@ void setupMasterSensors( void )
      * Setup the BME
      * Update status message accordingly
      */
-    if( !bme.begin() )
+    if( !sensors.bme.begin() )
         statuss.bme_status = "BIFD";
     else
         statuss.bme_status = "BIGD";
@@ -84,7 +84,7 @@ void setupMasterSensors( void )
      * Setup the AM2315
      * Update status message accordingly
      */
-    if( !dongle.begin() )
+    if( !sensors.dongle.begin() )
         statuss.am2315_status = "AIFD";
     else
         statuss.am2315_status = "AIGD";
@@ -92,13 +92,13 @@ void setupMasterSensors( void )
 
 void initStateMachine()
 {
-    state_machine[RECEIVE_GROUND] = new receive_ground( ground_command_handle, Serial );
-    state_machine[RECEIVE_SLAVE] = new receive_slave( readings.slave, Serial1 );
-    state_machine[DOWNLINK_GROUND] = new downlink_ground( readings, sample_set, Serial );
-    state_machine[REQUEST_SLAVE_READING] = new request_slave_reading( Serial1 );
-    state_machine[COMMAND_HANDLER] = new command_handler( ground_command_handle );
-    state_machine[TIMER_HANDLER] = new timer_handler( timers );
-    state_machine[SAMPLE] = new sample( sample_set, sensors );
+    state_machine[RECEIVE_GROUND] = receive_ground( ground_command_handle, Serial );
+    state_machine[RECEIVE_SLAVE] = receive_slave( readings.slave, Serial1 );
+    state_machine[DOWNLINK_GROUND] = downlink_ground( readings, sample_set, Serial );
+    state_machine[REQUEST_SLAVE_READING] = request_slave_reading( Serial1 );
+    state_machine[COMMAND_HANDLER] = command_handler( ground_command_handle );
+    state_machine[TIMER_HANDLER] = timer_handler( timers );
+    state_machine[SAMPLE] = sample( sample_set, sensors );
 }
 
 /******************
@@ -131,15 +131,15 @@ void setup()
      * TL;DR: prepareInitialDownlink()
      */
      {
-         readings.master.header = "\x1\x21";
-         readings.master.terminator = "\r\n";
+         readings.master.header[2] = "\x1\x21";
+         readings.master.terminator[2] = "\r\n";
          assignEntry( readings.master.time, C_TIME(), sizeof( readings.master.time ) );
          assignEntry( readings.master.bank, "1", sizeof( readings.master.bank ) );
          assignEntry( readings.master.so2_reading, "0.00", sizeof( readings.master.so2_reading ) );
          assignEntry( readings.master.no2_reading, "0.00", sizeof( readings.master.no2_reading ) );
          assignEntry( readings.master.o3_reading, "0.00", sizeof( readings.master.o3_reading ) );
          assignEntry( readings.master.temp_reading, "0.00", sizeof( readings.master.temp_reading ) );
-         assignEntry( readings.master.extt_reading, "0.00", sizeof( readings.master.extt_readings ) );
+         assignEntry( readings.master.extt_reading, "0.00", sizeof( readings.master.extt_reading ) );
          assignEntry( readings.master.pressure_reading, "0.00", sizeof( readings.master.pressure_reading ) );
          assignEntry( readings.master.humidity_reading, "0.00", sizeof( readings.master.humidity_reading ) );
          assignEntry( readings.master.ext_humidity_reading, "0.00", sizeof( readings.master.ext_humidity_reading ) );
@@ -171,7 +171,7 @@ void setup()
      */
     bufferToReading( buffers.slave, &readings.slave );
   
-    sendCommand( Serial1, slave_command );
+    sendCommand( Serial1, ACKNOWLEDGE );
     sendData( Serial, (byte *)&slave_reading, sizeof( slave_reading ) );
     sendData( Serial2, (byte *)&slave_reading, sizeof( slave_reading ) );
 
@@ -290,7 +290,7 @@ void downlinkToHasp( void )
     }
 }
 
-void sample( void )
+void __sample( void )
 {   
     sample_set.so2_total += so2.generateReadingPPM();
     sample_set.so2_count++;
