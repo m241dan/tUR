@@ -12,7 +12,7 @@
 
 #define SD_PIN 49
 #define BME_PIN 53
-#define TEMP_BUS 42
+#define PUMP_PIN 47
 #define MAX_BUF 256
 #define LOG_NAME "GOAT"
 #define C_TIME() ( String( millis() / 1000.0F ).c_str() )

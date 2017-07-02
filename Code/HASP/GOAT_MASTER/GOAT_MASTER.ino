@@ -29,6 +29,9 @@ TIMER_TABLE timers;
 DATA_SET sample_set;
 HardwareSerial ground_serial;
 HardwareSerial slave_serial;
+pump_controller pump();
+state state_machine[MAX_STATE];
+
 
 void setup()
 {
