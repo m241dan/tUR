@@ -163,13 +163,13 @@ void setup()
      * Wait for Slave to send its initial prepared readings (like Master does)
      */
     while( !Serial1.available() );
-    while( ( type = receiveData( Serial1, buffers.slave, buffers.slave_index ) ) != TRANS_DATA );
+    while( receiveData( Serial1, buffers.slave, buffers.slave_index ) != TRANS_DATA );
     
     /*
      * I don't want to check the boolean here, if we got anything from slave it must have initialized
      * and later we will simply throw out corrupt readings and request new ones
      */
-    bufferToReading( buffers.slave, &readings.slave );
+    bufferToReading( buffers.slave, readings.slave );
   
     sendCommand( Serial1, ACKNOWLEDGE );
     sendData( Serial, (byte *)&slave_reading, sizeof( slave_reading ) );
