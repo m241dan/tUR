@@ -343,25 +343,8 @@ void __sample( void )
 
 void prepareMasterReading( void )
 {
-    double so2_ppm;
-    double no2_ppm;
-    double o3_ppm;
-    double temp;
-    double humidity;
-    double pressure;
-    double ext_temp;
-    double ext_humidity;
 
-    so2_ppm = sample_set.so2_total / sample_set.so2_count;
-    no2_ppm = sample_set.no2_total / sample_set.no2_count;
-    o3_ppm  = sample_set.o3_total / sample_set.o3_count;
 
-    temp = sample_set.temp_total / sample_set.temp_count;
-    humidity = sample_set.humidity_total / sample_set.humidity_count;
-    pressure = sample_set.pressure_total / sample_set.pressure_count;
-
-    ext_temp = sample_set.ext_temp_total / sample_set.ext_temp_count;
-    ext_humidity = sample_set.ext_humidity_total / sample_set.ext_humidity_count;
 
     memset( &sample_set, 0, sizeof( sample_set ) );
 
