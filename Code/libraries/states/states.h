@@ -5,6 +5,8 @@
 #include "hasp_types.h"
 #include "HardwareSerial.h"
 #include "goat_funcs.h"
+#include "master_types.h"
+#include <SD.h>
 
 typedef enum : byte
 {
@@ -17,8 +19,7 @@ typedef enum : byte
 class state
 {
     public:
-        virtual void run() { return; }
-        virtual STATE_ID transition() { return NONE_SPECIFIC; }
+        virtual STATE_ID void run() { return; }
 };
 
 class receive_ground : public state
@@ -27,7 +28,7 @@ class receive_ground : public state
         //functions
         receive_ground( GROUND_COMMAND &handle, GTP_DATA &gps, HardwareSerial &serial ) : command_handle(handle),
             gtp(gps), ground_serial(serial) {}
-        virtual void run();
+        virtual STATE_ID run();
     private:
         //vars
         GROUND_COMMAND &command_handle;
@@ -41,7 +42,7 @@ class receive_slave : public state
         //functions
         receive_slave( SENSOR_READING &read, HardwareSerial &serial ) : reading(read),
             slave_serial(serial) {}
-        virtual void run();
+        virtual STATE_ID run();
     private:
         //vars
         SENSOR_READING &reading;
@@ -52,17 +53,19 @@ class downlink_ground : public state
 {
     public:
         //functions
-        downlink_ground( READINGS_TABLE tab, DATA_SET &set, HardwareSerial &serial ) : readings(tab),
-            data(set), ground_serial(serial) {}
-        virtual void run();
+        downlink_ground( READINGS_TABLE &tab, DATA_SET &set, STATUS_TABLE &stab, HardwareSerial &serial HardwareSerial *bserial = nullptr ) : readings(tab),
+            data(set), statuss(stab), ground_serial(serial), blu_serial(bserial) {}
+        virtual STATE_ID run();
     private:
         //functions
-        void prepareReading();
-
+        void prepareReading( SENSOR_READING &reading );
+        void writeSD( SENSOR_READING &reading );
         //vars
         READINGS_TABLE &readings;
         DATA_SET &data;
+        STATUS_TABLE &statuss;
         HardwareSerial &ground_serial;
+        HardwareSerial *blu_serial;
 };
 
 class request_slave_reading : public state
@@ -70,7 +73,7 @@ class request_slave_reading : public state
     public:
         //functions
         request_slave_reading( HardwareSerial &serial ) : slave_serial(serial) {}
-        virtual void run();
+        virtual STATE_ID run();
     private:
         //vars
         HardwareSerial &slave_serial;
@@ -81,7 +84,7 @@ class command_handler : public state
     public:
         //functions
         command_handler( GROUND_COMMAND &hand ) : handle(hand) {}
-        virtual void run();
+        virtual STATE_ID run();
     private:
         //vars
         GROUND_COMMAND &handle;
@@ -91,11 +94,15 @@ class timer_handler : public state
 {
     public:
         //functions
-        timer_handler( TIMER_TABLE &tab ) : timers(tab) {}
-        virtual void run();
+        timer_handler( TIMER_TABLE &tab, GTP_DATA &g, STATUS_TABLE &s, pump_controller &p ) : timers(tab),
+            gtp(p), statuss(s), pump(p) {}
+        virtual STATE_ID run();
     private:
         //vars
+       GTP_DATA &gtp;
        TIMER_TABLE &timers;
+       STATUS_TABLE &statuss;
+       pump_controller &pump;
 };
 
 class sample : public state
@@ -104,7 +111,7 @@ class sample : public state
         //functions
         sample( DATA_SET &set, SENSOR_TABLE &tab ) : data(set),
             sensors(tab) {}
-        virtual void run();
+        virtual STATE_ID run();
     private:
         //vars
         SENSOR_TABLE &sensors;

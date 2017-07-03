@@ -32,15 +32,16 @@ TIMER_TABLE timers;
 DATA_SET sample_set;
 HardwareSerial &ground_serial = Serial;
 HardwareSerial &slave_serial = Serial1;
+HardwareSerial *blu_serial = &Serial2;
 pump_controller pump( PUMP_PIN );
 
 state state_machine[MAX_STATE] = { 
-                                   receive_ground( ground_command_handle, readings.gtp, Serial ),
-                                   receive_slave( readings.slave, Serial1 ),
-                                   downlink_ground( readings, sample_set, Serial ),
-                                   request_slave_reading( Serial1 ),
+                                   receive_ground( ground_command_handle, readings.gtp, ground_serial ),
+                                   receive_slave( readings.slave, slave_serial ),
+                                   downlink_ground( readings, sample_set, statuss, ground_serial, blu_serial ),
+                                   request_slave_reading( slave_serial ),
                                    command_handler( ground_command_handle ),
-                                   timer_handler( timers ),
+                                   timer_handler( timers, readings.gtp, statuss, pump ),
                                    sample( sample_set, sensors )                                                 
 };
 
@@ -54,11 +55,17 @@ void setupMasterSerials()
 {
     //Serial to HASP
     ground_serial.begin( 1200 );
-    while( !Serial );
+    while( !ground_serial );
 
     //Serial to Slave
     slave_serial.begin( 300 );
-    while( !Serial1 );
+    while( !slave_serial );
+
+    /*
+     * Don't want to bother figuring out how to handle pointers to serials...
+     */
+    Serial2.begin( 9600 );
+    while( !Serial2 );
 }
 
 /*
@@ -69,6 +76,7 @@ void setupMasterGlobals()
 {
     statuss.log_name = getNextFile( LOG_NAME );
     timers.pump_timer = millis() + ( 30 * 1000 ); //Start the pump 30 seconds after start
+    timers.downlink_schedule = millis() + ( 20 * 1000 ); //Downlink the first reading 20 seconds from this time
 }
 
 void setupMasterSensors( void )
@@ -109,6 +117,16 @@ void initStateMachine()
     current_state = &state_machine[SAMPLE];
 }
 
+/*
+ * This is a very important function. This function handles the state transition
+ * if a state does not return a recommended transition. IE if state.run() returns
+ * NONE_SPECIFIC. 
+ */
+void determineTransition()
+{
+    
+}
+
 /******************
  * Main Execution *
  ******************/
@@ -119,12 +137,6 @@ void setup()
     setupMasterGlobals();
     setupMasterSensors();
     initStateMachine();
-
-    /*
-     * this is the bluetooth hack, gonna leave all serial2 stuff in for now
-     */
-    Serial2.begin( 9600 );
-    while( !Serial2 );
 
     /*
      * This delay is in place to give slave time to boot, essentially both Arduinos will
@@ -163,25 +175,26 @@ void setup()
       * 1.) Downlink to HASP
       * 2.) Downlink to Bluetooth (if the BT hack is still in place )
       */
-    sendData( Serial, (byte *)&readings.master, sizeof( readings.master ) );
-    sendData( Serial2, (byte *)&readings.master, sizeof( readings.master ) );
+    sendData( ground_serial, (byte *)&readings.master, sizeof( readings.master ) );
+    sendData( *blu_serial, (byte *)&readings.master, sizeof( readings.master ) );
 
     /*
      * Once the data has been downlinked...
      * Wait for Slave to send its initial prepared readings (like Master does)
      */
-    while( !Serial1.available() );
-    while( receiveData( Serial1, buffers.slave, buffers.slave_index ) != TRANS_DATA );
+    while( !slave_serial.available() );
+    while( receiveData( slave_serial, buffers.slave, buffers.slave_index ) != TRANS_DATA );
     
     /*
      * I don't want to check the boolean here, if we got anything from slave it must have initialized
-     * and later we will simply throw out corrupt readings and request new ones
+     * and later we will simply throw out corrupt readings and 
+ new ones
      */
     bufferToReading( buffers.slave, readings.slave );
   
-    sendCommand( Serial1, ACKNOWLEDGE );
-    sendData( Serial, (byte *)&slave_reading, sizeof( slave_reading ) );
-    sendData( Serial2, (byte *)&slave_reading, sizeof( slave_reading ) );
+    sendCommand( slave_serial, ACKNOWLEDGE );
+    sendData( ground_serial, (byte *)&slave_reading, sizeof( slave_reading ) );
+    sendData( *blu_serial, (byte *)&slave_reading, sizeof( slave_reading ) );
 
     /*
      * We start in the Sample State, because it's a good place to start PLUS it should
@@ -380,7 +393,8 @@ void writeSD( SENSOR_READING *reading )
     File goat_log;
     byte *ptr;
 
-    if( !( goat_log = SD.open( log_name ,FILE_WRITE ) ) )
+    if( !( goat_log = SD.open( 
+ ,FILE_WRITE ) ) )
     {
         sd_status = "WRITEFAIL";
         return;         

@@ -47,7 +47,8 @@ typedef struct status_table
 {
     status_table() : log_name(""), pump_on(false), pump_auto(true),
                      reading_status(""), reading_auto(true), sd_status(""),
-                     bme_status(""), am2315_status(""), which_bank(1) {}
+                     bme_status(""), am2315_status(""), which_bank(1),
+                     slave_wait_sanity(1) {}
     String log_name;
     bool pump_on;
     bool pump_auto;
@@ -57,6 +58,7 @@ typedef struct status_table
     String bme_status;
     String am2315_status;
     byte which_bank;
+    byte slave_wait_sanity;
 } STATUS_TABLE;
 
 typedef struct receive_buffers
@@ -76,7 +78,6 @@ typedef struct timer_table
     unsigned long long gtp_time = 0;
     unsigned long long gtp_received_at = 0;
     unsigned long long pump_timer = 0;
-    int slave_wait_sanity = 0;
 } TIMER_TABLE;
 
 typedef struct data_set
