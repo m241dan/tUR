@@ -134,22 +134,21 @@ void bufferToGTP( byte (&buffer)[MAX_BUF], GTP_DATA &gtp )
 {
     bool gtp_good = false;
     /*
-     * Using memset first here may be redundant...
-     * Clear out the given gtp
-     */
-    memset( &gtp, 0, sizeof( GTP_DATA) );
-    /*
-     * Copy the buffer into reading raw
-     */
-    memcpy( &gtp, &buffer[0], sizeof( GTP_DATA ) );
-    /*
      * Check the header and the terminators for data corruption
      */
-    if( gtp.header[0] == '\x1' && gtp.header[1] == '\x30' &&
-        gtp.terminator[0] == '\x3' && gtp.terminator[1] == '\xD' &&
-        gtp.terminator[2] == '\xA' )
+    if( buffer[0] == '\x1' && buffer[1] == '\x30' &&
+        buffer[122] == '\x3' && buffer[123] == '\xD' && buffer[124] == '\xA' )
     {
-       gtp_good = true;
+        /*
+         * Clear out the given gtp
+         */
+        memset( &gtp, 0, sizeof( GTP_DATA) );
+        sscanf( buffer, "\x1\x30%f,%s,%f,%f,%c,%f,%c,%c,%c,%f,%f,M,%d,%s",
+            &gtp.utc_time, &gtp.NMEA, &gtp.utc_position_time, &gtp.latitude,
+            &gtp.latitude_hemisphere, &gtp.longitude, &gtp.longitude_hemisphere,
+            &gtp.position_fix, &gtp.num_satelites, &gtp.horizontal_dilution_precision,
+            &gtp.msl_altitude, &gtp.differential_age;
+        gtp_good = true;
     }
     return gtp_good;
 }
