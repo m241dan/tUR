@@ -92,8 +92,8 @@ void downlink_ground::prepareReading( SENSOR_READING &reading )
 
     assignReading( reading.pump_status, pump_message.c_str(), sizeof( reading.pump_status ) );
     assignReading( reading.bme_status, statuss.bme_status.c_str(), sizeof( reading.pump_status ) );
-    assignReading( reading.am2315_status, statuss.am2314_status.c_str(), sizeof( reading.am2315_status );
-    assignReading( reading.sd_status, statuss.sd_status.c_str(), sizeof( reading.sd_status ); 
+    assignReading( reading.am2315_status, statuss.am2314_status.c_str(), sizeof( reading.am2315_status ) );
+    assignReading( reading.sd_status, statuss.sd_status.c_str(), sizeof( reading.sd_status ) );
     assignReading( reading.reading_status, "ACT AUTO", sizeof( reading.reading_status ) );
 
     assignReading( reading.terminator, "\r\n", sizeof( reading.terminator ) );
