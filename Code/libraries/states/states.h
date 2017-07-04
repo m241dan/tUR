@@ -26,13 +26,14 @@ class receive_ground : public state
 {
     public:
         //functions
-        receive_ground( GROUND_COMMAND &handle, GTP_DATA &gps, HardwareSerial &serial ) : command_handle(handle),
-            gtp(gps), ground_serial(serial) {}
+        receive_ground( GROUND_COMMAND &handle, GTP_DATA &gps, HardwareSerial &serial, byte (&buf)[MAX_BUF] ) : command_handle(handle),
+            gtp(gps), ground_serial(serial), buffer(buf) {}
         virtual STATE_ID run();
     private:
         //vars
         GROUND_COMMAND &command_handle;
         GTP_DATA &gtp;
+        byte (&buffer)[MAX_BUF];
         HardwareSerial &ground_serial;
 };
 
@@ -40,12 +41,13 @@ class receive_slave : public state
 {
     public:
         //functions
-        receive_slave( SENSOR_READING &read, HardwareSerial &serial ) : reading(read),
-            slave_serial(serial) {}
+        receive_slave( SENSOR_READING &read, HardwareSerial &serial, byte (&buf)[MAX_BUF] ) : reading(read),
+            slave_serial(serial), buffer(buf) {}
         virtual STATE_ID run();
     private:
         //vars
         SENSOR_READING &reading;
+        byte (&buffer)[MAX_BUF];
         HardwareSerial &slave_serial;
 };
 
