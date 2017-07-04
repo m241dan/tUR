@@ -26,29 +26,31 @@ class receive_ground : public state
 {
     public:
         //functions
-        receive_ground( GROUND_COMMAND &handle, GTP_DATA &gps, HardwareSerial &serial, byte (&buf)[MAX_BUF] ) : command_handle(handle),
-            gtp(gps), ground_serial(serial), buffer(buf) {}
+        receive_ground( GROUND_COMMAND &handle, GTP_DATA &gps, HardwareSerial &serial, byte (&buf)[MAX_BUF], int &i ) : command_handle(handle),
+            gtp(gps), ground_serial(serial), buffer(buf), index(i) {}
         virtual STATE_ID run();
     private:
         //vars
         GROUND_COMMAND &command_handle;
         GTP_DATA &gtp;
-        byte (&buffer)[MAX_BUF];
         HardwareSerial &ground_serial;
+        byte (&buffer)[MAX_BUF];
+        int &index;
 };
 
 class receive_slave : public state
 {
     public:
         //functions
-        receive_slave( SENSOR_READING &read, HardwareSerial &serial, byte (&buf)[MAX_BUF] ) : reading(read),
-            slave_serial(serial), buffer(buf) {}
+        receive_slave( SENSOR_READING &read, HardwareSerial &serial, byte (&buf)[MAX_BUF], int &i ) : reading(read),
+            slave_serial(serial), buffer(buf), index(i) {}
         virtual STATE_ID run();
     private:
         //vars
         SENSOR_READING &reading;
         byte (&buffer)[MAX_BUF];
         HardwareSerial &slave_serial;
+        int &index;
 };
 
 class downlink_ground : public state
