@@ -33,8 +33,8 @@ HardwareSerial *blu_serial = &Serial2;
 pump_controller pump( PUMP_PIN );
 
 state state_machine[MAX_STATE] = { 
-                                   receive_ground( ground_command_handle, readings.gtp, ground_serial ),
-                                   receive_slave( readings.slave, slave_serial ),
+                                   receive_ground( ground_command_handle, readings.gtp, ground_serial, buffers.master ),
+                                   receive_slave( readings.slave, slave_serial, buffers.slave ),
                                    downlink_ground( readings, sample_set, statuss, timers, ground_serial, blu_serial ),
                                    request_slave_reading( slave_serial ),
                                    command_handler( ground_command_handle ),
