@@ -1,6 +1,3 @@
-
-
-
 /*
  * HASP GOAT: Master Arduino
  * Author: Daniel R. Koris
@@ -207,37 +204,6 @@ void loop()
         current_state = determineTransition();
 }
 
-/*
-void old_loop()
-    checkGround();
-    checkSlave();
-    if( ( downlink_schedule + 1000 ) < millis() )
-    {
-        downlinkToHasp();
-        downlink_schedule = millis();
-    }
-    sample();
-
-    // KIERAN: I changed the place where pump_timer was assigned its value and I made another timer called prev_timer.
-    
-    pump_timer = millis();
-    if( ( pump_timer - prev_timer ) >= FIFTEEN_MINUTES )
-    {
-        prev_timer = pump_timer;
-        if( pump_on )
-        {
-            digitalWrite( 47, LOW );
-            pump_on = false;
-        }
-        else
-        {
-            digitalWrite( 47, HIGH );
-            pump_on = true;
-        }
-    }
-
-} */
-
 void checkGround( void )
 {
     TRANS_TYPE transmission;
@@ -319,55 +285,3 @@ void downlinkToHasp( void )
         //sendCommand( Serial1, slave_command );
     }
 }
-
-void __sample( void )
-{   
-    sample_set.so2_total += so2.generateReadingPPM();
-    sample_set.so2_count++;
-    sample_set.no2_total += no2.generateReadingPPM();
-    sample_set.no2_count++;
-    sample_set.o3_total += o3.generateReadingPPM();
-    sample_set.o3_count++;
-    sample_set.temp_total += bme.readTemperature();
-    sample_set.temp_count++;
-    sample_set.humidity_total += bme.readHumidity();
-    sample_set.humidity_count++;
-    sample_set.pressure_total += bme.readPressure() / 100.0F;
-    sample_set.pressure_count++;
-    sample_set.ext_temp_total += dongle.readTemperature();
-    sample_set.ext_temp_count++;
-    sample_set.ext_humidity_total += dongle.readHumidity();
-    sample_set.ext_humidity_count++;
-}
-
-void prepareMasterReading( void )
-{
-
-
-
-    memset( &sample_set, 0, sizeof( sample_set ) );
-
-
-    assignEntry( master_reading.time, String( gtp_time +  ( ( millis() - gtp_received_at ) / 1000.0F ) ).c_str(), sizeof( master_reading.time ) );
-    assignEntry( master_reading.bank, "1", sizeof( master_reading.bank ) );
-    assignEntry( master_reading.so2_reading, String( so2_ppm ).c_str(), sizeof( master_reading.so2_reading ) );
-    assignEntry( master_reading.no2_reading, String( no2_ppm ).c_str(), sizeof( master_reading.no2_reading ) );
-    assignEntry( master_reading.o3_reading, String( o3_ppm ).c_str(), sizeof( master_reading.o3_reading ) );
-    if( bme_status != "BIFD" )
-    {
-       assignEntry( master_reading.temp_reading, String( temp ).c_str(), sizeof( master_reading.temp_reading ) );
-       assignEntry( master_reading.pressure_reading, String( pressure ).c_str(), sizeof( master_reading.pressure_reading ) );
-       assignEntry( master_reading.humidity_reading, String( humidity ).c_str(), sizeof( master_reading.humidity_reading ) );
-    }
-    if( am2315_status != "AIFD" )
-    {
-        assignEntry( master_reading.extt_reading, String( ext_temp ).c_str(), sizeof( master_reading.extt_reading ) );
-        assignEntry( master_reading.ext_humidity_reading, String( ext_humidity ).c_str(), sizeof( master_reading.ext_humidity_reading ) );
-    }
-    assignEntry( master_reading.pump_status, pump_on ? "PUMP ON" : "PUMP OFF", sizeof( master_reading.pump_status ) );
-    //assignEntry( master_reading.peltier_status, ( String( temp_one.getTempCByIndex( 0 ) ) + " " + String( temp_one.getTempCByIndex( 1 ) ) + " " + String( temp_one.getTempCByIndex( 2 ) ) ).c_str(), sizeof( master_reading.peltier_status ) );
-    assignEntry( master_reading.sd_status, sd_status.c_str(), sizeof( master_reading.sd_status ) );
-    assignEntry( master_reading.reading_status, reading_status.c_str(), sizeof( master_reading.reading_status ) );
-}
-
-
