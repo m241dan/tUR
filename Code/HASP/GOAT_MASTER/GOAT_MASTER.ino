@@ -187,8 +187,7 @@ void setup()
     
     /*
      * I don't want to check the boolean here, if we got anything from slave it must have initialized
-     * and later we will simply throw out corrupt readings and 
- new ones
+     * and later we will simply throw out corrupt readings and request new ones
      */
     bufferToReading( buffers.slave, readings.slave );
   
