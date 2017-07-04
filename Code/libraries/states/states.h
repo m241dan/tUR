@@ -53,17 +53,20 @@ class downlink_ground : public state
 {
     public:
         //functions
-        downlink_ground( READINGS_TABLE &tab, DATA_SET &set, STATUS_TABLE &stab, HardwareSerial &serial HardwareSerial *bserial = nullptr ) : readings(tab),
-            data(set), statuss(stab), ground_serial(serial), blu_serial(bserial) {}
+        downlink_ground( READINGS_TABLE &tab, DATA_SET &set, STATUS_TABLE &stab, TIMERS_TABLE &ttab, HardwareSerial &serial HardwareSerial *bserial = nullptr ) : readings(tab),
+            data(set), statuss(stab), timers(ttab), ground_serial(serial),
+            blu_serial(bserial) {}
         virtual STATE_ID run();
     private:
         //functions
         void prepareReading( SENSOR_READING &reading );
         void writeSD( SENSOR_READING &reading );
+
         //vars
         READINGS_TABLE &readings;
         DATA_SET &data;
         STATUS_TABLE &statuss;
+        TIMERS_TABLE &timers;
         HardwareSerial &ground_serial;
         HardwareSerial *blu_serial;
 };
