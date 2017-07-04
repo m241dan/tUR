@@ -1,5 +1,15 @@
 #include "states.h"
 
+virtual STATE_ID receive_ground::run()
+{
+
+}
+
+virtual STATE_ID receive_slave::run()
+{
+   if( ( transmission = receiveData( slave_serial, buffers.slave
+}
+
 virtual STATE_ID downlink_ground::run()
 {
     STATE_ID transition = NONE_SPECIFIC;
