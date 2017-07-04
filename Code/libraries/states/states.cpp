@@ -97,6 +97,7 @@ void downlink_ground::prepareReading( SENSOR_READING &reading )
     temp = data.temp_total / data.super_sample;
     humidity = data.humidity_total / data.super_sample;
     pressure = data.pressure_total / data.super_sample;
+    statuss.goat_pressure = pressure;
 
     ext_temp = data.ext_temp_total / data.super_sample;
     ext_humidity = data.ext_humidity_total / data.super_sample;
@@ -147,6 +148,8 @@ void downlink_ground::writeSD( SENSOR_READING &reading )
             statuss.sd_status = "WRITEFAIL";
         return;
     }
+    else
+       statuss.sd_status == "SD INIT G";
 
     ptr = (byte *)&(reading.time[0]);
 
@@ -197,12 +200,21 @@ virtual STATE_ID timer_handler::run()
      */
     if( timers.pump_time < now_time && statuss.pump_auto == true )
     {
-        if( statuss.pump_on )
-            pump.off();
+        if( statuss.goat_pressure < 100.00 )
+        {
+            if( statuss.pump_on )
+                pump.off();
+            else
+                pump.on();
+            statuss.pump_on = statuss.pump_on ? false : true;
+            timers.pump_time = now_time + FIFTEEN_MINUTES;
+        }
         else
-            pump.on();
-        statuss.pump_on = statuss.pump_on ? false : true;
-        timers.pump_time = now_time + FIFTEEN_MINUTES;
+        {
+           pump.off();
+           statuss.pump_on = false;
+            timers.pump_time = now_time + ( 1000 * 60 ); //ie, check back in a minute
+        }
     }
 
     /*
