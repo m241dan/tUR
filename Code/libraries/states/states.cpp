@@ -2,12 +2,34 @@
 
 virtual STATE_ID receive_ground::run()
 {
+    STATE_ID transition = NONE_SPECIFIC;
+    TRANS_TYPE transmission;
 
+    if( ( transmission = receiveData( ground_serial, buffer, index ) ) != TRANS_INCOMPLETE )
+    {
+        switch( transmission )
+        {
+           case TRANS_COMMAND:
+              bufferToCommand( buffer, command_handle );
+              transition = COMMAND_HANDLER;
+              break;
+           case TRANS_GTP:
+              bufferToGTP( buffer, gtp );
+              break;
+        }
+    }
+
+    return transition;
 }
 
 virtual STATE_ID receive_slave::run()
 {
-   if( ( transmission = receiveData( slave_serial, buffers.slave
+    TRANS_TYPE transmission;
+
+    if( ( transmission = receiveData( slave_serial, buffer, index ) ) != TRANS_INCOMPLETE )
+        bufferToReading( buffer, reading );
+
+    return NONE_SPECIFIC;
 }
 
 virtual STATE_ID downlink_ground::run()
@@ -47,6 +69,11 @@ virtual STATE_ID downlink_ground::run()
           sendData( *blu_serial, (byte *)&current_reading, sizeof( SENSOR_READING ) );
        sendData( ground_serial, (byte *)&current_reading, sizeof( SENSOR_READING ) );
 
+       memset( &current_reading[0], 0, sizeof( SENSOR_READING ) );
+
+       statuss.which_bank = statuss.which_bank  == 1 ? 2 : 1;
+       if( which_bank == 2 )
+          transition = REQUEST_READING;
     }
     return transition;
 }
