@@ -1,6 +1,8 @@
 #ifndef hasp_types_h
 #define hasp_types_h
 
+#include "Arduino.h"
+
 #define ACKNOWLEDGE '\x06'
 #define ARD_RESET '\x20'
 #define DOWNLINK_OFF '\x21'
@@ -29,11 +31,27 @@ typedef struct ground_command
    unsigned char terminator[3] = "\x3\xD\xA";
 } GROUND_COMMAND;
 
+typedef struct sample_gtp
+{
+   unsigned char header[2] "\x1\x30";
+   unsigned char data[120] = "1234470131.649,$GPGGA,202212.00,3024.7205,N,09110.7264,W,1,06,1.69,00061,M,-025,M,,*51,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
+   unsigned char terminator[3] = "\x3\xD\xA";
+} SAMPLE_GTP;
+
 typedef struct gps_time_position
 {
-   unsigned char header[2] = "\x1\x30";
-   unsigned char data[119] = "1234470131.649,$GPGGA,202212.00,3024.7205,N,09110.7264,W,1,06,1.69,00061,M,-025,M,,*51,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
-   unsigned char terminator[3] = "\x3\xD\xA";
+   time_t utc_time;
+   unsigned char NMEA[10];
+   time_t utc_position_time;
+   double latitude;
+   unsigned char latitude_hemisphere;
+   double longitude;
+   unsigned char longitude_hemisphere;
+   byte position_fix;
+   byte num_satelites;
+   double horizontal_dilution_precision;
+   double msl_altitude;
+   int differential_age;
 } GTP_DATA;
 
 typedef struct sensor_readings
