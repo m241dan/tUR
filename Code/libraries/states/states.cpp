@@ -43,6 +43,7 @@ virtual STATE_ID downlink_ground::run()
 
 void downlink_ground::prepareReading( SENSOR_READING &reading )
 {
+    double synced_now_time;
     double so2_ppm;
     double no2_ppm;
     double o3_ppm;
@@ -62,6 +63,40 @@ void downlink_ground::prepareReading( SENSOR_READING &reading )
 
     ext_temp = data.ext_temp_total / data.super_sample;
     ext_humidity = data.ext_humidity_total / data.super_sample;
+
+    synced_now_time = readings.gtp.utc_time + ( ( millis() - timers.gtp_received_at ) / 100.00F )
+    assignReading( reading.header, "\x1\x21", sizeof( reading.header ) );
+    assignReading( reading.time, String( synced_now_time ).c_str(), sizeof( reading.time ) );
+    assignReading( reading.bank, "1", sizeof( reading.bank ) );
+    assignReading( reading.so2_reading, String( so2_ppm ).c_str(), sizeof( reading.so2_reading ) );
+    assignReading( reading.no2_reading, String( no2_ppm ).c_str(), sizeof( reading.no2_reading ) );
+    assignReading( reading.o3_reading, String( o3_ppm ).c_str(), sizeof( reading.o3_reading ) );
+    assignReading( reading.temp_reading, String( temp ).c_str(), sizeof( reading.temp_reading ) );
+    assignReading( reading.extt_reading, String( ext_temp ).c_str(), sizeof( reading.extt_reading ) );
+    assignReading( reading.pressure_reading, String( pressure ).c_str(), sizeof( reading.pressure_reading ) );
+    assignReading( reading.humidity_reading, String( ext_humidity ).c_str(), sizeof( reading.humidity_reading ) );
+
+    /*
+     * Determine the Status of the Bump from the Status Table
+     */
+    String pump_message = "P: ";
+    if( statuss.pump_on )
+       pump_message += "ON ";
+    else
+       pump_message += "OFF ";
+
+    if( status.pump_auto )
+       pump_message += "AUTO";
+    else
+       pump_message += "MANU";
+
+    assignReading( reading.pump_status, pump_message.c_str(), sizeof( reading.pump_status ) );
+    assignReading( reading.bme_status, statuss.bme_status.c_str(), sizeof( reading.pump_status ) );
+    assignReading( reading.am2315_status, statuss.am2314_status.c_str(), sizeof( reading.am2315_status );
+    assignReading( reading.sd_status, statuss.sd_status.c_str(), sizeof( reading.sd_status ); 
+    assignReading( reading.reading_status, "ACT AUTO", sizeof( reading.reading_status ) );
+
+    assignReading( reading.terminator, "\r\n", sizeof( reading.terminator ) );
 }
 
 void downlink_ground::writeSD( SENSOR_READING &reading )
@@ -71,7 +106,8 @@ void downlink_ground::writeSD( SENSOR_READING &reading )
 
     if( !( goat_log = SD.open( statuss.log_name ,FILE_WRITE ) ) )
     {
-        statuss.sd_status = "WRITEFAIL";
+        if( statuss.sd_status == "SD INIT G" )
+            statuss.sd_status = "WRITEFAIL";
         return;
     }
 
