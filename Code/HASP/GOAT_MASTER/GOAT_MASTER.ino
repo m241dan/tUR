@@ -38,7 +38,7 @@ pump_controller pump( PUMP_PIN );
 state state_machine[MAX_STATE] = { 
                                    receive_ground( ground_command_handle, readings.gtp, ground_serial ),
                                    receive_slave( readings.slave, slave_serial ),
-                                   downlink_ground( readings, sample_set, statuss, ground_serial, blu_serial ),
+                                   downlink_ground( readings, sample_set, statuss, timers, ground_serial, blu_serial ),
                                    request_slave_reading( slave_serial ),
                                    command_handler( ground_command_handle ),
                                    timer_handler( timers, readings.gtp, statuss, pump ),
@@ -370,39 +370,4 @@ void prepareMasterReading( void )
     assignEntry( master_reading.reading_status, reading_status.c_str(), sizeof( master_reading.reading_status ) );
 }
 
-void writeSD( SENSOR_READING *reading )
-{
-    File goat_log;
-    byte *ptr;
-
-    if( !( goat_log = SD.open( 
- ,FILE_WRITE ) ) )
-    {
-        sd_status = "WRITEFAIL";
-        return;         
-    }
-    
-    ptr = (byte *)&reading->time[0];
-    
-    for( int x = 0; x < sizeof( SENSOR_READING ); x++ )
-    {
-        goat_log.write(*ptr++);
-    }
-
-    goat_log.close();
-    
-}
-
-void doCommand( void )
-{
-    Serial.println( "Command received." );   
-}
-
-void parseGTP( void )
-{
-    Serial.println( "GPS received." );
-    char buf[256];
-    gtp_received_at = millis();
-    sscanf( current_gtp.data, "%f,%s", &gtp_time, buf );
-}
 
