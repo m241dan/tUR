@@ -120,8 +120,14 @@ void initStateMachine()
  */
 STATE_ID determineTransition()
 {
+    STATE_ID transition = TIMER_HANDLER;
+
+    if( ground_serial.available() )
+       transition = RECEIVE_GROUND;
+    else if( slave_serial.available() )
+       transition = RECEIVE_SLAVE;
     
-    return NONE_SPECIFIC;
+    return transition;
 }
 
 /******************
