@@ -103,7 +103,12 @@ void downlink_ground::prepareReading( SENSOR_READING &reading )
     ext_humidity = data.ext_humidity_total / data.super_sample;
 
     synced_now_time = readings.gtp.utc_time + ( ( millis() - timers.gtp_received_at ) / 100.00F );
-    assignEntry( reading.header, "\x1\x21", sizeof( reading.header ) );
+
+    reading.header[0] = '\x01';
+    reading.header[1] = '\x21';
+    reading.terminator[0] = '\r';
+    reading.terminator[1] = '\n';
+
     assignEntry( reading.time, String( synced_now_time ).c_str(), sizeof( reading.time ) );
     assignEntry( reading.bank, "1", sizeof( reading.bank ) );
     assignEntry( reading.so2_reading, String( so2_ppm ).c_str(), sizeof( reading.so2_reading ) );
@@ -133,8 +138,6 @@ void downlink_ground::prepareReading( SENSOR_READING &reading )
     assignEntry( reading.am2315_status, statuss.am2315_status.c_str(), sizeof( reading.am2315_status ) );
     assignEntry( reading.sd_status, statuss.sd_status.c_str(), sizeof( reading.sd_status ) );
     assignEntry( reading.reading_status, "ACT AUTO", sizeof( reading.reading_status ) );
-
-    assignEntry( reading.terminator, "\r\n", sizeof( reading.terminator ) );
 }
 
 void downlink_ground::writeSD( SENSOR_READING &reading )

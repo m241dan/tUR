@@ -7,10 +7,8 @@
  *                  control the Sparkfun pump,
  *                  and thermal controlling.
  * Required Components: Arduino Mega, Adafruit MicroSD Card Breakout Board, Adafruit BME280,
- *                      Spec SO2, Spec O3, Spec NO2, Adafruit Oscillator, Resistor Heaters,
- *                      Thermoelectric Modules
+ *                      Spec SO2, Spec O3, Spec NO2,
  */
-
 #include "master_types.h"
 #include "goat_funcs.h"
 #include "states.h"
@@ -154,8 +152,10 @@ void setup()
      * TL;DR: prepareInitialDownlink()
      */
      {
-         readings.master.header[2] = "\x1\x21";
-         readings.master.terminator[2] = "\r\n";
+         readings.master.header[0] = '\x01';
+         readings.master.header[1] = '\x21';
+         readings.master.terminator[0] = '\r';
+         readings.master.terminator[1] = '\n';
          assignEntry( readings.master.time, C_TIME(), sizeof( readings.master.time ) );
          assignEntry( readings.master.bank, "1", sizeof( readings.master.bank ) );
          assignEntry( readings.master.so2_reading, "0.00", sizeof( readings.master.so2_reading ) );
