@@ -4,6 +4,7 @@
 #include "Arduino.h"
 #include "hasp_types.h"
 #include "HardwareSerial.h"
+#include "master_types.h"
 
 void sendData( HardwareSerial &serial, byte *data, int length );
 void assignEntry( char *dst, const char *src, int length, bool from_uplink = false );

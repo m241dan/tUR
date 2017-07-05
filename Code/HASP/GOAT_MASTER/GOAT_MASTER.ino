@@ -33,7 +33,7 @@ HardwareSerial *blu_serial = &Serial2;
 pump_controller pump( PUMP_PIN );
 
 state state_machine[MAX_STATE] = { 
-                                   receive_ground( ground_command_handle, readings.gtp, ground_serial, buffers.master, buffers.ground_index ),
+                                   receive_ground( ground_command_handle, readings.gtp, ground_serial, buffers.ground, buffers.ground_index ),
                                    receive_slave( readings.slave, slave_serial, buffers.slave, buffers.slave_index ),
                                    downlink_ground( readings, sample_set, statuss, timers, ground_serial, blu_serial ),
                                    request_slave_reading( slave_serial ),
@@ -111,7 +111,7 @@ void setupMasterSensors( void )
  */
 void initStateMachine()
 {
-    current_state = &state_machine[SAMPLE];
+    current_state = SAMPLE;
 }
 
 /*
@@ -119,9 +119,9 @@ void initStateMachine()
  * if a state does not return a recommended transition. IE if state.run() returns
  * NONE_SPECIFIC. 
  */
-void determineTransition()
+STATE_ID determineTransition()
 {
-    
+    return NONE_SPECIFIC;
 }
 
 /******************
@@ -189,8 +189,8 @@ void setup()
     bufferToReading( buffers.slave, readings.slave );
   
     sendCommand( slave_serial, ACKNOWLEDGE );
-    sendData( ground_serial, (byte *)&slave_reading, sizeof( slave_reading ) );
-    sendData( *blu_serial, (byte *)&slave_reading, sizeof( slave_reading ) );
+    sendData( ground_serial, (byte *)&readings.slave, sizeof( readings.slave ) );
+    sendData( *blu_serial, (byte *)&readings.slave, sizeof( readings.slave ) );
 
     /*
      * We start in the Sample State, because it's a good place to start PLUS it should

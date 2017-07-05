@@ -6,6 +6,7 @@
 #include "HardwareSerial.h"
 #include "goat_funcs.h"
 #include "master_types.h"
+#include "pump_controller.h"
 #include <SD.h>
 
 typedef enum : byte
@@ -19,14 +20,14 @@ typedef enum : byte
 class state
 {
     public:
-        virtual STATE_ID void run() { return; }
+        virtual STATE_ID run() { return; }
 };
 
 class receive_ground : public state
 {
     public:
         //functions
-        receive_ground( GROUND_COMMAND &handle, GTP_DATA &gps, HardwareSerial &serial, byte (&buf)[MAX_BUF], int &i ) : command_handle(handle),
+        receive_ground( GROUND_COMMAND &handle, GTP_DATA &gps, HardwareSerial &serial, byte (&buf)[MAX_BUF], unsigned int &i ) : command_handle(handle),
             gtp(gps), ground_serial(serial), buffer(buf), index(i) {}
         virtual STATE_ID run();
     private:
@@ -35,14 +36,14 @@ class receive_ground : public state
         GTP_DATA &gtp;
         HardwareSerial &ground_serial;
         byte (&buffer)[MAX_BUF];
-        int &index;
+        unsigned int &index;
 };
 
 class receive_slave : public state
 {
     public:
         //functions
-        receive_slave( SENSOR_READING &read, HardwareSerial &serial, byte (&buf)[MAX_BUF], int &i ) : reading(read),
+        receive_slave( SENSOR_READING &read, HardwareSerial &serial, byte (&buf)[MAX_BUF], unsigned int &i ) : reading(read),
             slave_serial(serial), buffer(buf), index(i) {}
         virtual STATE_ID run();
     private:
@@ -50,14 +51,14 @@ class receive_slave : public state
         SENSOR_READING &reading;
         byte (&buffer)[MAX_BUF];
         HardwareSerial &slave_serial;
-        int &index;
+        unsigned int &index;
 };
 
 class downlink_ground : public state
 {
     public:
         //functions
-        downlink_ground( READINGS_TABLE &tab, DATA_SET &set, STATUS_TABLE &stab, TIMERS_TABLE &ttab, HardwareSerial &serial HardwareSerial *bserial = nullptr ) : readings(tab),
+        downlink_ground( READINGS_TABLE &tab, DATA_SET &set, STATUS_TABLE &stab, TIMER_TABLE &ttab, HardwareSerial &serial, HardwareSerial *bserial ) : readings(tab),
             data(set), statuss(stab), timers(ttab), ground_serial(serial),
             blu_serial(bserial) {}
         virtual STATE_ID run();
@@ -70,7 +71,7 @@ class downlink_ground : public state
         READINGS_TABLE &readings;
         DATA_SET &data;
         STATUS_TABLE &statuss;
-        TIMERS_TABLE &timers;
+        TIMER_TABLE &timers;
         HardwareSerial &ground_serial;
         HardwareSerial *blu_serial;
 };
@@ -102,7 +103,7 @@ class timer_handler : public state
     public:
         //functions
         timer_handler( TIMER_TABLE &tab, GTP_DATA &g, STATUS_TABLE &s, pump_controller &p ) : timers(tab),
-            gtp(p), statuss(s), pump(p) {}
+            gtp(g), statuss(s), pump(p) {}
         virtual STATE_ID run();
     private:
         //vars
