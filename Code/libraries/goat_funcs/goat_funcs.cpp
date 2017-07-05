@@ -130,7 +130,7 @@ bool bufferToCommand( byte (&buffer)[MAX_BUF], GROUND_COMMAND &com )
     return com_good;
 }
 
-void bufferToGTP( byte (&buffer)[MAX_BUF], GTP_DATA &gtp )
+bool bufferToGTP( byte (&buffer)[MAX_BUF], GTP_DATA &gtp )
 {
     bool gtp_good = false;
     /*
@@ -147,7 +147,7 @@ void bufferToGTP( byte (&buffer)[MAX_BUF], GTP_DATA &gtp )
             &gtp.utc_time, &gtp.NMEA, &gtp.utc_position_time, &gtp.latitude,
             &gtp.latitude_hemisphere, &gtp.longitude, &gtp.longitude_hemisphere,
             &gtp.position_fix, &gtp.num_satelites, &gtp.horizontal_dilution_precision,
-            &gtp.msl_altitude, &gtp.differential_age;
+            &gtp.msl_altitude, &gtp.differential_age );
         gtp_good = true;
     }
     return gtp_good;

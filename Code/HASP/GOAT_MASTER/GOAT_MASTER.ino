@@ -11,7 +11,6 @@
  *                      Thermoelectric Modules
  */
 
-#include "goat_master_funcs.h"
 #include "master_types.h"
 #include "goat_funcs.h"
 #include "states.h"
@@ -121,6 +120,7 @@ void initStateMachine()
  */
 STATE_ID determineTransition()
 {
+    
     return NONE_SPECIFIC;
 }
 

@@ -1,6 +1,6 @@
 #include "states.h"
 
-virtual STATE_ID receive_ground::run()
+STATE_ID receive_ground::run()
 {
     STATE_ID transition = NONE_SPECIFIC;
     TRANS_TYPE transmission;
@@ -22,7 +22,7 @@ virtual STATE_ID receive_ground::run()
     return transition;
 }
 
-virtual STATE_ID receive_slave::run()
+STATE_ID receive_slave::run()
 {
     TRANS_TYPE transmission;
 
@@ -32,7 +32,7 @@ virtual STATE_ID receive_slave::run()
     return NONE_SPECIFIC;
 }
 
-virtual STATE_ID downlink_ground::run()
+STATE_ID downlink_ground::run()
 {
     STATE_ID transition = NONE_SPECIFIC;
     bool downlink = false;
@@ -69,10 +69,10 @@ virtual STATE_ID downlink_ground::run()
           sendData( *blu_serial, (byte *)&current_reading, sizeof( SENSOR_READING ) );
        sendData( ground_serial, (byte *)&current_reading, sizeof( SENSOR_READING ) );
 
-       memset( &current_reading[0], 0, sizeof( SENSOR_READING ) );
+       memset( &current_reading, 0, sizeof( SENSOR_READING ) );
 
        statuss.which_bank = statuss.which_bank  == 1 ? 2 : 1;
-       if( which_bank == 2 )
+       if( statuss.which_bank == 2 )
           transition = REQUEST_READING;
     }
     return transition;
@@ -102,17 +102,17 @@ void downlink_ground::prepareReading( SENSOR_READING &reading )
     ext_temp = data.ext_temp_total / data.super_sample;
     ext_humidity = data.ext_humidity_total / data.super_sample;
 
-    synced_now_time = readings.gtp.utc_time + ( ( millis() - timers.gtp_received_at ) / 100.00F )
-    assignReading( reading.header, "\x1\x21", sizeof( reading.header ) );
-    assignReading( reading.time, String( synced_now_time ).c_str(), sizeof( reading.time ) );
-    assignReading( reading.bank, "1", sizeof( reading.bank ) );
-    assignReading( reading.so2_reading, String( so2_ppm ).c_str(), sizeof( reading.so2_reading ) );
-    assignReading( reading.no2_reading, String( no2_ppm ).c_str(), sizeof( reading.no2_reading ) );
-    assignReading( reading.o3_reading, String( o3_ppm ).c_str(), sizeof( reading.o3_reading ) );
-    assignReading( reading.temp_reading, String( temp ).c_str(), sizeof( reading.temp_reading ) );
-    assignReading( reading.extt_reading, String( ext_temp ).c_str(), sizeof( reading.extt_reading ) );
-    assignReading( reading.pressure_reading, String( pressure ).c_str(), sizeof( reading.pressure_reading ) );
-    assignReading( reading.humidity_reading, String( ext_humidity ).c_str(), sizeof( reading.humidity_reading ) );
+    synced_now_time = readings.gtp.utc_time + ( ( millis() - timers.gtp_received_at ) / 100.00F );
+    assignEntry( reading.header, "\x1\x21", sizeof( reading.header ) );
+    assignEntry( reading.time, String( synced_now_time ).c_str(), sizeof( reading.time ) );
+    assignEntry( reading.bank, "1", sizeof( reading.bank ) );
+    assignEntry( reading.so2_reading, String( so2_ppm ).c_str(), sizeof( reading.so2_reading ) );
+    assignEntry( reading.no2_reading, String( no2_ppm ).c_str(), sizeof( reading.no2_reading ) );
+    assignEntry( reading.o3_reading, String( o3_ppm ).c_str(), sizeof( reading.o3_reading ) );
+    assignEntry( reading.temp_reading, String( temp ).c_str(), sizeof( reading.temp_reading ) );
+    assignEntry( reading.extt_reading, String( ext_temp ).c_str(), sizeof( reading.extt_reading ) );
+    assignEntry( reading.pressure_reading, String( pressure ).c_str(), sizeof( reading.pressure_reading ) );
+    assignEntry( reading.humidity_reading, String( ext_humidity ).c_str(), sizeof( reading.humidity_reading ) );
 
     /*
      * Determine the Status of the Bump from the Status Table
@@ -123,18 +123,18 @@ void downlink_ground::prepareReading( SENSOR_READING &reading )
     else
        pump_message += "OFF ";
 
-    if( status.pump_auto )
+    if( statuss.pump_auto )
        pump_message += "AUTO";
     else
        pump_message += "MANU";
 
-    assignReading( reading.pump_status, pump_message.c_str(), sizeof( reading.pump_status ) );
-    assignReading( reading.bme_status, statuss.bme_status.c_str(), sizeof( reading.pump_status ) );
-    assignReading( reading.am2315_status, statuss.am2314_status.c_str(), sizeof( reading.am2315_status ) );
-    assignReading( reading.sd_status, statuss.sd_status.c_str(), sizeof( reading.sd_status ) );
-    assignReading( reading.reading_status, "ACT AUTO", sizeof( reading.reading_status ) );
+    assignEntry( reading.pump_status, pump_message.c_str(), sizeof( reading.pump_status ) );
+    assignEntry( reading.bme_status, statuss.bme_status.c_str(), sizeof( reading.pump_status ) );
+    assignEntry( reading.am2315_status, statuss.am2315_status.c_str(), sizeof( reading.am2315_status ) );
+    assignEntry( reading.sd_status, statuss.sd_status.c_str(), sizeof( reading.sd_status ) );
+    assignEntry( reading.reading_status, "ACT AUTO", sizeof( reading.reading_status ) );
 
-    assignReading( reading.terminator, "\r\n", sizeof( reading.terminator ) );
+    assignEntry( reading.terminator, "\r\n", sizeof( reading.terminator ) );
 }
 
 void downlink_ground::writeSD( SENSOR_READING &reading )
@@ -161,13 +161,13 @@ void downlink_ground::writeSD( SENSOR_READING &reading )
     goat_log.close();
 }
 
-virtual STATE_ID request_slave_reading::run()
+STATE_ID request_slave_reading::run()
 {
     sendCommand( slave_serial, REQUEST_READING );
     return NONE_SPECIFIC;
 }
 
-virtual STATE_ID commander_handler::run()
+STATE_ID command_handler::run()
 {
     return NONE_SPECIFIC;
 }
@@ -179,7 +179,7 @@ virtual STATE_ID commander_handler::run()
  * It also transitions into either sampling or downlinking
  * depending on the time.
  */
-virtual STATE_ID timer_handler::run()
+STATE_ID timer_handler::run()
 {
     STATE_ID transition = SAMPLE;
     unsigned long long now_time = millis();
@@ -187,8 +187,8 @@ virtual STATE_ID timer_handler::run()
     /*
      * sync timers data with HASP time
      */
-    if( timers.gtp_time != gtp.time )
-       timers.gtp_time = gtp.time;
+    if( timers.gtp_time != gtp.utc_time )
+       timers.gtp_time = gtp.utc_time;
 
     /*
      * If the pump time is less than now time and the pump
@@ -198,7 +198,7 @@ virtual STATE_ID timer_handler::run()
      * This means that next time our now_time is bigger than
      * pump time, toggle it.
      */
-    if( timers.pump_time < now_time && statuss.pump_auto == true )
+    if( timers.pump_timer < now_time && statuss.pump_auto == true )
     {
         if( statuss.goat_pressure < 100.00 )
         {
@@ -207,13 +207,13 @@ virtual STATE_ID timer_handler::run()
             else
                 pump.on();
             statuss.pump_on = statuss.pump_on ? false : true;
-            timers.pump_time = now_time + FIFTEEN_MINUTES;
+            timers.pump_timer = now_time + FIFTEEN_MINUTES;
         }
         else
         {
            pump.off();
            statuss.pump_on = false;
-            timers.pump_time = now_time + ( 1000 * 60 ); //ie, check back in a minute
+            timers.pump_timer = now_time + ( 1000 * 60 ); //ie, check back in a minute
         }
     }
 
@@ -224,7 +224,7 @@ virtual STATE_ID timer_handler::run()
      */
     if( timers.downlink_schedule < now_time )
     {
-        timers.downlink_schedule = millis() + ( 1 * 1000 ) //downlink again a second from now
+        timers.downlink_schedule = millis() + ( 1 * 1000 ); //downlink again a second from now
         transition = DOWNLINK_GROUND;
     }
 
@@ -236,7 +236,7 @@ virtual STATE_ID timer_handler::run()
  * In this State, just take readings from all the sensors
  * and increment the super sample counter for averaging.
  */
-virtual STATE_ID sample::run()
+STATE_ID sample::run()
 {
     data.so2_total += sensors.so2.generateReadingPPM();
     data.no2_total += sensors.no2.generateReadingPPM();
@@ -248,7 +248,7 @@ virtual STATE_ID sample::run()
     data.ext_humidity_total += sensors.dongle.readHumidity();
     data.super_sample++;
 
-    return NONE_SPECIFIC
+    return NONE_SPECIFIC;
 }
 
 
