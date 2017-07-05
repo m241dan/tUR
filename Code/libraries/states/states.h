@@ -58,7 +58,7 @@ class downlink_ground : public state
 {
     public:
         //functions
-        downlink_ground( READINGS_TABLE &tab, DATA_SET &set, STATUS_TABLE &stab, TIMER_TABLE &ttab, HardwareSerial &serial, HardwareSerial *bserial ) : readings(tab),
+        downlink_ground( READINGS_TABLE &tab, DATA_SET &set, STATUS_TABLE &stab, TIMER_TABLE &ttab, HardwareSerial &serial, HardwareSerial &bserial ) : readings(tab),
             data(set), statuss(stab), timers(ttab), ground_serial(serial),
             blu_serial(bserial) {}
         virtual STATE_ID run();
@@ -73,7 +73,7 @@ class downlink_ground : public state
         STATUS_TABLE &statuss;
         TIMER_TABLE &timers;
         HardwareSerial &ground_serial;
-        HardwareSerial *blu_serial;
+        HardwareSerial &blu_serial;
 };
 
 class request_slave_reading : public state

@@ -26,7 +26,7 @@ TIMER_TABLE timers;
 DATA_SET sample_set;
 HardwareSerial &ground_serial = Serial;
 HardwareSerial &slave_serial = Serial1;
-HardwareSerial *blu_serial = &Serial2;
+HardwareSerial &blu_serial = Serial2;
 pump_controller pump( PUMP_PIN );
 
 state state_machine[MAX_STATE] = { 
@@ -179,7 +179,7 @@ void setup()
       * 2.) Downlink to Bluetooth (if the BT hack is still in place )
       */
     sendData( ground_serial, (byte *)&readings.master, sizeof( readings.master ) );
-    sendData( *blu_serial, (byte *)&readings.master, sizeof( readings.master ) );
+    sendData( blu_serial, (byte *)&readings.master, sizeof( readings.master ) );
 
     /*
      * Once the data has been downlinked...
@@ -193,18 +193,20 @@ void setup()
      * and later we will simply throw out corrupt readings and request new ones
      */
     bufferToReading( buffers.slave, readings.slave );
-  
-    sendCommand( slave_serial, ACKNOWLEDGE );
-    sendData( ground_serial, (byte *)&readings.slave, sizeof( readings.slave ) );
-    sendData( *blu_serial, (byte *)&readings.slave, sizeof( readings.slave ) );
 
-    /*
-     * We start in the Sample State, because it's a good place to start PLUS it should
-     */
+    Serial.println( "anything...." );
+    sendCommand( slave_serial, ACKNOWLEDGE );
+    Serial.println( "anything...." );
+    sendData( ground_serial, (byte *)&readings.slave, sizeof( SENSOR_READING ) );
+    Serial.println( "anything...." );
+    sendData( blu_serial, (byte *)&readings.slave, sizeof( readings.slave ) );
+
+    Serial.println( "Exiting the Setup loop" );
 }
 
 void loop()
 {
+    Serial.println( "Current State: " + String( current_state ) );
     current_state = state_machine[current_state].run();
     if( current_state == NONE_SPECIFIC )
         current_state = determineTransition();

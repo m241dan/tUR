@@ -65,8 +65,7 @@ STATE_ID downlink_ground::run()
     if( downlink )
     {
        writeSD( current_reading );
-       if( blu_serial )
-          sendData( *blu_serial, (byte *)&current_reading, sizeof( SENSOR_READING ) );
+       sendData( blu_serial, (byte *)&current_reading, sizeof( SENSOR_READING ) );
        sendData( ground_serial, (byte *)&current_reading, sizeof( SENSOR_READING ) );
 
        memset( &current_reading, 0, sizeof( SENSOR_READING ) );
