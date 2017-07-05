@@ -108,7 +108,7 @@ void setupMasterSensors( void )
  */
 void initStateMachine()
 {
-    current_state = SAMPLE;
+    current_state = TIMER_HANDLER;
 }
 
 /*
@@ -135,6 +135,7 @@ STATE_ID determineTransition()
 void setup()
 {
     setupMasterSerials();
+    Serial.println( "Master starting..." );
     setupMasterGlobals();
     setupMasterSensors();
     initStateMachine();
@@ -178,6 +179,7 @@ void setup()
       * 1.) Downlink to HASP
       * 2.) Downlink to Bluetooth (if the BT hack is still in place )
       */
+    Serial.println( "sending ground reading" );
     sendData( ground_serial, (byte *)&readings.master, sizeof( readings.master ) );
     sendData( blu_serial, (byte *)&readings.master, sizeof( readings.master ) );
 
@@ -192,14 +194,17 @@ void setup()
      * I don't want to check the boolean here, if we got anything from slave it must have initialized
      * and later we will simply throw out corrupt readings and request new ones
      */
-    bufferToReading( buffers.slave, readings.slave );
+    if( !bufferToReading( buffers.slave, readings.slave ) )
+        Serial.println( "Returning false" );
+    else
+        Serial.println( "Returning true" );
 
     Serial.println( "anything...." );
     sendCommand( slave_serial, ACKNOWLEDGE );
     Serial.println( "anything...." );
     sendData( ground_serial, (byte *)&readings.slave, sizeof( SENSOR_READING ) );
     Serial.println( "anything...." );
-    sendData( blu_serial, (byte *)&readings.slave, sizeof( readings.slave ) );
+    //sendData( blu_serial, (byte *)&readings.slave, sizeof( readings.slave ) );
 
     Serial.println( "Exiting the Setup loop" );
 }

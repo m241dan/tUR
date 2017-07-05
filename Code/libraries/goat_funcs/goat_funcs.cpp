@@ -64,19 +64,22 @@ TRANS_TYPE receiveData( HardwareSerial &serial, byte (&buffer)[MAX_BUF], unsigne
         //store what we got
         buffer[index++] = c;
         //check if its a command or gtp
-        if( c == '\x0A' && buffer[index-2] == '\x0D' && buffer[index-3] == '\x03' )
+        if( index > 3 )
         {
-            if( buffer[1] == '\x02' ) //then it's a command
-                type = TRANS_COMMAND;
-            else if( buffer[1] == '\x30' ) //then it's a gps
-                type = TRANS_GTP;
+            if( c == '\x0A' && buffer[index-2] == '\x0D' && buffer[index-3] == '\x03' )
+            {
+                if( buffer[1] == '\x02' ) //then it's a command
+                    type = TRANS_COMMAND;
+                else if( buffer[1] == '\x30' ) //then it's a gps
+                    type = TRANS_GTP;
+            }
+            //check if its data our data (like, from Slave)
+            else if( c == '\n' && buffer[index-2] == '\r' )
+                type = TRANS_DATA;
+            //something has gone terribly wrong, just reset
+            else if( index == MAX_BUF )
+               resetBuffer( buffer, index );
         }
-        //check if its data our data (like, from Slave)
-        else if( c == '\n' && buffer[index-2] == '\r' )
-            type = TRANS_DATA;
-        //something has gone terribly wrong, just reset
-        else if( index == MAX_BUF )
-           resetBuffer( buffer, index );
     }
     return type;
 }
