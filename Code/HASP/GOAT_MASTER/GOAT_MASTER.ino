@@ -40,28 +40,34 @@ GTP_DATA current_gtp;
 struct buffers_table
 {
     byte ground[MAX_BUF];
-    unsigned int ground_index;
+    unsigned int ground_index = 0;
     byte slave[MAX_BUF];
-    unsigned int slave_index;
+    unsigned int slave_index = 0;
 } buffers;
 
-String log_name;
+struct state_table
+{
+    String log_name = "";
+    bool pump_on = false;
+    bool pump_auto = true;
+    String reading_status = "";
+    bool reading_auto = true;
+    String sd_status = "";
+    String bme_status = "";
+    String am2315_status = "";
+    byte which_bank = 1;
+    byte slave_wait_sanity = 0;
+    double goat_pressure = 1337;
+    double goat_temperature = 100;
+} statuss;
 
-bool pump_on;
-bool take_readings;
-unsigned long long downlink_schedule;
-bool new_slave_reading;
-byte which_bank;
-String reading_status;
-String sd_status;
-String bme_status;
-String am2315_status;
-double gtp_time = 0;
-unsigned long long gtp_received_at = 0;
-int slave_wait_sanity = 0;
-unsigned long long pump_timer;
-unsigned long long prev_timer;
-
+struct timer_table
+{
+    unsigned long long downlink_schedule = 0;
+    unsigned long long gtp_time = 0;
+    unsigned long long gtp_received_at = 0;
+    unsigned long long pump_timer = 0;
+} timers;
 
 struct data_set
 {
@@ -73,7 +79,7 @@ struct data_set
     double pressure_total = 0;
     double ext_temp_total = 0;
     double ext_humidity_total = 0;
-    double sample_size;
+    double sample_size = 0;
     
 } sample_set;
 
@@ -85,64 +91,39 @@ void setupMasterSerials( void )
     //Serial to Slave
     Serial1.begin( 300 );
     while( !Serial1 );
+
+    //Serial to Blu_Tooth
+    Serial2.begin( 9600 );
+    while( !Serial2 );
 }
 
 void setupMasterGlobals( void )
 {
-    pump_on = false;
-    take_readings = true;
-    ground_index = 0;
-    slave_index = 0;
-    downlink_schedule = 0;
-    new_slave_reading = false;
-    which_bank = 1;
-    reading_status = "";
-    sd_status = "";
-    bme_status = "";
-    am2315_status = "";
-    log_name = getNextFile( LOG_NAME );
 
-    //clear these out appropriately
-    memset( &current_gtp.data[0], 0, sizeof( current_gtp.data ) );
-    memset( &master_reading.time[0], ' ', sizeof( master_reading ) - 4 );
-    memset( &slave_reading.time[0], ' ', sizeof( slave_reading ) - 4 );
-    memset( &receive_buffer_ground[0], 0, MAX_BUF );
-    memset( &receive_buffer_slave[0], 0, MAX_BUF );
-
-    //setup the sensor reading message as its how we communicate
-    assignEntry( master_reading.time, C_TIME(), sizeof( master_reading.time ) );
-    assignEntry( master_reading.bank, "1", sizeof( master_reading.bank ) );
-    assignEntry( master_reading.pump_status, "PUMP OFF", sizeof( master_reading.pu$
-    assignEntry( master_reading.reading_status, "FIRST", sizeof( master_reading.re$
 }
 
 void setupMasterSensors( void )
 {
     //Setup the SD
     if( !SD.begin( SD_PIN ) )
-        sd_status = "SD INIT F";
+        statuss.sd_status = "SD INIT F";
     else
     {
-        sd_status = "SD INIT G";
-        log_name = getNextFile( "GOAT" );
+        statuss.sd_status = "SD INIT G";
+        statuss.log_name = getNextFile( "GOAT" );
     }
-    assignEntry( master_reading.sd_status, sd_status.c_str(), sizeof( master_readi$
 
     //Setup the BME
     if( !bme.begin() )
-        bme_status = "BIFD";
+        statuss.bme_status = "BIFD";
     else
-        bme_status = "BIGD";
-    assignEntry( master_reading.temp_reading, bme_status.c_str(), sizeof( master_r$
-
+        statuss.bme_status = "BIGD";
 
     //Setup the AM2315
     if( !dongle.begin() )
-        am2315_status = "AIFD";
+        statuss.am2315_status = "AIFD";
     else
-        am2315_status = "AIGD";
-    assignEntry( master_reading.extt_reading, am2315_status.c_str(), sizeof( maste$
-
+        statuss.am2315_status = "AIGD";
 }
 
 
