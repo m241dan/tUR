@@ -17,8 +17,6 @@
 #include "goat_master_funcs.h"
 #include "master_globals.h"
 #include "goat_funcs.h"
-#include <OneWire.h>
-#include <DallasTemperature.h>
 
 #define FIFTEEN_MINUTES ( 60000 * 15 )
 
@@ -49,8 +47,6 @@ String am2315_status;
 double gtp_time = 0;
 unsigned long long gtp_received_at = 0;
 int slave_wait_sanity = 0;
-OneWire bus_one( 4 );
-DallasTemperature temp_one( &bus_one );
 unsigned long long pump_timer;
 unsigned long long prev_timer;
 
@@ -90,7 +86,6 @@ void setup()
     
     Serial2.begin( 9600 );
     while( !Serial2 );
-    temp_one.begin();
     
     delay( 2000 );
   //  assignEntry( master_reading.time, C_TIME(), sizeof( master_reading.time ) );
@@ -102,7 +97,7 @@ void setup()
     new_slave_reading = false;
     slave_command.command[0] = ACKNOWLEDGE;
     sendCommand( Serial1, slave_command );
-    sendData( Serial, (byte *)&slave_reading, sizeof( slave_reading ) );
+    sendData( Serial, (byttee *)&slave_reading, sizeof( slave_reading ) );
     sendData( Serial2, (byte *)&slave_reading, sizeof( slave_reading ) );
 
 }
@@ -279,7 +274,6 @@ void prepareMasterReading( void )
         assignEntry( master_reading.ext_humidity_reading, String( ext_humidity ).c_str(), sizeof( master_reading.ext_humidity_reading ) );
     }
     assignEntry( master_reading.pump_status, pump_on ? "PUMP ON" : "PUMP OFF", sizeof( master_reading.pump_status ) );
-    assignEntry( master_reading.peltier_status, ( String( temp_one.getTempCByIndex( 0 ) ) + " " + String( temp_one.getTempCByIndex( 1 ) ) + " " + String( temp_one.getTempCByIndex( 2 ) ) ).c_str(), sizeof( master_reading.peltier_status ) );
     assignEntry( master_reading.sd_status, sd_status.c_str(), sizeof( master_reading.sd_status ) );
     assignEntry( master_reading.reading_status, reading_status.c_str(), sizeof( master_reading.reading_status ) );
 }
