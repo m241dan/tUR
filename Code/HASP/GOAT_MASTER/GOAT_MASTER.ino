@@ -51,28 +51,19 @@ unsigned long long pump_timer;
 unsigned long long prev_timer;
 
 
-typedef struct data_set
+struct data_set
 {
     double so2_total = 0;
-    double so2_count = 0;
     double no2_total = 0;
-    double no2_count = 0;
     double o3_total = 0;
-    double o3_count = 0;
     double temp_total = 0;
-    double temp_count = 0;
     double humidity_total = 0;
-    double humidity_count = 0;
     double pressure_total = 0;
-    double pressure_count = 0;
     double ext_temp_total = 0;
-    double ext_temp_count = 0;
     double ext_humidity_total = 0;
-    double ext_humidity_count = 0;
+    double sample_size;
     
-} DATA_SET;
-
-DATA_SET sample_set;
+} sample_set;
 
 void setup()
 {

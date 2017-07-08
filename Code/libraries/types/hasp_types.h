@@ -16,6 +16,10 @@
 #define BANK_TWO '\x2F'
 #define REQUEST_READING '\x30'
 
+#define C_TIME() ( String( millis() / 1000.0F ).c_str() )
+#define MAX_BUF 256
+
+
 typedef enum
 {
    TRANS_INCOMPLETE = 0, TRANS_COMMAND, TRANS_DATA, TRANS_GTP
