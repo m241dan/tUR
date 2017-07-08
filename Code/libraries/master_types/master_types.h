@@ -22,10 +22,6 @@
 
 typedef struct sensor_table
 {
-    sensor_table() : so2( SPEC_SO2, A0, A1, A2, 43.54 ),
-                     no2( SPEC_NO2, A3, A4, A5, 43.53 ),
-                     o3( SPEC_O3, A6, A7, A8, 43.54 ),
-                     bme( BME_PIN ) {}
     Spec so2;
     Spec no2;
     Spec o3;
@@ -35,9 +31,6 @@ typedef struct sensor_table
 
 typedef struct readings_table
 {
-    readings_table() { memset( &master, 0, sizeof( master ) );
-                       memset( &slave, 0, sizeof( slave ) );
-                       memset( &gtp, 0, sizeof( gtp ) ); }
     SENSOR_READING master;
     SENSOR_READING slave;
     GTP_DATA gtp;
@@ -45,32 +38,25 @@ typedef struct readings_table
 
 typedef struct status_table
 {
-    status_table() : log_name(""), pump_on(false), pump_auto(true),
-                     reading_status(""), reading_auto(true), sd_status(""),
-                     bme_status(""), am2315_status(""), which_bank(1),
-                     slave_wait_sanity(1), goat_pressure(1334) {}
-    String log_name;
-    bool pump_on;
-    bool pump_auto;
-    String reading_status;
-    bool reading_auto;
-    String sd_status;
-    String bme_status;
-    String am2315_status;
-    byte which_bank;
-    byte slave_wait_sanity;
-    double goat_pressure;
+    String log_name = "";
+    bool pump_on = false;
+    bool pump_auto = true;
+    String reading_status = "";
+    bool reading_auto = true;
+    String sd_status = "";
+    String bme_status = "";
+    String am2315_status = "";
+    byte which_bank = 1;
+    byte slave_wait_sanity = 1;
+    double goat_pressure = 1334.00;
 } STATUS_TABLE;
 
 typedef struct receive_buffers
 {
-    receive_buffers() : ground_index(0), slave_index(0) {
-                        memset( &ground[0], 0, MAX_BUF );
-                        memset( &slave[0], 0, MAX_BUF ); }
     byte ground[MAX_BUF];
-    unsigned int ground_index;
+    unsigned int ground_index = 0;
     byte slave[MAX_BUF];
-    unsigned int slave_index;
+    unsigned int slave_index = 0;
 } RECEIVE_BUFFERS;
 
 typedef struct timer_table

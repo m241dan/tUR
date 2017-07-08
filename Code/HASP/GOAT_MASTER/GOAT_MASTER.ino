@@ -88,6 +88,7 @@ void setupMasterSensors( void )
      * Setup the BME
      * Update status message accordingly
      */
+    sensors.bme = Adafruit_BME280( BME_PIN );
     if( !sensors.bme.begin() )
         statuss.bme_status = "BIFD";
     else
@@ -101,6 +102,10 @@ void setupMasterSensors( void )
         statuss.am2315_status = "AIFD";
     else
         statuss.am2315_status = "AIGD";
+
+    sensors.so2 = Spec( SPEC_SO2, A0, A1, A2, 43.45 );
+    sensors.no2 = Spec( SPEC_NO2, A3, A4, A5, 43.45 );
+    sensors.o3 = Spec( SPEC_O3, A6, A7, A8, 43.45 );
 }
 
 /*
@@ -136,9 +141,9 @@ void setup()
 {
     setupMasterSerials();
     Serial.println( "Master starting..." );
-    setupMasterGlobals();
-    setupMasterSensors();
-    initStateMachine();
+ //   setupMasterGlobals();
+   // setupMasterSensors();
+   // initStateMachine();
 
     /*
      * This delay is in place to give slave time to boot, essentially both Arduinos will
@@ -152,7 +157,7 @@ void setup()
      * 
      * TL;DR: prepareInitialDownlink()
      */
-     {
+ /*    {
          readings.master.header[0] = '\x01';
          readings.master.header[1] = '\x21';
          readings.master.terminator[0] = '\r';
@@ -172,7 +177,7 @@ void setup()
          assignEntry( readings.master.am2315_status, statuss.am2315_status.c_str(), sizeof( readings.master.am2315_status ) );
          assignEntry( readings.master.sd_status, statuss.sd_status.c_str(), sizeof( readings.master.sd_status ) );
          assignEntry( readings.master.reading_status, "FIRST", sizeof( readings.master.reading_status ) );
-     }
+     } */
 
      /*
       * Downlink the prepared reading to two possible places:
@@ -180,31 +185,32 @@ void setup()
       * 2.) Downlink to Bluetooth (if the BT hack is still in place )
       */
     Serial.println( "sending ground reading" );
-    sendData( ground_serial, (byte *)&readings.master, sizeof( readings.master ) );
-    sendData( blu_serial, (byte *)&readings.master, sizeof( readings.master ) );
+    //sendData( ground_serial, (byte *)&readings.master, sizeof( readings.master ) );
+    //sendData( blu_serial, (byte *)&readings.master, sizeof( readings.master ) );
 
     /*
      * Once the data has been downlinked...
      * Wait for Slave to send its initial prepared readings (like Master does)
      */
-    while( !slave_serial.available() );
-    while( receiveData( slave_serial, buffers.slave, buffers.slave_index ) != TRANS_DATA );
+ //   while( !slave_serial.available() );
+    //while( receiveData( slave_serial, buffers.slave, buffers.slave_index ) != TRANS_DATA );
     
     /*
      * I don't want to check the boolean here, if we got anything from slave it must have initialized
      * and later we will simply throw out corrupt readings and request new ones
      */
+     /*
     if( !bufferToReading( buffers.slave, readings.slave ) )
         Serial.println( "Returning false" );
     else
         Serial.println( "Returning true" );
-
+*/
     Serial.println( "anything...." );
-    sendCommand( slave_serial, ACKNOWLEDGE );
+  //  sendCommand( slave_serial, ACKNOWLEDGE );
     Serial.println( "anything...." );
-    sendData( ground_serial, (byte *)&readings.slave, sizeof( SENSOR_READING ) );
+//    sendData( ground_serial, (byte *)&readings.slave, sizeof( SENSOR_READING ) );
     Serial.println( "anything...." );
-    //sendData( blu_serial, (byte *)&readings.slave, sizeof( readings.slave ) );
+  //  sendData( blu_serial, (byte *)&readings.slave, sizeof( SENSOR_READING ) );
 
     Serial.println( "Exiting the Setup loop" );
 }
