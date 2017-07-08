@@ -17,6 +17,7 @@
 #define REQUEST_READING '\x30'
 
 #define C_TIME() ( String( millis() / 1000.0F ).c_str() )
+#define FIFTEEN_MINUTES ( 60000 * 15 )
 #define MAX_BUF 256
 
 

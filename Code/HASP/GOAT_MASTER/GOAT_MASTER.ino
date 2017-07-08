@@ -18,25 +18,37 @@
 #include "master_globals.h"
 #include "goat_funcs.h"
 
-#define FIFTEEN_MINUTES ( 60000 * 15 )
 
-Spec so2( SPEC_SO2, A0, A1, A2, 43.54 );
-Spec no2( SPEC_NO2, A3, A4, A5, 43.54 );
-Spec o3( SPEC_O3, A6, A7, A8, 43.54 );
-Adafruit_BME280 bme( BME_PIN );
-Adafruit_AM2315 dongle;
-String log_name;
-GROUND_COMMAND master_command;
-GROUND_COMMAND slave_command;
+struct sensor_table
+{
+   Spec so2 = Spec( SPEC_S02, A0, A1, A2, 43.54 );
+   Spec no2 = Spec( SPEC_NO2, A3, A4, A5, 43.54 );
+   Spec o3 = Spec( SPEC_O3, A6, A7, A8, 43.54 );
+   Adafruit_BME280 bme = Adafruit_BME280( BME_PIN );
+   Adafruit_AM2315 dongle;
+} sensors;
+
+struct readings_table
+{
+   SENSOR_READING master_reading;
+   SENSOR_READING slave_reading;
+} readings;
+
+GROUND_COMMAND received_command;
 GTP_DATA current_gtp;
-SENSOR_READING master_reading;
-SENSOR_READING slave_reading;
+
+struct buffers_table
+{
+    byte ground[MAX_BUF];
+    unsigned int ground_index;
+    byte slave[MAX_BUF];
+    unsigned int slave_index;
+} buffers;
+
+String log_name;
+
 bool pump_on;
 bool take_readings;
-byte receive_buffer_ground[MAX_BUF];
-unsigned int ground_index;
-byte receive_buffer_slave[MAX_BUF];
-unsigned int slave_index;
 unsigned long long downlink_schedule;
 bool new_slave_reading;
 byte which_bank;
