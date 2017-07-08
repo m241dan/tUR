@@ -17,6 +17,7 @@
 #include "goat_master_funcs.h"
 #include "master_globals.h"
 #include "goat_funcs.h"
+#include "pump_controller.h"
 
 
 struct sensor_table
@@ -36,6 +37,7 @@ struct readings_table
 
 GROUND_COMMAND received_command;
 GTP_DATA current_gtp;
+pump_controller pump( PUMP_PIN );
 
 struct buffers_table
 {
@@ -132,10 +134,6 @@ void setup()
     setupMasterSerials();
     setupMasterGlobals();
     setupMasterSensors();
-
-    pinMode( 47, OUTPUT );
-    digitalWrite( 47, LOW );
-    prev_timer = 0;
     
     Serial2.begin( 9600 );
     while( !Serial2 );
@@ -166,24 +164,7 @@ void loop()
     }
     sample();
 
-    // KIERAN: I changed the place where pump_timer was assigned its value and I made another timer called prev_timer.
-    
-    pump_timer = millis();
-    if( ( pump_timer - prev_timer ) >= FIFTEEN_MINUTES )
-    {
-        prev_timer = pump_timer;
-        if( pump_on )
-        {
-            digitalWrite( 47, LOW );
-            pump_on = false;
-        }
-        else
-        {
-            digitalWrite( 47, HIGH );
-            pump_on = true;
-        }
-    }
-
+    pump_logic();
 }
 
 void checkGround( void )
