@@ -18,18 +18,18 @@
  * Organized Globals (hopefully, they seem organized \(o.o)/ )
  */
 SENSOR_TABLE sensors = { Spec( SPEC_SO2, A0, A1, A2, 43.45 ), Spec( SPEC_NO2, A3, A4, A5, 43.45 ),
-                       Spec( SPEC_SO3, A6, A7, A8, 43.45 ), Adafruit_BME280( BME_PIN ), Adafruit_AM2315() };
+                       Spec( SPEC_O3, A6, A7, A8, 43.45 ), Adafruit_BME280( BME_PIN ), Adafruit_AM2315() };
 READINGS_TABLE readings;
 GROUND_COMMAND ground_command_handle;
-STATUS_TABLE statuss();
-RECEIVE_BUFFERS buffers();
+STATUS_TABLE statuss;
+RECEIVE_BUFFERS buffers;
 TIMER_TABLE timers;
 DATA_SET sample_set;
 HardwareSerial &ground_serial = Serial;
 HardwareSerial &slave_serial = Serial1;
 HardwareSerial &blu_serial = Serial2;
 pump_controller pump( PUMP_PIN );
-REFS_TABLE refs = { readings, ground_command_handle, statuss, buffers, timers, sample_set, ground_serial, slave_serial, blue_serial, pump };
+REFS_TABLE refs = { sensors, readings, ground_command_handle, statuss, buffers, timers, sample_set, ground_serial, slave_serial, blu_serial, pump };
 
 
 state state_machine[MAX_STATE] = { 

@@ -1,7 +1,6 @@
 #ifndef pump_controller_h
 #define pump_controller_h
 
-#include "master_types.h"
 #include "Arduino.h"
 
 class pump_controller
