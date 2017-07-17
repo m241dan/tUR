@@ -19,11 +19,6 @@ Spec::Spec( specType s_type, int g, int r, int t, double code ) : type(s_type), 
    M = 1.00 / ( ( sensitivity_code * (TIA * TIA_E ) ) * 1000 );
 }
 
-Spec::Spec()
-{
-
-}
-
 String Spec::generateRawReading( char delim, bool perr, bool newline )
 {
    String reading = "";
