@@ -5,16 +5,16 @@ STATE_ID receive_ground::run()
     STATE_ID transition = NONE_SPECIFIC;
     TRANS_TYPE transmission;
 
-    if( ( transmission = receiveData( refs.ground_serial, refs.buffer, refs.index ) ) != TRANS_INCOMPLETE )
+    if( ( transmission = receiveData( refs.ground_serial, refs.buffers.ground, refs.buffers.ground_index ) ) != TRANS_INCOMPLETE )
     {
         switch( transmission )
         {
            case TRANS_COMMAND:
-              bufferToCommand( refs.buffer, refs.command_handle );
+              bufferToCommand( refs.buffers.ground, refs.ground_command_handle );
               transition = COMMAND_HANDLER;
               break;
            case TRANS_GTP:
-              bufferToGTP( refs.buffer, refs.gtp );
+              bufferToGTP( refs.buffers.ground, refs.readings.gtp );
               break;
         }
     }
@@ -26,8 +26,8 @@ STATE_ID receive_slave::run()
 {
     TRANS_TYPE transmission;
 
-    if( ( transmission = receiveData( refs.slave_serial, refs.buffer, refs.index ) ) != TRANS_INCOMPLETE )
-        bufferToReading( refs.buffer, refs.reading );
+    if( ( transmission = receiveData( refs.slave_serial, refs.buffers.slave, refs.buffers.slave_index ) ) != TRANS_INCOMPLETE )
+        bufferToReading( refs.buffers.slave, refs.readings.slave );
 
     return NONE_SPECIFIC;
 }
@@ -89,19 +89,19 @@ void downlink_ground::prepareReading( SENSOR_READING &reading )
     double ext_temp;
     double ext_humidity;
 
-    so2_ppm = refs.data.so2_total / refs.data.super_sample;
-    no2_ppm = refs.data.no2_total / refs.data.super_sample;
-    o3_ppm  = refs.data.o3_total / refs.data.super_sample;
+    so2_ppm = refs.sample_set.so2_total / refs.sample_set.super_sample;
+    no2_ppm = refs.sample_set.no2_total / refs.sample_set.super_sample;
+    o3_ppm  = refs.sample_set.o3_total / refs.sample_set.super_sample;
 
-    temp = refs.data.temp_total / refs.data.super_sample;
-    humidity = refs.data.humidity_total / refs.data.super_sample;
-    pressure = refs.data.pressure_total / refs.data.super_sample;
+    temp = refs.sample_set.temp_total / refs.sample_set.super_sample;
+    humidity = refs.sample_set.humidity_total / refs.sample_set.super_sample;
+    pressure = refs.sample_set.pressure_total / refs.sample_set.super_sample;
     refs.statuss.goat_pressure = pressure;
 
-    ext_temp = refs.data.ext_temp_total / refs.data.super_sample;
-    ext_humidity = refs.data.ext_humidity_total / refs.data.super_sample;
+    ext_temp = refs.sample_set.ext_temp_total / refs.sample_set.super_sample;
+    ext_humidity = refs.sample_set.ext_humidity_total / refs.sample_set.super_sample;
 
-    synced_now_time = refs.reading.gtp.utc_time + ( ( millis() - refs.timers.gtp_received_at ) / 100.00F );
+    synced_now_time = refs.readings.gtp.utc_time + ( ( millis() - refs.timers.gtp_received_at ) / 100.00F );
 
     reading.header[0] = '\x01';
     reading.header[1] = '\x21';
@@ -189,8 +189,8 @@ STATE_ID timer_handler::run()
     /*
      * sync timers data with HASP time
      */
-    if( refs.timers.gtp_time != gtp.utc_time )
-       refs.timers.gtp_time = gtp.utc_time;
+    if( refs.timers.gtp_time != refs.readings.gtp.utc_time )
+       refs.timers.gtp_time = refs.readings.gtp.utc_time;
 
     /*
      * If the pump time is less than now time and the pump
@@ -205,16 +205,16 @@ STATE_ID timer_handler::run()
         if( refs.statuss.goat_pressure < 100.00 )
         {
             if( refs.statuss.pump_on )
-                pump.off();
+                refs.pump.off();
             else
-                pump.on();
+                refs.pump.on();
             refs.statuss.pump_on = refs.statuss.pump_on ? false : true;
             refs.timers.pump_timer = now_time + FIFTEEN_MINUTES;
         }
         else
         {
-           pump.off();
-           refs.statuss.pump_on = false;
+            refs.pump.off();
+            refs.statuss.pump_on = false;
             refs.timers.pump_timer = now_time + ( 1000 * 60 ); //ie, check back in a minute
         }
     }
@@ -240,15 +240,15 @@ STATE_ID timer_handler::run()
  */
 STATE_ID sample::run()
 {
-    refs.data.so2_total += refs.sensors.so2.generateReadingPPM();
-    refs.data.no2_total += refs.sensors.no2.generateReadingPPM();
-    refs.data.o3_total += refs.sensors.o3.generateReadingPPM();
-    refs.data.temp_total += refs.sensors.bme.readTemperature();
-    refs.data.humidity_total += refs.sensors.bme.readHumidity();
-    refs.data.pressure_total += refs.sensors.bme.readPressure() / 100.0F;
-    refs.data.ext_temp_total += refs.sensors.dongle.readTemperature();
-    refs.data.ext_humidity_total += refs.sensors.dongle.readHumidity();
-    refs.data.super_sample++;
+    refs.sample_set.so2_total += refs.sensors.so2.generateReadingPPM();
+    refs.sample_set.no2_total += refs.sensors.no2.generateReadingPPM();
+    refs.sample_set.o3_total += refs.sensors.o3.generateReadingPPM();
+    refs.sample_set.temp_total += refs.sensors.bme.readTemperature();
+    refs.sample_set.humidity_total += refs.sensors.bme.readHumidity();
+    refs.sample_set.pressure_total += refs.sensors.bme.readPressure() / 100.0F;
+    refs.sample_set.ext_temp_total += refs.sensors.dongle.readTemperature();
+    refs.sample_set.ext_humidity_total += refs.sensors.dongle.readHumidity();
+    refs.sample_set.super_sample++;
 
     return NONE_SPECIFIC;
 }
