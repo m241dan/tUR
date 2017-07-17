@@ -7,6 +7,7 @@
 #include "Spec.h"
 #include "hasp_types.h"
 #include "Arduino.h"
+#include "pump_controller.h"
 
 //GOAT macros
 
