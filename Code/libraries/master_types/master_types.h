@@ -22,10 +22,6 @@
 
 typedef struct sensor_table
 {
-    sensor_table() : so2( SPEC_SO2, A0, A1, A2, 43.54 ),
-                     no2( SPEC_NO2, A3, A4, A5, 43.53 ),
-                     o3( SPEC_O3, A6, A7, A8, 43.54 ),
-                     bme( BME_PIN ) {}
     Spec so2;
     Spec no2;
     Spec o3;
@@ -35,9 +31,6 @@ typedef struct sensor_table
 
 typedef struct readings_table
 {
-    readings_table() { memset( &master, 0, sizeof( master ) );
-                       memset( &slave, 0, sizeof( slave ) );
-                       memset( &gtp, 0, sizeof( gtp ) ); }
     SENSOR_READING master;
     SENSOR_READING slave;
     GTP_DATA gtp;
@@ -64,9 +57,7 @@ typedef struct status_table
 
 typedef struct receive_buffers
 {
-    receive_buffers() : ground_index(0), slave_index(0) {
-                        memset( &ground[0], 0, MAX_BUF );
-                        memset( &slave[0], 0, MAX_BUF ); }
+    receive_buffers() : ground_index(0), slave_index(0) {}
     byte ground[MAX_BUF];
     unsigned int ground_index;
     byte slave[MAX_BUF];
@@ -93,5 +84,19 @@ typedef struct data_set
     double ext_humidity_total = 0;
     unsigned int super_sample = 0;
 } DATA_SET;
+
+typedef struct refs_table
+{
+    READINGS_TABLE &readings;
+    GROUND_COMMAND &ground_command_handle;
+    STATUS_TABLE &statuss;
+    RECEIVE_BUFFERS &buffers;
+    TIMER_TABLE &timers;
+    DATA_SET &sample_set;
+    HardwareSerial &ground_serial;
+    HardwareSerial &slave_serial;
+    HardwareSerial &blu_serial;
+    pump_controller &pump;
+} REFS_TABLE;
 
 #endif

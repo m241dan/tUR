@@ -20,111 +20,72 @@ typedef enum : byte
 class state
 {
     public:
+        state::state( REFS_TABLE &r ) : refs(r) {}
         virtual STATE_ID run() { return; }
+    protected:
+        REFS_TABLE &refs;
 };
 
 class receive_ground : public state
 {
     public:
         //functions
-        receive_ground( GROUND_COMMAND &handle, GTP_DATA &gps, HardwareSerial &serial, byte (&buf)[MAX_BUF], unsigned int &i ) : command_handle(handle),
-            gtp(gps), ground_serial(serial), buffer(buf), index(i) {}
+        receive_ground( REFS_TABLE &r ) : state( r ) {}
         virtual STATE_ID run();
-    private:
-        //vars
-        GROUND_COMMAND &command_handle;
-        GTP_DATA &gtp;
-        HardwareSerial &ground_serial;
-        byte (&buffer)[MAX_BUF];
-        unsigned int &index;
 };
 
 class receive_slave : public state
 {
     public:
         //functions
-        receive_slave( SENSOR_READING &read, HardwareSerial &serial, byte (&buf)[MAX_BUF], unsigned int &i ) : reading(read),
-            slave_serial(serial), buffer(buf), index(i) {}
+        receive_slave( REFS_TABLE &r ) : state( r ) {}
         virtual STATE_ID run();
-    private:
-        //vars
-        SENSOR_READING &reading;
-        byte (&buffer)[MAX_BUF];
-        HardwareSerial &slave_serial;
-        unsigned int &index;
 };
 
 class downlink_ground : public state
 {
     public:
         //functions
-        downlink_ground( READINGS_TABLE &tab, DATA_SET &set, STATUS_TABLE &stab, TIMER_TABLE &ttab, HardwareSerial &serial, HardwareSerial &bserial ) : readings(tab),
-            data(set), statuss(stab), timers(ttab), ground_serial(serial),
-            blu_serial(bserial) {}
+        downlink_ground( REFS_TABLE &r ) : state( r ) {}
         virtual STATE_ID run();
     private:
         //functions
         void prepareReading( SENSOR_READING &reading );
         void writeSD( SENSOR_READING &reading );
-
-        //vars
-        READINGS_TABLE &readings;
-        DATA_SET &data;
-        STATUS_TABLE &statuss;
-        TIMER_TABLE &timers;
-        HardwareSerial &ground_serial;
-        HardwareSerial &blu_serial;
 };
 
 class request_slave_reading : public state
 {
     public:
         //functions
-        request_slave_reading( HardwareSerial &serial ) : slave_serial(serial) {}
+        request_slave_reading( REFS_TABLE &r ) : state( r ) {}
         virtual STATE_ID run();
-    private:
-        //vars
-        HardwareSerial &slave_serial;
 };
 
 class command_handler : public state
 {
     public:
         //functions
-        command_handler( GROUND_COMMAND &hand ) : handle(hand) {}
+        command_handler( REFS_TABLE &r ) : state( r ) {}
         virtual STATE_ID run();
-    private:
-        //vars
-        GROUND_COMMAND &handle;
 };
 
 class timer_handler : public state
 {
     public:
         //functions
-        timer_handler( TIMER_TABLE &tab, GTP_DATA &g, STATUS_TABLE &s, pump_controller &p ) : timers(tab),
-            gtp(g), statuss(s), pump(p) {}
+        timer_handler( REFS_TABLE &r ) : state( r ) {}
         virtual STATE_ID run();
-    private:
-        //vars
-       GTP_DATA &gtp;
-       TIMER_TABLE &timers;
-       STATUS_TABLE &statuss;
-       pump_controller &pump;
 };
 
 class sample : public state
 {
     public:
         //functions
-        sample( DATA_SET &set, SENSOR_TABLE &tab ) : data(set),
-            sensors(tab) {}
+        sample( REFS_TABLE &r ) : state( r ) {}
         virtual STATE_ID run();
-    private:
-        //vars
-        SENSOR_TABLE &sensors;
-        DATA_SET &data;
 };
 
 #endif
+
 
