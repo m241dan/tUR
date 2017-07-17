@@ -83,6 +83,7 @@ typedef struct data_set
 
 typedef struct refs_table
 {
+    SENSOR_TABLE &sensors;
     READINGS_TABLE &readings;
     GROUND_COMMAND &ground_command_handle;
     STATUS_TABLE &statuss;
