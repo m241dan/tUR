@@ -59,11 +59,11 @@ typedef struct sensor_readings
    unsigned char header[2] = "\x1\x21";
    unsigned char time[15];
    unsigned char bank[2];
-   unsigned char so2_reading[10];
-   unsigned char no2_reading[10];
-   unsigned char o3_reading[10];
-   unsigned char temp_reading[5];
-   unsigned char extt_reading[5];
+   unsigned char so2_reading[8];
+   unsigned char no2_reading[8];
+   unsigned char o3_reading[8];
+   unsigned char temp_reading[8];
+   unsigned char extt_reading[8];
    unsigned char pressure_reading[10];
    unsigned char humidity_reading[5];
    unsigned char ext_humidity_reading[5];
