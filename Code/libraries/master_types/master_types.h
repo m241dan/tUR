@@ -80,4 +80,18 @@ typedef struct data_set
     unsigned int super_sample = 0;
 } DATA_SET;
 
+typedef struct refs_table
+{
+    READINGS_TABLE &readings;
+    GROUND_COMMAND &ground_command_handle;
+    STATUS_TABLE &statuss;
+    RECEIVE_BUFFERS &buffers;
+    TIMER_TABLE &timers;
+    DATA_SET &sample_set;
+    HardwareSerial &ground_serial;
+    HardwareSerial &slave_serial;
+    HardwareSerial &blu_serial;
+    pump_controller &pump;
+} REFS_TABLE;
+
 #endif

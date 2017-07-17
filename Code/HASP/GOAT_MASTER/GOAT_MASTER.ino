@@ -17,26 +17,29 @@
 /*
  * Organized Globals (hopefully, they seem organized \(o.o)/ )
  */
-SENSOR_TABLE sensors;
+SENSOR_TABLE sensors = { Spec( SPEC_SO2, A0, A1, A2, 43.45 ), Spec( SPEC_NO2, A3, A4, A5, 43.45 ),
+                       Spec( SPEC_SO3, A6, A7, A8, 43.45 ), Adafruit_BME280( BME_PIN ), Adafruit_AM2315() };
 READINGS_TABLE readings;
 GROUND_COMMAND ground_command_handle;
-STATUS_TABLE statuss;
-RECEIVE_BUFFERS buffers;
+STATUS_TABLE statuss();
+RECEIVE_BUFFERS buffers();
 TIMER_TABLE timers;
 DATA_SET sample_set;
 HardwareSerial &ground_serial = Serial;
 HardwareSerial &slave_serial = Serial1;
 HardwareSerial &blu_serial = Serial2;
 pump_controller pump( PUMP_PIN );
+REFS_TABLE refs = { readings, ground_command_handle, statuss, buffers, timers, sample_set, ground_serial, slave_serial, blue_serial, pump };
+
 
 state state_machine[MAX_STATE] = { 
-                                   receive_ground( ground_command_handle, readings.gtp, ground_serial, buffers.ground, buffers.ground_index ),
-                                   receive_slave( readings.slave, slave_serial, buffers.slave, buffers.slave_index ),
-                                   downlink_ground( readings, sample_set, statuss, timers, ground_serial, blu_serial ),
-                                   request_slave_reading( slave_serial ),
-                                   command_handler( ground_command_handle ),
-                                   timer_handler( timers, readings.gtp, statuss, pump ),
-                                   sample( sample_set, sensors )                                                 
+                                   receive_ground( refs ),
+                                   receive_slave( refs ),
+                                   downlink_ground( refs ),
+                                   request_slave_reading( refs ),
+                                   command_handler( refs ),
+                                   timer_handler( refs ),
+                                   sample( refs )                                                 
 };
 
 STATE_ID current_state;
