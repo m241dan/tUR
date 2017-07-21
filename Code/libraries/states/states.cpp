@@ -172,6 +172,8 @@ STATE_ID request_slave_reading::run()
 
 STATE_ID command_handler::run()
 {
+    
+
     return NONE_SPECIFIC;
 }
 
@@ -201,6 +203,50 @@ STATE_ID timer_handler::run()
      * This means that next time our now_time is bigger than
      * pump time, toggle it.
      */
+
+    //begin ghetto hack state machine, ya baby
+    //transition
+    switch( refs.statuss.pump_auto )
+    {
+        case PUMP_ON_AUTO:
+            if( refs.statuss.goat_pressure > 100.00 )
+               refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
+            else if( refs.timers.pump_timer < now_time )
+            {
+                refs.timers.pump_auto = PUMP_OFF_AUTO;
+                refs.timers.pump_timer = now_time + FIFTEEN_MINUTES;
+            }
+            break;
+        case PUMP_OFF_AUTO:
+            if( refs.statuss.goat_pressure > 100.00 )
+               refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
+            else if( refs.timers.pump_timer < now_time )
+            {
+                refs.statuss.pump_auto = PUMP_ON_AUTO;
+                refs.timers.pump_timer = now_time + FIFTEEN_MINUTES;
+            }
+            break;
+        case PUMP_OFF_PRESSURE:
+            if( refs.statuss.goat_pressure < 100.00 )
+                refs.statuss.pump_auto = PUMP_ON_AUTO;
+            break;
+        case PUMP_ON_MANUAL:
+        case PUMP_OFF_MANUAL:
+            break;
+    }
+    //action
+    switch( refs.statuss.pump_auto )
+    {
+        case PUMP_ON_AUTO:
+        case PUMP_ON_MANUAL:
+            refs.pump.on();
+            break;
+        case PUMP_OFF_AUTO:
+        case PUMP_OFF_PRESSURE:
+        case PUMP_OFF_MANUAL:
+            refs.pump.off();
+            break;
+    }
     if( refs.timers.pump_timer < now_time && refs.statuss.pump_auto == true )
     {
         if( refs.statuss.goat_pressure < 100.00 )
@@ -210,7 +256,6 @@ STATE_ID timer_handler::run()
             else
                 refs.pump.on();
             refs.statuss.pump_on = refs.statuss.pump_on ? false : true;
-            refs.timers.pump_timer = now_time + FIFTEEN_MINUTES;
         }
         else
         {
