@@ -122,18 +122,7 @@ void downlink_ground::prepareReading( SENSOR_READING &reading )
     /*
      * Determine the Status of the Bump from the Status Table
      */
-    String pump_message = "P: ";
-    if( refs.statuss.pump_on )
-       pump_message += "ON ";
-    else
-       pump_message += "OFF ";
-
-    if( refs.statuss.pump_auto )
-       pump_message += "AUTO";
-    else
-       pump_message += "MANU";
-
-    assignEntry( reading.pump_status, pump_message.c_str(), sizeof( reading.pump_status ) );
+    assignEntry( reading.pump_status, pump_status_string[refs.pump_auto], sizeof( reading.pump_status ) );
     assignEntry( reading.bme_status, refs.statuss.bme_status.c_str(), sizeof( reading.pump_status ) );
     assignEntry( reading.am2315_status, refs.statuss.am2315_status.c_str(), sizeof( reading.am2315_status ) );
     assignEntry( reading.sd_status, refs.statuss.sd_status.c_str(), sizeof( reading.sd_status ) );
