@@ -63,17 +63,20 @@ STATE_ID downlink_ground::run()
             break;
     }
 
-    if( downlink )
+
+    if( downlink && refs.statuss.write_sd )
+        writeSD( *current_reading );
+
+    if( downlink && refs.statuss.downlink_on )
     {
-       writeSD( *current_reading );
-       sendData( refs.blu_serial, (byte *)current_reading, sizeof( SENSOR_READING ) );
-       sendData( refs.ground_serial, (byte *)current_reading, sizeof( SENSOR_READING ) );
+        sendData( refs.blu_serial, (byte *)current_reading, sizeof( SENSOR_READING ) );
+        sendData( refs.ground_serial, (byte *)current_reading, sizeof( SENSOR_READING ) );
 
-       memset( current_reading, 0, sizeof( SENSOR_READING ) );
+        memset( current_reading, 0, sizeof( SENSOR_READING ) );
 
-       refs.statuss.which_bank = refs.statuss.which_bank  == 1 ? 2 : 1;
-       if( refs.statuss.which_bank == 2 )
-          transition = REQUEST_SLAVE_READING;
+        refs.statuss.which_bank = refs.statuss.which_bank  == 1 ? 2 : 1;
+        if( refs.statuss.which_bank == 2 )
+           transition = REQUEST_SLAVE_READING;
     }
     return transition;
 }
@@ -126,7 +129,10 @@ void downlink_ground::prepareReading( SENSOR_READING &reading )
     assignEntry( reading.bme_status, refs.statuss.bme_status.c_str(), sizeof( reading.pump_status ) );
     assignEntry( reading.am2315_status, refs.statuss.am2315_status.c_str(), sizeof( reading.am2315_status ) );
     assignEntry( reading.sd_status, refs.statuss.sd_status.c_str(), sizeof( reading.sd_status ) );
-    assignEntry( reading.reading_status, "ACT AUTO", sizeof( reading.reading_status ) );
+    if( refs.statuss.reading_auto )
+        assignEntry( reading.reading_status, "READ ON", sizeof( reading.reading_status ) );
+    else
+        assignEntry( reading.reading_status, "READ OFF", sizeof( reading.reading_status ) );
 }
 
 void downlink_ground::writeSD( SENSOR_READING &reading )
@@ -161,6 +167,51 @@ STATE_ID request_slave_reading::run()
 
 STATE_ID command_handler::run()
 {
+    GROUND_COMMAND com = refs.ground_command_handle;
+
+    switch( com.command[0] )
+    {
+        default:
+        case ACKNOWLEDGE:
+            break;
+        case ARD_RESET:
+            break;
+        case DOWNLINK_OFF:
+            refs.statuss.downlink_on = false;
+            break;
+        case DOWNLINK_ON:
+            refs.statuss.downlink_on = true;
+            break;
+        case STOP_SENSORS:
+            refs.statuss.reading_auto = false;
+            break;
+        case START_SENSORS:
+            refs.statuss.reading_auto = true;
+            break;
+        case PUMP_ON:
+            refs.statuss.pump_auto = PUMP_ON_MANUAL;
+            break;
+        case PUMP_OFF:
+            refs.statuss.pump_auto = PUMP_OFF_MANUAL;
+            break;
+        case DISABLE_SD:
+            refs.statuss.write_sd = false;
+            break;
+        case ENABLE_SD:
+            refs.statuss.write_sd = true;
+            break;
+        case REINIT_SD:
+            if( !SD.begin( SD_PIN ) )
+            {
+                statuss.sd_status = "SD INIT F";
+            }
+            else
+            {
+                statuss.sd_status = "SD INIT G":
+                statuss.log_name = getNextFile( LOG_NAME );
+            }
+            break;
+    }
 
     return NONE_SPECIFIC;
 }
@@ -257,15 +308,18 @@ STATE_ID timer_handler::run()
  */
 STATE_ID sample::run()
 {
-    refs.sample_set.so2_total += refs.sensors.so2.generateReadingPPM();
-    refs.sample_set.no2_total += refs.sensors.no2.generateReadingPPM();
-    refs.sample_set.o3_total += refs.sensors.o3.generateReadingPPM();
-    refs.sample_set.temp_total += refs.sensors.bme.readTemperature();
-    refs.sample_set.humidity_total += refs.sensors.bme.readHumidity();
-    refs.sample_set.pressure_total += refs.sensors.bme.readPressure() / 100.0F;
-    refs.sample_set.ext_temp_total += refs.sensors.dongle.readTemperature();
-    refs.sample_set.ext_humidity_total += refs.sensors.dongle.readHumidity();
-    refs.sample_set.super_sample++;
+    if( refs.statuss.reading_auto )
+    {
+        refs.sample_set.so2_total += refs.sensors.so2.generateReadingPPM();
+        refs.sample_set.no2_total += refs.sensors.no2.generateReadingPPM();
+        refs.sample_set.o3_total += refs.sensors.o3.generateReadingPPM();
+        refs.sample_set.temp_total += refs.sensors.bme.readTemperature();
+        refs.sample_set.humidity_total += refs.sensors.bme.readHumidity();
+        refs.sample_set.pressure_total += refs.sensors.bme.readPressure() / 100.0F;
+        refs.sample_set.ext_temp_total += refs.sensors.dongle.readTemperature();
+        refs.sample_set.ext_humidity_total += refs.sensors.dongle.readHumidity();
+        refs.sample_set.super_sample++;
+    }
 
     return NONE_SPECIFIC;
 }

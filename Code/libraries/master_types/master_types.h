@@ -49,6 +49,8 @@ typedef struct status_table
     byte which_bank = 1;
     byte slave_wait_sanity = 1;
     double goat_pressure = 1334.00;
+    bool downlink_on = true;
+    bool write_sd = true;
 } STATUS_TABLE;
 
 typedef struct receive_buffers
