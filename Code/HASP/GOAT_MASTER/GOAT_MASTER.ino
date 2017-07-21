@@ -174,7 +174,7 @@ void setup()
     assignEntry( readings.master.pressure_reading, "0.00", sizeof( readings.master.pressure_reading ) );
     assignEntry( readings.master.humidity_reading, "0.00", sizeof( readings.master.humidity_reading ) );
     assignEntry( readings.master.ext_humidity_reading, "0.00", sizeof( readings.master.ext_humidity_reading ) );
-    assignEntry( readings.master.pump_status, "P: OFF AUTO", sizeof( readings.master.pump_status ) );
+    assignEntry( readings.master.pump_status, pump_status_string[statuss.pump_auto], sizeof( readings.master.pump_status ) );
     assignEntry( readings.master.bme_status, statuss.bme_status.c_str(), sizeof( readings.master.bme_status ) );
     assignEntry( readings.master.am2315_status, statuss.am2315_status.c_str(), sizeof( readings.master.am2315_status ) );
     assignEntry( readings.master.sd_status, statuss.sd_status.c_str(), sizeof( readings.master.sd_status ) );
