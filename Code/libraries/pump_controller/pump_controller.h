@@ -3,6 +3,14 @@
 
 #include "Arduino.h"
 
+typedef enum : byte
+{
+   PUMP_ON_AUTO, PUMP_OFF_AUTO, PUMP_OFF_PRESSURE, PUMP_ON_MANUAL, PUMP_OFF_MANUAL, MAX_PUMP
+} PUMP_STATUS;
+
+const char *const pump_status_string[MAX_PUMP] = { "P:ON AUTO", "P:OFF AUTO",
+    "P:OFF PRESSURE", "P:ON MANUAL", "P:OFF MANUAL" };
+
 class pump_controller
 {
     public:
