@@ -36,24 +36,24 @@ STATE_ID downlink_ground::run()
 {
     STATE_ID transition = NONE_SPECIFIC;
     bool downlink = false;
-    SENSOR_READING &current_reading = refs.readings.master;
+    SENSOR_READING *current_reading = &refs.readings.master;
 
 
     switch( refs.statuss.which_bank )
     {
         case 1:
-            prepareReading( current_reading );
+            prepareReading( *current_reading );
             downlink = true;
             break;
         case 2:
-            current_reading = refs.readings.slave;
-            if( current_reading.header[0] == 0 )
+            current_reading = &refs.readings.slave;
+            if( current_reading->header[0] == 0 )
             {
                 if( refs.statuss.slave_wait_sanity++ > 10 )
                 {
                     refs.statuss.which_bank = 1;
                     refs.statuss.slave_wait_sanity = 0;
-                    transition = REQUEST_READING;
+                    transition = REQUEST_SLAVE_READING;
                 }
                 downlink = false;
             }
@@ -64,15 +64,15 @@ STATE_ID downlink_ground::run()
 
     if( downlink )
     {
-       writeSD( current_reading );
-       sendData( refs.blu_serial, (byte *)&current_reading, sizeof( SENSOR_READING ) );
-       sendData( refs.ground_serial, (byte *)&current_reading, sizeof( SENSOR_READING ) );
+       writeSD( *current_reading );
+       sendData( refs.blu_serial, (byte *)current_reading, sizeof( SENSOR_READING ) );
+       sendData( refs.ground_serial, (byte *)current_reading, sizeof( SENSOR_READING ) );
 
-       memset( &current_reading, 0, sizeof( SENSOR_READING ) );
+       memset( current_reading, 0, sizeof( SENSOR_READING ) );
 
        refs.statuss.which_bank = refs.statuss.which_bank  == 1 ? 2 : 1;
        if( refs.statuss.which_bank == 2 )
-          transition = REQUEST_READING;
+          transition = REQUEST_SLAVE_READING;
     }
     return transition;
 }

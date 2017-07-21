@@ -170,5 +170,5 @@ void sendCommand( HardwareSerial &serial, unsigned char command )
 {
    GROUND_COMMAND com;
    com.command[0] = command;
-   sendData( serial, (byte *)&com, sizeof( com ) );
+   sendData( serial, (byte *)&com, sizeof( GROUND_COMMAND ) );
 }

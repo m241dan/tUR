@@ -23,13 +23,15 @@ class Spec
    public:
       Spec( specType s_type, int g, int r, int t, double code );
 
-      String generateRawReading( char delim, bool perr, bool newline );
+      String generateRawReading( char delim, bool perr = false, bool newline = false );
       String generateRawVerboseReading();
       int generateReadingPPM();
    private:
       //Functions
       double rawReadingToPPM( int vgas, int vref, int vtmp );
+      double getTemperature();
       void takeReading();
+
       //Vars
       specType type;
       int vgas_pin;

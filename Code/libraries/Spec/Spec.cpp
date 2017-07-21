@@ -81,3 +81,8 @@ void Spec::takeReading()
     vref_reading = analogRead( vref_pin ) * ( 5.0 / 1024.0 );
     vtmp_reading = analogRead( vtmp_pin ) * ( 5.0 / 1024.0 );
 }
+
+double Spec::getTemperature()
+{
+    return ( 87.0 * vtmp_reading - 18.00 );
+}
