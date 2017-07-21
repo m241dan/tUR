@@ -203,12 +203,12 @@ STATE_ID command_handler::run()
         case REINIT_SD:
             if( !SD.begin( SD_PIN ) )
             {
-                statuss.sd_status = "SD INIT F";
+                refs.statuss.sd_status = "SD INIT F";
             }
             else
             {
-                statuss.sd_status = "SD INIT G":
-                statuss.log_name = getNextFile( LOG_NAME );
+                refs.statuss.sd_status = "SD INIT G";
+                refs.statuss.log_name = getNextFile( LOG_NAME );
             }
             break;
     }
