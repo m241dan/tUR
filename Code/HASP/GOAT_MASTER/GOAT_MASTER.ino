@@ -208,7 +208,9 @@ void setup()
 }
 
 void loop()
-{ current_state = state_machine[current_state]->run();
-  if ( current_state == NONE_SPECIFIC )
-    current_state = determineTransition();
+{
+    Serial.println( "Pump Timer: " + String( (unsigned long)timers.pump_timer ) );
+    current_state = state_machine[current_state]->run();
+    if ( current_state == NONE_SPECIFIC )
+        current_state = determineTransition();
 }
