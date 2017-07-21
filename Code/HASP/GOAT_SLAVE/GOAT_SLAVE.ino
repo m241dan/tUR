@@ -1,21 +1,18 @@
 
 #include "slave_globals.h"
-#include "goat_slave_funcs.h"
 #include "goat_funcs.h"
 
 Spec so2( SPEC_SO2, A0, A1, A2, 43.54 );
 Spec no2( SPEC_NO2, A3, A4, A5, 43.53 );
 Spec o3( SPEC_O3, A6, A7, A8, 43.56 );
 Adafruit_BME280 bme( BME_PIN );
-GROUND_COMMAND current_command;
-SENSOR_READING slave_reading;
 byte receive_buffer[MAX_BUF];
 unsigned int buffer_index;
-String reading_status = "GOOD";
+String reading_status = "FIRST";
 String bme_status;
 
 //Data set struct that holds our data
-typedef struct data_set
+struct slave_data_set
 {
     double so2_total = 0;
     double so2_count = 0;
@@ -30,9 +27,7 @@ typedef struct data_set
     double pressure_total = 0;
     double pressure_count = 0;
     
-}DATA_SET;
-
-DATA_SET sample_set;
+} sample_set;
 
 void setupSlaveSerials( void )
 {
@@ -43,17 +38,8 @@ void setupSlaveSerials( void )
 
 void setupSlaveGlobals( void )
 {
-    memset( &slave_reading.time[0], ' ', sizeof( slave_reading ) - 4 );
     memset( &receive_buffer[0], 0, MAX_BUF );
     buffer_index = 0;
-
-    assignEntry( slave_reading.time, C_TIME(), sizeof( slave_reading.time ) );
-    assignEntry( slave_reading.bank, "2", sizeof( slave_reading.bank ) );
-    assignEntry( slave_reading.extt_reading, "DNA", sizeof( slave_reading.extt_reading ) );
-    assignEntry( slave_reading.ext_humidity_reading, "DNA", sizeof( slave_reading.ext_humidity_reading ) $
-    assignEntry( slave_reading.pump_status, "DNA", sizeof( slave_reading.pump_status ) );
-    assignEntry( slave_reading.sd_status, "DNA", sizeof( slave_reading.sd_status ) );
-    assignEntry( slave_reading.reading_status, "FIRST", sizeof( slave_reading.reading_status ) );
 }
 
 void setupSlaveSensors( void )
@@ -62,25 +48,46 @@ void setupSlaveSensors( void )
        bme_status = "BIFD";
     else
        bme_status = "BIGD";
-    assignEntry( slave_reading.temp_reading, bme_status.c_str(), sizeof( slave_reading.temp_reading ) );
 }
-
 
 void setup()
 {
+    SENSOR_READING slave_reading;
+    GROUND_COMMAND current_command;
     //Setup and initialize sensors
     setupSlaveSerials();
     setupSlaveGlobals();
     setupSlaveSensors();
 
     delay( 10000 );
+
+    slave_reading.header[0] = '\x01';
+    slave_reading.header[1] = '\x21';
+    slave_reading.terminator[0] = '\r';
+    slave_reading.terminator[1] = '\n';
     assignEntry( slave_reading.time, C_TIME(), sizeof( slave_reading.time ) );
+    assignEntry( slave_reading.bank, "2", sizeof( slave_reading.bank ) );
+    assignEntry( slave_reading.so2_reading, "0.00", sizeof( slave_reading.so2_reading ) );
+    assignEntry( slave_reading.no2_reading, "0.00", sizeof( slave_reading.no2_reading ) );
+    assignEntry( slave_reading.o3_reading, "0.00", sizeof( slave_reading.o3_reading ) );
+    assignEntry( slave_reading.temp_reading, "0.00", sizeof( slave_reading.temp_reading ) );
+    assignEntry( slave_reading.extt_reading, "SLAVE", sizeof( slave_reading.extt_reading ) );
+    assignEntry( slave_reading.pressure_reading, "0.00", sizeof( slave_reading.pressure_reading ) );
+    assignEntry( slave_reading.humidity_reading, "0%", sizeof( slave_reading.humidity_reading ) );
+    assignEntry( slave_reading.ext_humidity_reading, "SLAVE", sizeof( slave_reading.ext_humidity_reading ) );
+    assignEntry( slave_reading.pump_status, "SLAVE", sizeof( slave_reading.pump_status ) );
+    assignEntry( slave_reading.bme_status, bme_status.c_str(), sizeof( slave_reading.bme_status ) );
+    assignEntry( slave_reading.am2315_status, "SLAVE", sizeof( slave_reading.am2315_status ) );
+    assignEntry( slave_reading.sd_status, "SLAVE", sizeof( slave_reading.sd_status ) );
+    assignEntry( slave_reading.reading_status, reading_status.c_str(), sizeof( slave_reading ) );
+
     sendData( Serial, (byte *)&slave_reading, sizeof( slave_reading ) );
 
     while( !Serial.available() ); //block and wait for acknowledgement
     while( 1 ) 
     {
-        while( receiveData( Serial, receive_buffer, buffer_index, nullptr, &current_command, nullptr ) == TRANS_INCOMPLETE ); //block until we get the something
+        while( receiveData( Serial, receive_buffer, buffer_index ) == TRANS_INCOMPLETE ); //block until we get the something
+        bufferToCommand( receive_buffer, current_command );
         if( current_command.command[0] == ACKNOWLEDGE )
            break;
     }
@@ -96,24 +103,32 @@ void loop()
 void checkMaster( void )
 { 
     TRANS_TYPE transmission;
+    GROUND_COMMAND current_command;
+
     if( !Serial.available() )
         return;
 
-    if( ( transmission = receiveData( Serial, receive_buffer, buffer_index, nullptr, &current_command, nullptr ) ) == TRANS_INCOMPLETE )
+    if( ( transmission = receiveData( Serial, receive_buffer, buffer_index ) ) == TRANS_INCOMPLETE )
         return;
     else if( transmission == TRANS_COMMAND )
     {        
-        if( current_command.command[0] == REQUEST_READING )
+        if( bufferToCommand( receive_buffer, current_command ) )
         {
-            //Prepare to initiate slave readings
-            downlinkToMaster();
+            reading_status = "CMD RECEIVED";
+            if( current_command.command[0] == REQUEST_READING )
+            {
+                //Prepare to initiate slave readings
+                downlinkToMaster();
+            }
         }
+        else
+            reading_status = "BAD COMMAND";
     }
 }
 
 void downlinkToMaster( void )
 {
-   prepareReading();
+   SENSOR_READING slave_reading = prepareReading();
    //Send the data
    sendData( Serial, (byte *)&slave_reading, sizeof( slave_reading ) );
 }
@@ -135,8 +150,9 @@ void sample( void )
    
 }
 
-void prepareReading( void )
+SENSOR_READING prepareReading( void )
 {
+    SENSOR_READING slave_reading;
     double so2_ppm;
     double no2_ppm;
     double o3_ppm;
@@ -152,25 +168,27 @@ void prepareReading( void )
     humidity = sample_set.humidity_total / sample_set.humidity_count;
     pressure = sample_set.pressure_total / sample_set.pressure_count;
 
-    memset( &sample_set, 0 , sizeof( sample_set ) );
-
+    slave_reading.header[0] = '\x01';
+    slave_reading.header[1] = '\x21';
+    slave_reading.terminator[0] = '\r';
+    slave_reading.terminator[1] = '\n';
     assignEntry( slave_reading.time, C_TIME(), sizeof( slave_reading.time) );
     assignEntry( slave_reading.bank, "2", sizeof( slave_reading.bank) );
     assignEntry( slave_reading.so2_reading, String( so2_ppm ).c_str(), sizeof( slave_reading.so2_reading ) );
     assignEntry( slave_reading.no2_reading, String( no2_ppm ).c_str(), sizeof( slave_reading.no2_reading ) );
     assignEntry( slave_reading.o3_reading, String( o3_ppm).c_str(), sizeof( slave_reading.o3_reading ) );
-    if( bme_status != "BIFD" )
-    {
-        assignEntry( slave_reading.temp_reading, String( temp ).c_str(), sizeof( slave_reading.temp_reading ) );
-        assignEntry( slave_reading.pressure_reading, String( pressure ).c_str(), sizeof( slave_reading.pressure_reading ) );
-        assignEntry( slave_reading.humidity_reading, String( humidity ).c_str(), sizeof( slave_reading.humidity_reading ) );
-        
-    }
-
-    assignEntry( slave_reading.reading_status, reading_status.c_str(), sizeof( slave_reading.reading_status ) );
-
-    
-    
+    assignEntry( slave_reading.temp_reading, String( temp ).c_str(), sizeof( slave_reading.temp_reading ) );
+    assignEntry( slave_reading.extt_reading, "SLAVE", sizeof( slave_reading.extt_reading ) );
+    assignEntry( slave_reading.pressure_reading, String( pressure ).c_str(), sizeof( slave_reading.pressure_reading ) );
+    assignEntry( slave_reading.humidity_reading, String( humidity ).c_str(), sizeof( slave_reading.humidity_reading ) );
+    assignEntry( slave_reading.pressure_reading, "0.00", sizeof( slave_reading.pressure_reading ) );
+    assignEntry( slave_reading.humidity_reading, "0%", sizeof( slave_reading.humidity_reading ) );
+    assignEntry( slave_reading.ext_humidity_reading, "SLAVE", sizeof( slave_reading.ext_humidity_reading ) );
+    assignEntry( slave_reading.pump_status, "SLAVE", sizeof( slave_reading.pump_status ) );
+    assignEntry( slave_reading.bme_status, bme_status.c_str(), sizeof( slave_reading.bme_status ) );
+    assignEntry( slave_reading.am2315_status, "SLAVE", sizeof( slave_reading.am2315_status ) );
+    assignEntry( slave_reading.sd_status, "SLAVE", sizeof( slave_reading.sd_status ) );
+    assignEntry( slave_reading.reading_status, reading_status.c_str(), sizeof( slave_reading ) );
 }
 
 
