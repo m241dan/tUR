@@ -15,6 +15,7 @@ STATE_ID receive_ground::run()
               break;
            case TRANS_GTP:
               bufferToGTP( refs.buffers.ground, refs.readings.gtp );
+              refs.timers.gtp_received_at = millis();
               break;
         }
     }
@@ -101,7 +102,7 @@ void downlink_ground::prepareReading( SENSOR_READING &reading )
     ext_temp = refs.sample_set.ext_temp_total / refs.sample_set.super_sample;
     ext_humidity = refs.sample_set.ext_humidity_total / refs.sample_set.super_sample;
 
-    synced_now_time = refs.readings.gtp.utc_time + ( ( millis() - refs.timers.gtp_received_at ) / 100.00F );
+    synced_now_time = refs.readings.gtp.utc_time + ( ( millis() - refs.timers.gtp_received_at ) / 1000.00F );
 
     reading.header[0] = '\x01';
     reading.header[1] = '\x21';
