@@ -40,8 +40,7 @@ typedef struct readings_table
 typedef struct status_table
 {
     String log_name = "";
-    bool pump_on = false;
-    bool pump_auto = true;
+    PUMP_STATUS pump_auto = PUMP_OFF_AUTO;
     String reading_status = "";
     bool reading_auto = true;
     String sd_status = "";
