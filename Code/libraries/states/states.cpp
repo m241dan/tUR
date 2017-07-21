@@ -176,7 +176,6 @@ STATE_ID timer_handler::run()
 {
     STATE_ID transition = SAMPLE;
     unsigned long long now_time = millis();
-    Serial.println( "now is..." + String( (unsigned long)now_time ) );
     /*
      * sync timers data with HASP time
      */

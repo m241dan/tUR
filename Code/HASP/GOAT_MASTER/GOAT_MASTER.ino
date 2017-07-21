@@ -66,7 +66,7 @@ void setupMasterSerials()
 void setupMasterGlobals()
 {
     statuss.log_name = getNextFile( LOG_NAME );
-    timers.pump_timer = millis() + ( 30 * 1000 ); //Start the pump 30 seconds after start
+    timers.pump_timer = millis() + ( 60ULL * 1000ULL ); //Toggle pump in 60 seconds after start
     timers.downlink_schedule = millis() + ( 20 * 1000 ); //Downlink the first reading 20 seconds from this time
 }
 
@@ -209,7 +209,6 @@ void setup()
 
 void loop()
 {
-    Serial.println( "Pump Timer: " + String( (unsigned long)timers.pump_timer ) );
     current_state = state_machine[current_state]->run();
     if ( current_state == NONE_SPECIFIC )
         current_state = determineTransition();
