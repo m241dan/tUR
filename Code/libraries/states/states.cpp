@@ -122,7 +122,7 @@ void downlink_ground::prepareReading( SENSOR_READING &reading )
     /*
      * Determine the Status of the Bump from the Status Table
      */
-    assignEntry( reading.pump_status, pump_status_string[refs.pump_auto], sizeof( reading.pump_status ) );
+    assignEntry( reading.pump_status, pump_status_string[refs.statuss.pump_auto], sizeof( reading.pump_status ) );
     assignEntry( reading.bme_status, refs.statuss.bme_status.c_str(), sizeof( reading.pump_status ) );
     assignEntry( reading.am2315_status, refs.statuss.am2315_status.c_str(), sizeof( reading.am2315_status ) );
     assignEntry( reading.sd_status, refs.statuss.sd_status.c_str(), sizeof( reading.sd_status ) );
@@ -202,7 +202,7 @@ STATE_ID timer_handler::run()
                refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
             else if( refs.timers.pump_timer < now_time )
             {
-                refs.timers.pump_auto = PUMP_OFF_AUTO;
+                refs.statuss.pump_auto = PUMP_OFF_AUTO;
                 refs.timers.pump_timer = now_time + FIFTEEN_MINUTES;
             }
             break;
@@ -236,24 +236,6 @@ STATE_ID timer_handler::run()
             refs.pump.off();
             break;
     }
-    if( refs.timers.pump_timer < now_time && refs.statuss.pump_auto == true )
-    {
-        if( refs.statuss.goat_pressure < 100.00 )
-        {
-            if( refs.statuss.pump_on )
-                refs.pump.off();
-            else
-                refs.pump.on();
-            refs.statuss.pump_on = refs.statuss.pump_on ? false : true;
-        }
-        else
-        {
-            refs.pump.off();
-            refs.statuss.pump_on = false;
-            refs.timers.pump_timer = now_time + ( 1000 * 60 ); //ie, check back in a minute
-        }
-    }
-
     /*
      * Check if it is time to downlink, if it is
      * we use a specific transition to head to downlink
