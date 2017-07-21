@@ -79,9 +79,9 @@ void setup()
     assignEntry( slave_reading.bme_status, bme_status.c_str(), sizeof( slave_reading.bme_status ) );
     assignEntry( slave_reading.am2315_status, "SLAVE", sizeof( slave_reading.am2315_status ) );
     assignEntry( slave_reading.sd_status, "SLAVE", sizeof( slave_reading.sd_status ) );
-    assignEntry( slave_reading.reading_status, reading_status.c_str(), sizeof( slave_reading ) );
+    assignEntry( slave_reading.reading_status, reading_status.c_str(), sizeof( slave_reading.reading_status ) );
 
-    sendData( Serial, (byte *)&slave_reading, sizeof( slave_reading ) );
+    sendData( Serial, (byte *)&slave_reading, sizeof( SENSOR_READING ) );
 
     while( !Serial.available() ); //block and wait for acknowledgement
     while( 1 ) 
@@ -130,7 +130,7 @@ void downlinkToMaster( void )
 {
    SENSOR_READING slave_reading = prepareReading();
    //Send the data
-   sendData( Serial, (byte *)&slave_reading, sizeof( slave_reading ) );
+   sendData( Serial, (byte *)&slave_reading, sizeof( SENSOR_READING ) );
 }
 
 void sample( void )
@@ -188,7 +188,7 @@ SENSOR_READING prepareReading( void )
     assignEntry( slave_reading.bme_status, bme_status.c_str(), sizeof( slave_reading.bme_status ) );
     assignEntry( slave_reading.am2315_status, "SLAVE", sizeof( slave_reading.am2315_status ) );
     assignEntry( slave_reading.sd_status, "SLAVE", sizeof( slave_reading.sd_status ) );
-    assignEntry( slave_reading.reading_status, reading_status.c_str(), sizeof( slave_reading ) );
+    assignEntry( slave_reading.reading_status, reading_status.c_str(), sizeof( slave_reading.reading_status ) );
 }
 
 
