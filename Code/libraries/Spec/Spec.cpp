@@ -84,5 +84,5 @@ void Spec::takeReading()
 
 double Spec::getTemperature()
 {
-    return ( 87.0 * vtmp_reading - 18.00 );
+    return ( ( 87.0 * vtmp_reading - 18.00 ) - 32.0) * ( 5.0 / 9.0 );
 }
