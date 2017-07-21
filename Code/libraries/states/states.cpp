@@ -161,7 +161,6 @@ STATE_ID request_slave_reading::run()
 
 STATE_ID command_handler::run()
 {
-    
 
     return NONE_SPECIFIC;
 }
@@ -236,6 +235,8 @@ STATE_ID timer_handler::run()
             refs.pump.off();
             break;
     }
+    //end super awesome ghetto hack state machine
+
     /*
      * Check if it is time to downlink, if it is
      * we use a specific transition to head to downlink
