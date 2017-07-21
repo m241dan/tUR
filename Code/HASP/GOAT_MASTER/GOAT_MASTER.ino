@@ -205,8 +205,6 @@ void setup()
   sendCommand( slave_serial, ACKNOWLEDGE );
   sendData( ground_serial, (byte *)&readings.slave, sizeof( SENSOR_READING ) );
   sendData( blu_serial, (byte *)&readings.slave, sizeof( SENSOR_READING ) );
-
-  Serial.println( "Exiting the Setup loop" );
 }
 
 void loop()
