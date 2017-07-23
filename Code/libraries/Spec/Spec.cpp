@@ -1,5 +1,5 @@
 #include "Spec.h"
-
+#include "Arduino.h"
 Spec::Spec( specType s_type, int g, int r, int t, double code ) : type(s_type), vgas_pin(g), vref_pin(r), vtmp_pin(t), sensitivity_code(code)
 {
    //O3 and NO2 are the same
@@ -16,7 +16,7 @@ Spec::Spec( specType s_type, int g, int r, int t, double code ) : type(s_type), 
    //janky but it is what it is
    if( type == SPEC_SO2 )
       TIA = 100.00;
-   M = 1.00 / ( ( sensitivity_code * (TIA * TIA_E ) ) * 1000 );
+   M = sensitivity_code * (TIA * 0.000000001 ) * 1000.00;
 }
 
 String Spec::generateRawReading( char delim, bool perr, bool newline )
@@ -64,14 +64,13 @@ String Spec::generateRawVerboseReading()
    return reading;
 }
 
-int Spec::generateReadingPPM()
+double Spec::generateReadingPPM()
 {
     double reading_ppm;
 
     takeReading();
-
-    reading_ppm = M * (vgas_reading - vref_reading );
-
+    reading_ppm = (vgas_reading - vref_reading ) / M;
+    reading_ppm = reading_ppm < 0 ? 0 : reading_ppm;
     return reading_ppm;
 }
 
