@@ -268,7 +268,7 @@ STATE_ID timer_handler::run()
             break;
         case PUMP_OFF_PRESSURE:
 //            if( refs.statuss.goat_pressure < 100.00 )
-//                refs.statuss.pump_auto = PUMP_ON_AUTO;
+                refs.statuss.pump_auto = PUMP_ON_AUTO;
             break;
         case PUMP_ON_MANUAL:
         case PUMP_OFF_MANUAL:
