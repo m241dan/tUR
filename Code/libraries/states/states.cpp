@@ -247,26 +247,28 @@ STATE_ID timer_handler::run()
     switch( refs.statuss.pump_auto )
     {
         case PUMP_ON_AUTO:
-            if( refs.statuss.goat_pressure > 100.00 )
-               refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
-            else if( refs.timers.pump_timer < now_time )
+//            if( refs.statuss.goat_pressure > 100.00 )
+//               refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
+//            else if( refs.timers.pump_timer < now_time )
+            if( refs.timers.pump_timer < now_time )
             {
                 refs.statuss.pump_auto = PUMP_OFF_AUTO;
                 refs.timers.pump_timer = now_time + FIFTEEN_MINUTES;
             }
             break;
         case PUMP_OFF_AUTO:
-            if( refs.statuss.goat_pressure > 100.00 )
-               refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
-            else if( refs.timers.pump_timer < now_time )
+//            if( refs.statuss.goat_pressure > 100.00 )
+  //             refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
+//            else if( refs.timers.pump_timer < now_time )
+            if( refs.timers.pump_timer < now_time )
             {
                 refs.statuss.pump_auto = PUMP_ON_AUTO;
                 refs.timers.pump_timer = now_time + FIFTEEN_MINUTES;
             }
             break;
         case PUMP_OFF_PRESSURE:
-            if( refs.statuss.goat_pressure < 100.00 )
-                refs.statuss.pump_auto = PUMP_ON_AUTO;
+//            if( refs.statuss.goat_pressure < 100.00 )
+//                refs.statuss.pump_auto = PUMP_ON_AUTO;
             break;
         case PUMP_ON_MANUAL:
         case PUMP_OFF_MANUAL:
