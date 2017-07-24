@@ -18,8 +18,8 @@
    Organized Globals (hopefully, they seem organized \(o.o)/ )
 */
 
-SENSOR_TABLE sensors = { Spec( SPEC_SO2, A0, A1, A2, 43.45 ), Spec( SPEC_NO2, A3, A4, A5, 43.45 ),
-                         Spec( SPEC_O3, A6, A7, A8, 43.45 ), Adafruit_BME280( BME_PIN ), Adafruit_AM2315()
+SENSOR_TABLE sensors = { Spec( SPEC_SO2, A0, A1, A2, 36.82 ), Spec( SPEC_NO2, A3, A4, A5, 36.50 ),
+                         Spec( SPEC_O3, A6, A7, A8, 13.37 ), Adafruit_BME280( BME_PIN ), Adafruit_AM2315()
                        };
 READINGS_TABLE readings;
 GROUND_COMMAND ground_command_handle;
