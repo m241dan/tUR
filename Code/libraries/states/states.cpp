@@ -28,8 +28,9 @@ STATE_ID receive_slave::run()
     TRANS_TYPE transmission;
 
     if( ( transmission = receiveData( refs.slave_serial, refs.buffers.slave, refs.buffers.slave_index ) ) != TRANS_INCOMPLETE )
+    {
         bufferToReading( refs.buffers.slave, refs.readings.slave );
-
+    }
     return NONE_SPECIFIC;
 }
 
@@ -69,7 +70,7 @@ STATE_ID downlink_ground::run()
 
     if( downlink && refs.statuss.downlink_on )
     {
-        sendData( refs.blu_serial, (byte *)current_reading, sizeof( SENSOR_READING ) );
+//        sendData( refs.blu_serial, (byte *)current_reading, sizeof( SENSOR_READING ) );
         sendData( refs.ground_serial, (byte *)current_reading, sizeof( SENSOR_READING ) );
 
         memset( current_reading, 0, sizeof( SENSOR_READING ) );
@@ -133,6 +134,8 @@ void downlink_ground::prepareReading( SENSOR_READING &reading )
         assignEntry( reading.reading_status, "READ ON", sizeof( reading.reading_status ) );
     else
         assignEntry( reading.reading_status, "READ OFF", sizeof( reading.reading_status ) );
+
+    memset( &refs.sample_set, 0, sizeof( DATA_SET ) );
 }
 
 void downlink_ground::writeSD( SENSOR_READING &reading )

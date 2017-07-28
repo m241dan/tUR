@@ -18,8 +18,8 @@
    Organized Globals (hopefully, they seem organized \(o.o)/ )
 */
 
-SENSOR_TABLE sensors = { Spec( SPEC_SO2, A0, A1, A2, 36.82 ), Spec( SPEC_NO2, A3, A4, A5, 36.50 ),
-                         Spec( SPEC_O3, A6, A7, A8, 13.37 ), Adafruit_BME280( BME_PIN ), Adafruit_AM2315()
+SENSOR_TABLE sensors = { Spec( SPEC_SO2, A0, A1, A2, 36.89 ), Spec( SPEC_NO2, A3, A4, A5, -36.50 ),
+                         Spec( SPEC_O3, A6, A7, A8, -13.37 ), Adafruit_BME280( BME_PIN ), Adafruit_AM2315()
                        };
 READINGS_TABLE readings;
 GROUND_COMMAND ground_command_handle;
@@ -27,9 +27,9 @@ STATUS_TABLE statuss;
 RECEIVE_BUFFERS buffers;
 TIMER_TABLE timers;
 DATA_SET sample_set;
-HardwareSerial &ground_serial = Serial;
+HardwareSerial &ground_serial = Serial2;
 HardwareSerial &slave_serial = Serial1;
-HardwareSerial &blu_serial = Serial2;
+HardwareSerial &blu_serial = Serial;
 pump_controller pump( PUMP_PIN );
 REFS_TABLE refs = { sensors, readings, ground_command_handle, statuss, buffers, timers, sample_set, ground_serial, slave_serial, blu_serial, pump };
 
@@ -52,11 +52,6 @@ void setupMasterSerials()
   slave_serial.begin( 300 );
   while ( !slave_serial );
 
-  /*
-     Don't want to bother figuring out how to handle pointers to serials...
-  */
-  Serial2.begin( 9600 );
-  while ( !Serial2 );
 }
 
 /*
@@ -92,7 +87,7 @@ void setupMasterSensors( void )
     statuss.bme_status = "BIGD";
 
   /*
-     Setup the AM2315
+     Setup the AM2315b
      Update status message accordingly
   */
   if ( !sensors.dongle.begin() )
@@ -187,7 +182,7 @@ void setup()
      2.) Downlink to Bluetooth (if the BT hack is still in place )
   */
   sendData( ground_serial, (byte *)&readings.master, sizeof( readings.master ) );
-  sendData( blu_serial, (byte *)&readings.master, sizeof( readings.master ) );
+  //sendData( blu_serial, (byte *)&readings.master, sizeof( readings.master ) );
 
   /*
      Once the data has been downlinked...
@@ -204,7 +199,7 @@ void setup()
 
   sendCommand( slave_serial, ACKNOWLEDGE );
   sendData( ground_serial, (byte *)&readings.slave, sizeof( SENSOR_READING ) );
-  sendData( blu_serial, (byte *)&readings.slave, sizeof( SENSOR_READING ) );
+  //sendData( blu_serial, (byte *)&readings.slave, sizeof( SENSOR_READING ) );
 }
 
 void loop()
