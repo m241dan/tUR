@@ -1,6 +1,6 @@
 #include "Spec.h"
 #include "Arduino.h"
-Spec::Spec( specType s_type, int g, int r, int t, double code ) : type(s_type), vgas_pin(g), vref_pin(r), vtmp_pin(t), sensitivity_code(code)
+Spec::Spec( specType s_type, int g, int r, int t, double code, double offset ) : type(s_type), vgas_pin(g), vref_pin(r), vtmp_pin(t), sensitivity_code(code), v_offset(offset)
 {
    //O3 and NO2 are the same
    double TIA = 499.00;
@@ -67,9 +67,13 @@ String Spec::generateRawVerboseReading()
 double Spec::generateReadingPPM()
 {
     double reading_ppm;
+    double vgas_offset;
 
     takeReading();
-    reading_ppm = (vgas_reading - vref_reading ) / M;
+
+    vgas_offset = vref_reading - v_offset;
+
+    reading_ppm = (vgas_reading - vgas_offset ) / M;
     reading_ppm = reading_ppm < 0 ? 0 : reading_ppm;
     return reading_ppm;
 }

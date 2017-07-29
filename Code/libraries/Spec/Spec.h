@@ -21,7 +21,7 @@ typedef enum : byte
 class Spec
 {
    public:
-      Spec( specType s_type, int g, int r, int t, double code );
+      Spec( specType s_type, int g, int r, int t, double code, double offset = 0.00 );
 
       String generateRawReading( char delim, bool perr = false, bool newline = false );
       String generateRawVerboseReading();
@@ -42,6 +42,7 @@ class Spec
       double vtmp_reading;
       double sensitivity_code;
       double M;
+      double v_offset;
 
 };
 
