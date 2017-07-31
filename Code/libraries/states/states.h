@@ -34,14 +34,6 @@ class receive_ground : public state
         virtual STATE_ID run();
 };
 
-class receive_slave : public state
-{
-    public:
-        //functions
-        receive_slave( REFS_TABLE &r ) : state( r ) {}
-        virtual STATE_ID run();
-};
-
 class downlink_ground : public state
 {
     public:
@@ -50,16 +42,8 @@ class downlink_ground : public state
         virtual STATE_ID run();
     private:
         //functions
-        void prepareReading( SENSOR_READING &reading );
+        void prepareReading( SENSOR_READING &reading, byte bank );
         void writeSD( SENSOR_READING &reading );
-};
-
-class request_slave_reading : public state
-{
-    public:
-        //functions
-        request_slave_reading( REFS_TABLE &r ) : state( r ) {}
-        virtual STATE_ID run();
 };
 
 class command_handler : public state
