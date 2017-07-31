@@ -1,5 +1,7 @@
 #include "Spec.h"
 #include "Arduino.h"
+#define OVER_SAMPLE 16
+
 Spec::Spec( specType s_type, int g, int r, int t, double code, double offset ) : type(s_type), vgas_pin(g), vref_pin(r), vtmp_pin(t), sensitivity_code(code), v_offset(offset)
 {
    //O3 and NO2 are the same
@@ -80,9 +82,26 @@ double Spec::generateReadingPPM()
 
 void Spec::takeReading()
 {
-    vgas_reading = analogRead( vgas_pin ) * ( 5.0 / 1024.0 );
-    vref_reading = analogRead( vref_pin ) * ( 5.0 / 1024.0 );
-    vtmp_reading = analogRead( vtmp_pin ) * ( 5.0 / 1024.0 );
+    vgas_reading = analogRead( vgas_pin );
+    delay( 10 );
+    vgas_reading = 0;
+    for( int c = 0; c < OVER_SAMPLE; c++ )
+        vgas_reading += analogRead( vgas_pin ) * ( 5. / 1023. );
+    vgas_reading /= OVER_SAMPLE;
+
+    vref_reading = analogRead( vref_pin );
+    delay( 10 );
+    vref_reading = 0;
+    for( int c = 0; c < OVER_SAMPLE; c++ )
+        vref_reading += analogRead( vref_pin ) * ( 5. / 1023. );
+    vref_reading /= OVER_SAMPLE;
+
+    vtmp_reading = analogRead( vtmp_pin );
+    delay( 10 );
+    vtmp_reading = 0;
+    for( int c = 0; c < OVER_SAMPLE; c++ )
+        vtmp_reading += analogRead( vtmp_pin ) * ( 5. / 1023. );
+    vtmp_reading /= OVER_SAMPLE;
 }
 
 double Spec::getTemperature()
