@@ -19,7 +19,7 @@ GTP_DATA spoof_gps;
 unsigned long long time_schedule;
 unsigned long long time_command;
 
-byte possible_commands[12] = { ARD_RESET, DOWNLINK_OFF, DOWNLINK_ON, STOP_SENSORS, START_SENSORS, PUMP_ON, PUMP_OFF, DISABLE_SD, ENABLE_SD, REINIT_SD, BANK_ONE, BANK_TWO };
+byte possible_commands[10] = { ARD_RESET, DOWNLINK_OFF, DOWNLINK_ON, STOP_SENSORS, START_SENSORS, PUMP_ON, PUMP_OFF, DISABLE_SD, ENABLE_SD, REINIT_SD };
 
 void setup()
 {

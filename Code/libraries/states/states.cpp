@@ -22,13 +22,12 @@ STATE_ID receive_ground::run()
               break;
         }
     }
-    Serial2.println( "Transmission: " + String( transmission ) );
     return transition;
 }
 
 STATE_ID downlink_ground::run()
 {
-    SENSOR_READING *current_reading = &refs.readings.babi_reading;
+    SENSOR_READING current_reading;
 
 
     if( !refs.statuss.write_sd )
@@ -36,30 +35,27 @@ STATE_ID downlink_ground::run()
     switch( refs.statuss.which_bank )
     {
         case 1:
-            prepareReading( current_reading, 1 );
+            current_reading = prepareReading( 1 );
             break;
         case 2:
-            current_reading = &refs.readings.goat_reading;
-            prepareReading( current_reading, 2 );
+            current_reading = prepareReading( 2 );
             break;
     }
 
-    Serial.println( "In Downlink: " + String( pump_status_string[refs.statuss.pump_auto] ) );
-
     if( refs.statuss.write_sd )
-        writeSD( *current_reading );
+        writeSD( &current_reading );
 
     if( refs.statuss.downlink_on )
     {
-        sendData( refs.ground_serial, (byte *)current_reading, sizeof( SENSOR_READING ) );
-        memset( current_reading, 0, sizeof( SENSOR_READING ) );
+        sendData( refs.ground_serial, (byte *)&current_reading, sizeof( SENSOR_READING ) );
         refs.statuss.which_bank = refs.statuss.which_bank  == 1 ? 2 : 1;
     }
     return NONE_SPECIFIC;
 }
 
-void downlink_ground::prepareReading( SENSOR_READING *reading, byte bank )
+SENSOR_READING downlink_ground::prepareReading( byte bank )
 {
+    SENSOR_READING reading;
     double synced_now_time;
     double so2_ppm;
     double no2_ppm;
@@ -86,39 +82,39 @@ void downlink_ground::prepareReading( SENSOR_READING *reading, byte bank )
 
     synced_now_time = refs.readings.gtp.utc_time + ( ( millis() - refs.timers.gtp_received_at ) / 1000.00F );
 
-    reading->header[0] = '\x01';
-    reading->header[1] = '\x21';
-    reading->terminator[0] = '\r';
-    reading->terminator[1] = '\n';
+    reading.header[0] = '\x01';
+    reading.header[1] = '\x21';
+    reading.terminator[0] = '\r';
+    reading.terminator[1] = '\n';
 
-    assignEntry( reading->time, String( synced_now_time ).c_str(), sizeof( reading->time ) );
-    assignEntry( reading->bank, bank == 1 ? "1" : "2", sizeof( reading->bank ) );
-    assignEntry( reading->so2_reading, String( so2_ppm ).c_str(), sizeof( reading->so2_reading ) );
-    assignEntry( reading->no2_reading, String( no2_ppm ).c_str(), sizeof( reading->no2_reading ) );
-    assignEntry( reading->o3_reading, String( o3_ppm ).c_str(), sizeof( reading->o3_reading ) );
-    assignEntry( reading->temp_reading, String( temp ).c_str(), sizeof( reading->temp_reading ) );
-    assignEntry( reading->extt_reading, String( ext_temp ).c_str(), sizeof( reading->extt_reading ) );
-    assignEntry( reading->pressure_reading, String( pressure ).c_str(), sizeof( reading->pressure_reading ) );
-    assignEntry( reading->humidity_reading, String( ext_humidity ).c_str(), sizeof( reading->humidity_reading ) );
+    assignEntry( reading.time, String( synced_now_time ).c_str(), sizeof( reading.time ) );
+    assignEntry( reading.bank, bank == 1 ? "1" : "2", sizeof( reading.bank ) );
+    assignEntry( reading.so2_reading, String( so2_ppm ).c_str(), sizeof( reading.so2_reading ) );
+    assignEntry( reading.no2_reading, String( no2_ppm ).c_str(), sizeof( reading.no2_reading ) );
+    assignEntry( reading.o3_reading, String( o3_ppm ).c_str(), sizeof( reading.o3_reading ) );
+    assignEntry( reading.temp_reading, String( temp ).c_str(), sizeof( reading.temp_reading ) );
+    assignEntry( reading.extt_reading, String( ext_temp ).c_str(), sizeof( reading.extt_reading ) );
+    assignEntry( reading.pressure_reading, String( pressure ).c_str(), sizeof( reading.pressure_reading ) );
+    assignEntry( reading.humidity_reading, String( humidity ).c_str(), sizeof( reading.humidity_reading ) );
+    assignEntry( reading.ext_humidity_reading, String( ext_humidity ).c_str(), sizeof( reading.ext_humidity_reading ) );
 
     /*
      * Determine the Status of the Bump from the Status Table
      */
-    Serial.println( "prepReading pump status: " + String( refs.statuss.pump_auto ) );
-    assignEntry( reading->pump_status, pump_status_string[(int)refs.statuss.pump_auto], sizeof( reading->pump_status ) );
-    Serial.println( "The message pump status is: " + String( pump_status_string[refs.statuss.pump_auto] ) );
-    assignEntry( reading->bme_status, refs.statuss.which_bank == 1 ? refs.statuss.babi_bme_status.c_str() : refs.statuss.goat_bme_status.c_str(), sizeof( reading->pump_status ) );
-    assignEntry( reading->am2315_status, refs.statuss.am2315_status.c_str(), sizeof( reading->am2315_status ) );
-    assignEntry( reading->sd_status, refs.statuss.sd_status.c_str(), sizeof( reading->sd_status ) );
+    assignEntry( reading.pump_status, pump_status_string[(int)refs.statuss.pump_auto], sizeof( reading.pump_status ) );
+    assignEntry( reading.bme_status, refs.statuss.which_bank == 1 ? refs.statuss.babi_bme_status.c_str() : refs.statuss.goat_bme_status.c_str(), sizeof( reading.pump_status ) );
+    assignEntry( reading.am2315_status, refs.statuss.am2315_status.c_str(), sizeof( reading.am2315_status ) );
+    assignEntry( reading.sd_status, refs.statuss.sd_status.c_str(), sizeof( reading.sd_status ) );
     if( refs.statuss.reading_auto )
-        assignEntry( reading->reading_status, "READ ON", sizeof( reading->reading_status ) );
+        assignEntry( reading.reading_status, "READ ON", sizeof( reading.reading_status ) );
     else
-        assignEntry( reading->reading_status, "READ OFF", sizeof( reading->reading_status ) );
+        assignEntry( reading.reading_status, "READ OFF", sizeof( reading.reading_status ) );
 
     memset( sample_set, 0, sizeof( DATA_SET ) );
+    return reading;
 }
 
-void downlink_ground::writeSD( SENSOR_READING &reading )
+void downlink_ground::writeSD( SENSOR_READING *reading )
 {
     File goat_log;
     byte *ptr;
@@ -132,7 +128,7 @@ void downlink_ground::writeSD( SENSOR_READING &reading )
     else
        refs.statuss.sd_status == "SD INIT G";
 
-    ptr = (byte *)&(reading.time[0]);
+    ptr = (byte *)(reading->time[0]);
 
     for( int x = 0; x < sizeof( SENSOR_READING ); x++ )
     {
@@ -146,7 +142,6 @@ STATE_ID command_handler::run()
 {
     GROUND_COMMAND &com = refs.ground_command_handle;
 
-    Serial.println( "Operating Command: " + String( com.command[0] ) );
     switch( com.command[0] )
     {
         default:
@@ -154,7 +149,6 @@ STATE_ID command_handler::run()
             break;
         case ARD_RESET:
             resetFunc();
-            Serial.println( "TRYING TO RESET" );
             break;
         case DOWNLINK_OFF:
             refs.statuss.downlink_on = false;
@@ -175,7 +169,6 @@ STATE_ID command_handler::run()
                 refs.statuss.pump_auto = PUMP_ON_MANUAL;
             break;
         case PUMP_OFF:
-            Serial.println( "PUMP OFF RUNNING" );
             if( refs.statuss.pump_auto == PUMP_OFF_MANUAL )
                 refs.statuss.pump_auto = PUMP_OFF_AUTO;
             else
@@ -231,7 +224,6 @@ STATE_ID timer_handler::run()
 
     //begin ghetto hack state machine, ya baby
     //transition
-    Serial.println( "Current Pump Status: " + String( refs.statuss.pump_auto ) );
     switch( refs.statuss.pump_auto )
     {
         case PUMP_ON_AUTO:
@@ -282,7 +274,7 @@ STATE_ID timer_handler::run()
      */
     if( refs.timers.downlink_schedule < now_time )
     {
-        refs.timers.downlink_schedule = millis() + ( 1 * 1000 ); //downlink again a second from now
+        refs.timers.downlink_schedule = millis() + ( 4 * 1000 ); //downlink again a second from now
         transition = DOWNLINK_GROUND;
     }
 

@@ -187,8 +187,4 @@ void loop()
     current_state = state_machine[current_state]->run();
     if ( current_state == NONE_SPECIFIC )
         current_state = determineTransition();
-    Serial.println( "Current State: " + String( current_state ) );
-    Serial.println( "Current Pump Auto Status: " + String( statuss.pump_auto ) );
-    if( Serial.available() )
-        Serial.println( " -- " + Serial.readString() );
 }

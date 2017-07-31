@@ -42,8 +42,8 @@ class downlink_ground : public state
         virtual STATE_ID run();
     private:
         //functions
-        void prepareReading( SENSOR_READING *reading, byte bank );
-        void writeSD( SENSOR_READING &reading );
+        SENSOR_READING prepareReading( byte bank );
+        void writeSD( SENSOR_READING *reading );
 };
 
 class command_handler : public state
