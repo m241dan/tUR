@@ -31,7 +31,7 @@ DATA_SET babi_set;
 DATA_SET goat_set;
 HardwareSerial &ground_serial = Serial2;
 pump_controller pump( PUMP_PIN );
-REFS_TABLE refs = { sensors, readings, ground_command_handle, statuss, buffers, timers, sample_set, ground_serial, pump };
+REFS_TABLE refs = { sensors, readings, ground_command_handle, statuss, buffers, timers, babi_set, goat_set, ground_serial, pump };
 
 
 state *state_machine[MAX_STATE];
