@@ -23,17 +23,21 @@
 
 typedef struct sensor_table
 {
-    Spec so2;
-    Spec no2;
-    Spec o3;
-    Adafruit_BME280 bme;
+    Spec babi_so2;
+    Spec babi_no2;
+    Spec babi_o3;
+    Adafruit_BME280 babi_bme;
+    Spec goat_so2;
+    Spec goat_no2;
+    Spec goat_o3;
+    Adafuit_BME280 goat_bme;
     Adafruit_AM2315 dongle;
 } SENSOR_TABLE;
 
 typedef struct readings_table
 {
-    SENSOR_READING master;
-    SENSOR_READING slave;
+    SENSOR_READING babi_reading;
+    SENSOR_READING goat_reading;
     GTP_DATA gtp;
 } READINGS_TABLE;
 
@@ -44,11 +48,12 @@ typedef struct status_table
     String reading_status = "";
     bool reading_auto = true;
     String sd_status = "";
-    String bme_status = "";
+    String babi_bme_status = "";
     String am2315_status = "";
+    String goat_bme_status = "";
     byte which_bank = 1;
     byte slave_wait_sanity = 1;
-    double goat_pressure = 1334.00;
+    double babi_pressure = 1334.00;
     bool downlink_on = true;
     bool write_sd = true;
 } STATUS_TABLE;
@@ -57,8 +62,6 @@ typedef struct receive_buffers
 {
     byte ground[MAX_BUF];
     unsigned int ground_index = 0;
-    byte slave[MAX_BUF];
-    unsigned int slave_index = 0;
 } RECEIVE_BUFFERS;
 
 typedef struct timer_table
@@ -92,8 +95,6 @@ typedef struct refs_table
     TIMER_TABLE &timers;
     DATA_SET &sample_set;
     HardwareSerial &ground_serial;
-    HardwareSerial &slave_serial;
-    HardwareSerial &blu_serial;
     pump_controller &pump;
 } REFS_TABLE;
 
