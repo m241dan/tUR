@@ -3,6 +3,7 @@
 
 #include <Adafruit_BME280.h>
 #include <Adafruit_AM2315.h>
+#include <Adafruit_ADS1015.h>
 #include <SD.h>
 #include "Spec.h"
 #include "hasp_types.h"
@@ -12,7 +13,8 @@
 //GOAT macros
 
 #define SD_PIN 49
-#define BME_PIN 53
+#define BABI_BME_PIN 53
+#define GOAT_BME_PIN 46
 #define PUMP_PIN 47
 #define MAX_BUF 256
 #define LOG_NAME "GOAT"
@@ -30,8 +32,12 @@ typedef struct sensor_table
     Spec goat_so2;
     Spec goat_no2;
     Spec goat_o3;
-    Adafuit_BME280 goat_bme;
-    Adafruit_AM2315 dongle;
+    Adafruit_BME280 goat_bme;
+    Adafruit_ADS1115 babi_ads_so2_no2;
+    Adafruit_ADS1115 babi_ads_o3;
+    Adafruit_ADS1115 goat_ads_so2_no2;
+    Adafruit_ADS1115 goat_ads_o3;
+	    Adafruit_AM2315 dongle;
 } SENSOR_TABLE;
 
 typedef struct readings_table
@@ -49,8 +55,8 @@ typedef struct status_table
     bool reading_auto = true;
     String sd_status = "";
     String babi_bme_status = "";
-    String am2315_status = "";
     String goat_bme_status = "";
+    String am2315_status = "";
     byte which_bank = 1;
     byte slave_wait_sanity = 1;
     double babi_pressure = 1334.00;

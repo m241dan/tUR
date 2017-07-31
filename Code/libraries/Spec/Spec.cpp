@@ -23,7 +23,7 @@ Spec::Spec( specType s_type, int g, int r, int t, double code, double offset ) :
 
 Spec::Spec( specType s_type, double code, double offset ) : type(s_type), sensitivity_code(code), v_offset(offset)
 {
-    double TIA = 499.00
+    double TIA = 499.00;
 
     if( type == SPEC_SO2 )
         TIA = 100.00;
@@ -98,7 +98,7 @@ double Spec::generateReadingPPM( double differential )
     vgas_offset = differential - v_offset;
 
     reading_ppm = vgas_offset / M;
-    reading_ppm = reading_ppm < 0 ? 0 : reading__ppm;
+    reading_ppm = reading_ppm < 0 ? 0 : reading_ppm;
 
     return reading_ppm;
 }

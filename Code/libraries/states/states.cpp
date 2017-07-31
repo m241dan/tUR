@@ -42,7 +42,7 @@ STATE_ID downlink_ground::run()
     if( refs.statuss.write_sd )
         writeSD( *current_reading );
     else
-        refs.statuss.sd_stats = "SD NO WRITE";
+        refs.statuss.sd_status = "SD NO WRITE";
 
     if( refs.statuss.downlink_on )
     {
@@ -100,7 +100,7 @@ void downlink_ground::prepareReading( SENSOR_READING &reading, byte bank )
      * Determine the Status of the Bump from the Status Table
      */
     assignEntry( reading.pump_status, pump_status_string[refs.statuss.pump_auto], sizeof( reading.pump_status ) );
-    assignEntry( reading.bme_status, refs.statuss.bme_status.c_str(), sizeof( reading.pump_status ) );
+    assignEntry( reading.bme_status, refs.statuss.which_bank == 1 ? refs.statuss.babi_bme_status.c_str() : refs.statuss.goat_bme_status.c_str(), sizeof( reading.pump_status ) );
     assignEntry( reading.am2315_status, refs.statuss.am2315_status.c_str(), sizeof( reading.am2315_status ) );
     assignEntry( reading.sd_status, refs.statuss.sd_status.c_str(), sizeof( reading.sd_status ) );
     if( refs.statuss.reading_auto )
@@ -160,7 +160,7 @@ STATE_ID command_handler::run()
             break;
         case PUMP_ON:
             if( refs.statuss.pump_auto == PUMP_ON_MANUAL )
-                refs.statuss.pump_auto == PUMP_ON_AUTO )
+                refs.statuss.pump_auto == PUMP_ON_AUTO;
             else
                 refs.statuss.pump_auto = PUMP_ON_MANUAL;
             break;
@@ -223,7 +223,7 @@ STATE_ID timer_handler::run()
     switch( refs.statuss.pump_auto )
     {
         case PUMP_ON_AUTO:
-            if( refs.statuss.goat_pressure > 100.00 )
+            if( refs.statuss.babi_pressure > 100.00 )
                refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
             else if( refs.timers.pump_timer < now_time )
             {
@@ -232,7 +232,7 @@ STATE_ID timer_handler::run()
             }
             break;
         case PUMP_OFF_AUTO:
-            if( refs.statuss.goat_pressure > 100.00 )
+            if( refs.statuss.babi_pressure > 100.00 )
                refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
             else if( refs.timers.pump_timer < now_time )
             {
@@ -241,7 +241,7 @@ STATE_ID timer_handler::run()
             }
             break;
         case PUMP_OFF_PRESSURE:
-            if( refs.statuss.goat_pressure < 100.00 )
+            if( refs.statuss.babi_pressure < 100.00 )
                 refs.statuss.pump_auto = PUMP_ON_AUTO;
             break;
         case PUMP_ON_MANUAL:
@@ -286,9 +286,9 @@ STATE_ID sample::run()
 {
     if( refs.statuss.reading_auto )
     {
-        refs.babi_set.so2_total += refs.sensors.babi_so2.generateReadingPPM();
-        refs.babi_set.no2_total += refs.sensors.babi_no2.generateReadingPPM();
-        refs.babi_set.o3_total += refs.sensors.babi_o3.generateReadingPPM();
+        refs.babi_set.so2_total += refs.sensors.babi_so2.generateReadingPPM( refs.sensors.babi_ads_so2_no2.readADC_Differential_0_1() );
+        refs.babi_set.no2_total += refs.sensors.babi_no2.generateReadingPPM( refs.sensors.babi_ads_so2_no2.readADC_Differential_2_3() );
+        refs.babi_set.o3_total += refs.sensors.babi_o3.generateReadingPPM( refs.sensors.babi_ads_o3.readADC_Differential_0_1() );
         refs.babi_set.temp_total += refs.sensors.babi_bme.readTemperature();
         refs.babi_set.humidity_total += refs.sensors.babi_bme.readHumidity();
         refs.babi_set.pressure_total += refs.sensors.babi_bme.readPressure() / 100.0F;
@@ -296,9 +296,9 @@ STATE_ID sample::run()
         refs.babi_set.ext_humidity_total += refs.sensors.dongle.readHumidity();
         refs.babi_set.super_sample++;
 
-        refs.goat_set.so2_total += refs.sensors.goat_so2.generateReadingPPM();
-        refs.goat_set.no2_total += refs.sensors.goat_no2.generateReadingPPM();
-        refs.goat_set.o3_total += refs.sensors.goat_o3.generateReadingPPM();
+        refs.goat_set.so2_total += refs.sensors.goat_so2.generateReadingPPM( refs.sensors.goat_ads_so2_no2.readADC_Differential_0_1() );
+        refs.goat_set.no2_total += refs.sensors.goat_no2.generateReadingPPM( refs.sensors.goat_ads_so2_no2.readADC_Differential_2_3() );
+        refs.goat_set.o3_total += refs.sensors.goat_o3.generateReadingPPM( refs.sensors.goat_ads_o3.readADC_Differential_0_1() );
         refs.goat_set.temp_total += refs.sensors.goat_bme.readTemperature();
         refs.goat_set.humidity_total += refs.sensors.goat_bme.readHumidity();
         refs.goat_set.pressure_total += refs.sensors.goat_bme.readPressure() / 100.0F;

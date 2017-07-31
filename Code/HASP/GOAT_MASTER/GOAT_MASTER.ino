@@ -19,7 +19,8 @@
 */
 
 SENSOR_TABLE sensors = { Spec( SPEC_SO2, 36.89 ), Spec( SPEC_NO2, -36.50 ), Spec( SPEC_O3, -13.37 ), Adafruit_BME280( BABI_BME_PIN ),
-                         Spec( SPEC_SO2, 43.45 ), Spec( SPEC_NO2, -51.63 ), Spec( SPEC_03, -10.87 ), Adafruit_BME280( GOAT_BME_PIN ),
+                         Spec( SPEC_SO2, 43.45 ), Spec( SPEC_NO2, -51.63 ), Spec( SPEC_O3, -10.87 ), Adafruit_BME280( GOAT_BME_PIN ),
+                         Adafruit_ADS1115( 0x48 ), Adafruit_ADS1115( 0x49 ), Adafruit_ADS1115( 0x4A ), Adafruit_ADS1115( 0x4B ),
                          Adafruit_AM2315()
                        };
 READINGS_TABLE readings;
@@ -29,7 +30,7 @@ RECEIVE_BUFFERS buffers;
 TIMER_TABLE timers;
 DATA_SET babi_set;
 DATA_SET goat_set;
-HardwareSerial &ground_serial = Serial2;
+HardwareSerial &ground_serial = Serial;
 pump_controller pump( PUMP_PIN );
 REFS_TABLE refs = { sensors, readings, ground_command_handle, statuss, buffers, timers, babi_set, goat_set, ground_serial, pump };
 
@@ -92,6 +93,15 @@ void setupMasterSensors( void )
     statuss.am2315_status = "AIFD";
   else
     statuss.am2315_status = "AIGD";
+
+  sensors.babi_ads_so2_no2.begin();
+  sensors.babi_ads_so2_no2.setGain(GAIN_TWO);
+  sensors.babi_ads_o3.begin();
+  sensors.babi_ads_o3.setGain(GAIN_TWO);
+  sensors.goat_ads_so2_no2.begin();
+  sensors.goat_ads_so2_no2.setGain(GAIN_TWO);
+  sensors.goat_ads_o3.begin();
+  sensors.goat_ads_o3.setGain(GAIN_TWO);
 }
 
 /*
@@ -102,12 +112,10 @@ void initStateMachine()
   current_state = SAMPLE;
 
   state_machine[0] = new receive_ground( refs );
-  state_machine[1] = new receive_slave( refs );
-  state_machine[2] = new downlink_ground( refs );
-  state_machine[3] = new request_slave_reading( refs );
-  state_machine[4] = new command_handler( refs );
-  state_machine[5] = new timer_handler( refs );
-  state_machine[6] = new sample( refs );
+  state_machine[1] = new downlink_ground( refs );
+  state_machine[2] = new command_handler( refs );
+  state_machine[3] = new timer_handler( refs );
+  state_machine[4] = new sample( refs );
 
 }
 
@@ -138,7 +146,7 @@ void setup()
   initStateMachine();
 
   /*
-     This delay is in place to give slave time to boot, essentially both Arduinos will
+     This delay is in place to give slave time to   boot, essentially both Arduinos will
      be started at the same time.
   */
   delay( 2000 );
@@ -150,31 +158,31 @@ void setup()
      TL;DR: prepareInitialDownlink()
   */
   {
-    readings.master.header[0] = '\x01';
-    readings.master.header[1] = '\x21';
-    readings.master.terminator[0] = '\r';
-    readings.master.terminator[1] = '\n';
-    assignEntry( readings.master.time, C_TIME(), sizeof( readings.master.time ) );
-    assignEntry( readings.master.bank, "1", sizeof( readings.master.bank ) );
-    assignEntry( readings.master.so2_reading, "0.00", sizeof( readings.master.so2_reading ) );
-    assignEntry( readings.master.no2_reading, "0.00", sizeof( readings.master.no2_reading ) );
-    assignEntry( readings.master.o3_reading, "0.00", sizeof( readings.master.o3_reading ) );
-    assignEntry( readings.master.temp_reading, "0.00", sizeof( readings.master.temp_reading ) );
-    assignEntry( readings.master.extt_reading, "0.00", sizeof( readings.master.extt_reading ) );
-    assignEntry( readings.master.pressure_reading, "0.00", sizeof( readings.master.pressure_reading ) );
-    assignEntry( readings.master.humidity_reading, "0.00", sizeof( readings.master.humidity_reading ) );
-    assignEntry( readings.master.ext_humidity_reading, "0.00", sizeof( readings.master.ext_humidity_reading ) );
-    assignEntry( readings.master.pump_status, pump_status_string[statuss.pump_auto], sizeof( readings.master.pump_status ) );
-    assignEntry( readings.master.bme_status, statuss.bme_status.c_str(), sizeof( readings.master.bme_status ) );
-    assignEntry( readings.master.am2315_status, statuss.am2315_status.c_str(), sizeof( readings.master.am2315_status ) );
-    assignEntry( readings.master.sd_status, statuss.sd_status.c_str(), sizeof( readings.master.sd_status ) );
-    assignEntry( readings.master.reading_status, "FIRST", sizeof( readings.master.reading_status ) );
+    readings.babi_reading.header[0] = '\x01';
+    readings.babi_reading.header[1] = '\x21';
+    readings.babi_reading.terminator[0] = '\r';
+    readings.babi_reading.terminator[1] = '\n';
+    assignEntry( readings.babi_reading.time, C_TIME(), sizeof( readings.babi_reading.time ) );
+    assignEntry( readings.babi_reading.bank, "1", sizeof( readings.babi_reading.bank ) );
+    assignEntry( readings.babi_reading.so2_reading, "0.00", sizeof( readings.babi_reading.so2_reading ) );
+    assignEntry( readings.babi_reading.no2_reading, "0.00", sizeof( readings.babi_reading.no2_reading ) );
+    assignEntry( readings.babi_reading.o3_reading, "0.00", sizeof( readings.babi_reading.o3_reading ) );
+    assignEntry( readings.babi_reading.temp_reading, "0.00", sizeof( readings.babi_reading.temp_reading ) );
+    assignEntry( readings.babi_reading.extt_reading, "0.00", sizeof( readings.babi_reading.extt_reading ) );
+    assignEntry( readings.babi_reading.pressure_reading, "0.00", sizeof( readings.babi_reading.pressure_reading ) );
+    assignEntry( readings.babi_reading.humidity_reading, "0.00", sizeof( readings.babi_reading.humidity_reading ) );
+    assignEntry( readings.babi_reading.ext_humidity_reading, "0.00", sizeof( readings.babi_reading.ext_humidity_reading ) );
+    assignEntry( readings.babi_reading.pump_status, pump_status_string[statuss.pump_auto], sizeof( readings.babi_reading.pump_status ) );
+    assignEntry( readings.babi_reading.bme_status, statuss.babi_bme_status.c_str(), sizeof( readings.babi_reading.bme_status ) );
+    assignEntry( readings.babi_reading.am2315_status, statuss.am2315_status.c_str(), sizeof( readings.babi_reading.am2315_status ) );
+    assignEntry( readings.babi_reading.sd_status, statuss.sd_status.c_str(), sizeof( readings.babi_reading.sd_status ) );
+    assignEntry( readings.babi_reading.reading_status, "FIRST", sizeof( readings.babi_reading.reading_status ) );
   }
 
   /*
    * Downlink to HASP
    */
-  sendData( ground_serial, (byte *)&readings.master, sizeof( readings.master ) );
+  sendData( ground_serial, (byte *)&readings.babi_reading, sizeof( SENSOR_READING ) );
 }
 
 void loop()
