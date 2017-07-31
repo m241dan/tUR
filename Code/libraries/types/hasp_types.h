@@ -16,7 +16,6 @@
 #define REINIT_SD '\x2B'
 #define BANK_ONE '\x2E'
 #define BANK_TWO '\x2F'
-#define REQUEST_READING '\x30'
 
 typedef enum
 {

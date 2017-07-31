@@ -48,6 +48,9 @@ void setupMasterSerials()
     //Serial to HASP
     ground_serial.begin( 1200 );
     while ( !ground_serial );
+
+    Serial.begin( 1200 );
+    while( !Serial );
 }
 
 /*
@@ -58,7 +61,7 @@ void setupMasterGlobals()
 {
     statuss.log_name = getNextFile( LOG_NAME );
     timers.pump_timer = millis() + ( 60ULL * 1000ULL ); //Toggle pump in 60 seconds after start
-    timers.downlink_schedule = millis() + ( 20ULL * 1000ULL ); //Downlink the first reading 20 seconds from this time
+    timers.downlink_schedule = millis() + ( 5ULL * 1000ULL ); //Downlink the first reading 20 seconds from this time
 }
 
 void setupMasterSensors( void )
@@ -111,11 +114,11 @@ void initStateMachine()
 {
   current_state = SAMPLE;
 
-  state_machine[0] = new receive_ground( refs );
-  state_machine[1] = new downlink_ground( refs );
-  state_machine[2] = new command_handler( refs );
-  state_machine[3] = new timer_handler( refs );
-  state_machine[4] = new sample( refs );
+  state_machine[RECEIVE_GROUND] = new receive_ground( refs );
+  state_machine[DOWNLINK_GROUND] = new downlink_ground( refs );
+  state_machine[COMMAND_HANDLER] = new command_handler( refs );
+  state_machine[TIMER_HANDLER] = new timer_handler( refs );
+  state_machine[SAMPLE] = new sample( refs );
 
 }
 
@@ -144,12 +147,6 @@ void setup()
   setupMasterGlobals();
   setupMasterSensors();
   initStateMachine();
-
-  /*
-     This delay is in place to give slave time to   boot, essentially both Arduinos will
-     be started at the same time.
-  */
-  delay( 2000 );
 
   /*
      This next part could easilly be its own function, but I didn't think it was worth it.
@@ -190,4 +187,8 @@ void loop()
     current_state = state_machine[current_state]->run();
     if ( current_state == NONE_SPECIFIC )
         current_state = determineTransition();
+    Serial.println( "Current State: " + String( current_state ) );
+    Serial.println( "Current Pump Auto Status: " + String( statuss.pump_auto ) );
+    if( Serial.available() )
+        Serial.println( " -- " + Serial.readString() );
 }
