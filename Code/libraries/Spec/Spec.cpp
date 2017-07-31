@@ -21,6 +21,16 @@ Spec::Spec( specType s_type, int g, int r, int t, double code, double offset ) :
    M = sensitivity_code * (TIA * 0.000000001 ) * 1000.00;
 }
 
+Spec::Spec( specType s_type, double code, double offset ) : type(s_type), sensitivity_code(code), v_offset(offset)
+{
+    double TIA = 499.00
+
+    if( type == SPEC_SO2 )
+        TIA = 100.00;
+
+    M = sensitivity_code * ( TIA * 0.000000001 ) * 1000.00;
+}
+
 String Spec::generateRawReading( char delim, bool perr, bool newline )
 {
    String reading = "";
@@ -80,6 +90,18 @@ double Spec::generateReadingPPM()
     return reading_ppm;
 }
 
+double Spec::generateReadingPPM( double differential )
+{
+    double reading_ppm;
+    double vgas_offset;
+
+    vgas_offset = differential - v_offset;
+
+    reading_ppm = vgas_offset / M;
+    reading_ppm = reading_ppm < 0 ? 0 : reading__ppm;
+
+    return reading_ppm;
+}
 void Spec::takeReading()
 {
     vgas_reading = analogRead( vgas_pin );

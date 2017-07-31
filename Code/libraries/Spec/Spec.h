@@ -22,10 +22,11 @@ class Spec
 {
    public:
       Spec( specType s_type, int g, int r, int t, double code, double offset = 0.00 );
-
+      Spec( specType s_type, double code, double offset = 0.00 );
       String generateRawReading( char delim, bool perr = false, bool newline = false );
       String generateRawVerboseReading();
       double generateReadingPPM();
+      double generateReadingPPM( double differential );
    private:
       //Functions
       double rawReadingToPPM( int vgas, int vref, int vtmp );
