@@ -15,23 +15,23 @@
 #include "pump_controller.h"
 
 /*
-   Organized Globals (hopefully, they seem organized \(o.o)/ )
+   Organized Globals (hopefully, they seem organized \(o.o)/
 */
 
-SENSOR_TABLE sensors = { Spec( SPEC_SO2, A0, A1, A2, 36.89 ), Spec( SPEC_NO2, A3, A4, A5, -36.50 ),
-                         Spec( SPEC_O3, A6, A7, A8, -13.37 ), Adafruit_BME280( BME_PIN ), Adafruit_AM2315()
+SENSOR_TABLE sensors = { Spec( SPEC_SO2, 36.89 ), Spec( SPEC_NO2, -36.50 ), Spec( SPEC_O3, -13.37 ), Adafruit_BME280( BABI_BME_PIN ),
+                         Spec( SPEC_SO2, 43.45 ), Spec( SPEC_NO2, -51.63 ), Spec( SPEC_03, -10.87 ), Adafruit_BME280( GOAT_BME_PIN ),
+                         Adafruit_AM2315()
                        };
 READINGS_TABLE readings;
 GROUND_COMMAND ground_command_handle;
 STATUS_TABLE statuss;
 RECEIVE_BUFFERS buffers;
 TIMER_TABLE timers;
-DATA_SET sample_set;
+DATA_SET babi_set;
+DATA_SET goat_set;
 HardwareSerial &ground_serial = Serial2;
-HardwareSerial &slave_serial = Serial1;
-HardwareSerial &blu_serial = Serial;
 pump_controller pump( PUMP_PIN );
-REFS_TABLE refs = { sensors, readings, ground_command_handle, statuss, buffers, timers, sample_set, ground_serial, slave_serial, blu_serial, pump };
+REFS_TABLE refs = { sensors, readings, ground_command_handle, statuss, buffers, timers, sample_set, ground_serial, pump };
 
 
 state *state_machine[MAX_STATE];
@@ -44,14 +44,9 @@ int current_state;
 
 void setupMasterSerials()
 {
-  //Serial to HASP
-  ground_serial.begin( 1200 );
-  while ( !ground_serial );
-
-  //Serial to Slave
-  slave_serial.begin( 300 );
-  while ( !slave_serial );
-
+    //Serial to HASP
+    ground_serial.begin( 1200 );
+    while ( !ground_serial );
 }
 
 /*
@@ -62,15 +57,15 @@ void setupMasterGlobals()
 {
     statuss.log_name = getNextFile( LOG_NAME );
     timers.pump_timer = millis() + ( 60ULL * 1000ULL ); //Toggle pump in 60 seconds after start
-    timers.downlink_schedule = millis() + ( 20 * 1000 ); //Downlink the first reading 20 seconds from this time
+    timers.downlink_schedule = millis() + ( 20ULL * 1000ULL ); //Downlink the first reading 20 seconds from this time
 }
 
 void setupMasterSensors( void )
 {
-  /*
-     Setup the SD
-     Update status message accordingly
-  */
+    /*
+       Setup the SD
+       Update status message accordingly
+    */
   if ( !SD.begin( SD_PIN ) )
     statuss.sd_status = "SD INIT F";
   else
@@ -80,12 +75,15 @@ void setupMasterSensors( void )
      Setup the BME
      Update status message accordingly
   */
-  sensors.bme = Adafruit_BME280( BME_PIN );
-  if ( !sensors.bme.begin() )
-    statuss.bme_status = "BIFD";
+  if ( !sensors.babi_bme.begin() )
+    statuss.babi_bme_status = "BIFD";
   else
-    statuss.bme_status = "BIGD";
+    statuss.babi_bme_status = "BIGD";
 
+  if( !sensors.goat_bme.begin() )
+    statuss.goat_bme_status = "BIFD";
+  else
+    statuss.goat_bme_status = "BIGD";
   /*
      Setup the AM2315b
      Update status message accordingly
@@ -125,9 +123,6 @@ STATE_ID determineTransition()
 
   if ( ground_serial.available() )
     transition = RECEIVE_GROUND;
-  else if ( slave_serial.available() )
-    transition = RECEIVE_SLAVE;
-
   return transition;
 }
 
@@ -177,29 +172,9 @@ void setup()
   }
 
   /*
-     Downlink the prepared reading to two possible places:
-     1.) Downlink to HASP
-     2.) Downlink to Bluetooth (if the BT hack is still in place )
-  */
+   * Downlink to HASP
+   */
   sendData( ground_serial, (byte *)&readings.master, sizeof( readings.master ) );
-  //sendData( blu_serial, (byte *)&readings.master, sizeof( readings.master ) );
-
-  /*
-     Once the data has been downlinked...
-     Wait for Slave to send its initial prepared readings (like Master does)
-  */
-  while ( !slave_serial.available() );
-  while ( receiveData( slave_serial, buffers.slave, buffers.slave_index ) != TRANS_DATA );
-
-  /*
-     I don't want to check the boolean here, if we got anything from slave it must have initialized
-     and later we will simply throw out corrupt readings and request new ones
-  */
-  bufferToReading( buffers.slave, readings.slave );
-
-  sendCommand( slave_serial, ACKNOWLEDGE );
-  sendData( ground_serial, (byte *)&readings.slave, sizeof( SENSOR_READING ) );
-  //sendData( blu_serial, (byte *)&readings.slave, sizeof( SENSOR_READING ) );
 }
 
 void loop()
