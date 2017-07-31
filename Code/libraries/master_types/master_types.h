@@ -93,7 +93,8 @@ typedef struct refs_table
     STATUS_TABLE &statuss;
     RECEIVE_BUFFERS &buffers;
     TIMER_TABLE &timers;
-    DATA_SET &sample_set;
+    DATA_SET &babi_set;
+    DATA_SET &goat_set;
     HardwareSerial &ground_serial;
     pump_controller &pump;
 } REFS_TABLE;
