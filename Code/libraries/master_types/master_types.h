@@ -14,7 +14,7 @@
 
 #define SD_PIN 49
 #define BABI_BME_PIN 53
-#define GOAT_BME_PIN 46
+#define GOAT_BME_PIN 45
 #define PUMP_PIN 47
 #define MAX_BUF 256
 #define LOG_NAME "GOAT"
