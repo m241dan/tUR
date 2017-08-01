@@ -2,7 +2,7 @@
 #define master_globals_h
 
 #include <Adafruit_BME280.h>
-#include <Adafruit_AM2315.h>
+#include "cactus_io_AM2315.h"
 #include <Adafruit_ADS1015.h>
 #include <SD.h>
 #include "Spec.h"
@@ -37,7 +37,7 @@ typedef struct sensor_table
     Adafruit_ADS1115 babi_ads_o3;
     Adafruit_ADS1115 goat_ads_so2_no2;
     Adafruit_ADS1115 goat_ads_o3;
-	    Adafruit_AM2315 dongle;
+    AM2315 dongle;
 } SENSOR_TABLE;
 
 typedef struct readings_table

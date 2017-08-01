@@ -296,8 +296,8 @@ STATE_ID sample::run()
         refs.babi_set.temp_total += refs.sensors.babi_bme.readTemperature();
         refs.babi_set.humidity_total += refs.sensors.babi_bme.readHumidity();
         refs.babi_set.pressure_total += refs.sensors.babi_bme.readPressure() / 100.0F;
-        refs.babi_set.ext_temp_total += refs.sensors.dongle.readTemperature();
-        refs.babi_set.ext_humidity_total += refs.sensors.dongle.readHumidity();
+        refs.babi_set.ext_temp_total += refs.sensors.dongle.getTemperature_C();
+        refs.babi_set.ext_humidity_total += refs.sensors.dongle.getHumidity();
         refs.babi_set.super_sample++;
 
         refs.goat_set.so2_total += refs.sensors.goat_ads_so2_no2.readADC_Differential_0_1() * 0.625;
@@ -306,8 +306,8 @@ STATE_ID sample::run()
         refs.goat_set.temp_total += refs.sensors.goat_bme.readTemperature();
         refs.goat_set.humidity_total += refs.sensors.goat_bme.readHumidity();
         refs.goat_set.pressure_total += refs.sensors.goat_bme.readPressure() / 100.0F;
-        refs.goat_set.ext_temp_total += refs.sensors.dongle.readTemperature();
-        refs.goat_set.ext_humidity_total += refs.sensors.dongle.readHumidity();
+        refs.goat_set.ext_temp_total += refs.sensors.dongle.getTemperature_C();
+        refs.goat_set.ext_humidity_total += refs.sensors.dongle.getHumidity();
         refs.goat_set.super_sample++;
     }
 

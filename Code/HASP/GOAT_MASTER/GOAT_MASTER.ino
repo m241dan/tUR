@@ -21,7 +21,7 @@
 SENSOR_TABLE sensors = { Spec( SPEC_SO2, 36.89 ), Spec( SPEC_NO2, -36.50 ), Spec( SPEC_O3, -13.37 ), Adafruit_BME280( BABI_BME_PIN ),
                          Spec( SPEC_SO2, 43.45 ), Spec( SPEC_NO2, -51.63 ), Spec( SPEC_O3, -10.87 ), Adafruit_BME280( GOAT_BME_PIN ),
                          Adafruit_ADS1115( 0x48 ), Adafruit_ADS1115( 0x49 ), Adafruit_ADS1115( 0x4A ), Adafruit_ADS1115( 0x4B ),
-                         Adafruit_AM2315()
+                         AM2315()
                        };
 READINGS_TABLE readings;
 GROUND_COMMAND ground_command_handle;
