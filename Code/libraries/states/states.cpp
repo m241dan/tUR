@@ -290,9 +290,9 @@ STATE_ID sample::run()
 {
     if( refs.statuss.reading_auto )
     {
-        refs.babi_set.so2_total += refs.sensors.babi_so2.generateReadingPPM( refs.sensors.babi_ads_so2_no2.readADC_Differential_0_1() );
-        refs.babi_set.no2_total += refs.sensors.babi_no2.generateReadingPPM( refs.sensors.babi_ads_so2_no2.readADC_Differential_2_3() );
-        refs.babi_set.o3_total += refs.sensors.babi_o3.generateReadingPPM( refs.sensors.babi_ads_o3.readADC_Differential_0_1() );
+        refs.babi_set.so2_total += refs.sensors.babi_ads_so2_no2.readADC_Differential_0_1() * 0.625;
+        refs.babi_set.no2_total += refs.sensors.babi_ads_so2_no2.readADC_Differential_2_3() * 0.625;
+        refs.babi_set.o3_total += refs.sensors.babi_ads_o3.readADC_Differential_0_1() * 0.625;
         refs.babi_set.temp_total += refs.sensors.babi_bme.readTemperature();
         refs.babi_set.humidity_total += refs.sensors.babi_bme.readHumidity();
         refs.babi_set.pressure_total += refs.sensors.babi_bme.readPressure() / 100.0F;
@@ -300,9 +300,9 @@ STATE_ID sample::run()
         refs.babi_set.ext_humidity_total += refs.sensors.dongle.readHumidity();
         refs.babi_set.super_sample++;
 
-        refs.goat_set.so2_total += refs.sensors.goat_so2.generateReadingPPM( refs.sensors.goat_ads_so2_no2.readADC_Differential_0_1() );
-        refs.goat_set.no2_total += refs.sensors.goat_no2.generateReadingPPM( refs.sensors.goat_ads_so2_no2.readADC_Differential_2_3() );
-        refs.goat_set.o3_total += refs.sensors.goat_o3.generateReadingPPM( refs.sensors.goat_ads_o3.readADC_Differential_0_1() );
+        refs.goat_set.so2_total += refs.sensors.goat_ads_so2_no2.readADC_Differential_0_1() * 0.625;
+        refs.goat_set.no2_total += refs.sensors.goat_ads_so2_no2.readADC_Differential_2_3() * 0.625;
+        refs.goat_set.o3_total += refs.sensors.goat_ads_o3.readADC_Differential_0_1() * 0.625;
         refs.goat_set.temp_total += refs.sensors.goat_bme.readTemperature();
         refs.goat_set.humidity_total += refs.sensors.goat_bme.readHumidity();
         refs.goat_set.pressure_total += refs.sensors.goat_bme.readPressure() / 100.0F;
