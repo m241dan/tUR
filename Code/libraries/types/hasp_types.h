@@ -25,7 +25,6 @@ typedef enum
 typedef struct ground_command
 {
    unsigned char header[2] = "\x1\x2";
-   unsigned char checksum = 0;
    unsigned char command[2] = { 0, 0 };
    unsigned char terminator[3] = "\x3\xD\xA";
 } GROUND_COMMAND;
