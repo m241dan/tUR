@@ -82,6 +82,8 @@ SENSOR_READING downlink_ground::prepareReading( byte bank )
 
     synced_now_time = refs.readings.gtp.utc_time + ( ( millis() - refs.timers.gtp_received_at ) / 1000.00F );
 
+    Serial.println( "Current UTC: " + String( refs.readings.gtp.utc_time ) );
+
     reading.header[0] = '\x01';
     reading.header[1] = '\x21';
     reading.terminator[0] = '\r';
