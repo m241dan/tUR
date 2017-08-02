@@ -12,6 +12,7 @@
 
 //GOAT macros
 
+#define ADS_GAIN_CONVERSION_FACTOR 0.0625
 #define SD_PIN 49
 #define BABI_BME_PIN 53
 #define GOAT_BME_PIN 45
