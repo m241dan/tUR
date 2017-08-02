@@ -228,7 +228,7 @@ STATE_ID timer_handler::run()
     {
         case PUMP_ON_AUTO:
             if( refs.statuss.babi_pressure > 100.00 )
-               refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
+              refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
             else if( refs.timers.pump_timer < now_time )
             {
                 refs.statuss.pump_auto = PUMP_OFF_AUTO;
@@ -290,9 +290,9 @@ STATE_ID sample::run()
 {
     if( refs.statuss.reading_auto )
     {
-        refs.babi_set.so2_total += refs.sensors.babi_ads_so2_no2.readADC_Differential_0_1() * 0.625;
-        refs.babi_set.no2_total += refs.sensors.babi_ads_so2_no2.readADC_Differential_2_3() * 0.625;
-        refs.babi_set.o3_total += refs.sensors.babi_ads_o3.readADC_Differential_0_1() * 0.625;
+        refs.babi_set.so2_total += ( refs.sensors.babi_ads_so2_no2.readADC_Differential_0_1() * ADS_GAIN_CONVERSION_FACTOR ) / 1000.00;
+        refs.babi_set.no2_total += ( refs.sensors.babi_ads_so2_no2.readADC_Differential_2_3() * ADS_GAIN_CONVERSION_FACTOR ) / 1000.00;
+        refs.babi_set.o3_total += ( refs.sensors.babi_ads_o3.readADC_Differential_0_1() * ADS_GAIN_CONVERSION_FACTOR ) / 1000.00;
         refs.babi_set.temp_total += refs.sensors.babi_bme.readTemperature();
         refs.babi_set.humidity_total += refs.sensors.babi_bme.readHumidity();
         refs.babi_set.pressure_total += refs.sensors.babi_bme.readPressure() / 100.0F;
@@ -300,9 +300,9 @@ STATE_ID sample::run()
         refs.babi_set.ext_humidity_total += refs.sensors.dongle.getHumidity();
         refs.babi_set.super_sample++;
 
-        refs.goat_set.so2_total += refs.sensors.goat_ads_so2_no2.readADC_Differential_0_1() * 0.625;
-        refs.goat_set.no2_total += refs.sensors.goat_ads_so2_no2.readADC_Differential_2_3() * 0.625;
-        refs.goat_set.o3_total += refs.sensors.goat_ads_o3.readADC_Differential_0_1() * 0.625;
+        refs.goat_set.so2_total += ( refs.sensors.goat_ads_so2_no2.readADC_Differential_0_1() * ADS_GAIN_CONVERSION_FACTOR ) / 1000.00;
+        refs.goat_set.no2_total += ( refs.sensors.goat_ads_so2_no2.readADC_Differential_2_3() * ADS_GAIN_CONVERSION_FACTOR ) / 1000.00;
+        refs.goat_set.o3_total += ( refs.sensors.goat_ads_o3.readADC_Differential_0_1() * ADS_GAIN_CONVERSION_FACTOR ) / 1000.00;
         refs.goat_set.temp_total += refs.sensors.goat_bme.readTemperature();
         refs.goat_set.humidity_total += refs.sensors.goat_bme.readHumidity();
         refs.goat_set.pressure_total += refs.sensors.goat_bme.readPressure() / 100.0F;
