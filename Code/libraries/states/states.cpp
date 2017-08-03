@@ -1,5 +1,8 @@
 #include "states.h"
 
+#define PRESSURE_THRESHOLD 20.00
+#define TEMP_THRESHOLD 30.00
+
 void( *resetFunc) (void) = 0;
 
 
@@ -80,6 +83,7 @@ SENSOR_READING downlink_ground::prepareReading( byte bank )
     humidity = sample_set->humidity_total / sample_set->super_sample;
     pressure = sample_set->pressure_total / sample_set->super_sample;
     refs.statuss.babi_pressure = pressure;
+    refs.statuss.babi_temp = temp;
 
     ext_temp = sample_set->ext_temp_total / sample_set->super_sample;
     ext_humidity = sample_set->ext_humidity_total / sample_set->super_sample;
@@ -245,29 +249,44 @@ STATE_ID timer_handler::run()
     switch( refs.statuss.pump_auto )
     {
         case PUMP_ON_AUTO:
-            if( refs.statuss.babi_pressure > 20.00 )
-              refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
-            else
-            if( refs.timers.pump_timer < now_time )
+            if( refs.statuss.babi_temp < TEMP_THRESHOLD )
+                refs.statuss.pump_auto = PUMP_OFF_TEMP;
+            else if( refs.statuss.babi_pressure > PRESSURE_THRESHOLD )
+                refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
+            else if( refs.timers.pump_timer < now_time )
             {
                 refs.statuss.pump_auto = PUMP_OFF_AUTO;
                 refs.timers.pump_timer = now_time + FIFTEEN_MINUTES;
             }
             break;
         case PUMP_OFF_AUTO:
-            if( refs.statuss.babi_pressure > 20.00 )
+            if( refs.statuss.babi_temp < TEMP_THRESHOLD )
+               refs.statuss.pump_auto = PUMP_OFF_TEMP;
+            else if( refs.statuss.babi_pressure > PRESSURE_THRESHOLD )
                refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
-            else
-            if( refs.timers.pump_timer < now_time )
+            else if( refs.timers.pump_timer < now_time )
             {
                 refs.statuss.pump_auto = PUMP_ON_AUTO;
                 refs.timers.pump_timer = now_time + FIFTEEN_MINUTES;
             }
             break;
         case PUMP_OFF_PRESSURE:
-            if( refs.statuss.babi_pressure < 20.00 )
-                refs.statuss.pump_auto = PUMP_ON_AUTO;
+            if( refs.statuss.babi_pressure < PRESSURE_THRESHOLD )
+            {
+                if( refs.statuss.babi_temp < TEMP_THRESHOLD )
+                    refs.statuss.pump_auto = PUMP_OFF_TEMP;
+                else
+                    refs.statuss.pump_auto = PUMP_ON_AUTO;
+            }
             break;
+        case PUMP_OFF_TEMP:
+            if( refs.statuss.babi_temp > TEMP_THRESHOLD )
+            {
+                if( refs.statuss.babi_pressure > PRESSURE_THRESHOLD )
+                    refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
+                else
+                    refs.statuss.pump_auto = PUMP_ON_AUTO;
+            }
         case PUMP_ON_MANUAL:
         case PUMP_OFF_MANUAL:
             break;
@@ -282,6 +301,7 @@ STATE_ID timer_handler::run()
         case PUMP_OFF_AUTO:
         case PUMP_OFF_PRESSURE:
         case PUMP_OFF_MANUAL:
+        case PUMP_OFF_TEMP:
             refs.pump.off();
             break;
     }
