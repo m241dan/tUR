@@ -51,7 +51,7 @@ typedef struct readings_table
 typedef struct status_table
 {
     String log_name = "";
-    PUMP_STATUS pump_auto = PUMP_OFF_AUTO;
+    PUMP_STATUS pump_auto = PUMP_OFF_MANUAL;
     String reading_status = "";
     bool reading_auto = true;
     String sd_status = "";
