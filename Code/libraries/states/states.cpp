@@ -14,7 +14,9 @@ STATE_ID receive_ground::run()
         {
            case TRANS_COMMAND:
               bufferToCommand( refs.buffers.ground, refs.ground_command_handle );
-              transition = COMMAND_HANDLER;
+              //this is essentially a checksum test
+              if( refs.ground_command_handle.command[0] == refs.ground_command_handle[1] )
+                  transition = COMMAND_HANDLER;
               break;
            case TRANS_GTP:
               bufferToGTP( refs.buffers.ground, refs.readings.gtp );
@@ -292,6 +294,7 @@ STATE_ID sample::run()
 {
     if( refs.statuss.reading_auto )
     {
+        refs.sensors.dongle.readSensor();
         refs.babi_set.so2_total += ( refs.sensors.babi_ads_so2_no2.readADC_Differential_0_1() * ADS_GAIN_CONVERSION_FACTOR ) / 1000.00;
         refs.babi_set.no2_total += ( refs.sensors.babi_ads_so2_no2.readADC_Differential_2_3() * ADS_GAIN_CONVERSION_FACTOR ) / 1000.00;
         refs.babi_set.o3_total += ( refs.sensors.babi_ads_o3.readADC_Differential_0_1() * ADS_GAIN_CONVERSION_FACTOR ) / 1000.00;
