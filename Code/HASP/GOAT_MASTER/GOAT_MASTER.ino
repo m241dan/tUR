@@ -45,9 +45,12 @@ int current_state;
 
 void setupMasterSerials()
 {
-    //Serial to HASP
-    ground_serial.begin( 1200 );
-    while ( !ground_serial );
+  //Serial to HASP
+  ground_serial.begin( 1200 );
+  while ( !ground_serial );
+
+  Serial.begin( 1200 );
+  while ( !Serial );
 }
 
 /*
@@ -56,17 +59,17 @@ void setupMasterSerials()
 */
 void setupMasterGlobals()
 {
-    statuss.log_name = getNextFile( LOG_NAME );
-    timers.pump_timer = millis() + ( 60ULL * 1000ULL ); //Toggle pump in 60 seconds after start
-    timers.downlink_schedule = millis() + ( 5ULL * 1000ULL ); //Downlink the first reading 20 seconds from this time
+  statuss.log_name = getNextFile( LOG_NAME );
+  timers.pump_timer = millis() + ( 60ULL * 1000ULL ); //Toggle pump in 60 seconds after start
+  timers.downlink_schedule = millis() + ( 5ULL * 1000ULL ); //Downlink the first reading 20 seconds from this time
 }
 
 void setupMasterSensors( void )
 {
-    /*
-       Setup the SD
-       Update status message accordingly
-    */
+  /*
+     Setup the SD
+     Update status message accordingly
+  */
   if ( !SD.begin( SD_PIN ) )
     statuss.sd_status = "SD INIT F";
   else
@@ -81,7 +84,7 @@ void setupMasterSensors( void )
   else
     statuss.babi_bme_status = "BIGD";
 
-  if( !sensors.goat_bme.begin() )
+  if ( !sensors.goat_bme.begin() )
     statuss.goat_bme_status = "BIFD";
   else
     statuss.goat_bme_status = "BIGD";
@@ -174,14 +177,14 @@ void setup()
   }
 
   /*
-   * Downlink to HASP
-   */
+     Downlink to HASP
+  */
   sendData( ground_serial, (byte *)&readings.babi_reading, sizeof( SENSOR_READING ) );
 }
 
 void loop()
 {
-    current_state = state_machine[current_state]->run();
-    if ( current_state == NONE_SPECIFIC )
-        current_state = determineTransition();
+  current_state = state_machine[current_state]->run();
+  if( current_state == NONE_SPECIFIC )
+      current_state = determineTransition();
 }

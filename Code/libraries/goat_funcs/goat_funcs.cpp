@@ -135,7 +135,11 @@ bool bufferToCommand( byte (&buffer)[MAX_BUF], GROUND_COMMAND &com )
 
 bool bufferToGTP( byte (&buffer)[MAX_BUF], GTP_DATA &gtp )
 {
+    SAMPLE_GTP sample;
     bool gtp_good = false;
+    char buf[MAX_BUF];
+
+    memset( &sample, 0, sizeof( SAMPLE_GTP ) );
     /*
      * Check the header and the terminators for data corruption
      */
@@ -145,13 +149,19 @@ bool bufferToGTP( byte (&buffer)[MAX_BUF], GTP_DATA &gtp )
         /*
          * Clear out the given gtp
          */
-        memset( &gtp, 0, sizeof( GTP_DATA) );
-        sscanf( buffer, "\x1\x30%f,%s,%f,%f,%c,%f,%c,%c,%c,%f,%f,M,%d,%s",
-            &gtp.utc_time, &gtp.NMEA, &gtp.utc_position_time, &gtp.latitude,
-            &gtp.latitude_hemisphere, &gtp.longitude, &gtp.longitude_hemisphere,
-            &gtp.position_fix, &gtp.num_satelites, &gtp.horizontal_dilution_precision,
-            &gtp.msl_altitude, &gtp.differential_age );
+        memset( &gtp, 0, sizeof( GTP_DATA ) );
+        memset( &buf[0], 0, MAX_BUF );
+
+        memcpy( &sample, buffer, sizeof( SAMPLE_GTP ) );
+        //transform it to a string sscanf can read the way I want
+        for( int x = 0; x < sizeof( sample.data ); x++ )
+            buf[x] = (char)sample.data[x];
+        char *ptr = strtok( buf, "," );
+        if( ptr )
+            snprintf( gtp.utc_time, sizeof( gtp.utc_time ), "%s", ptr );
         gtp_good = true;
+        gtp.utc_time[9] = '0';
+        gtp.utc_time[10] = '0';
     }
     return gtp_good;
 }

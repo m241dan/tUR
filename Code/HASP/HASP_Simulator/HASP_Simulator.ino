@@ -12,7 +12,7 @@
 #define TELE_RATE 60000
 
 //GPS Telemetry
-GTP_DATA spoof_gps;
+SAMPLE_GTP spoof_gps;
 
 
 //Global Variables
@@ -23,15 +23,10 @@ byte possible_commands[10] = { ARD_RESET, DOWNLINK_OFF, DOWNLINK_ON, STOP_SENSOR
 
 void setup()
 {
-    Serial.begin( 9600 );
+    Serial.begin( 1200 );
     while( !Serial );
     
-    //Begin Serial Communication
-    Serial1.begin( 1200 );
-    while( !Serial1 );
-    
     time_schedule = 0;
-    time_command = 70000;
 }
 
 void loop()
@@ -39,10 +34,11 @@ void loop()
     if( ( time_schedule + TELE_RATE ) < millis() )
     {
         //Send telemetry data every minute
-        sendData( Serial1, (byte *)&spoof_gps, sizeof( spoof_gps ) );
+        sendData( Serial, (byte *)&spoof_gps, sizeof( spoof_gps ) );
         time_schedule = millis();
     }
 
+/*
     if( Serial.available() )
     {
         GROUND_COMMAND spoof_command;
@@ -51,5 +47,5 @@ void loop()
         //Send command
         spoof_command.command[0] = possible_commands[received_command];
         sendData( Serial1, (byte *)&spoof_command, sizeof( GROUND_COMMAND ) );
-    }
+    } */
 }

@@ -74,7 +74,7 @@ typedef struct receive_buffers
 typedef struct timer_table
 {
     unsigned long long downlink_schedule = 0;
-    unsigned long long gtp_time = 0;
+    unsigned char gtp_time[15] = "123456789012345";
     unsigned long long gtp_received_at = 0;
     unsigned long long pump_timer = 0;
 } TIMER_TABLE;

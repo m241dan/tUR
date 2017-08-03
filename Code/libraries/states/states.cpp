@@ -15,7 +15,7 @@ STATE_ID receive_ground::run()
            case TRANS_COMMAND:
               bufferToCommand( refs.buffers.ground, refs.ground_command_handle );
               //this is essentially a checksum test
-              if( refs.ground_command_handle.command[0] == refs.ground_command_handle[1] )
+              if( refs.ground_command_handle.command[0] == refs.ground_command_handle.command[1] )
                   transition = COMMAND_HANDLER;
               break;
            case TRANS_GTP:
@@ -58,7 +58,9 @@ STATE_ID downlink_ground::run()
 SENSOR_READING downlink_ground::prepareReading( byte bank )
 {
     SENSOR_READING reading;
-    double synced_now_time;
+    double synced_addition;
+    char addition_buffer[15];
+    char synced_now_time[15];
     double so2_ppm;
     double no2_ppm;
     double o3_ppm;
@@ -82,16 +84,28 @@ SENSOR_READING downlink_ground::prepareReading( byte bank )
     ext_temp = sample_set->ext_temp_total / sample_set->super_sample;
     ext_humidity = sample_set->ext_humidity_total / sample_set->super_sample;
 
-    synced_now_time = refs.readings.gtp.utc_time + ( ( millis() - refs.timers.gtp_received_at ) / 1000.00F );
+    /* begin fancy hack magic to get a current time in seconds from january 1 1970 */
+    synced_addition = ( millis() - refs.timers.gtp_received_at ) / 1000.00F;
+    strcpy( addition_buffer, String( synced_addition ).c_str() );
+    int synced_cross_over_index = strlen( refs.readings.gtp.utc_time ) - strlen( addition_buffer );
+    if( synced_cross_over_index < 0 )
+        synced_cross_over_index = 0;
 
-    Serial.println( "Current UTC: " + String( refs.readings.gtp.utc_time ) );
+    memset( &synced_now_time[0], 0, 15 );
+    for( int x = 0; x < 15; x++ )
+    {
+        if( x < synced_cross_over_index )
+            synced_now_time[x] = refs.readings.gtp.utc_time[x];
+        else
+            synced_now_time[x] = addition_buffer[x-synced_cross_over_index];
+    }
 
     reading.header[0] = '\x01';
     reading.header[1] = '\x21';
     reading.terminator[0] = '\r';
     reading.terminator[1] = '\n';
 
-    assignEntry( reading.time, String( synced_now_time ).c_str(), sizeof( reading.time ) );
+    assignEntry( reading.time, synced_now_time, sizeof( reading.time ) );
     assignEntry( reading.bank, bank == 1 ? "1" : "2", sizeof( reading.bank ) );
     assignEntry( reading.so2_reading, String( so2_ppm ).c_str(), sizeof( reading.so2_reading ) );
     assignEntry( reading.no2_reading, String( no2_ppm ).c_str(), sizeof( reading.no2_reading ) );
@@ -106,7 +120,7 @@ SENSOR_READING downlink_ground::prepareReading( byte bank )
      * Determine the Status of the Bump from the Status Table
      */
     assignEntry( reading.pump_status, pump_status_string[(int)refs.statuss.pump_auto], sizeof( reading.pump_status ) );
-    assignEntry( reading.bme_status, refs.statuss.which_bank == 1 ? refs.statuss.babi_bme_status.c_str() : refs.statuss.goat_bme_status.c_str(), sizeof( reading.pump_status ) );
+    assignEntry( reading.bme_status, refs.statuss.which_bank == 1 ? refs.statuss.babi_bme_status.c_str() : refs.statuss.goat_bme_status.c_str(), sizeof( reading.bme_status ) );
     assignEntry( reading.am2315_status, refs.statuss.am2315_status.c_str(), sizeof( reading.am2315_status ) );
     assignEntry( reading.sd_status, refs.statuss.sd_status.c_str(), sizeof( reading.sd_status ) );
     if( refs.statuss.reading_auto )
@@ -214,8 +228,8 @@ STATE_ID timer_handler::run()
     /*
      * sync timers data with HASP time
      */
-    if( refs.timers.gtp_time != refs.readings.gtp.utc_time )
-       refs.timers.gtp_time = refs.readings.gtp.utc_time;
+    if( strcmp( refs.timers.gtp_time, refs.readings.gtp.utc_time ) )
+       strcpy( refs.timers.gtp_time, refs.readings.gtp.utc_time );
 
     /*
      * If the pump time is less than now time and the pump
@@ -231,25 +245,27 @@ STATE_ID timer_handler::run()
     switch( refs.statuss.pump_auto )
     {
         case PUMP_ON_AUTO:
-            if( refs.statuss.babi_pressure > 100.00 )
-              refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
-            else if( refs.timers.pump_timer < now_time )
+//            if( refs.statuss.babi_pressure > 100.00 )
+ //             refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
+   //         else
+            if( refs.timers.pump_timer < now_time )
             {
                 refs.statuss.pump_auto = PUMP_OFF_AUTO;
                 refs.timers.pump_timer = now_time + FIFTEEN_MINUTES;
             }
             break;
         case PUMP_OFF_AUTO:
-            if( refs.statuss.babi_pressure > 100.00 )
-               refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
-            else if( refs.timers.pump_timer < now_time )
+//            if( refs.statuss.babi_pressure > 100.00 )
+  //             refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
+    //        else
+            if( refs.timers.pump_timer < now_time )
             {
                 refs.statuss.pump_auto = PUMP_ON_AUTO;
                 refs.timers.pump_timer = now_time + FIFTEEN_MINUTES;
             }
             break;
         case PUMP_OFF_PRESSURE:
-            if( refs.statuss.babi_pressure < 100.00 )
+//            if( refs.statuss.babi_pressure < 100.00 )
                 refs.statuss.pump_auto = PUMP_ON_AUTO;
             break;
         case PUMP_ON_MANUAL:

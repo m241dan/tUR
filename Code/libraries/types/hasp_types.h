@@ -38,7 +38,7 @@ typedef struct sample_gtp
 
 typedef struct gps_time_position
 {
-   double utc_time;
+   unsigned char utc_time[15];
    unsigned char NMEA[10];
    double utc_position_time;
    double latitude;
