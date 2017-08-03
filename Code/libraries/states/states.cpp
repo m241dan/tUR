@@ -245,9 +245,9 @@ STATE_ID timer_handler::run()
     switch( refs.statuss.pump_auto )
     {
         case PUMP_ON_AUTO:
-//            if( refs.statuss.babi_pressure > 100.00 )
- //             refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
-   //         else
+            if( refs.statuss.babi_pressure > 20.00 )
+              refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
+            else
             if( refs.timers.pump_timer < now_time )
             {
                 refs.statuss.pump_auto = PUMP_OFF_AUTO;
@@ -255,9 +255,9 @@ STATE_ID timer_handler::run()
             }
             break;
         case PUMP_OFF_AUTO:
-//            if( refs.statuss.babi_pressure > 100.00 )
-  //             refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
-    //        else
+            if( refs.statuss.babi_pressure > 20.00 )
+               refs.statuss.pump_auto = PUMP_OFF_PRESSURE;
+            else
             if( refs.timers.pump_timer < now_time )
             {
                 refs.statuss.pump_auto = PUMP_ON_AUTO;
@@ -265,7 +265,7 @@ STATE_ID timer_handler::run()
             }
             break;
         case PUMP_OFF_PRESSURE:
-//            if( refs.statuss.babi_pressure < 100.00 )
+            if( refs.statuss.babi_pressure < 20.00 )
                 refs.statuss.pump_auto = PUMP_ON_AUTO;
             break;
         case PUMP_ON_MANUAL:
