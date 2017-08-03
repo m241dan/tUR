@@ -48,9 +48,6 @@ void setupMasterSerials()
   //Serial to HASP
   ground_serial.begin( 1200 );
   while ( !ground_serial );
-
-  Serial.begin( 1200 );
-  while ( !Serial );
 }
 
 /*
