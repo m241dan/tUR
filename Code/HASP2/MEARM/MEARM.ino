@@ -94,6 +94,7 @@ void loop()
                     rate = value;
                     break;
             }
+            //Soham was here
             resetBuffer();
         }
     }
