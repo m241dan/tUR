@@ -38,9 +38,9 @@ void setup()
     z_servo.attach( Z_PIN );
     c_servo.attach( CLAW_PIN );
 
-    x_servo.write( 90 );
+    x_servo.write( 1 );
     y_servo.write( 1 );
-    z_servo.write( 70 );
+    z_servo.write( 1 );
     c_servo.write( 1 );
 
     Serial.begin( 9600 );
@@ -108,11 +108,11 @@ void loop()
         y_cur_pos = y_final_pos;
         y_servo.write( y_cur_pos );
     }
-    if( z_final_pos != z_cur_pos )
-    {
-        z_cur_pos = z_final_pos;
+  //  if( z_final_pos != z_cur_pos )
+   // {
+     //   z_cur_pos = z_final_pos;
         z_servo.write( z_cur_pos );
-    }
+   // }
     if( c_final_pos != c_cur_pos )
     {
         c_cur_pos = c_final_pos;
