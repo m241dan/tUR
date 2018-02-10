@@ -1,0 +1,2 @@
+apriltags_ros/apriltags:apriltags_ros/apriltags_ros:usb_cam
+-DCATKIN_DEVEL_PREFIX=/home/craptop/Desktop/ROS/devel -DCMAKE_INSTALL_PREFIX=/home/craptop/Desktop/ROS/install -G Unix Makefiles
