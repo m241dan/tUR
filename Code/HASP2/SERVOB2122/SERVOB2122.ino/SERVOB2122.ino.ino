@@ -1,8 +1,10 @@
 #include <Servo.h>
 
-#define S_PIN 9
+#define S_PIN 7
+#define S_PIN_2 8
 
-Servo servo;
+Servo servo_one;
+Servo servo_two;
 
 byte buf[256];
 byte buf_index = 0;
@@ -12,13 +14,16 @@ void resetBuffer()
     memset( &buf[0], 0, 256 );
     buf_index = 0;
 
-    pinMode( A0, INPUT );
+    pinMode( A1, INPUT );
+    pinMode( A2, INPUT );
 }
 
 void setup()
 {
-    servo.attach( S_PIN );
-    servo.write( 1 );
+    servo_one.attach( S_PIN );
+    servo_two.attach( S_PIN_2 );
+    servo_one.write( map( 1, 1, 180, 1, 120 ) );
+    servo_two.write( map( 1, 1, 180, 1, 120 ) );
 
     Serial.begin( 9600 );
     while( !Serial );
@@ -44,8 +49,8 @@ void loop()
             resetBuffer();
         }
     }
-    servo.write( value );
-    Serial.println( "analogRead: " + String( analogRead( A0 ) ) );
-
-    
+    servo_one.write( value );
+    servo_two.write( value );
+    Serial.println( "servo1: " + String( analogRead( A1 ) ) );
+    Serial.println( "servo2: " + String( analogRead( A2 ) ) );    
 }

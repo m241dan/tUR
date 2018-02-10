@@ -1,35 +1,93 @@
 #include <Servo.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
 
-#define S_PIN 9
+#define SERVO_6V 7
+#define SERVO_12V 8
+#define THERMO_1 13
 
-Servo servo;
+#define STANDARD_BUF_SIZE 256
 
-byte buf[256];
+Servo servo_6v;
+Servo servo_12v;
+OneWire oneWire( THERMO_1 );
+DallasTemperature sensors ( &oneWire );
+byte buf[STANDARD_BUF_SIZE];
 byte buf_index = 0;
 
-void resetBuffer()
+typedef enum
 {
-    memset( &buf[0], 0, 256 );
-    buf_index = 0;
+    AUTONOMOUS, MANUAL
+} PROGRAM_MODE;
 
-    pinMode( A0, INPUT );
-}
+PROGRAM_MODE mode;
+
+int loop_counter, cycle;
 
 void setup()
 {
-    servo.attach( S_PIN );
-    servo.write( 1 );
+    pinMode( A1, INPUT );
+    pinMode( A2, INPUT );
+
+    servo_6v.attach( SERVO_6V );
+    servo_6v.write( 1 );
+    servo_12v.attach( SERVO_12V );
+    for( int x = 1; x < 151; x++ )
+    {
+        servo_12v.write( x );
+        delay( 10 );
+    }
 
     Serial.begin( 9600 );
     while( !Serial );
-
-    resetBuffer();
-
+    
     Serial.println( "Starting" );
+
+    Serial1.begin( 9600 );
+    while( !Serial );
+
+    mode = AUTONOMOUS;    
+    loop_counter = 1;
+    cycle = 0;
 }
 
 void loop()
 {
+    /* drive servos */
+    servo_6v.write( loop_counter );
+    servo_12v.write( 150 - loop_counter );
+
+    sensors.requestTemperatures();
+
+    /* | MILLIS | Servo6V Position | Servo12V Position | Servo6V Celsius | Servo12V Celsius | */
+    double test = sensors.getTempCByIndex(0);
+    Serial.println( String( millis() ) + "," +
+                    String( analogRead( A1 ) ) + "," +
+                    String( analogRead( A2 ) ) + "," +
+                    String( sensors.getTempCByIndex(0) ) + "," +
+                    String( sensors.getTempCByIndex(1) ) );
+    Serial1.println( String( millis() ) + "," +
+                    String( analogRead( A1 ) ) + "," +
+                    String( analogRead( A2 ) ) + "," +
+                    String( sensors.getTempCByIndex(0) ) + "," +
+                    String( sensors.getTempCByIndex(1) ) );
+    
+    /* loop handling and delay */
+    if( cycle == 0 )
+    {
+        loop_counter++;
+        if( loop_counter > 150 )
+            cycle = 1;
+    }
+    else
+    {
+        loop_counter--;
+        if( loop_counter < 1 )
+            cycle = 0;
+    }
+    delay( 100 );
+        
+    /*
     static int value = 1;
     while( Serial.available() > 0 )
     {
@@ -46,6 +104,5 @@ void loop()
     }
     servo.write( value );
     Serial.println( "analogRead: " + String( analogRead( A0 ) ) );
-
-    
+    */    
 }

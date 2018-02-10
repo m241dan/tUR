@@ -17,7 +17,7 @@
  */
 
 //which digital pin on the Arduino?
-OneWire oneWire(6);
+OneWire oneWire(13);
 DallasTemperature sensors( &oneWire );
 
 void setup()
