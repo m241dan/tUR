@@ -4,9 +4,7 @@
 
 #define SERVO_6V 7
 #define SERVO_12V 8
-#define THERMO_1 13
-
-#define STANDARD_BUF_SIZE 256
+#define THERMO_1 50
 
 Servo servo_6v;
 Servo servo_12v;
@@ -14,13 +12,6 @@ OneWire oneWire( THERMO_1 );
 DallasTemperature sensors ( &oneWire );
 byte buf[STANDARD_BUF_SIZE];
 byte buf_index = 0;
-
-typedef enum
-{
-    AUTONOMOUS, MANUAL
-} PROGRAM_MODE;
-
-PROGRAM_MODE mode;
 
 int loop_counter, cycle;
 
@@ -46,7 +37,6 @@ void setup()
     Serial1.begin( 9600 );
     while( !Serial );
 
-    mode = AUTONOMOUS;    
     loop_counter = 1;
     cycle = 0;
 }
@@ -57,21 +47,20 @@ void loop()
     servo_6v.write( loop_counter );
     servo_12v.write( 150 - loop_counter );
 
-    sensors.requestTemperatures();
+   //sensors.requestTemperatures();
 
     /* | MILLIS | Servo6V Position | Servo12V Position | Servo6V Celsius | Servo12V Celsius | */
-    double test = sensors.getTempCByIndex(0);
-    Serial.println( String( millis() ) + "," +
+ /*   Serial.println( String( millis() ) + "," +
                     String( analogRead( A1 ) ) + "," +
                     String( analogRead( A2 ) ) + "," +
                     String( sensors.getTempCByIndex(0) ) + "," +
-                    String( sensors.getTempCByIndex(1) ) );
-    Serial1.println( String( millis() ) + "," +
+                    String( sensors.getTempCByIndex(1) ) ); */
+  /*  Serial1.println( String( millis() ) + "," +
                     String( analogRead( A1 ) ) + "," +
                     String( analogRead( A2 ) ) + "," +
                     String( sensors.getTempCByIndex(0) ) + "," +
-                    String( sensors.getTempCByIndex(1) ) );
-    
+                    String( sensors.getTempCByIndex(1) ) ); */
+ 
     /* loop handling and delay */
     if( cycle == 0 )
     {
@@ -82,27 +71,8 @@ void loop()
     else
     {
         loop_counter--;
-        if( loop_counter < 1 )
+        if( loop_counter < 2 )
             cycle = 0;
     }
     delay( 100 );
-        
-    /*
-    static int value = 1;
-    while( Serial.available() > 0 )
-    {
-        byte c = Serial.read();
-        buf[buf_index++] = c;
-        
-        if( c != ';' )
-            return;
-        else
-        {
-            sscanf( buf, "%d;", &value );
-            resetBuffer();
-        }
-    }
-    servo.write( value );
-    Serial.println( "analogRead: " + String( analogRead( A0 ) ) );
-    */    
 }
