@@ -1,17 +1,11 @@
 #include <Servo.h>
-#include <OneWire.h>
-#include <DallasTemperature.h>
 
 #define SERVO_6V 7
 #define SERVO_12V 8
-#define THERMO_1 50
 
 Servo servo_6v;
 Servo servo_12v;
-OneWire oneWire( THERMO_1 );
-DallasTemperature sensors ( &oneWire );
-byte buf[STANDARD_BUF_SIZE];
-byte buf_index = 0;
+
 
 int loop_counter, cycle;
 
@@ -29,14 +23,6 @@ void setup()
         delay( 10 );
     }
 
-    Serial.begin( 9600 );
-    while( !Serial );
-    
-    Serial.println( "Starting" );
-
-    Serial1.begin( 9600 );
-    while( !Serial );
-
     loop_counter = 1;
     cycle = 0;
 }
@@ -46,20 +32,6 @@ void loop()
     /* drive servos */
     servo_6v.write( loop_counter );
     servo_12v.write( 150 - loop_counter );
-
-   //sensors.requestTemperatures();
-
-    /* | MILLIS | Servo6V Position | Servo12V Position | Servo6V Celsius | Servo12V Celsius | */
- /*   Serial.println( String( millis() ) + "," +
-                    String( analogRead( A1 ) ) + "," +
-                    String( analogRead( A2 ) ) + "," +
-                    String( sensors.getTempCByIndex(0) ) + "," +
-                    String( sensors.getTempCByIndex(1) ) ); */
-  /*  Serial1.println( String( millis() ) + "," +
-                    String( analogRead( A1 ) ) + "," +
-                    String( analogRead( A2 ) ) + "," +
-                    String( sensors.getTempCByIndex(0) ) + "," +
-                    String( sensors.getTempCByIndex(1) ) ); */
  
     /* loop handling and delay */
     if( cycle == 0 )
