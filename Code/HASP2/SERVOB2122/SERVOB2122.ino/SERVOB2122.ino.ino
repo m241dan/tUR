@@ -22,8 +22,8 @@ void setup()
 {
     servo_one.attach( S_PIN );
     servo_two.attach( S_PIN_2 );
-    servo_one.write( map( 1, 1, 180, 1, 120 ) );
-    servo_two.write( map( 1, 1, 180, 1, 120 ) );
+    servo_one.write( 1 );
+    servo_two.write( 1 );
 
     Serial.begin( 9600 );
     while( !Serial );
