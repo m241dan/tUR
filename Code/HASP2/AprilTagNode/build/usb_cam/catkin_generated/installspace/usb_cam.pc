@@ -1,0 +1,8 @@
+prefix=/home/craptop/Desktop/catkinws/install
+
+Name: usb_cam
+Description: Description of usb_cam
+Version: 0.3.6
+Cflags: -I/home/craptop/Desktop/catkinws/install/include
+Libs: -L/home/craptop/Desktop/catkinws/install/lib -lusb_cam
+Requires: 
