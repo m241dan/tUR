@@ -194,6 +194,29 @@ void loop()
     //    x_servo.write( x_cur_pos );
    // }
 
+<<<<<<< HEAD
+=======
+    if( x_final_pos != x_cur_pos )
+    {
+        x_cur_pos = x_final_pos;
+        x_servo.write( x_cur_pos );
+    }
+    if( y_final_pos != y_cur_pos )
+    {
+        y_cur_pos = y_final_pos;
+        y_servo.write( y_cur_pos );
+    }
+  //  if( z_final_pos != z_cur_pos )
+   // {
+     //   z_cur_pos = z_final_pos;
+        z_servo.write( z_cur_pos );
+   // }
+    if( c_final_pos != c_cur_pos )
+    {
+        c_cur_pos = c_final_pos;
+        c_servo.write( c_cur_pos );
+    }
+>>>>>>> 54ed5c8797d22029713c362469b85719ff57b4b7
 }
 
 
