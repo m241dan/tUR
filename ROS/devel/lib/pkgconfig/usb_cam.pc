@@ -1,8 +1,0 @@
-prefix=/home/craptop/Desktop/ROS/devel
-
-Name: usb_cam
-Description: Description of usb_cam
-Version: 0.3.6
-Cflags: -I/home/craptop/Desktop/ROS/src/usb_cam/include
-Libs: -L/home/craptop/Desktop/ROS/devel/lib -lusb_cam
-Requires: 
