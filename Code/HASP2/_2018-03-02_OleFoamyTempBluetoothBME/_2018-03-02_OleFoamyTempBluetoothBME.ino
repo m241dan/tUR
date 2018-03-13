@@ -25,7 +25,7 @@ void loop()
 {
     sensors.requestTemperatures();
 
-    Serial.print( "Therms: " + String(millis() )/1000 + " sec M.E.T., " +
+    Serial.print( "Therms: " + String(millis()) + " msec, " +
                     String( sensors.getTempCByIndex(0) ) + " C  , " +
                     String( sensors.getTempCByIndex(1) ) + " C\t ");
 
