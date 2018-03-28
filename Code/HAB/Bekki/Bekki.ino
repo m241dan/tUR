@@ -5,7 +5,9 @@
 #include "Adafruit_Sensor.h"
 #include "Adafruit_BME280.h"
 #include "Adafruit_ADXL345_U.h"
-
+#include <SoftwareSerial.h>
+#include <StandardCplusplus.h>
+#include <vector>
 /* ADXL labels
  *  SDA/SDI/SDIO
  *  SDO
@@ -26,11 +28,14 @@
 #define BME_4 28
 #define BME_5 30
 #define BME_6 32
-#define ACCEL_1 34
-#define ACCEL_2 36
+#define SOFT_TX 34
+#define SOFT_RX 36
 #define SD_PIN 10
 
 RTC_PCF8523 rtc;
+
+std::vector<int> BME_IDs = { BME_1, BME_2, BME_3, BME_4, BME_5, BME_6 };
+std::vector<Adafruit_BME280> BMEs;
 
 Adafruit_BME280 bme1( BME_1 );
 Adafruit_BME280 bme2( BME_2 );
@@ -39,12 +44,13 @@ Adafruit_BME280 bme4( BME_4 );
 Adafruit_BME280 bme5( BME_5 );
 Adafruit_BME280 bme6( BME_6 );
 
+SoftwareSerial cameraconnection = SoftwareSerial(SOFT_RX, SOFT_TX);
+
 Adafruit_ADXL345_Unified accel( 12345 );
 
 String error_log;
 
 File data_file;
-File error_file;
 
 void setup()
 {
@@ -58,42 +64,23 @@ void setup()
         error_log += String( "RTC not working.\r\n" );
     }
     rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));    
-    
-    if( !bme1.begin() )
+
+    for( int i = 0; i < BME_IDs.size(); i++ )
     {
-        Serial.println( "BME1 not working" );
-        error_log += String( "BME1 not working.\r\n" );
-    }
-    if( !bme2.begin() )
-    {
-        Serial.println( "BME2 not working" );
-        error_log += String( "BME2 not working.\r\n" );
-    }
-    if( !bme3.begin() )
-    {
-        Serial.println( "BME3 not working" );
-        error_log += String( "BME3 not working.\r\n" );
-    }
-    if( !bme4.begin() )
-    {
-        Serial.println( "BME4 not working" );
-        error_log += String( "BME4 not working.\r\n" );
-    }
-    if( !bme5.begin() )
-    {
-        Serial.println( "BME5 not working" );
-        error_log += String( "BME5 not working.\r\n" );
-    }
-    if( !bme6.begin() )
-    {
-        Serial.println( "BME6 not working" );
-        error_log += String( "BME6 not working.\r\n" );
+        BMEs.at(i) = Adafruit_BME280( BME_IDs[i] );
+        if( !BMEs.at(i).begin() )
+        {
+            String error_msg = "BME" + String( (i+1) ) + "is not working.\r\n";
+            Serial.println( error_msg );
+            error_log += error_msg;
+        }
     }
         
     if( !accel.begin() )
     {
-        Serial.println( "Accel not working." );
-        error_log += String( "Accel not working.\r\n" );
+        String error_msg = "Accel not working.\r\n";
+        Serial.println( error_msg );
+        error_log += error_msg;
     }
     else
     {
@@ -105,49 +92,48 @@ void setup()
     {
         Serial.println( "SD did not init" );
     }
+    Serial.println( "Error Log: " + error_log );
+    
 }
 
 void loop()
 {
     /* this will prepend all written data */
-    DateTime now = rtc.now();
-    String prepend = String( now.hour() ) + "/" +
-                 String( now.minute() ) + "/" +
-                 String( now.second() ) + ":";
-
+    String output_prepend = generateOutputPrepend();
     /* this will prepend all files saved */             
-    String file_name_base = String( now.month() ) + ":" +
-                            String( now.day() );
+    String file_prepend = generateFilePrepend();
+    
 
     /* if we have errors, write them to their own log */
     if( error_log != "" )
     {
-       String error_file_name = file_name_base + "err";
-       Serial.println( error_file_name );
-       error_file = SD.open( error_file_name.c_str(), FILE_WRITE );
-       if( error_file )
-       {
-            String to_write = prepend + error_log;
-            error_file.println( to_write.c_str( ));
-            error_file.close();
-            error_log = "";
-        }
-        else
-        {
-            Serial.println( "Failed to open error log." );
-        }
+        writeErrorLog( output_prepend, file_prepend );
     }
     else
     {
-        Serial.println( "Did not write any errors" );
+        Serial.println( "Operating without any errors." );
     }
     
-    String buf_file_name = file_name_base + "out";
-
     sensors_event_t event;
     accel.getEvent( &event );
 
     /* read data */
+    std::vector<double> temperature_readings;
+    std::vector<double> humidity_readings;
+    std::vector<double> pressure_readings;
+
+    temperature_readings.clear();
+    humidity_readings.clear();
+    pressure_readings.clear();
+    
+    for( int i = 0; i < BMEs.size(); i++ )
+    {
+        Adafruit_BME280 &cur_bme = BMEs.at(i);
+        temperature_readings.at(i) = cur_bme.readTemperature();
+        humidity_readings.at(i) = cur_bme.readHumidity();
+        pressure_readings.at(i) = cur_bme.readPressure() / 100.0F;
+        
+    }
     /* write data */
     /* check pressure */
     /* flip pump */
@@ -155,7 +141,43 @@ void loop()
     delay(1000);
 }
 
+String generateOutputPrepend()
+{
+    DateTime now = rtc.now();
+    String prepend = "H:" + String( now.hour() ) +
+                     "M:" + String( now.minute() ) +
+                     "S:" + String( now.second() ) + ":";
 
+    return prepend;
+}
+
+String generateFilePrepend()
+{
+    DateTime now = rtc.now();
+    String file_prepend = String( now.month() ) + ":" +
+                          String( now.day() );
+   
+    return file_prepend;
+}
+
+void writeErrorLog( String output_prepend, String file_prepend )
+{
+    File error_file;
+    
+    String error_file_name = file_prepend + "err";
+    error_file = SD.open( error_file_name.c_str(), FILE_WRITE );
+    if( error_file )
+    {
+        String to_write = output_prepend + error_log;
+        error_file.println( to_write.c_str( ));
+        error_file.close();
+        error_log = "";
+    }
+    else
+    {
+        Serial.println( "Failed to open error log." );
+    }    
+}
 //    Serial.print(now.hour(), DEC);
 //    Serial.print(':');
 //    Serial.print(now.minute(), DEC);
