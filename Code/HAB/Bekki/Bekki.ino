@@ -32,6 +32,16 @@
 #define SOFT_RX 36
 #define SD_PIN 10
 
+typedef struct data_table
+{
+    std::vector<double> temp;
+    std::vector<double> hum;
+    std::vector<double> pres;
+    double accel_x;
+    double accel_y;
+    double accel_z;
+} DataTable;
+
 RTC_PCF8523 rtc;
 
 std::vector<int> BME_IDs = { BME_1, BME_2, BME_3, BME_4, BME_5, BME_6 };
@@ -51,6 +61,7 @@ Adafruit_ADXL345_Unified accel( 12345 );
 String error_log;
 
 File data_file;
+
 
 void setup()
 {
@@ -100,9 +111,16 @@ void loop()
 {
     /* this will prepend all written data */
     String output_prepend = generateOutputPrepend();
+    
     /* this will prepend all files saved */             
     String file_prepend = generateFilePrepend();
+
+    /* read data */
+    DataTable data;
+    readBMEs( data );
+    readAccel( data );
     
+    /* write data */
 
     /* if we have errors, write them to their own log */
     if( error_log != "" )
@@ -114,27 +132,6 @@ void loop()
         Serial.println( "Operating without any errors." );
     }
     
-    sensors_event_t event;
-    accel.getEvent( &event );
-
-    /* read data */
-    std::vector<double> temperature_readings;
-    std::vector<double> humidity_readings;
-    std::vector<double> pressure_readings;
-
-    temperature_readings.clear();
-    humidity_readings.clear();
-    pressure_readings.clear();
-    
-    for( int i = 0; i < BMEs.size(); i++ )
-    {
-        Adafruit_BME280 &cur_bme = BMEs.at(i);
-        temperature_readings.at(i) = cur_bme.readTemperature();
-        humidity_readings.at(i) = cur_bme.readHumidity();
-        pressure_readings.at(i) = cur_bme.readPressure() / 100.0F;
-        
-    }
-    /* write data */
     /* check pressure */
     /* flip pump */
 
@@ -177,6 +174,42 @@ void writeErrorLog( String output_prepend, String file_prepend )
     {
         Serial.println( "Failed to open error log." );
     }    
+}
+
+void readBMEs( DataTable &table)
+{
+    table.temp.clear();
+    table.hum.clear();
+    table.pres.clear();
+    
+    for( int i = 0; i < BMEs.size(); i++ )
+    {
+        Adafruit_BME280 &cur_bme = BMEs.at(i);
+        table.temp.at(i) = cur_bme.readTemperature();
+        table.hum.at(i) = cur_bme.readHumidity();
+        table.pres.at(i) = cur_bme.readPressure() / 100.0F;
+    }
+}
+
+void readAccel( DataTable &table)
+{   
+    sensors_event_t event;
+ 
+    accel.getEvent( &event );
+
+    table.accel_x = event.acceleration.x;
+    table.accel_y = event.acceleration.y;
+    table.accel_z = event.acceleration.z;   
+}
+
+void writeData( DataTable &table)
+{
+    
+}
+
+void takeAndSaveImg()
+{
+    
 }
 //    Serial.print(now.hour(), DEC);
 //    Serial.print(':');
