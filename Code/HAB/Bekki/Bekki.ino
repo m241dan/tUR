@@ -31,12 +31,13 @@
 #define SOFT_TX 34
 #define SOFT_RX 36
 #define SD_PIN 10
+#define NUM_BMEs 6
 
 typedef struct data_table
 {
-    std::vector<double> temp;
-    std::vector<double> hum;
-    std::vector<double> pres;
+    double temp[NUM_BMEs];
+    double hum[NUM_BMEs];
+    double pres[NUM_BMEs];
     double accel_x;
     double accel_y;
     double accel_z;
@@ -44,15 +45,7 @@ typedef struct data_table
 
 RTC_PCF8523 rtc;
 
-std::vector<int> BME_IDs = { BME_1, BME_2, BME_3, BME_4, BME_5, BME_6 };
-std::vector<Adafruit_BME280> BMEs;
-
-Adafruit_BME280 bme1( BME_1 );
-Adafruit_BME280 bme2( BME_2 );
-Adafruit_BME280 bme3( BME_3 );
-Adafruit_BME280 bme4( BME_4 );
-Adafruit_BME280 bme5( BME_5 );
-Adafruit_BME280 bme6( BME_6 );
+Adafruit_BME280 BMEs[NUM_BMEs] = { Adafruit_BME280( BME_1 ), Adafruit_BME280( BME_2 ), Adafruit_BME280( BME_3 ), Adafruit_BME280( BME_4 ), Adafruit_BME280( BME_5 ), Adafruit_BME280( BME_6 ) };
 
 SoftwareSerial cameraconnection = SoftwareSerial(SOFT_RX, SOFT_TX);
 
@@ -68,7 +61,7 @@ void setup()
     Serial.begin( 57600 );
     while( !Serial );
     error_log = "";
-    
+
     if( !rtc.begin() )
     {
         Serial.println( "RTC not working." );
@@ -76,16 +69,18 @@ void setup()
     }
     rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));    
 
-    for( int i = 0; i < BME_IDs.size(); i++ )
+    Serial.println( "output" );
+    
+    for( int i = 0; i < NUM_BMEs; i++ )
     {
-        BMEs.at(i) = Adafruit_BME280( BME_IDs[i] );
-        if( !BMEs.at(i).begin() )
+        if( !BMEs[i].begin() )
         {
             String error_msg = "BME" + String( (i+1) ) + "is not working.\r\n";
             Serial.println( error_msg );
             error_log += error_msg;
         }
     }
+    Serial.println( "output dos" );
         
     if( !accel.begin() )
     {
@@ -178,16 +173,16 @@ void writeErrorLog( String output_prepend, String file_prepend )
 
 void readBMEs( DataTable &table)
 {
-    table.temp.clear();
-    table.hum.clear();
-    table.pres.clear();
+    memset( &table.temp[0], 0, sizeof( table.temp ) );
+    memset( &table.hum[0], 0, sizeof( table.hum ) );
+    memset( &table.pres[0], 0, sizeof( table.pres ) );
     
-    for( int i = 0; i < BMEs.size(); i++ )
+    for( int i = 0; i < NUM_BMEs; i++ )
     {
-        Adafruit_BME280 &cur_bme = BMEs.at(i);
-        table.temp.at(i) = cur_bme.readTemperature();
-        table.hum.at(i) = cur_bme.readHumidity();
-        table.pres.at(i) = cur_bme.readPressure() / 100.0F;
+        Adafruit_BME280 &cur_bme = BMEs[i];
+        table.temp[i] = cur_bme.readTemperature();
+        table.hum[i] = cur_bme.readHumidity();
+        table.pres[i] = cur_bme.readPressure() / 100.0F;
     }
 }
 
@@ -199,7 +194,7 @@ void readAccel( DataTable &table)
 
     table.accel_x = event.acceleration.x;
     table.accel_y = event.acceleration.y;
-    table.accel_z = event.acceleration.z;   
+    table.accel_z = event.acceleration.z;
 }
 
 void writeData( DataTable &table)
