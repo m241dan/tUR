@@ -8,6 +8,7 @@
 #include <SoftwareSerial.h>
 #include <Adafruit_VC0706.h>
 #include "goat_funcs.h"
+#include "pump_controller.h"
 
 #define BME_1 22
 #define BME_2 24
@@ -22,16 +23,20 @@
 #define CAM_INTERVAL 30 //in seconds
 #define PUMP_ON_PRESSURE 100.00f
 #define PUMP_OFF_PRESSURE 300.00f
+#define PUMP_PIN 49
 
 typedef struct data_table
 {
-  double temp[NUM_BMEs];
-  double hum[NUM_BMEs];
-  double pres[NUM_BMEs];
-  double accel_x;
-  double accel_y;
-  double accel_z;
+    double temp[NUM_BMEs];
+    double hum[NUM_BMEs];
+    double pres[NUM_BMEs];
+    double accel_x;
+    double accel_y;
+    double accel_z;
 } DataTable;
+
+/* actuators */
+pump_controller pump( PUMP_PIN );
 
 /* Sensors */
 RTC_PCF8523 rtc;
@@ -44,10 +49,11 @@ String error_log;
 long long last_photo;
 bool photo_to_save;
 bool pump_on;
+double ambient_pressure;
 
 void setup()
 {
-    Serial.begin( 57600 );
+    Serial.begin( 9600 );
     while ( !Serial );
 
     /* init these globals */
@@ -55,6 +61,7 @@ void setup()
     pump_on = false;
     last_photo = millis();
     photo_to_save = false;
+    ambient_pressure = 1000.;
 
     if ( !rtc.begin() )
     {
@@ -106,10 +113,8 @@ void setup()
 
 void loop()
 {
-    /* this will prepend all written data */
+    /* generate out prepends */
     String output_prepend = generateOutputPrepend();
-
-    /* this will prepend all files saved */
     String file_prepend = generateFilePrepend();
 
     /* read data */
@@ -120,8 +125,9 @@ void loop()
         takeImg();
 
     /* write data */
-    if( photo_to_save )
+    if ( photo_to_save )
         saveImg();
+    writeData( data, output_prepend, file_prepend );
 
     /* if we have errors, write them to their own log */
     if ( error_log != "" )
@@ -133,16 +139,19 @@ void loop()
         Serial.println( "Operating without any errors." );
     }
 
-    /* check pressure */
-    /* flip pump */
+    /* check pressure / pump */
+    if ( shouldPumpBeOn() )
+        pump.on();
+    else
+        pump.off();
 
     delay(1000);
 }
 
 /*
- * File / Output Convention Functions
- * Written by Daniel R. Koris
- */
+    File / Output Convention Functions
+    Written by Daniel R. Koris
+*/
 
 String generateOutputPrepend()
 {
@@ -163,9 +172,9 @@ String generateFilePrepend()
 }
 
 /*
- * Error Log Writing Function
- * Written by Daniel R. Koris
- */
+    Error Log Writing Function
+    Written by Daniel R. Koris
+*/
 void writeErrorLog( String output_prepend, String file_prepend )
 {
     File error_file;
@@ -186,18 +195,49 @@ void writeErrorLog( String output_prepend, String file_prepend )
 }
 
 /*
- * Writing our Data Functions
- * Written by Daniel R. Koris
- */
-void writeData( DataTable &table)
+    Writing our Data Functions
+    Written by Daniel R. Koris
+*/
+void writeData( DataTable &table, String output_prepend, String file_prepend )
 {
+    File data_file;
+    String data_file_name = file_prepend + "DAT";
 
+    data_file = SD.open( data_file_name.c_str(), FILE_WRITE );
+    if( data_file )
+    {
+        String data_buffer = "";
+        /* prepend */
+        data_buffer += output_prepend + " ";
+        /* temp */
+        for( int i = 0; i < NUM_BMEs; i++ )
+            data_buffer += String( table.temp[i] ) + " ";
+        /* pressure */
+        for( int i = 0; i < NUM_BMEs; i++ )
+            data_buffer += String( table.pres[i] ) + " ";
+        /* humidity */
+        for( int i = 0; i < NUM_BMEs; i++ )
+            data_buffer += String( table.hum[i] ) + " ";
+        /* accel x y z */
+        data_buffer += String( table.accel_x ) + " ";
+        data_buffer += String( table.accel_y ) + " ";
+        data_buffer += String( table.accel_z );
+
+        data_file.println( data_buffer );
+        data_file.close();
+    }
+    else
+    {
+        String error_msg = "Could not open DAT file to read readings.\r\n";
+        Serial.print( error_msg );
+        error_log += error_msg;
+    }
 }
 
 /*
- * Reading out Adafruit Sensors
- * Written by Daniel R. Koris
- */
+    Reading out Adafruit Sensors
+    Written by Daniel R. Koris
+*/
 void readBMEs( DataTable &table)
 {
     memset( &table.temp[0], 0, sizeof( table.temp ) );
@@ -211,6 +251,15 @@ void readBMEs( DataTable &table)
         table.hum[i] = cur_bme.readHumidity();
         table.pres[i] = cur_bme.readPressure() / 100.0F;
     }
+
+    /* average our ambient pressure for turning pump off/on */
+    ambient_pressure = 0;
+    for ( int i = 0; i < 3; i++ )
+    {
+        ambient_pressure += table.pres[i];
+    }
+    ambient_pressure /= 3;
+
 }
 
 void readAccel( DataTable &table)
@@ -225,9 +274,9 @@ void readAccel( DataTable &table)
 }
 
 /*
- * Camera Specific Functions
- * Written by Daniel R. Koris
- */
+    Camera Specific Functions
+    Written by Daniel R. Koris
+*/
 bool shouldTakePhoto()
 {
     bool take_photo = false;
@@ -255,13 +304,13 @@ void saveImg()
     File img_file;
     String img_file_name = getNextFile( "IMG", ".jpg" );
 
-    
+
     img_file = SD.open( img_file_name.c_str(), FILE_WRITE );
-    if( img_file )
+    if ( img_file )
     {
         uint16_t len = cam.frameLength();
 
-        while( len > 0 )
+        while ( len > 0 )
         {
             uint8_t *buffer;
             uint8_t bytes_to_read = min( 32, len );
@@ -280,3 +329,31 @@ void saveImg()
         error_log += error_msg;
     }
 }
+
+/*
+ *   Pump Specific Functions
+ *   Written by Daniel R. Koris
+ */
+
+bool shouldPumpBeOn()
+{
+    bool pump_status = false;
+
+    if ( pump_on )
+    {
+        if ( ambient_pressure > PUMP_OFF_PRESSURE )
+            pump_status = false;
+        else
+            pump_status = true;
+    }
+    else
+    {
+        if ( ambient_pressure < PUMP_ON_PRESSURE )
+            pump_status = true;
+        else
+            pump_status = false;
+    }
+
+    return pump_status;
+}
+
