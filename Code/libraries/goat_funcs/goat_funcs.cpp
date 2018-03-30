@@ -44,7 +44,7 @@ String getNextFile( String name, String append )
 
    //This loop will basically find us a free file appended 1-2.1 billion, which should be plenty
    file_name = name + String( file_iteration ) + append;
-   for( ; SD.exists( file_name ); file_iteration++ )
+   for( ; SD.exists( file_name.c_str() ); file_iteration++ )
       file_name = name + String( file_iteration ) + append;
 
    return file_name;
