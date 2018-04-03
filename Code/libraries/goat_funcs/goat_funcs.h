@@ -13,7 +13,7 @@ bool bufferToReading( byte (&buffer)[MAX_BUF], SENSOR_READING &reading );
 bool bufferToCommand( byte (&buffer)[MAX_BUF], GROUND_COMMAND &com );
 bool bufferToGTP( byte (&buffer)[MAX_BUF], GTP_DATA &gtp );
 void resetBuffer( byte (&buffer)[MAX_BUF], unsigned int &index );
-String getNextFile( String name );
+String getNextFile( String name, String append );
 
 void sendCommand( HardwareSerial &serial, unsigned char command );
 
