@@ -16,8 +16,8 @@
 #define BME_4 28
 #define BME_5 30
 #define BME_6 32
-#define SOFT_TX 34
-#define SOFT_RX 36
+#define SOFT_TX A8
+#define SOFT_RX A9
 #define SD_PIN 10
 #define NUM_BMEs 6
 #define CAM_INTERVAL 30 //in seconds
@@ -46,7 +46,7 @@ SoftwareSerial camera_connection = SoftwareSerial(SOFT_RX, SOFT_TX);
 Adafruit_VC0706 cam = Adafruit_VC0706( &camera_connection );
 
 String error_log;
-long long last_photo;
+unsigned long last_photo;
 bool photo_to_save;
 bool pump_on;
 double ambient_pressure;
@@ -75,7 +75,7 @@ void setup()
     {
         if ( !BMEs[i].begin() )
         {
-            String error_msg = "BME" + String( (i + 1) ) + "is not working.\r\n";
+            String error_msg = "BME" + String( (i + 1) ) + " is not working.\r\n";
             Serial.print( error_msg );
             error_log += error_msg;
         }
@@ -121,12 +121,18 @@ void loop()
     DataTable data;
     readBMEs( data );
     readAccel( data );
-    if ( shouldTakePhoto == true )
+    if ( shouldTakePhoto() == true )
+    {
+        Serial.println( "Taking img." );
         takeImg();
+    }
 
     /* write data */
     if ( photo_to_save )
+    {
+        Serial.println( "Saving IMG." );
         saveImg();
+    }
     writeData( data, output_prepend, file_prepend );
 
     /* if we have errors, write them to their own log */
@@ -139,13 +145,15 @@ void loop()
         Serial.println( "Operating without any errors." );
     }
 
-    /* check pressure / pump */
+    /* check pressure / pump
     if ( shouldPumpBeOn() )
         pump.on();
     else
         pump.off();
-
+*/
+    //Uhh boom, big shaq, big shaq, big khaled, what we say khaled
     delay(1000);
+    //They dont want us to win, so we're gonna win more
 }
 
 /*
@@ -156,9 +164,9 @@ void loop()
 String generateOutputPrepend()
 {
     DateTime now = rtc.now();
-    String prepend = "H:" + String( now.hour() ) +
-                     "M:" + String( now.minute() ) +
-                     "S:" + String( now.second() ) + ":";
+    String prepend =  String( now.hour() ) +
+                     "." + String( now.minute() ) +
+                     "." + String( now.second() ) + ": ";
     return prepend;
 }
 
@@ -280,9 +288,13 @@ void readAccel( DataTable &table)
 bool shouldTakePhoto()
 {
     bool take_photo = false;
-
-    if ( ( last_photo - millis() ) >= ( CAM_INTERVAL * 1000 ) )
+    Serial.println( String( millis() ) );
+    Serial.println( String( last_photo ) );
+    if ( ( millis() - last_photo ) >= ( CAM_INTERVAL * 1000 ) )
+    {
         take_photo = true;
+        last_photo = millis();
+    }
 
     return take_photo;
 }
@@ -320,6 +332,8 @@ void saveImg()
             len -= bytes_to_read;
         }
         photo_to_save = false;
+        last_photo = millis();
+        cam.reset();
         img_file.close();
     }
     else
