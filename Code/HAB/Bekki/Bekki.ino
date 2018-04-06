@@ -23,7 +23,8 @@
 #define CAM_INTERVAL 30 //in seconds
 #define PUMP_ON_PRESSURE 100.00f
 #define PUMP_OFF_PRESSURE 300.00f
-#define PUMP_PIN 49
+#define PUMP_PIN 48
+#define LED_PIN 47
 
 typedef struct data_table
 {
@@ -36,7 +37,7 @@ typedef struct data_table
 } DataTable;
 
 /* actuators */
-pump_controller pump( PUMP_PIN );
+//pump_controller pump( PUMP_PIN );
 
 /* Sensors */
 RTC_PCF8523 rtc;
@@ -109,10 +110,18 @@ void setup()
         Serial.println( "SD did not init" );
     }
     Serial.println( "Error Log: " + error_log );
+
+
+    if( error_log == "" )
+    {
+        pinMode( PUMP_PIN, OUTPUT );
+        digitalWrite( PUMP_PIN, OUTPUT );
+    }
 }
 
 void loop()
 {
+    digitalWrite( LED_PIN, HIGH );
     /* generate out prepends */
     String output_prepend = generateOutputPrepend();
     String file_prepend = generateFilePrepend();
@@ -148,7 +157,7 @@ void loop()
     /* check pressure / pump
     if ( shouldPumpBeOn() )
         pump.on();
-    else
+    else'
         pump.off();
 */
     //Uhh boom, big shaq, big shaq, big khaled, what we say khaled
