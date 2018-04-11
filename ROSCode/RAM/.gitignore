@@ -4,3 +4,4 @@
 *build*
 *log*
 *.catkin_tools*
+CMakeLists.txt
