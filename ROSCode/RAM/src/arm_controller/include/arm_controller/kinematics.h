@@ -28,40 +28,48 @@
 
 namespace kinematics
 {
-    struct Coordinate
+    struct Coordinates
     {
         double x = 0.0;
         double y = 0.0;
         double z = 0.0;
     };
 
-    struct JointPositions
+    struct Joints
     {
-        double joint_1 = 0.0;
-        double joint_2 = 0.0;
-        double joint_3 = 0.0;
-        double joint_4 = 0.0;
+        double _1 = 0.0;
+        double _2 = 0.0;
+        double _3 = 0.0;
+        double _4 = 0.0;
     };
 
-    /*
-    std::tuple< JointPositions, JointPositions > inverseKinematics( Coordinate desired_coordinates )
+
+    std::tuple< Joints, Joints > inverseKinematics( Coordinates desired_coords, double EE_orientation_desired )
     {
+        double theta_1 = atan2( desired_coords.y / desired_coords.x );
+        double c = coords.z - length1 - length4*sin(EE_orientation_desired);
+        double A = coords.x - length4*cos(theta_1)*cos(EE_orientation_desired);
+        double B = coords.y - length4*sin(theta_1)*cos(EE_orientation_desired);
+        double C = coords.z - length1 - length4*sin(EE_orientation_desired);
+        double theta_3 = acos( (A^2 + B^2 + C^2 - length2^2 - length3^2 ) / ( 2 * length2 * length3 ) );
+        double a = length3*sin(theta_3);
+        double b = length2 + length3*cos(theta_3);
+        double r = sqrt( a^2 + b^2 );
+        double theta_2_low = atan2( )
+
 
     };
-*/
-    std::tuple< Coordinate, double > forwardKinematics( JointPositions current_joints )
+
+    std::tuple< Coordinates, double > forwardKinematics( Joints joints )
     {
-        Coordinate coords;
-        double EE_orientation = 0;
+        Coordinates coords;
+        double calc = length2*cos( joints._2 ) + length3*cos( joints._2 + joints._3 );
+        double EE_orientation= joints._2 + joints._3 + joints._4;
 
-        double calc = length2*cos( current_joints.joint_2 ) + length3*cos( current_joints.joint_2 + current_joints.joint_3 );
-        double angle_sum = current_joints.joint_2 + current_joints.joint_3 + current_joints.joint_4 );
-
-        coords.x = cos( current_joints.joint_1 ) * calc + length4*cos( current_joints.joint_1)*cos( angle_sum );
-        coords.y = sin( current_joints.joint_1 ) * calc + length4*sin( current_joints.joint_1)*sin( angle_sum );
-        coords.z = ( length1 + length2*sin( current_joints.joint_2 ) + length3*sin( current_joints.joint_2 + current_joints.joint_3 ) )
-                   + length4*sin( angle_sum );
-        EE_orientation = angle_sum; //sort of a dumb step, will resolve later
+        coords.x = cos( joints._1 ) * calc + length4*cos( joints._1 )*cos( EE_orientation );
+        coords.y = sin( joints._1 ) * calc + length4*sin( joints._1 )*sin( EE_orientation );
+        coords.z = ( length1 + length2*sin( joints._2 ) + length3*sin( joints._2 + joints._3 ) )
+                   + length4*sin( EE_orientation );
 
         return std::make_tuple( coords, EE_orientation );
     };
