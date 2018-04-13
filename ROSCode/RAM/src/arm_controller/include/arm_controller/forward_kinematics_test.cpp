@@ -3,6 +3,7 @@
 
 using namespace kinematics;
 using namespace std;
+
 int main()
 {
     Joints joints;

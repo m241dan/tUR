@@ -46,18 +46,49 @@ namespace kinematics
 
     std::tuple< Joints, Joints > inverseKinematics( Coordinates desired_coords, double EE_orientation_desired )
     {
-        double theta_1 = atan2( desired_coords.y / desired_coords.x );
-        double c = coords.z - length1 - length4*sin(EE_orientation_desired);
-        double A = coords.x - length4*cos(theta_1)*cos(EE_orientation_desired);
-        double B = coords.y - length4*sin(theta_1)*cos(EE_orientation_desired);
-        double C = coords.z - length1 - length4*sin(EE_orientation_desired);
-        double theta_3 = acos( (A^2 + B^2 + C^2 - length2^2 - length3^2 ) / ( 2 * length2 * length3 ) );
+        double theta_1 = atan2( desired_coords.y, desired_coords.x );
+        double c = desired_coords.z - length1 - length4*sin(EE_orientation_desired);
+
+        double A = desired_coords.x - length4*cos(theta_1)*cos(EE_orientation_desired);
+        double B = desired_coords.y - length4*sin(theta_1)*cos(EE_orientation_desired);
+        double C = desired_coords.z - length1 - length4*sin(EE_orientation_desired);
+
+        double theta_3 = acos( (A*A + B*B + C*C - length2*length2 - length3*length3 ) / ( 2 * length2 * length3 ) );
         double a = length3*sin(theta_3);
         double b = length2 + length3*cos(theta_3);
-        double r = sqrt( a^2 + b^2 );
-        double theta_2_low = atan2( )
+        double r = sqrt( a*a + b*b );
+        double theta_2_1 = atan2( c, sqrt( r*r - c*c ) ) - atan2( a, b );
+        double theta_2_2 = atan2( c, (-1)*sqrt( r*r - c*c ) ) - atan2( a, b );
+        double theta_4_1 = EE_orientation_desired - theta_2_1 - theta_3;
+        double theta_4_2 = EE_orientation_desired - theta_2_2 - theta_3;
 
+        Joints set_one;
+        set_one._1 = theta_1;
+        set_one._2 = theta_2_1;
+        set_one._3 = theta_3;
+        set_one._4 = theta_4_1;
 
+        Joints set_two;
+        set_two._1 = theta_1;
+        set_two._2 = theta_2_2;
+        set_two._3 = theta_3;
+        set_two._4 = theta_4_2;
+
+        Joints *ptr;
+     /*   for( int i = 0; i < 2; i++ )
+        {
+            ptr = &set_one;
+            if( ptr->_1 == M_PI || ptr->_1 == -M_PI )
+                ptr->_1 = 0;
+            if( ptr->_2 == M_PI || ptr->_2 == -M_PI )
+                ptr->_2 = 0;
+            if( ptr->_3 == M_PI || ptr->_3 == -M_PI )
+                ptr->_3 = 0;
+            if( ptr->_4 == M_PI || ptr->_4 == -M_PI )
+                ptr->_4 = 0;
+        } */
+
+        return std::make_tuple( set_one, set_two );
     };
 
     std::tuple< Coordinates, double > forwardKinematics( Joints joints )
