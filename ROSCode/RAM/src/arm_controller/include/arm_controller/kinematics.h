@@ -12,6 +12,7 @@
 
 #include <tuple>
 #include <math.h>
+#include "eigen3/Eigen/Eigen"
 
 /*
  * Lengths in cm
@@ -25,6 +26,15 @@
 #define length2 10.0
 #define length3 10.0
 #define length4 10.0
+
+using namespace Eigen;
+
+typedef Matrix<float,4,4> Matrix4;
+
+#define DegToRad(d)	(float)((float)d*(M_PI/180.0))
+#define RadToDeg(r)	(float)((float)r*(180.0/M_PI))
+
+Matrix4 HomogenousDHMatrix( float theta, float alpha, float r, float d );
 
 namespace kinematics
 {
@@ -53,7 +63,7 @@ namespace kinematics
 
         double gamma = atan2( desired_coords.z - length1, desired_coords.x );
         double beta = acos( ( CQ * CQ + CP * CP - length4 * length4 ) / ( 2 * CQ * CP ) );
-        if( isnan( beta ) )
+        if( std::isnan( beta ) )
             beta = 0;
         double alpha = acos( ( CQ * CQ + length2 * length2 - length3 * length3 ) / ( 2 * CQ * length2) );
 
@@ -74,16 +84,32 @@ namespace kinematics
     std::tuple< Coordinates, double > forwardKinematics( Joints joints )
     {
         Coordinates coords;
-        double calc = length2*cos( joints._2 ) + length3*cos( joints._2 + joints._3 );
-        double EE_orientation= joints._2 + joints._3 + joints._4;
+        double EE_orientation = joints._2 + joints._3 + joints._4;
 
-        coords.x = cos( joints._1 ) * calc + length4*cos( joints._1 )*cos( EE_orientation );
-        coords.y = sin( joints._1 ) * calc + length4*sin( joints._1 )*sin( EE_orientation );
-        coords.z = ( length1 + length2*sin( joints._2 ) + length3*sin( joints._2 + joints._3 ) )
-                   + length4*sin( EE_orientation );
+        Matrix4 H_0_1 = HomogenousDHMatrix( joints._1, M_PI_2, 0, length1 );
+        Matrix4 H_1_2 = HomogenousDHMatrix( joints._2, 0, length2, 0 );
+        Matrix4 H_2_3 = HomogenousDHMatrix( joints._3, 0, length3, 0 );
+        Matrix4 H_3_4 = HomogenousDHMatrix( joints._4, 0, length4, 0 );
+        Matrix4 H_0_4 = H_0_1 * H_1_2 * H_2_3 * H_3_4;
+
+        coords.x = H_0_4( 0, 3 );
+        coords.y = H_0_4( 1, 3 );
+        coords.z = H_0_4( 2, 3 );
 
         return std::make_tuple( coords, EE_orientation );
     };
+}
+
+Matrix4 HomogenousDHMatrix( float theta, float alpha, float r, float d )
+{
+    Matrix4 h_dh_matrix;
+
+    h_dh_matrix << cos(theta), (-1.0)*sin(theta)*cos(alpha), sin(theta)*sin(alpha), r*cos(theta),
+            sin(theta), cos(theta)*cos(alpha), (-1.0)*cos(theta)*sin(alpha), r*sin(theta),
+            0, sin(alpha), cos(alpha), d,
+            0, 0, 0, 1;
+
+    return h_dh_matrix;
 }
 
 #endif //RAM_KINEMATICS_H
