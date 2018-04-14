@@ -67,7 +67,7 @@ namespace kinematics
         double gamma = atan2( desired_coords.z, desired_coords.x );
         double beta = acos( ( CQ * CQ + CP * CP - length4 * length4 ) / ( 2 * CQ * CP ) );
         double alpha = acos( ( CQ * CQ + length2 * length2 - length3 * length3 ) / ( 2 * CQ * length2) );
-        
+
         double theta_2 = alpha + beta + gamma;
         double theta_3 = (-1) * ( M_PI -  acos( ( length2 * length2 + length3 * length3 - CQ * CQ ) / ( 2 * length2 * length3 ) ) );
         double theta_4 = EE_orientation_desired - theta_2 - theta_3;
