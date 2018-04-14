@@ -56,18 +56,18 @@ namespace kinematics
 
     Joints inverseKinematics( Coordinates desired_coords, double EE_orientation_desired )
     {
+        double theta_1 = atan2( desired_coords.y, desired_coords.x );
+        desired_coords.z -= length1;
+        desired_coords.x = sqrt( desired_coords.x * desired_coords.x + desired_coords.y * desired_coords.y );
         double x_q = desired_coords.x - length4*cos(EE_orientation_desired);
-        double z_q = desired_coords.z - length1 - length4*sin(EE_orientation_desired);
+        double z_q = desired_coords.z - length4*sin(EE_orientation_desired);
         double CQ = sqrt( x_q * x_q + z_q * z_q );
         double CP = sqrt( desired_coords.x * desired_coords.x + desired_coords.z * desired_coords.z );
 
-        double gamma = atan2( desired_coords.z - length1, desired_coords.x );
+        double gamma = atan2( desired_coords.z, desired_coords.x );
         double beta = acos( ( CQ * CQ + CP * CP - length4 * length4 ) / ( 2 * CQ * CP ) );
-        if( std::isnan( beta ) )
-            beta = 0;
         double alpha = acos( ( CQ * CQ + length2 * length2 - length3 * length3 ) / ( 2 * CQ * length2) );
-
-        double theta_1 = atan2( desired_coords.y, desired_coords.x );
+        
         double theta_2 = alpha + beta + gamma;
         double theta_3 = (-1) * ( M_PI -  acos( ( length2 * length2 + length3 * length3 - CQ * CQ ) / ( 2 * length2 * length3 ) ) );
         double theta_4 = EE_orientation_desired - theta_2 - theta_3;
