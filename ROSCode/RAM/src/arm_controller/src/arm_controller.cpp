@@ -4,17 +4,36 @@
 
 #include "arm_controller.h"
 
+/*
+ * MAIN FUNCTION
+ */
 int main( int argc, char **argv )
 {
+    bool run_ros = true;
     ros::init( argc, argv, "arm_controller", ros::init_options::NoSigintHandler );
     ros::NodeHandle ros_handle;
 
     setupPublishers( ros_handle );
     setupSubscribers( ros_handle );
-    setupDynamixelBus();
-    setupDynamixelDriver();
 
-    ros::spin();
+    if( setupDynamixelBus() )
+    {
+        if( setupDynamixelDriver() )
+        {
+            
+        }
+        else
+        {
+            run_ros = false;
+        }
+    }
+    else {
+        run_ros = false;
+    }
+
+
+    if( run_ros )
+        ros::spin();
     return 0;
 }
 
@@ -29,7 +48,6 @@ void setupPublishers( ros::NodeHandle &ros_handle )
     servo_shoulder_info = ros_handle.advertise<dynamixel_workbench_msgs::XH>( "servo/shoulder", 10 );
     servo_elbow_info = ros_handle.advertise<dynamixel_workbench_msgs::XH>( "servo/elbow", 10 );
     servo_wrist_info = ros_handle.advertise<dynamixel_workbench_msgs::XH>( "servo/wrist", 10 );
-    return;
 }
 
 void setupSubscribers( ros::NodeHandle &ros_handle )
@@ -37,7 +55,6 @@ void setupSubscribers( ros::NodeHandle &ros_handle )
     enqueue_waypoint = ros_handle.subscribe( "arm/waypoint", 10, enqueueHandler );
     reset_queue = ros_handle.subscribe( "arm/queue_reset", 10, resetQueueHandler );
     operation_mode = ros_handle.subscribe( "arm/mode_setter", 10, operationModeHandler );
-    return;
 }
 
 bool setupDynamixelBus()
@@ -105,5 +122,5 @@ void resetQueueHandler( const std_msgs::UInt8::ConstPtr &message )
 }
 void operationModeHandler( const std_msgs::UInt8::ConstPtr &message )
 {
-    
+
 }
