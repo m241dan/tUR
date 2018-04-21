@@ -4,11 +4,11 @@ project(arm_controller)
 SET( CMAKE_CXX_FLAGS "-std=c++11" )
 
 find_package(catkin REQUIRED COMPONENTS
-  robotis_controller
-  robotis_device
-  robotis_framework_common
+  dynamixel_workbench_toolbox
+  dynamixel_workbench_msgs
   roscpp
   std_msgs
+  geometry_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -103,7 +103,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES arm_controller
-  CATKIN_DEPENDS robotis_controller robotis_device robotis_framework_common roscpp std_msgs
+  CATKIN_DEPENDS dynamixel_workbench_toolbox dynamixel_workbench_msgs roscpp std_msgs geometry_msgs
 #  DEPENDS system_lib
 )
 
@@ -121,6 +121,8 @@ include_directories(
 add_executable(
         arm_controller
         src/arm_controller.cpp
+        include/state_machine/Error.cpp
+        include/state_machine/
 )
 
 ## Rename C++ executable without prefix
