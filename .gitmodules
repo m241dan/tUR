@@ -1,3 +1,6 @@
 [submodule "Code/libraries/state_machine"]
 	path = Code/libraries/state_machine
 	url = https://github.com/m241dan/state_machine
+[submodule "ROSCode/RAM/src/arm_controller/include/state_machine"]
+	path = ROSCode/RAM/src/arm_controller/include/state_machine
+	url = https://github.com/m241dan/state_machine
