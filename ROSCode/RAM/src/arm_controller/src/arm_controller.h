@@ -7,6 +7,7 @@
 
 #include <ros/ros.h>
 #include <string>
+#include "dynamixel_sdk/port_handler.h"
 
 /*
  * Publishers
