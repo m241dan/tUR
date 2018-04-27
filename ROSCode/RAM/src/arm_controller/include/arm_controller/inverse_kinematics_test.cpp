@@ -7,10 +7,10 @@ using namespace std;
 int main()
 {
     Joints joints;
-    joints._4 = -M_PI_2;;
-    joints._3 = -M_PI_2;
-    joints._2 = M_PI_2;//M_PI_4;
-    joints._1 = -M_PI_4;
+    joints._4 = 0;
+    joints._3 = 0;
+    joints._2 = 0;//M_PI_4;
+    joints._1 = 0;
     std::tuple<Coordinates,double> ret = forwardKinematics( joints );
     Coordinates coords = get<0>( ret );
     double EE_orientation = get<1>( ret );

@@ -58,11 +58,10 @@ namespace kinematics
     {
         double theta_1 = atan2( desired_coords.y, desired_coords.x );
         desired_coords.z -= length1;
-        desired_coords.x = sqrt( desired_coords.x * desired_coords.x + desired_coords.y * desired_coords.y );
         double x_q = desired_coords.x - length4*cos(EE_orientation_desired);
         double z_q = desired_coords.z - length4*sin(EE_orientation_desired);
-        double CQ = sqrt( x_q * x_q + z_q * z_q );
-        double CP = sqrt( desired_coords.x * desired_coords.x + desired_coords.z * desired_coords.z );
+        double CQ = sqrt( x_q * x_q + desired_coords.y * desired_coords.y + z_q * z_q );
+        double CP = sqrt( desired_coords.x * desired_coords.x + desired_coords.y * desired_coords.y  + desired_coords.z * desired_coords.z );
 
         double gamma = atan2( desired_coords.z, desired_coords.x );
         double beta = acos( ( CQ * CQ + CP * CP - length4 * length4 ) / ( 2 * CQ * CP ) );
@@ -87,7 +86,7 @@ namespace kinematics
         double EE_orientation = joints._2 + joints._3 + joints._4;
 
         Matrix4 H_0_1 = HomogenousDHMatrix( joints._1, M_PI_2, 0, length1 );
-        Matrix4 H_1_2 = HomogenousDHMatrix( joints._2, 0, length2, 0 );
+        Matrix4 H_1_2 = HomogenousDHMatrix( joints._2 - 0.0872665, 0, length2, 0 );
         Matrix4 H_2_3 = HomogenousDHMatrix( joints._3, 0, length3, 0 );
         Matrix4 H_3_4 = HomogenousDHMatrix( joints._4, 0, length4, 0 );
         Matrix4 H_0_4 = H_0_1 * H_1_2 * H_2_3 * H_3_4;

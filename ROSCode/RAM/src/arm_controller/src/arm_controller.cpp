@@ -162,3 +162,5 @@ void publishServoInfo( const ros::TimerEvent& event )
         servo_info[i].publish( servos[i] );
     }
 }
+
+void
