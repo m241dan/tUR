@@ -20,7 +20,17 @@ int main( int argc, char **argv )
     {
         if( setupDynamixelDriver() )
         {
-            
+            /* setup bulkread and perform an initial reading + publish findings*/
+            bench.initBulkRead();
+            for( int i = 1; i < 5; i++ )
+            {
+                bench.addBulkReadParam( i, "Torque_Enable" );
+                bench.addBulkReadParam( i, "Goal_Position" );
+                bench.addBulkReadParam( i, "Present_Position" );
+
+            }
+
+
         }
         else
         {
