@@ -37,6 +37,8 @@ ros::Subscriber enqueue_waypoint;
 ros::Subscriber reset_queue;
 ros::Subscriber operation_mode;
 
+ros::Timer publish_info_timer;
+
 DynamixelWorkbench bench;
 
 
@@ -47,11 +49,11 @@ std::string updateParams[MAX_UPDATE_PARAMS] = {
         "Profile_Velocity"
 };
 
-typedef enum
+enum
 {
     ROTATION_SERVO, SHOULDER_SERVO,
     ELBOW_SERVO, WRIST_SERVO, MAX_SERVO
-} SERVO_MSG;
+};
 
 ros::Publisher servo_info[MAX_SERVO];
 dynamixel_workbench_msgs::XH servos[MAX_SERVO];
@@ -66,11 +68,10 @@ void setupSubscribers( ros::NodeHandle &ros_handle );
 void setupCallbackFunctions( ros::NodeHandle &ros_handle );
 bool setupDynamixelBus();
 bool setupDynamixelDriver();
-bool setupBulkRead();
 
 bool readAndUpdateServos();
 void enqueueHandler( const geometry_msgs::Pose::ConstPtr &message );
 void resetQueueHandler( const std_msgs::UInt8::ConstPtr &message );
 void operationModeHandler( const std_msgs::UInt8::ConstPtr &message );
-void publishServoInfo();
+void publishServoInfo( const ros::TimerEvent& event );
 #endif //RAM_ARM_CONTROLLER_H

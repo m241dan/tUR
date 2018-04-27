@@ -21,24 +21,23 @@ int main( int argc, char **argv )
     {
         if( setupDynamixelDriver() )
         {
-            /* handle first read/update and perform an initial reading + publish findings*/
+            /* handle first read/update and perform an initial reading */
             readAndUpdateServos();
-            publishServoInfo();
-            std::cout << "Published" << std::endl;
         }
         else
         {
-            std::cout << "Failing here..." << std::endl;
             run_ros = false;
         }
     }
-    else {
+    else
+    {
         run_ros = false;
     }
 
 
     if( run_ros )
         ros::spin();
+
     return 0;
 }
 
@@ -62,7 +61,7 @@ void setupSubscribers( ros::NodeHandle &ros_handle )
 
 void setupCallbackFunctions( ros::NodeHandle &ros_handle )
 {
-
+    publish_info_timer = ros_handle.createTimer( ros::Duration( 1 ), publishServoInfo );
 }
 
 bool setupDynamixelBus()
@@ -116,41 +115,9 @@ bool setupDynamixelDriver()
     return success;
 }
 
-bool setupBulkRead()
-{
-    bool success = true;
-
-    bench.initBulkRead();
-
-    /*
-     * This loops through adding bulk params for each servo
-     * The param strings that it adds are in the updateParams array
-     * THis is less explicit than I like but allows for easy growth
-     */
-    for( int i = 1; i < 5; i++ )
-    {
-        for( int j = 0; j < 5; j++ )
-        {
-            success = bench.addBulkReadParam( i, updateParams[j].c_str() );
-            if( !success )
-            {
-                messaging::errorMsg( __FUNCTION__, "failed to add param" );
-                std::cout << "Failed to add " << updateParams[j] << " on servo " << i << std::endl;
-                break;
-            }
-        }
-        if( !success )
-            break;
-    }
-
-    return success;
-}
-
 bool readAndUpdateServos()
 {
     bool success = true;
-
-    success = bench.setBulkRead();
 
     if( success )
     {
@@ -160,11 +127,12 @@ bool readAndUpdateServos()
              * This is going to be very explicit but slightly slower in the growth department.
              * However, since this doesn't really have to deal with success checking, it should be fine.
              */
-            servos[i].Torque_Enable = (uint8_t)  bench.itemRead(i, "Torque_Enable");
-            servos[i].Goal_Position = (uint32_t) bench.itemRead(i, "Goal_Position");
-            servos[i].Present_Position = bench.itemRead(i, "Present_Position");
-            servos[i].Present_Velocity = bench.itemRead(i, "Present_Velocity");
-            servos[i].Profile_Velocity = (uint32_t) bench.itemRead(i, "Profile_Velocity");
+            int id = i + 1;
+            servos[i].Torque_Enable = (uint8_t)  bench.itemRead(id, "Torque_Enable");
+            servos[i].Goal_Position = (uint32_t) bench.itemRead(id, "Goal_Position");
+            servos[i].Present_Position = bench.itemRead(id, "Present_Position");
+            servos[i].Present_Velocity = bench.itemRead(id, "Present_Velocity");
+            servos[i].Profile_Velocity = (uint32_t) bench.itemRead(id, "Profile_Velocity");
         }
     }
     return success;
@@ -187,7 +155,7 @@ void operationModeHandler( const std_msgs::UInt8::ConstPtr &message )
 
 }
 
-void publishServoInfo( )
+void publishServoInfo( const ros::TimerEvent& event )
 {
     for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
     {
