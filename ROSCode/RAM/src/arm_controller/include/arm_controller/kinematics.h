@@ -22,10 +22,10 @@
  * length4 wrist to end-effector
  */
 
-#define length1 5.0
-#define length2 10.0
-#define length3 10.0
-#define length4 10.0
+#define length1 3.0
+#define length2 10.00
+#define length3 10.00
+#define length4 10.00
 
 using namespace Eigen;
 
@@ -86,7 +86,7 @@ namespace kinematics
         double EE_orientation = joints._2 + joints._3 + joints._4;
 
         Matrix4 H_0_1 = HomogenousDHMatrix( joints._1, M_PI_2, 0, length1 );
-        Matrix4 H_1_2 = HomogenousDHMatrix( joints._2 - 0.0872665, 0, length2, 0 );
+        Matrix4 H_1_2 = HomogenousDHMatrix( joints._2, 0, length2, 0 );
         Matrix4 H_2_3 = HomogenousDHMatrix( joints._3, 0, length3, 0 );
         Matrix4 H_3_4 = HomogenousDHMatrix( joints._4, 0, length4, 0 );
         Matrix4 H_0_4 = H_0_1 * H_1_2 * H_2_3 * H_3_4;

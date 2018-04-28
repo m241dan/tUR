@@ -3,3 +3,8 @@
 //
 
 #include "arm_controller/OffState.h"
+
+std::string OffState::transition()
+{
+
+}
