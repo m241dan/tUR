@@ -2,7 +2,7 @@
 // Created by korisd on 4/20/18.
 //
 
-#include "arm_controller.h"
+#include "arm_controller/arm_controller.h"
 
 /*
  * MAIN FUNCTION
@@ -62,6 +62,7 @@ void setupSubscribers( ros::NodeHandle &ros_handle )
 void setupCallbackFunctions( ros::NodeHandle &ros_handle )
 {
     publish_info_timer = ros_handle.createTimer( ros::Duration( 1 ), publishServoInfo );
+    state_machine_timer = ros_handle.createTimer( ros::Duration( 0.1 ), stateMachineLoop );
 }
 
 bool setupDynamixelBus()
@@ -119,24 +120,54 @@ bool readAndUpdateServos()
 {
     bool success = true;
 
-    if( success )
+    for ( int i = ROTATION_SERVO; i < MAX_SERVO; i++)
     {
-        for ( int i = ROTATION_SERVO; i < MAX_SERVO; i++)
-        {
-            /*
-             * This is going to be very explicit but slightly slower in the growth department.
-             * However, since this doesn't really have to deal with success checking, it should be fine.
-             */
-            int id = i + 1;
-            servos[i].Torque_Enable = (uint8_t)  bench.itemRead(id, "Torque_Enable");
-            servos[i].Goal_Position = (uint32_t) bench.itemRead(id, "Goal_Position");
-            servos[i].Present_Position = bench.itemRead(id, "Present_Position");
-            servos[i].Present_Velocity = bench.itemRead(id, "Present_Velocity");
-            servos[i].Profile_Velocity = (uint32_t) bench.itemRead(id, "Profile_Velocity");
-        }
+        /*
+         * This is going to be very explicit but slightly slower in the growth department.
+         * However, since this doesn't really have to deal with success checking, it should be fine.
+         */
+        int id = i + 1;
+        inputs.servos[i].Torque_Enable = (uint8_t)  bench.itemRead(id, "Torque_Enable");
+        inputs.servos[i].Goal_Position = (uint32_t) bench.itemRead(id, "Goal_Position");
+        inputs.servos[i].Present_Position = bench.itemRead(id, "Present_Position");
+        inputs.servos[i].Present_Velocity = bench.itemRead(id, "Present_Velocity");
+        inputs.servos[i].Profile_Velocity = (uint32_t) bench.itemRead(id, "Profile_Velocity");
     }
     return success;
 }
+
+void updateAndPublishCurrentLocation()
+{
+    /*
+     * Update Portion
+     */
+    std::tuple<kinematics::Coordinates, double> forward_kinematics;
+    kinematics::Coordinates coords;
+    double end_effector_orientation;
+
+    kinematics::Joints current_joints;
+    current_joints._1 = bench.convertValue2Radian( 1, inputs.servos[0].Present_Position );
+    current_joints._2 = bench.convertValue2Radian( 2, inputs.servos[1].Present_Position );
+    current_joints._3 = bench.convertValue2Radian( 3, inputs.servos[2].Present_Position );
+    current_joints._4 = bench.convertValue2Radian( 4, inputs.servos[3].Present_Position );
+
+    forward_kinematics = kinematics::forwardKinematics( current_joints );
+    coords = std::get<0>( forward_kinematics );
+    end_effector_orientation = std::get<1>( forward_kinematics );
+
+    inputs.current_position.position.x = coords.x;
+    inputs.current_position.position.y = coords.y;
+    inputs.current_position.position.z = coords.z;
+
+    inputs.current_position.orientation.x = end_effector_orientation;
+
+    /*
+     * Publish Portion
+     */
+    current_kinematics.publish( inputs.current_position );
+
+}
+
 
 /*
  * Subscriber Callbacks
@@ -155,12 +186,29 @@ void operationModeHandler( const std_msgs::UInt8::ConstPtr &message )
 
 }
 
+/*
+ * Timer Callbacks
+ */
 void publishServoInfo( const ros::TimerEvent& event )
 {
     for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
     {
-        servo_info[i].publish( servos[i] );
+        servo_info[i].publish( inputs.servos[i] );
     }
 }
 
-void
+void stateMachineLoop( const ros::TimerEvent& event )
+{
+    /* read and update servos */
+    readAndUpdateServos();
+    /* update and publish current location */
+    updateAndPublishCurrentLocation();
+    /* state machine operation */
+
+    /* write the new servo goal locations from the output table */
+
+    /* publish current goal */
+    goal_kinematics.publish( inputs.waypoint_queue.front() );
+
+}
+
