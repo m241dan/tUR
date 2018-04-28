@@ -204,7 +204,7 @@ void stateMachineLoop( const ros::TimerEvent& event )
     /* update and publish current location */
     updateAndPublishCurrentLocation();
     /* state machine operation */
-
+    machine.run();
     /* write the new servo goal locations from the output table */
 
     /* publish current goal */
