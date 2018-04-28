@@ -9,7 +9,7 @@ int main()
     Joints joints;
     joints._4 = 0;
     joints._3 = 0;
-    joints._2 = M_PI_4;//M_PI_4;
+    joints._2 = 0;//M_PI_4;
     joints._1 = 0;
     std::tuple<Coordinates,double> ret = forwardKinematics( joints );
     Coordinates coords = get<0>( ret );

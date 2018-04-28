@@ -23,8 +23,8 @@
  */
 
 #define length1 3.0
-#define length2 10.00
-#define length3 10.00
+#define length2 9.7
+#define length3 9.01
 #define length4 10.00
 
 using namespace Eigen;
