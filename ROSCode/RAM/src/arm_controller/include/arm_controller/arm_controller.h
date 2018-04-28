@@ -51,12 +51,6 @@ std::string updateParams[MAX_UPDATE_PARAMS] = {
         "Profile_Velocity"
 };
 
-enum
-{
-    ROTATION_SERVO, SHOULDER_SERVO,
-    ELBOW_SERVO, WRIST_SERVO, MAX_SERVO
-};
-
 ros::Publisher servo_info[MAX_SERVO];
 
 std::string servo_topic_names[MAX_SERVO] = {
