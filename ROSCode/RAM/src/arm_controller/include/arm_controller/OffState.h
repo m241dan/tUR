@@ -5,8 +5,9 @@
 #ifndef ARM_CONTROLLER_OFFSTATE_H
 #define ARM_CONTROLLER_OFFSTATE_H
 
+#include "state_machine/State.h"
 
-class OffState
+class OffState : public State
 {
 
 };

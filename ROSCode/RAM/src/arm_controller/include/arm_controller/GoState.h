@@ -5,8 +5,9 @@
 #ifndef ARM_CONTROLLER_GOSTATE_H
 #define ARM_CONTROLLER_GOSTATE_H
 
+#include "state_machine/State.h"
 
-class GoState
+class GoState : public State
 {
 
 };

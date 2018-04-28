@@ -5,8 +5,9 @@
 #ifndef ARM_CONTROLLER_GOSYNCHRONIZEDSTATE_H
 #define ARM_CONTROLLER_GOSYNCHRONIZEDSTATE_H
 
+#include "state_machine/State.h"
 
-class GoSynchronizedState
+class GoSynchronizedState : public State
 {
 
 };

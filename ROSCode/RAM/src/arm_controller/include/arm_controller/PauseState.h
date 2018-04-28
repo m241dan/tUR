@@ -5,8 +5,9 @@
 #ifndef ARM_CONTROLLER_PAUSESTATE_H
 #define ARM_CONTROLLER_PAUSESTATE_H
 
+#include "state_machine/State.h"
 
-class PauseState
+class PauseState : public State
 {
 
 };

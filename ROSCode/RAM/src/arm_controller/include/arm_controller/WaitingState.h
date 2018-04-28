@@ -5,8 +5,9 @@
 #ifndef ARM_CONTROLLER_WAITINGSTATE_H
 #define ARM_CONTROLLER_WAITINGSTATE_H
 
+#include "state_machine/State.h"
 
-class WaitingState
+class WaitingState : public State
 {
 
 };
