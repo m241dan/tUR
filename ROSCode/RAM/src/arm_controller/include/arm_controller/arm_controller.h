@@ -15,6 +15,7 @@
 #include "state_machine/Error.h"
 #include "dynamixel_workbench_toolbox/dynamixel_workbench.h"
 #include "dynamixel_workbench_msgs/XH.h"
+#include "shared_types.h"
 #include "arm_machine.h"
 
 /*
@@ -63,15 +64,9 @@ std::string servo_topic_names[MAX_SERVO] = {
         "servo/elbow", "servo/wrist"
 };
 
-typedef struct inputs_table
-{
-    std::vector<geometry_msgs::Pose> waypoint_queue;
-    dynamixel_workbench_msgs::XH servos[MAX_SERVO];
-    geometry_msgs::Pose current_position;
-
-} InputsTable;
 
 InputsTable inputs;
+ArmMachine machine( &inputs );
 
 
 
