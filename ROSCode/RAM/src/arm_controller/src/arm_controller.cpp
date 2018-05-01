@@ -182,16 +182,23 @@ void updateAndPublishCurrentLocation()
  */
 void enqueueHandler( const geometry_msgs::Pose::ConstPtr &message )
 {
-
+    if( inputs.desired_mode != OFF_MODE )
+    {
+        inputs.waypoint_queue.push_back( *message );
+    }
 }
 
 void resetQueueHandler( const std_msgs::UInt8::ConstPtr &message )
 {
+    if( message->data == 1 )
+    {
+        inputs.waypoint_queue.clear();
+    }
 
 }
 void operationModeHandler( const std_msgs::UInt8::ConstPtr &message )
 {
-
+    inputs.desired_mode = message->data;
 }
 
 /*
