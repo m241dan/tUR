@@ -5,11 +5,13 @@
 #ifndef ARM_CONTROLLER_PAUSESTATE_H
 #define ARM_CONTROLLER_PAUSESTATE_H
 
-#include "state_machine/State.h"
+#include "ArmState.h"
 
-class PauseState : public State
+class PauseState : public ArmState
 {
-
+    public:
+        PauseState( InputsTable *i );
+        virtual void onEnter( std::string prev_state );
 };
 
 

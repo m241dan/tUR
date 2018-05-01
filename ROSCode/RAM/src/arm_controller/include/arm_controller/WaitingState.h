@@ -5,11 +5,14 @@
 #ifndef ARM_CONTROLLER_WAITINGSTATE_H
 #define ARM_CONTROLLER_WAITINGSTATE_H
 
-#include "state_machine/State.h"
+#include "ArmState.h"
 
-class WaitingState : public State
+class WaitingState : public ArmState
 {
-
+    public:
+        WaitingState( InputsTable *i );
+        virtual void onEnter( std::string prev_state );
+        virtual std::string transition();
 };
 
 
