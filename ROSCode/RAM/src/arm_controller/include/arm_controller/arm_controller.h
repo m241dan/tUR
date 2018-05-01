@@ -17,6 +17,9 @@
 #include "dynamixel_workbench_msgs/XH.h"
 #include "shared_types.h"
 #include "arm_machine.h"
+#include "arm_controller/OffState.h"
+#include "arm_controller/PauseState.h"
+#include "arm_controller/WaitingState.h"
 
 /*
  * Publishers
@@ -61,14 +64,16 @@ std::string servo_topic_names[MAX_SERVO] = {
 
 InputsTable inputs;
 ArmMachine machine( &inputs );
-
-
+OffState off_state( &inputs );
+PauseState pause_state( &inputs );
+WaitingState waiting_state( &inputs );
 
 void setupPublishers( ros::NodeHandle &ros_handle  );
 void setupSubscribers( ros::NodeHandle &ros_handle );
 void setupCallbackFunctions( ros::NodeHandle &ros_handle );
 bool setupDynamixelBus();
 bool setupDynamixelDriver();
+void setupStateMachine();
 
 bool readAndUpdateServos();
 void enqueueHandler( const geometry_msgs::Pose::ConstPtr &message );

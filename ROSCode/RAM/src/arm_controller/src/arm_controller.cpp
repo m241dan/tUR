@@ -16,6 +16,7 @@ int main( int argc, char **argv )
     setupPublishers( ros_handle );
     setupSubscribers( ros_handle );
     setupCallbackFunctions( ros_handle );
+    setupStateMachine();
 
     if( setupDynamixelBus() )
     {
@@ -63,6 +64,13 @@ void setupCallbackFunctions( ros::NodeHandle &ros_handle )
 {
     publish_info_timer = ros_handle.createTimer( ros::Duration( 1 ), publishServoInfo );
     state_machine_timer = ros_handle.createTimer( ros::Duration( 0.1 ), stateMachineLoop );
+}
+
+void setupStateMachine()
+{
+    machine.addState( off_state.getIdentifier(), &off_state );
+    machine.addState( pause_state.getIdentifier(), &pause_state );
+    machine.addState( waiting_state.getIdentifier(), &waiting_state );
 }
 
 bool setupDynamixelBus()
