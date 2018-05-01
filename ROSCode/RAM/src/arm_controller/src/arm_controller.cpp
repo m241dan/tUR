@@ -214,6 +214,34 @@ void stateMachineLoop( const ros::TimerEvent& event )
     /* state machine operation */
     machine.run();
     /* write the new servo goal locations from the output table */
+    std::string current_state = machine.getCurrentIdentifier();
+    std::vector<ServoCommand> commands;
+
+    if( current_state == OFF_STATE )
+    {
+        commands = off_state.getOutputs();
+    }
+    else if( current_state == PAUSE_STATE )
+    {
+        commands = pause_state.getOutputs();
+    }
+    else if( current_state == WAITING_STATE )
+    {
+        commands = waiting_state.getOutputs();
+    }
+    else if( current_state == GO_STATE )
+    {
+        //soon come, ya? yuh dun know, skraat pop pop
+    }
+    else if( current_state == GO_SYNCHRONIZED_STATE )
+    {
+        //ibid
+    }
+
+    for( int i = 0; i < commands.size(); i++ )
+    {
+        bench.itemWrite( commands[i].id, commands[i].command.c_str(), commands[i].value );
+    }
 
     /* publish current goal */
     goal_kinematics.publish( inputs.waypoint_queue.front() );
