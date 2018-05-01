@@ -5,6 +5,7 @@
 #include "arm_controller/ArmState.h"
 
 ArmState:: ArmState( InputsTable *i, std::string name ) : State( name ), inputs(i) {}
+
 std::string ArmState::transition()
 {
     std::string transition_to = this->getIdentifier();
