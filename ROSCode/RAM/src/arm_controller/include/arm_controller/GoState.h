@@ -7,8 +7,14 @@
 
 #include "ArmState.h"
 
+#define ARRIVAL_THRESHOLD 0.01
 class GoState : public ArmState
 {
+    public:
+        GoState( InputsTable *i );
+        virtual std::string transition();
+        virtual void action();
+    private:
 
 };
 
