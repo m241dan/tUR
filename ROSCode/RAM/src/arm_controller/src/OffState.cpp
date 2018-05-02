@@ -12,5 +12,7 @@ OffState::OffState(InputsTable *i) : ArmState(i, OFF_STATE )
         com.id = i;
         com.command = "Torque_Enable";
         com.value = 0;
+
+        outputs.push_back( com );
     }
 }
