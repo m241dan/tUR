@@ -5,9 +5,11 @@
 #ifndef ARM_CONTROLLER_ARMSTATE_H
 #define ARM_CONTROLLER_ARMSTATE_H
 
+#include <vector>
+
 #include "state_machine/State.h"
 #include "shared_types.h"
-#include <vector>
+#include "kinematics.h"
 
 class ArmState : public State
 {
