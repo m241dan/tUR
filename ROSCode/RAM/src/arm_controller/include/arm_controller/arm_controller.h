@@ -10,6 +10,7 @@
 #include <geometry_msgs/Pose.h>
 #include <std_msgs/UInt8.h>
 #include <std_msgs/UInt16.h>
+#include <std_msgs/String.h>
 #include <vector>
 #include "arm_controller/kinematics.h"
 #include "state_machine/Error.h"
@@ -20,15 +21,18 @@
 #include "arm_controller/OffState.h"
 #include "arm_controller/PauseState.h"
 #include "arm_controller/WaitingState.h"
+#include "arm_controller/GoState.h"
+
+#define MAX_VELOCITY 30
 
 /*
  * Publishers
  */
-ros::Publisher queue_size;
-ros::Publisher state_machine_mode;
-ros::Publisher desired_mode;
-ros::Publisher current_kinematics;
-ros::Publisher goal_kinematics;
+ros::Publisher queue_size;          /* std_msgs::Uint16 */
+ros::Publisher state_machine_mode;  /* std_msgs::String */
+ros::Publisher desired_mode;        /* std_msgs::UInt8 */
+ros::Publisher current_kinematics;  /* geometry_msgs::Pose */
+ros::Publisher goal_kinematics;     /* geometry_msgs::Pose */
 
 
 /*
@@ -67,6 +71,7 @@ ArmMachine machine( &inputs );
 OffState off_state( &inputs );
 PauseState pause_state( &inputs );
 WaitingState waiting_state( &inputs );
+GoState go_state( &inputs );
 
 void setupPublishers( ros::NodeHandle &ros_handle  );
 void setupSubscribers( ros::NodeHandle &ros_handle );
@@ -76,6 +81,9 @@ bool setupDynamixelDriver();
 void setupStateMachine();
 
 bool readAndUpdateServos();
+void publishStateMachineMode();
+void publishQueueSize();
+void publishDesiredMode();
 void enqueueHandler( const geometry_msgs::Pose::ConstPtr &message );
 void resetQueueHandler( const std_msgs::UInt8::ConstPtr &message );
 void operationModeHandler( const std_msgs::UInt8::ConstPtr &message );
