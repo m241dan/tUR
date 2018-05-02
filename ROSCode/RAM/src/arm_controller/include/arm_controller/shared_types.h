@@ -45,6 +45,7 @@ typedef struct servo_command
     uint8_t id = 0;
     std::string command = "";
     int32_t value = 0;
+    bool value_in_radians = false;
 } ServoCommand;
 
 #endif //ARM_CONTROLLER_SHARED_TYPES_H
