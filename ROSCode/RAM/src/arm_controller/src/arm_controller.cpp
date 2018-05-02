@@ -45,7 +45,7 @@ int main( int argc, char **argv )
 void setupPublishers( ros::NodeHandle &ros_handle )
 {
     queue_size = ros_handle.advertise<std_msgs::UInt16>( "arm_queue_size", 10 );
-    state_machine_mode = ros_handle.advertise<std_msgs::UInt8>( "state_machine_mode", 10 );
+    state_machine_mode = ros_handle.advertise<std_msgs::String>( "state_machine_mode", 10 );
     desired_mode = ros_handle.advertise<std_msgs::UInt8>( "desired_mode", 10 );
     current_kinematics = ros_handle.advertise<geometry_msgs::Pose>( "current_kinematics", 10 );
     goal_kinematics = ros_handle.advertise<geometry_msgs::Pose>( "goal_kinematics", 10 );
@@ -71,6 +71,7 @@ void setupStateMachine()
     machine.addState( off_state.getIdentifier(), &off_state );
     machine.addState( pause_state.getIdentifier(), &pause_state );
     machine.addState( waiting_state.getIdentifier(), &waiting_state );
+    machine.addState( go_state.getIdentifier(), &go_state );
 }
 
 bool setupDynamixelBus()
@@ -140,6 +141,7 @@ bool readAndUpdateServos()
         inputs.servos[i].Present_Position = bench.itemRead(id, "Present_Position");
         inputs.servos[i].Present_Velocity = bench.itemRead(id, "Present_Velocity");
         inputs.servos[i].Profile_Velocity = (uint32_t) bench.itemRead(id, "Profile_Velocity");
+        bench.itemWrite( id, "Velocity_Limit", MAX_VELOCITY );
     }
     return success;
 }
@@ -212,6 +214,27 @@ void publishServoInfo( const ros::TimerEvent& event )
     }
 }
 
+void publishQueueSize()
+{
+    std_msgs::UInt16 qs;
+    qs.data = inputs.waypoint_queue.size();
+    queue_size.publish( qs );
+}
+
+void publishStateMachineMode()
+{
+    std_msgs::String current_state_msg;
+    current_state_msg.data = machine.getCurrentIdentifier();
+    state_machine_mode.publish( current_state_msg );
+}
+
+void publishDesiredMode()
+{
+    std_msgs::UInt8 mode_message;
+    mode_message.data = inputs.desired_mode;
+    desired_mode.publish( mode_message );
+}
+
 void stateMachineLoop( const ros::TimerEvent& event )
 {
     /* read and update servos */
@@ -238,20 +261,28 @@ void stateMachineLoop( const ros::TimerEvent& event )
     }
     else if( current_state == GO_STATE )
     {
-        //soon come, ya? yuh dun know, skraat pop pop
+        commands = go_state.getOutputs();
     }
     else if( current_state == GO_SYNCHRONIZED_STATE )
     {
-        //ibid
+        //soon come, ya? yuh dun know, skraat pop pop
     }
 
     for( int i = 0; i < commands.size(); i++ )
     {
+        if( commands[i].value_in_radians == true )
+        {;
+            commands[i].value = bench.convertRadian2Value( commands[i].id, commands[i].value );
+        }
+
         bench.itemWrite( commands[i].id, commands[i].command.c_str(), commands[i].value );
     }
 
-    /* publish current goal */
+    /* publish general data */
     goal_kinematics.publish( inputs.waypoint_queue.front() );
 
+    publishStateMachineMode();
+    publishQueueSize();
+    publishDesiredMode();
 }
 
