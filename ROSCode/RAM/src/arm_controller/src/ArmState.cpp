@@ -33,3 +33,71 @@ std::string ArmState::transition()
 }
 
 std::vector<ServoCommand> ArmState::getOutputs() { return outputs; }
+
+void ArmState::torqueOn()
+{
+    for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
+    {
+        ServoCommand com;
+        com.id = i + 1;
+        com.command = "Torque_Enable";
+        com.value = 1;
+
+        outputs.push_back( com );
+    }
+}
+
+void ArmState::torqueOff()
+{
+    for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
+    {
+        ServoCommand com;
+        com.id = i + 1;
+        com.command = "Torque_Enable";
+        com.value = 0;
+
+        outputs.push_back( com );
+    }
+}
+
+void ArmState::holdPosition()
+{
+    for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
+    {
+        int id = i + 1;
+        ServoCommand com;
+        com.id = id;
+        com.value = inputs->servos[i].Present_Position;
+        com.command = "Goal_Position";
+        com.value_in_radians = false;
+
+        outputs.push_back( com );
+    }
+}
+
+void ArmState::resetCommands()
+{
+    outputs.clear();
+}
+
+uint32_t ArmState::radianToValue(double radian, int32_t max_position, int32_t min_position, float max_radian,
+                                 float min_radian)
+{
+    int32_t value = 0;
+    int32_t zero_position = (max_position + min_position)/2;
+
+    if (radian > 0)
+    {
+        value = (radian * (max_position - zero_position) / max_radian) + zero_position;
+    }
+    else if (radian < 0)
+    {
+        value = (radian * (min_position - zero_position) / min_radian) + zero_position;
+    }
+    else
+    {
+        value = zero_position;
+    }
+
+    return value;
+}

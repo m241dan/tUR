@@ -18,6 +18,12 @@ class ArmState : public State
         virtual std::string transition();
         std::vector<ServoCommand> getOutputs();
     protected:
+        void torqueOn();
+        void torqueOff();
+        void holdPosition();
+        void resetCommands();
+        uint32_t radianToValue( double radian,  int32_t max_position, int32_t min_position, float max_radian = 3.14, float min_radian = -3.14 );
+
         InputsTable *inputs;
         std::vector<ServoCommand> outputs;
 };

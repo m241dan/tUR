@@ -11,22 +11,14 @@ WaitingState::WaitingState(InputsTable *i) : ArmState( i, WAITING_STATE )
 
 void WaitingState::onEnter( std::string prev_state )
 {
-    outputs.clear();
-
-    for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
-    {
-        int id = i + 1;
-        ServoCommand com;
-        com.id = id;
-        com.value = inputs->servos[i].Present_Position;
-        com.command = "Goal_Position";
-        outputs.push_back( com );
-    }
+    resetCommands();
+    torqueOn();
+    holdPosition();
 }
 
 std::string WaitingState::transition()
 {
-    std::string transition_to;
+    std::string transition_to = getIdentifier();
 
     switch( inputs->desired_mode )
     {
@@ -39,8 +31,6 @@ std::string WaitingState::transition()
                 transition_to = mode_state_strings[inputs->desired_mode];
             break;
     }
-
-
 
     return transition_to;
 }

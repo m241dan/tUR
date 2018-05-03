@@ -37,18 +37,23 @@ std::string GoState::transition()
 
 void GoState::action()
 {
-    /* if traveling, do nothing */
-    if( ( inputs->current_position.orientation.x - inputs->waypoint_queue.front().position.x ) < ARRIVAL_THRESHOLD &&
-            ( inputs->current_position.orientation.y - inputs->waypoint_queue.front().position.y ) < ARRIVAL_THRESHOLD &&
-            ( inputs->current_position.orientation.z - inputs->waypoint_queue.front().position.z ) < ARRIVAL_THRESHOLD &&
-            ( inputs->current_position.orientation.x - inputs->waypoint_queue.front().orientation.x ) < ARRIVAL_THRESHOLD )
-
+    std::cout << "doing go action!" << std::endl;
+    if( inputs->waypoint_queue.size() > 0 )
     {
-        inputs->waypoint_queue.erase( inputs->waypoint_queue.begin() );
 
-        if( inputs->waypoint_queue.size() > 0 )
+        /* if traveling, do nothing */
+        if (fabs(inputs->current_position.position.x - inputs->waypoint_queue.front().position.x) < ARRIVAL_THRESHOLD &&
+            fabs(inputs->current_position.position.y - inputs->waypoint_queue.front().position.y) < ARRIVAL_THRESHOLD &&
+            fabs(inputs->current_position.position.z - inputs->waypoint_queue.front().position.z) < ARRIVAL_THRESHOLD &&
+            fabs(inputs->current_position.orientation.x - inputs->waypoint_queue.front().orientation.x) < ARRIVAL_THRESHOLD)
         {
-            outputs.clear();
+            inputs->waypoint_queue.erase(inputs->waypoint_queue.begin());
+        }
+
+        if (inputs->waypoint_queue.size() > 0)
+        {
+            resetCommands();
+            torqueOn();
 
             /* velocity is in 0.229 rpm */
             /* servos are capable of 0 ~ 4095 positions */
@@ -64,6 +69,8 @@ void GoState::action()
             kinematics::Joints desired_joints = kinematics::inverseKinematics(desired_coordinates,
                                                                               inputs->waypoint_queue.front().orientation.x);
 
+           desired_joints._4 *= -1;
+
             /* do position messages first */
             for (int i = ROTATION_SERVO; i < MAX_SERVO; i++)
             {
@@ -72,14 +79,15 @@ void GoState::action()
 
                 com.id = id;
                 com.command = "Goal_Position";
-                com.value = desired_joints[i];
+                com.value = radianToValue(desired_joints[i], 4095, 0 );
+                std::cout << "GOJoint[" << i + 1 << "]:" << com.value << std::endl;
                 com.value_in_radians = true;
 
-                outputs.push_back( com );
+                outputs.push_back(com);
             }
 
             /* now does velocity messages */
-            for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
+            for (int i = ROTATION_SERVO; i < MAX_SERVO; i++)
             {
                 ServoCommand com;
                 int id = i + 1;
@@ -88,7 +96,7 @@ void GoState::action()
                 com.command = "Profile_Velocity";
                 com.value = velocity;
 
-                outputs.push_back( com );
+                outputs.push_back(com);
             }
 
         }

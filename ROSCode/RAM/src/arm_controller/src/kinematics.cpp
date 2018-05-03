@@ -2,7 +2,7 @@
 // Created by korisd on 5/2/18.
 //
 
-#include "arm_controller/kinematics.h"
+#include "../include/arm_controller/kinematics.h"
 
 kinematics::Joints kinematics::inverseKinematics(kinematics::Coordinates desired_coords, double EE_orientation_desired)
 

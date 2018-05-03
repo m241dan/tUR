@@ -7,7 +7,8 @@
 
 #include "ArmState.h"
 
-#define ARRIVAL_THRESHOLD 0.01
+#define ARRIVAL_THRESHOLD 0.5
+
 class GoState : public ArmState
 {
     public:
