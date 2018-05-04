@@ -7,7 +7,13 @@
 
 #include "ArmState.h"
 
-#define ARRIVAL_THRESHOLD 0.5
+#define ARRIVAL_THRESHOLD 2
+
+typedef enum
+{
+    LOAD_WAYPOINT, ARM_TRAVELING, ARM_ARRIVED
+} iGoState;
+
 
 class GoState : public ArmState
 {
@@ -15,8 +21,15 @@ class GoState : public ArmState
         GoState( InputsTable *i );
         virtual std::string transition();
         virtual void action();
-    private:
+        virtual void onExit( std::string next_state );
 
+    private:
+        iGoState internalTransition();
+        void internalAction();
+        void forceTransition( iGoState transition_to );
+        /* this above internal state machine only transitions from load, to travelling, to arrived */
+        iGoState internal_state;
+        geometry_msgs::Pose *present_waypoint; /* use this pointer to be for the front of the list, this helps make robust transitions  */
 };
 
 

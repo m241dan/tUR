@@ -159,7 +159,7 @@ void updateAndPublishCurrentLocation()
     current_joints._1 = bench.convertValue2Radian( 1, inputs.servos[0].Present_Position );
     current_joints._2 = bench.convertValue2Radian( 2, inputs.servos[1].Present_Position );
     current_joints._3 = bench.convertValue2Radian( 3, inputs.servos[2].Present_Position );
-    current_joints._4 = bench.convertValue2Radian( 4, inputs.servos[3].Present_Position ) * (-1);
+    current_joints._4 = bench.convertValue2Radian( 4, inputs.servos[3].Present_Position ) * (-1); /* have to flip this due to our arm setup */
 
     forward_kinematics = kinematics::forwardKinematics( current_joints );
     coords = std::get<0>( forward_kinematics );

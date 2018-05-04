@@ -101,3 +101,36 @@ uint32_t ArmState::radianToValue(double radian, int32_t max_position, int32_t mi
 
     return value;
 }
+
+ServoCommand ArmState::generatePositionCommand(int id, double position)
+{
+    ServoCommand com;
+
+    com.id = id;
+    com.command = "Goal_Position";
+    com.value = radianToValue( position, 4095, 0 );
+
+    return com;
+}
+
+ServoCommand ArmState::generateVelocityCommand(int id, int velocity)
+{
+    ServoCommand com;
+
+    com.id = id;
+    com.command = "Profile_Velocity";
+    com.value = velocity;
+
+    return com;
+}
+
+kinematics::Coordinates ArmState::poseToCoordinates( geometry_msgs::Pose pose )
+{
+    kinematics::Coordinates coords;
+
+    coords.x = pose.position.x;
+    coords.y = pose.position.y;
+    coords.z = pose.position.z;
+
+    return coords;
+}

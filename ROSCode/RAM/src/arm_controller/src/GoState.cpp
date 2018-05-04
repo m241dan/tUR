@@ -37,41 +37,177 @@ std::string GoState::transition()
 
 void GoState::action()
 {
-    std::cout << "doing go action!" << std::endl;
-    if( inputs->waypoint_queue.size() > 0 )
-    {
+    forceTransition(internalTransition());
+    internalAction();
+}
 
-        /* if traveling, do nothing */
-        if (fabs(inputs->current_position.position.x - inputs->waypoint_queue.front().position.x) < ARRIVAL_THRESHOLD &&
-            fabs(inputs->current_position.position.y - inputs->waypoint_queue.front().position.y) < ARRIVAL_THRESHOLD &&
-            fabs(inputs->current_position.position.z - inputs->waypoint_queue.front().position.z) < ARRIVAL_THRESHOLD &&
-            fabs(inputs->current_position.orientation.x - inputs->waypoint_queue.front().orientation.x) < ARRIVAL_THRESHOLD)
+void GoState::onExit( std::string next_state )
+{
+    present_waypoint = nullptr;
+    forceTransition( LOAD_WAYPOINT );
+}
+
+iGoState GoState::internalTransition()
+{
+    iGoState transition_to = internal_state;
+
+    switch( internal_state )
+    {
+        default: break;
+        case LOAD_WAYPOINT:
+            /*
+             * if the arm is in a load_waypoint state,
+             * stay there until present_waypoint is not null.
+             * If it is not null, should be moving to the arm_traveling state
+             */
+            if( present_waypoint )
+            {
+                transition_to = ARM_TRAVELING;
+            }
+            break;
+        case ARM_TRAVELING:
         {
-            inputs->waypoint_queue.erase(inputs->waypoint_queue.begin());
+            /*
+             * check for arrival,
+             * if arrived, transition to arm_arrived,
+             * otherwise stay in ARM_TRAVELING state
+             */
+            if( inputs->waypoint_queue.size() > 0 )
+            {
+                /* check to see if the queue has been cleared */
+                transition_to = ARM_ARRIVED;
+            }
+            else
+            {
+                bool has_arrived = true;
+                for (int i = ROTATION_SERVO; i < MAX_SERVO; i++)
+                {
+                    if (fabs(inputs->servos[i].Present_Position - inputs->servos[i].Goal_Position) > ARRIVAL_THRESHOLD)
+                    {
+                        has_arrived = false;
+                        break;
+                    }
+
+                }
+                if (has_arrived)
+                {
+                    transition_to = ARM_ARRIVED;
+                }
+            }
+            break;
+        }
+        case ARM_ARRIVED:
+            /*
+             * once the present_waypoint is null, should transition to load_waypoint
+             */
+            if( !present_waypoint )
+            {
+                transition_to = LOAD_WAYPOINT;
+            }
+            break;
+    }
+    return transition_to;
+}
+
+void GoState::internalAction()
+{
+    switch( internal_state )
+    {
+        default: break;
+        case LOAD_WAYPOINT:
+            /* loads a waypoint into our current waypoint which generates our kinematics */
+            if( !present_waypoint && inputs->waypoint_queue.size() > 0 )
+            {
+                present_waypoint = &inputs->waypoint_queue.front();
+            }
+            break;
+        case ARM_TRAVELING:
+            /* should essentially be a no action state */
+
+            break;
+        case ARM_ARRIVED:
+            /* should set preset_waypoint to null, should consider adding a checker to make sure this only runs once */
+            present_waypoint = nullptr;
+            if( inputs->waypoint_queue.size() > 0 )
+            {
+                /* have to check this, incase the transition to arrived was from a clear */
+                inputs->waypoint_queue.erase( inputs->waypoint_queue.begin() );
+            }
+            break;
+
+    }
+
+}
+
+void GoState::forceTransition( iGoState transition_to )
+{
+    iGoState prev_state = internal_state;
+
+    internal_state = transition_to;
+
+    /* handle the onEnter / onExit bits for an internal state machine */
+    if( internal_state != prev_state )
+    {
+        /* internal onExit */
+        switch( prev_state )
+        {
+            default: break;
         }
 
-        if (inputs->waypoint_queue.size() > 0)
+        /* internal onEnter */
+        switch( internal_state )
         {
-            resetCommands();
-            torqueOn();
+            default: break;
+            case ARM_TRAVELING:
+                resetCommands();
+                torqueOn();
 
-            /* velocity is in 0.229 rpm */
-            /* servos are capable of 0 ~ 4095 positions */
-            /* 0.088 degees per "position" */
+                if( present_waypoint )
+                {
+                    /*
+                     * velocity is in 0.229 rpm
+                     * servos are capable of 0 ~ 4095 positions
+                     * 0.088 degees per "position"
+                     */
+                    double velocity = inputs->waypoint_queue.front().orientation.y;
+                    /* convert pose to kinematics::Coordinates */
+                    kinematics::Coordinates goal_coordinates = poseToCoordinates( inputs->waypoint_queue.front() );
+                    /* grab the EE orientation */
+                    double goal_EE_orientation= inputs->waypoint_queue.front().orientation.w;
 
-            double velocity = inputs->waypoint_queue.front().orientation.y;
+                    /* do the inverse kinematics */
+                    kinematics::Joints goal_joint_positions = kinematics::inverseKinematics( goal_coordinates, goal_EE_orientation );
 
-            kinematics::Coordinates desired_coordinates;
-            desired_coordinates.x = inputs->waypoint_queue.front().position.x;
-            desired_coordinates.y = inputs->waypoint_queue.front().position.y;
-            desired_coordinates.z = inputs->waypoint_queue.front().position.z;
+                    /*
+                     * have to flip joint 4 (wrist) due to our setup
+                     */
+                    goal_joint_positions._4 *= -1;
 
-            kinematics::Joints desired_joints = kinematics::inverseKinematics(desired_coordinates,
-                                                                              inputs->waypoint_queue.front().orientation.x);
+                    /* do position message first */
+                    for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
+                    {
+                        outputs.push_back( generatePositionCommand( i + 1, goal_joint_positions[i]) );
+                    }
+
+                    /* do velocity message first */
+                    for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
+                    {
+                        outputs.push_back( generateVelocityCommand( i + 1, velocity ) );
+                    }
+                }
+                break;
+        }
+    }
+
+}
+
+/*
+    std::cout << "doing go action!" << std::endl;
+
 
            desired_joints._4 *= -1;
 
-            /* do position messages first */
+            * do position messages first *
             for (int i = ROTATION_SERVO; i < MAX_SERVO; i++)
             {
                 ServoCommand com;
@@ -86,7 +222,7 @@ void GoState::action()
                 outputs.push_back(com);
             }
 
-            /* now does velocity messages */
+            * now does velocity messages *
             for (int i = ROTATION_SERVO; i < MAX_SERVO; i++)
             {
                 ServoCommand com;
@@ -102,3 +238,4 @@ void GoState::action()
         }
     }
 }
+*/
