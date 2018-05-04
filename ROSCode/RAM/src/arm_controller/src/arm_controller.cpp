@@ -142,6 +142,7 @@ bool readAndUpdateServos()
         inputs.servos[i].Present_Velocity = bench.itemRead(id, "Present_Velocity");
         inputs.servos[i].Profile_Velocity = (uint32_t) bench.itemRead(id, "Profile_Velocity");
         bench.itemWrite( id, "Velocity_Limit", MAX_VELOCITY );
+        bench.itemWrite( id, "Position_I_Gain", 100 );
         std::cout << "Servo[" << id << "] Present/Goal[" << inputs.servos[i].Present_Position << "/" << inputs.servos[i].Goal_Position << "]" << std::endl;
     }
     return success;
