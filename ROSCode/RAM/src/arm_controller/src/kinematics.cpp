@@ -5,14 +5,14 @@
 #include "../include/arm_controller/kinematics.h"
 
 kinematics::Joints kinematics::inverseKinematics(kinematics::Coordinates desired_coords, double EE_orientation_desired)
-
 {
     double theta_1 = atan2( desired_coords.y, desired_coords.x );
     desired_coords.z -= length1;
+    desired_coords.x = sqrt( desired_coords.x * desired_coords.x + desired_coords.y * desired_coords.y );
     double x_q = desired_coords.x - length4*cos(EE_orientation_desired);
     double z_q = desired_coords.z - length4*sin(EE_orientation_desired);
-    double CQ = sqrt( x_q * x_q + desired_coords.y * desired_coords.y + z_q * z_q );
-    double CP = sqrt( desired_coords.x * desired_coords.x + desired_coords.y * desired_coords.y  + desired_coords.z * desired_coords.z );
+    double CQ = sqrt( x_q * x_q + z_q * z_q );
+    double CP = sqrt( desired_coords.x * desired_coords.x + desired_coords.z * desired_coords.z );
 
     double gamma = atan2( desired_coords.z, desired_coords.x );
     double beta = acos( ( CQ * CQ + CP * CP - length4 * length4 ) / ( 2 * CQ * CP ) );
@@ -28,6 +28,7 @@ kinematics::Joints kinematics::inverseKinematics(kinematics::Coordinates desired
     set_one._3 = theta_3;
     set_one._4 = theta_4;
 
+    return set_one;
     return set_one;
 };
 
