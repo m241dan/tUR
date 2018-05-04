@@ -26,6 +26,7 @@ class ArmState : public State
         ServoCommand generatePositionCommand( int id, double position );
         ServoCommand generateVelocityCommand( int id, int velocity );
         kinematics::Coordinates poseToCoordinates( geometry_msgs::Pose pose );
+        double poseMagnitude( geometry_msgs::Pose pose );
 
         InputsTable *inputs;
         std::vector<ServoCommand> outputs;

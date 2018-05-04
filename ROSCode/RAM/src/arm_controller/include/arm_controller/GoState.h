@@ -7,7 +7,9 @@
 
 #include "ArmState.h"
 
-#define ARRIVAL_THRESHOLD 2
+#define ARRIVAL_THRESHOLD 10
+#define MAX_MAG 24.0
+#define MIN_MAG 10.0
 
 typedef enum
 {

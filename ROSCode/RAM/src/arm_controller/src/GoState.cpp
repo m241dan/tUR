@@ -72,7 +72,7 @@ iGoState GoState::internalTransition()
              * if arrived, transition to arm_arrived,
              * otherwise stay in ARM_TRAVELING state
              */
-            if( inputs->waypoint_queue.size() > 0 )
+            if( inputs->waypoint_queue.size() == 0 )
             {
                 /* check to see if the queue has been cleared */
                 transition_to = ARM_ARRIVED;
@@ -82,7 +82,9 @@ iGoState GoState::internalTransition()
                 bool has_arrived = true;
                 for (int i = ROTATION_SERVO; i < MAX_SERVO; i++)
                 {
-                    if (fabs(inputs->servos[i].Present_Position - inputs->servos[i].Goal_Position) > ARRIVAL_THRESHOLD)
+                    double to_goal = abs( inputs->servos[i].Present_Position - inputs->servos[i].Goal_Position );
+                    std::cout << "ToGoal[" << i << "]: " << to_goal << std::endl;
+                    if( to_goal > ARRIVAL_THRESHOLD)
                     {
                         has_arrived = false;
                         break;
@@ -118,7 +120,16 @@ void GoState::internalAction()
             /* loads a waypoint into our current waypoint which generates our kinematics */
             if( !present_waypoint && inputs->waypoint_queue.size() > 0 )
             {
-                present_waypoint = &inputs->waypoint_queue.front();
+                double pose_magnitude = poseMagnitude( inputs->waypoint_queue.front() );
+                if( pose_magnitude > MAX_MAG || pose_magnitude < MIN_MAG )
+                {
+                    messaging::errorMsg( __FUNCTION__, "Goal Pose violates min/max conditions" );
+                    inputs->waypoint_queue.erase( inputs->waypoint_queue.begin() );
+                }
+                else
+                {
+                    present_waypoint = &inputs->waypoint_queue.front();
+                }
             }
             break;
         case ARM_TRAVELING:
@@ -169,7 +180,7 @@ void GoState::forceTransition( iGoState transition_to )
                      * servos are capable of 0 ~ 4095 positions
                      * 0.088 degees per "position"
                      */
-                    double velocity = inputs->waypoint_queue.front().orientation.y;
+                    double velocity = inputs->waypoint_queue.front().orientation.z;
                     /* convert pose to kinematics::Coordinates */
                     kinematics::Coordinates goal_coordinates = poseToCoordinates( inputs->waypoint_queue.front() );
                     /* grab the EE orientation */
@@ -200,42 +211,3 @@ void GoState::forceTransition( iGoState transition_to )
     }
 
 }
-
-/*
-    std::cout << "doing go action!" << std::endl;
-
-
-           desired_joints._4 *= -1;
-
-            * do position messages first *
-            for (int i = ROTATION_SERVO; i < MAX_SERVO; i++)
-            {
-                ServoCommand com;
-                int id = i + 1;
-
-                com.id = id;
-                com.command = "Goal_Position";
-                com.value = radianToValue(desired_joints[i], 4095, 0 );
-                std::cout << "GOJoint[" << i + 1 << "]:" << com.value << std::endl;
-                com.value_in_radians = true;
-
-                outputs.push_back(com);
-            }
-
-            * now does velocity messages *
-            for (int i = ROTATION_SERVO; i < MAX_SERVO; i++)
-            {
-                ServoCommand com;
-                int id = i + 1;
-
-                com.id = id;
-                com.command = "Profile_Velocity";
-                com.value = velocity;
-
-                outputs.push_back(com);
-            }
-
-        }
-    }
-}
-*/

@@ -10,7 +10,7 @@ int main()
     joints._4 = 0;
     joints._3 = 0;
     joints._2 = 0;//M_PI_4;
-    joints._1 = 0;
+    joints._1 = M_PI_4;
     std::tuple<Coordinates,double> ret = forwardKinematics( joints );
     Coordinates coords = get<0>( ret );
     double EE_orientation = get<1>( ret );

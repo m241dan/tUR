@@ -134,3 +134,15 @@ kinematics::Coordinates ArmState::poseToCoordinates( geometry_msgs::Pose pose )
 
     return coords;
 }
+
+double ArmState::poseMagnitude(geometry_msgs::Pose pose)
+{
+    /*
+     * pythag in 3 dimensions
+     */
+    double x = pose.position.x;
+    double y = pose.position.y;
+    double z = pose.position.z;
+
+    return sqrt( x*x + y*y + z*z );
+}
