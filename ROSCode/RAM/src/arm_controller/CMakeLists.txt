@@ -122,12 +122,12 @@ add_executable(
         arm_controller
         src/arm_controller.cpp
 	src/kinematics.cpp
-		src/ArmState.cpp
-		src/OffState.cpp
-		src/WaitingState.cpp
-		src/PauseState.cpp
-		src/GoState.cpp
-#		src/GoSynchronized.cpp
+	src/ArmState.cpp
+	src/OffState.cpp
+	src/WaitingState.cpp
+	src/PauseState.cpp
+	src/GoState.cpp
+	src/GoSynchronized.cpp
         include/state_machine/Error.cpp
         include/state_machine/
 )
