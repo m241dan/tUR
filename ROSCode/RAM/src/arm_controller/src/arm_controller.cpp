@@ -44,11 +44,11 @@ int main( int argc, char **argv )
 
 void setupPublishers( ros::NodeHandle &ros_handle )
 {
-    queue_size = ros_handle.advertise<std_msgs::UInt16>( "arm_queue_size", 10 );
-    state_machine_mode = ros_handle.advertise<std_msgs::String>( "state_machine_mode", 10 );
-    desired_mode = ros_handle.advertise<std_msgs::UInt8>( "desired_mode", 10 );
-    current_kinematics = ros_handle.advertise<geometry_msgs::Pose>( "current_kinematics", 10 );
-    goal_kinematics = ros_handle.advertise<geometry_msgs::Pose>( "goal_kinematics", 10 );
+    queue_size = ros_handle.advertise<std_msgs::UInt16>( "arm/queue_size", 10 );
+    state_machine_mode = ros_handle.advertise<std_msgs::String>( "arm/state_machine_mode", 10 );
+    desired_mode = ros_handle.advertise<std_msgs::UInt8>( "arm/desired_mode", 10 );
+    current_kinematics = ros_handle.advertise<geometry_msgs::Pose>( "arm/current_kinematics", 10 );
+    goal_kinematics = ros_handle.advertise<geometry_msgs::Pose>( "arm/goal_kinematics", 10 );
     for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
         servo_info[i] = ros_handle.advertise<dynamixel_workbench_msgs::XH>( servo_topic_names[i].c_str(), 10 );
 }
