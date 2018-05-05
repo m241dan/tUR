@@ -72,6 +72,7 @@ void setupStateMachine()
     machine.addState( pause_state.getIdentifier(), &pause_state );
     machine.addState( waiting_state.getIdentifier(), &waiting_state );
     machine.addState( go_state.getIdentifier(), &go_state );
+    machine.addState( go_synchronized_state.getIdentifier(), &go_synchronized_state );
 }
 
 bool setupDynamixelBus()
@@ -267,7 +268,7 @@ void stateMachineLoop( const ros::TimerEvent& event )
     }
     else if( current_state == GO_SYNCHRONIZED_STATE )
     {
-        //soon come, ya? yuh dun know, skraat pop pop
+        commands = go_synchronized_state.getOutputs();
     }
 
     for( int i = 0; i < commands.size(); i++ )
