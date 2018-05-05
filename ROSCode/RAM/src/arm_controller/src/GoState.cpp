@@ -9,6 +9,11 @@ GoState::GoState( InputsTable *i ) : ArmState( i, GO_STATE )
 
 }
 
+GoState::GoState( InputsTable *i, std::string state_name ) : ArmState( i, state_name )
+{
+
+}
+
 std::string GoState::transition()
 {
     std::string transition_to = getIdentifier();
@@ -120,15 +125,13 @@ void GoState::internalAction()
             /* loads a waypoint into our current waypoint which generates our kinematics */
             if( !present_waypoint && inputs->waypoint_queue.size() > 0 )
             {
-                double pose_magnitude = poseMagnitude( inputs->waypoint_queue.front() );
-                if( pose_magnitude > MAX_MAG || pose_magnitude < MIN_MAG )
+                if( checkTolerances( inputs->waypoint_queue.front() ) )
                 {
-                    messaging::errorMsg( __FUNCTION__, "Goal Pose violates min/max conditions" );
-                    inputs->waypoint_queue.erase( inputs->waypoint_queue.begin() );
+                    present_waypoint = &inputs->waypoint_queue.front();
                 }
                 else
                 {
-                    present_waypoint = &inputs->waypoint_queue.front();
+                    inputs->waypoint_queue.erase( inputs->waypoint_queue.begin() );
                 }
             }
             break;
