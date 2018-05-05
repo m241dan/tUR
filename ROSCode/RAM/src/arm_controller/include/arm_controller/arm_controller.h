@@ -22,6 +22,7 @@
 #include "arm_controller/PauseState.h"
 #include "arm_controller/WaitingState.h"
 #include "arm_controller/GoState.h"
+#include "arm_controller/GoSynchronizedState.h"
 
 /*
  * Publishers
@@ -70,6 +71,8 @@ OffState off_state( &inputs );
 PauseState pause_state( &inputs );
 WaitingState waiting_state( &inputs );
 GoState go_state( &inputs );
+GoSynchronizedState go_synchronized_state( &inputs );
+
 
 void setupPublishers( ros::NodeHandle &ros_handle  );
 void setupSubscribers( ros::NodeHandle &ros_handle );
