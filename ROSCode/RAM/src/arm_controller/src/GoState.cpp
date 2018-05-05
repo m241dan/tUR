@@ -197,13 +197,17 @@ void GoState::forceTransition( iGoState transition_to )
                     /* do position message first */
                     for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
                     {
-                        outputs.push_back( generatePositionCommand( i + 1, goal_joint_positions[i]) );
+                        int servo_id = i + 1;
+                        ServoCommand com = generatePositionCommand( servo_id, goal_joint_positions[i] );
+                        outputs.push_back( com );
                     }
 
                     /* do velocity message first */
                     for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
                     {
-                        outputs.push_back( generateVelocityCommand( i + 1, velocity ) );
+                        int servo_id = i + 1;
+                        ServoCommand com = generateVelocityCommand( servo_id, velocity );
+                        outputs.push_back( com );
                     }
                 }
                 break;
