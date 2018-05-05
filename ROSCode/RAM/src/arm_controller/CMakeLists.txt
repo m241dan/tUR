@@ -127,7 +127,7 @@ add_executable(
 	src/WaitingState.cpp
 	src/PauseState.cpp
 	src/GoState.cpp
-	src/GoSynchronized.cpp
+	src/GoSynchronizedState.cpp
         include/state_machine/Error.cpp
         include/state_machine/
 )
