@@ -69,7 +69,6 @@ void ArmState::holdPosition()
         com.id = id;
         com.value = inputs->servos[i].Present_Position;
         com.command = "Goal_Position";
-        com.value_in_radians = false;
 
         outputs.push_back( com );
     }
@@ -145,4 +144,39 @@ double ArmState::poseMagnitude(geometry_msgs::Pose pose)
     double z = pose.position.z;
 
     return sqrt( x*x + y*y + z*z );
+}
+
+bool ArmState::checkTolerances( geometry_msgs::Pose pose )
+{
+    bool tolerances_good = true;
+
+    double pose_magnitude = poseMagnitude( pose );
+    if( pose_magnitude > MAX_MAG || pose_magnitude < MIN_MAG )
+    {
+        messaging::errorMsg( __FUNCTION__, "Goal Pose violates min/max conditions" );
+        tolerances_good = false;
+    }
+
+    if( tolerances_good == true )
+    {
+        kinematics::Coordinates coords = poseToCoordinates( pose );
+        kinematics::Joints joints = kinematics::inverseKinematics( coords, pose.orientation.w );
+
+        for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
+        {
+            uint16_t servo_min = servo_min_max[i][0];
+            uint16_t servo_max = servo_min_max[i][1];
+            uint16_t servo_position = radianToValue( joints[i], 4095, 0 );
+            if( servo_position < servo_min || servo_position > servo_max )
+            {
+                std::cout << "Joint[" << i << "] is breaking at " << servo_position << " position" << std::endl;
+                messaging::errorMsg( __FUNCTION__, "Joint value outside of min/max range for servo" );
+                tolerances_good = false;
+                break;
+            }
+        }
+
+    }
+
+    return tolerances_good;
 }
