@@ -50,11 +50,11 @@ DynamixelWorkbench bench;
 
 /* Servo Related Globals */
 
-#define MAX_UPDATE_PARAMS 5
+#define MAX_UPDATE_PARAMS 6
 std::string updateParams[MAX_UPDATE_PARAMS] = {
         "Torque_Enabled", "Goal_Position",
         "Present_Position", "Present_Velocity",
-        "Profile_Velocity"
+        "Profile_Velocity", "Present_Temperature"
 };
 
 ros::Publisher servo_info[MAX_SERVO];
