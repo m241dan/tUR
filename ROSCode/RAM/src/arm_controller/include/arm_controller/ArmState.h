@@ -11,6 +11,9 @@
 #include "shared_types.h"
 #include "kinematics.h"
 
+#define MAX_MAG 24.0
+#define MIN_MAG 5.0
+
 class ArmState : public State
 {
     public:
@@ -27,6 +30,7 @@ class ArmState : public State
         ServoCommand generateVelocityCommand( int id, int velocity );
         kinematics::Coordinates poseToCoordinates( geometry_msgs::Pose pose );
         double poseMagnitude( geometry_msgs::Pose pose );
+        bool checkTolerances( geometry_msgs::Pose pose );
 
         InputsTable *inputs;
         std::vector<ServoCommand> outputs;
