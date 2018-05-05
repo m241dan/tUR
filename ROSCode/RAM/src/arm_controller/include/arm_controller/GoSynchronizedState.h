@@ -5,11 +5,15 @@
 #ifndef ARM_CONTROLLER_GOSYNCHRONIZEDSTATE_H
 #define ARM_CONTROLLER_GOSYNCHRONIZEDSTATE_H
 
-#include "ArmState.h"
+#include "GoState.h"
 
-class GoSynchronizedState : public ArmState
+class GoSynchronizedState : public GoState
 {
-
+    public:
+        GoSynchronizedState( InputsTable *i );
+        virtual std::string transition();
+    protected:
+        void forceTransition( iGoState transition_to );
 
 };
 
