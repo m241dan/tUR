@@ -16,7 +16,7 @@
 #define GO_SYNCHRONIZED_STATE "go_synchronized_state"
 
 #define MAX_VELOCITY 20
-#define PID_I_GAIN 100
+#define PID_I_GAIN 150
 
 
 enum
@@ -31,6 +31,13 @@ enum
     GO_MODE, GO_SYNCHRONIZED_MODE,
     MAX_MODE
 };
+
+/* [servo][0:min|1:max] */
+
+const uint16_t servo_min_max[MAX_SERVO][2] = { { 1200, 2826 },   /* rotation servo */
+                                         { 2000, 4065 },   /* shoulder servo */
+                                         { 310, 3524 },   /* elbow servo */
+                                         { 1430, 3362 } }; /* wrist servo */
 
 const std::string mode_state_strings[MAX_MODE] = {
         OFF_STATE, PAUSE_STATE, WAITING_STATE,
@@ -49,7 +56,6 @@ typedef struct servo_command
     uint8_t id = 0;
     std::string command = "";
     int32_t value = 0;
-    bool value_in_radians = false;
 } ServoCommand;
 
 #endif //ARM_CONTROLLER_SHARED_TYPES_H
