@@ -15,6 +15,10 @@
 #define GO_STATE "go_state"
 #define GO_SYNCHRONIZED_STATE "go_synchronized_state"
 
+#define MAX_VELOCITY 20
+#define PID_I_GAIN 100
+
+
 enum
 {
     ROTATION_SERVO = 0, SHOULDER_SERVO,

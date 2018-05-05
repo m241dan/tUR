@@ -23,8 +23,6 @@
 #include "arm_controller/WaitingState.h"
 #include "arm_controller/GoState.h"
 
-#define MAX_VELOCITY 30
-
 /*
  * Publishers
  */
