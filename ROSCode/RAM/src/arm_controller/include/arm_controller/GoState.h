@@ -7,9 +7,7 @@
 
 #include "ArmState.h"
 
-#define ARRIVAL_THRESHOLD 5
-#define MAX_MAG 24.0
-#define MIN_MAG 10.0
+#define ARRIVAL_THRESHOLD 2
 
 typedef enum
 {
@@ -21,14 +19,15 @@ class GoState : public ArmState
 {
     public:
         GoState( InputsTable *i );
+        GoState( InputsTable *i, std::string state_name );
         virtual std::string transition();
         virtual void action();
         virtual void onExit( std::string next_state );
 
-    private:
+    protected:
         iGoState internalTransition();
         void internalAction();
-        void forceTransition( iGoState transition_to );
+        virtual void forceTransition( iGoState transition_to );
         /* this above internal state machine only transitions from load, to travelling, to arrived */
         iGoState internal_state;
         geometry_msgs::Pose *present_waypoint; /* use this pointer to be for the front of the list, this helps make robust transitions  */
