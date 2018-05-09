@@ -1,0 +1,29 @@
+cmake_minimum_required(VERSION 2.8.3)
+project(logic_controller)
+
+add_compile_options(-std=c++11)
+
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  std_msgs
+)
+
+catkin_package(
+  INCLUDE_DIRS include
+  LIBRARIES logic_controller
+  CATKIN_DEPENDS roscpp std_msgs
+#  DEPENDS system_lib
+)
+
+include_directories(
+# include
+  ${catkin_INCLUDE_DIRS}
+)
+
+add_executable(${PROJECT_NAME} src/logic_controller.cpp)
+
+add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(${PROJECT_NAME}
+   ${catkin_LIBRARIES}
+)
