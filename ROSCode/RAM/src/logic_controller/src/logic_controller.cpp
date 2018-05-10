@@ -27,9 +27,56 @@ void setupPublishers( ros::NodeHandle &ros_handle )
 void setupSubscribers( ros::NodeHandle &ros_handle )
 {
     enqueue_trial = ros_handle.subscribe( "logic/trial", 10, enqueueTrialHandler );
+    reset_trial_queue = ros_handle.subscribe( "logic/trial_reset", 10, resetTrialHandler );
+    queue_size = ros_handle.subscribe( "arm/queue_size", 10, queueSizeHandler );
+    present_kinematics = ros_handle.subscribe( "arm/present_kinematics", 10, presentKinematicsHandler );
+    goal_kinematics = ros_handle.subscribe( "arm/goal_kinematics", 10, goalKinematicsHandler );
+    desired_mode = ros_handle.subscribe( "arm/desired_mode", 10, desiredModeHandler );
+    state_machine = ros_handle.subscribe( "arm/state_machine", 10, smStateHandler );
+    trial_mode_setter = ros_handle.subscribe( "logic/trial_mode_setter", 10, trialModeHandler );
 }
 
 void setupCallbackFunctions( ros::NodeHandle &ros_handle )
+{
+
+}
+
+void enqueueTrialHandler( const std_msgs::UInt16::ConstPtr &message )
+{
+
+}
+
+void resetTrialHandler( const std_msgs::UInt8::ConstPtr &message )
+{
+
+}
+
+void queueSizeHandler( const std_msgs::UInt16::ConstPtr &message )
+{
+
+}
+
+void presentKinematicsHandler( const geometry_msgs::Pose::ConstPtr &message )
+{
+
+}
+
+void goalKinematicsHandler( const geometry_msgs::Pose::ConstPtr &message )
+{
+
+}
+
+void desiredModeHandler( const std_msgs::UInt8::ConstPtr &message )
+{
+
+}
+
+void smStateHandler( const std_msgs::String::ConstPtr &message )
+{
+
+}
+
+void trialModeHandler( const std_msgs::UInt8::ConstPtr &message )
 {
 
 }
