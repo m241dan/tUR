@@ -45,9 +45,9 @@ int main( int argc, char **argv )
 void setupPublishers( ros::NodeHandle &ros_handle )
 {
     queue_size = ros_handle.advertise<std_msgs::UInt16>( "arm/queue_size", 10 );
-    state_machine_mode = ros_handle.advertise<std_msgs::String>( "arm/state_machine_mode", 10 );
+    state_machine_mode = ros_handle.advertise<std_msgs::String>( "arm/state_machine", 10 );
     desired_mode = ros_handle.advertise<std_msgs::UInt8>( "arm/desired_mode", 10 );
-    current_kinematics = ros_handle.advertise<geometry_msgs::Pose>( "arm/current_kinematics", 10 );
+    present_kinematics = ros_handle.advertise<geometry_msgs::Pose>( "arm/present_kinematics", 10 );
     goal_kinematics = ros_handle.advertise<geometry_msgs::Pose>( "arm/goal_kinematics", 10 );
     for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
         servo_info[i] = ros_handle.advertise<dynamixel_workbench_msgs::XH>( servo_topic_names[i].c_str(), 10 );
@@ -178,7 +178,7 @@ void updateAndPublishCurrentLocation()
     /*
      * Publish Portion
      */
-    current_kinematics.publish( inputs.current_position );
+    present_kinematics.publish( inputs.current_position );
 
 }
 

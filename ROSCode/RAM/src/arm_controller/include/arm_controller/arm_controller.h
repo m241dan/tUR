@@ -30,7 +30,7 @@
 ros::Publisher queue_size;          /* std_msgs::Uint16 */
 ros::Publisher state_machine_mode;  /* std_msgs::String */
 ros::Publisher desired_mode;        /* std_msgs::UInt8 */
-ros::Publisher current_kinematics;  /* geometry_msgs::Pose */
+ros::Publisher present_kinematics;  /* geometry_msgs::Pose */
 ros::Publisher goal_kinematics;     /* geometry_msgs::Pose */
 
 
