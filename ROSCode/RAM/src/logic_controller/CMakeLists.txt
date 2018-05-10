@@ -6,6 +6,7 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  geometry_msgs
 )
 
 catkin_package(
@@ -20,7 +21,9 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(${PROJECT_NAME} src/logic_controller.cpp)
+add_executable(${PROJECT_NAME} src/logic_controller.cpp
+	include/state_machine/Error.cpp
+)
 
 add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
 
