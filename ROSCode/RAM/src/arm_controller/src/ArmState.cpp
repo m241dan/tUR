@@ -151,12 +151,12 @@ bool ArmState::checkTolerances( geometry_msgs::Pose pose )
     bool tolerances_good = true;
 
     double pose_magnitude = poseMagnitude( pose );
-    if( pose_magnitude > MAX_MAG || pose_magnitude < MIN_MAG )
+ /*   if( pose_magnitude > MAX_MAG || pose_magnitude < MIN_MAG )
     {
         messaging::errorMsg( __FUNCTION__, "Goal Pose violates min/max conditions" );
         tolerances_good = false;
     }
-
+  */
     if( tolerances_good == true )
     {
         kinematics::Coordinates coords = poseToCoordinates( pose );
