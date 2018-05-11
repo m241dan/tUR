@@ -7,12 +7,13 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   geometry_msgs
+  apriltags_ros
 )
 
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES logic_controller
-  CATKIN_DEPENDS roscpp std_msgs
+  CATKIN_DEPENDS roscpp std_msgs apriltags_ros
 #  DEPENDS system_lib
 )
 
