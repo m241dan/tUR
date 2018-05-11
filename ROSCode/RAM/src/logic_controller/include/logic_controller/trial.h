@@ -9,6 +9,8 @@
 #include <apriltags_ros/AprilTagDetectionArray.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PoseArray.h>
+#include "logic_controller/action.h"
+typedef
 
 class Trial
 {
@@ -16,12 +18,15 @@ class Trial
         Trial( std::string trial_name );
         void setPresentKinematics( geometry_msgs::Pose *pk );
         void setPresentDetections( std::vector<geometry_msgs::PoseStamped> *pd );
-        std::vector<geometry_msgs::PoseArray> generateWaypoints();
-        bool isComplete();
+        geometry_msgs::PoseArray generateWaypoints();  //generates waypoints for an action based on present_kinematics and present_detections
+        bool isTrialComplete(); //decides if there is more actions that this trial needs to do
+        bool isActionComplete(); //verifies the action
     private:
         geometry_msgs::Pose *present_kinematics;
         std::vector<geometry_msgs::PoseStamped> *present_detections;
-        //std::vector<Action> action_queue;
+        std::vector<Action> action_queue;
+        Action *present_action;
+        std::string name;
 };
 
 #endif //TRIAL_H

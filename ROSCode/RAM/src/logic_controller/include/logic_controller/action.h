@@ -19,6 +19,10 @@ typedef struct trial_action
     double x = 0.0;
     double y = 0.0;
     double z = 0.0;
+    double eeo = 0.0;
+    double gripper_rot = 0.0;
+    double gripper_lin = 0.0;
+    uint8_t velocity = 20;
     uint8_t precision = 0;
     std::string shape = "linear";
     uint8_t tag_id = 0;
