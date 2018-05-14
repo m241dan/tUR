@@ -1,8 +1,8 @@
 //Assign variable names to switch and LED pins for convenience
 const int BUTTON_BLU    = 24;     //blue button pin
 const int ROCKER_HORIZ  = 23;   //horizontal rocker switch (black)
-const int ROCKER_VERTI  = 5;   //vertical rocker switch (black)
-const int TOGGLE_HORIZ  = 22;   //horizontal toggle switch (metal)
+const int ROCKER_VERTI  = 22;   //vertical rocker switch (black)
+const int TOGGLE_HORIZ  = 5;   //horizontal toggle switch (metal)
 const int TOGGLE_VERTI  = 6;   //vertical toggle switch (metal)
 const int POTENTIOM_LEVER = A0;        //potentiometer (ANALOG pin, not digital)
 const int POTENTIOM_KNOB = A1;         //potentiometer (ANALOG pin, not digital)
@@ -15,14 +15,14 @@ int state_toggle_horiz  = 0;
 int state_toggle_verti  = 0;
 
 void setup() {
-  //initialize switches as inputs and LEDs as outputs
-  pinMode(BUTTON_BLU, INPUT);
-  pinMode(ROCKER_HORIZ, INPUT);
-  pinMode(ROCKER_VERTI, INPUT);
-  pinMode(TOGGLE_HORIZ, INPUT);
-  pinMode(TOGGLE_VERTI, INPUT);
-  pinMode(POTENTIOM_LEVER, INPUT);
-  pinMode(POTENTIOM_KNOB, INPUT);
+  //initialize switches as inputs
+  pinMode(BUTTON_BLU, INPUT_PULLUP);
+  pinMode(ROCKER_HORIZ, INPUT_PULLUP);
+  pinMode(ROCKER_VERTI, INPUT_PULLUP);
+  pinMode(TOGGLE_HORIZ, INPUT_PULLUP);
+  pinMode(TOGGLE_VERTI, INPUT_PULLUP);
+  pinMode(POTENTIOM_LEVER, INPUT_PULLUP);
+  pinMode(POTENTIOM_KNOB, INPUT_PULLUP);
 
   //Initialize serial port for potentiometer
   Serial.begin(9600);
@@ -43,6 +43,7 @@ void loop() {
   {
     Serial.print("ON\t");
   }
+  else
   {
     Serial.print("--\t");
   }
@@ -52,6 +53,7 @@ void loop() {
   {
     Serial.print("ON\t");
   }
+  else
   {
     Serial.print("--\t");
   }
@@ -60,6 +62,7 @@ void loop() {
   {
     Serial.print("ON\t");
   }
+  else
   {
     Serial.print("--\t");
   }
@@ -68,6 +71,7 @@ void loop() {
   {
     Serial.print("ON\t");
   }
+  else
   {
     Serial.print("--\t");
   }
@@ -76,10 +80,11 @@ void loop() {
   {
     Serial.print("ON\t");
   }
+  else
   {
     Serial.print("--\t");
   }
   //Clean up the end of the line and wait a bit.
   Serial.println(" ");
-  delay(50);
+  delay(200);
 }
