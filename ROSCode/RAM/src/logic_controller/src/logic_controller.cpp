@@ -13,6 +13,14 @@ int main( int argc, char **argv )
     setupPublishers( ros_handle );
     setupSubscribers( ros_handle );
     setupCallbackFunctions( ros_handle );
+
+    Trial test_trial( "test" );
+    geometry_msgs::Pose present_position;
+    test_trial.setPresentKinematics( &present_position );
+    geometry_msgs::PoseArray test= test_trial.generateWaypoints();
+    std::cout << test << std::endl;
+
+    ros::spin();
 }
 
 /*
