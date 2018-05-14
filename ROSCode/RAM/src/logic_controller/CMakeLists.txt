@@ -25,6 +25,10 @@ include_directories(
 add_executable(${PROJECT_NAME}
 	src/logic_controller.cpp
 	src/trial.cpp
+	src/LogicState.cpp
+	src/WaitingState.cpp
+	src/LoadingState.cpp
+	src/VerifyState.cpp
 	include/state_machine/Error.cpp
 )
 

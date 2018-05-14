@@ -4,21 +4,11 @@
 
 #include "logic_controller/trial.h"
 
-Trial::Trial( std::string trial_name ) : name( trial_name )
+Trial::Trial( std::string trial_name ) : name( trial_name ), action_tracker(0), trial_complete(false)
 {
     //load trial with Lua
     //load actions with Lua
 
-    Action test_action;
-    test_action.type = DISCRETE_W;
-    test_action.name = "test-action";
-    test_action.x = 5.0;
-    test_action.y = 10.0;
-    test_action.z = 15.0;
-    test_action.precision = 10;
-    test_action.shape = "linear";
-
-    action_queue.push_back( test_action );
     present_action = &action_queue.front();
 }
 
@@ -121,12 +111,32 @@ geometry_msgs::PoseArray Trial::generateWaypoints()
 
 bool Trial::isTrialComplete()
 {
-    return false;
+    return trial_complete;
 }
 
 bool Trial::isActionComplete()
 {
-    return false;
+    bool complete = false;
+
+    complete = verifyAction();
+
+    if( complete )
+        nextAction();
+
+    return complete;
+}
+
+void Trial::nextAction()
+{
+    if( ( action_tracker + 1 ) == action_queue.size() ) //remember we have zero indexing on vectors, vector of size 1 will have one thing at index 0, and tracker is the index
+    {
+        trial_complete = true;
+    }
+    else
+    {
+        action_tracker++;
+        present_action = &action_queue.at( action_tracker );
+    }
 }
 
 std::tuple<double,double,double,double> Trial::generateConstants()
@@ -153,4 +163,26 @@ std::tuple<double,double,double,double> Trial::generateConstants()
     return std::make_tuple( A, B, C, D );
 };
 
+bool Trial::verifyAction()
+{
+    bool verified = false;
 
+    switch( present_action->type )
+    {
+        default: break;
+        case DISCRETE_W:
+            if( fabs( present_kinematics->position.x - present_action->x ) < WORLD_ERROR &&
+                fabs( present_kinematics->position.y - present_action->y ) < WORLD_ERROR &&
+                fabs( present_kinematics->position.z - present_action->z ) < WORLD_ERROR &&
+                fabs( present_kinematics->orientation.w - present_action->eeo < WORLD_ERROR  )
+                verified = true;
+            break;
+        case DISCRETE_R:
+            verified = true;
+            break;
+        case VISION:
+            break;
+    }
+
+    return verified;
+}

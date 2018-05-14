@@ -12,6 +12,7 @@
 #include "logic_controller/action.h"
 #include <tuple>
 
+#define WORLD_ERROR 0.1
 
 class Trial
 {
@@ -22,13 +23,19 @@ class Trial
         geometry_msgs::PoseArray generateWaypoints();  //generates waypoints for an action based on present_kinematics and present_detections
         bool isTrialComplete(); //decides if there is more actions that this trial needs to do
         bool isActionComplete(); //verifies the action
+        void nextAction();
+
     private:
         std::tuple<double,double,double,double> generateConstants();
+        bool verifyAction();
+
         geometry_msgs::Pose *present_kinematics;
         std::vector<geometry_msgs::PoseStamped> *present_detections;
         std::vector<Action> action_queue;
-        Action *present_action;
+        Action *present_action; /* points to the action_queue action */
+        uint8_t action_tracker; /* this should determine where the present_action pointer points */
         std::string name;
+        bool trial_complete;
 };
 
 #endif //TRIAL_H
