@@ -22,7 +22,9 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(${PROJECT_NAME} src/logic_controller.cpp
+add_executable(${PROJECT_NAME}
+	src/logic_controller.cpp
+	src/trial.cpp
 	include/state_machine/Error.cpp
 )
 
