@@ -10,7 +10,8 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PoseArray.h>
 #include "logic_controller/action.h"
-typedef
+#include <tuple>
+
 
 class Trial
 {
@@ -22,6 +23,7 @@ class Trial
         bool isTrialComplete(); //decides if there is more actions that this trial needs to do
         bool isActionComplete(); //verifies the action
     private:
+        std::tuple<double,double,double,double> generateConstants();
         geometry_msgs::Pose *present_kinematics;
         std::vector<geometry_msgs::PoseStamped> *present_detections;
         std::vector<Action> action_queue;

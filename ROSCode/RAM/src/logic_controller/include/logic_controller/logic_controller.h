@@ -14,6 +14,7 @@
 #include <vector>
 #include "state_machine/Error.h"
 #include "dynamixel_workbench_msgs/XH.h"
+#include "logic_controller/trial.h"
 
 /*
  * Publishers
