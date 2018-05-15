@@ -22,6 +22,7 @@
  */
 ros::Publisher waypoint_publisher;  /* geometry_msgs Pose */
 ros::Publisher queue_resetter;      /* std_msgs UInt8 */
+ros::Publisher logic_state_machine_state; /* std_msgs UInt8 */
 //ros::Publisher trial_data; /* custom msg... */
 
 /*
