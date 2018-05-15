@@ -45,42 +45,64 @@ void setupCallbackFunctions( ros::NodeHandle &ros_handle )
 
 void enqueueTrialHandler( const std_msgs::UInt16::ConstPtr &message )
 {
+    /* going to write some temporary trial loading code to test things */
+    std::string trial_name = "";
+
+    if( message->data == 1 )
+        trial_name = "discrete_w";
+    else if( message->data == 2 )
+    {
+        trial_name = "discrete_r";
+    }
+    else
+    {
+        trial_name = "discrete_mixed";
+    }
+    Trial test( trial_name );
+    test.setPresentKinematics( &inputs.present_kinematics );
+    inputs.trials_queue.push_back( test );
 
 }
 
 void resetTrialHandler( const std_msgs::UInt8::ConstPtr &message )
 {
-
+    if( message->data == 1 )
+    {
+        inputs.present_trial = nullptr;
+        inputs.trials_queue.clear();
+        /* reset arm queue */
+        state = WAITING_STATE;
+    }
 }
 
 void queueSizeHandler( const std_msgs::UInt16::ConstPtr &message )
 {
-
+    inputs.arm_waypoint_queue_size = message->data;
 }
 
 void presentKinematicsHandler( const geometry_msgs::Pose::ConstPtr &message )
 {
-
+    inputs.present_kinematics = *message;
 }
 
 void goalKinematicsHandler( const geometry_msgs::Pose::ConstPtr &message )
 {
-
+    inputs.goal_kinematics = *message;
 }
 
 void desiredModeHandler( const std_msgs::UInt8::ConstPtr &message )
 {
-
+    inputs.arm_desired_mode = message->data;
 }
 
 void smStateHandler( const std_msgs::String::ConstPtr &message )
 {
-
+    inputs.arm_state_machine_present_state = message->data;
 }
 
 void trialModeHandler( const std_msgs::UInt8::ConstPtr &message )
 {
-
+    inputs.trial_mode = message->data;
 }
 
 /*
@@ -139,7 +161,8 @@ LOGIC_STATE getTransition()
                 transition_to = WAITING_STATE;
                 break;
             case WAITING_STATE:
-                if( inputs.trials_queue.size() > 0 )
+                /* never load if the arm is "off" */
+                if( inputs.trials_queue.size() > 0 && inputs.arm_state_machine_present_state != "OFF_STATE" )
                 {
                     transition_to = LOADING_STATE;
                 }
@@ -152,7 +175,7 @@ LOGIC_STATE getTransition()
                     transition_to = VERIFY_STATE;
                 break;
             case VERIFY_STATE:
-                if( inputs.present_trial->isActionComplete() )
+                if( inputs.present_trial && inputs.present_trial->isActionComplete() ) /* have to check for null here in case the trial gets reset */
                 {
                     if( inputs.present_trial->isTrialComplete() )
                     {
@@ -164,6 +187,11 @@ LOGIC_STATE getTransition()
                     {
                         transition_to = LOADING_STATE;
                     }
+                }
+                else
+                {
+                    /* trial must have been reset */
+                    transition_to = WAITING_STATE;
                 }
                 break;
         }
@@ -177,5 +205,34 @@ void action()
     switch( state )
     {
         default: break;
+        case MANUAL_STATE:
+            /* for now its a do nothing state */
+            break;
+        case WAITING_STATE:
+            /* it's a waiting state, do nothing */
+            break;
+        case LOADING_STATE:
+        {
+            if( !inputs.present_trial && inputs.trials_queue.size() > 0 ) /* have to do this check incase trial gets reset */
+            {
+                inputs.present_trial = &inputs.trials_queue.front();
+            }
+
+            if( inputs.present_trial ) /* again, if a trial gets reset */
+            {
+                geometry_msgs::PoseArray waypoints = inputs.present_trial->generateWaypoints();
+                for( int i = 0; i < waypoints.poses.size(); i++ )
+                {
+                    waypoint_publisher.publish( waypoints.poses.at( i ));
+                }
+            }
+            break;
+        }
+        case PERFORM_STATE:
+            /* do nothing state, its action is the checking in transition */
+            break;
+        case VERIFY_STATE:
+            /* do nothing state, its action occurs in its transition */
+            break;
     }
 }
