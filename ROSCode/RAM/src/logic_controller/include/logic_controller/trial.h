@@ -26,13 +26,13 @@ class Trial
         void nextAction();
 
     private:
-        std::tuple<double,double,double,double> generateConstants();
+        std::tuple<double,double,double,double> generateConstants( double new_x, double new_y, double new_z, double new_eeo );
         bool verifyAction();
 
         geometry_msgs::Pose *present_kinematics;
         std::vector<geometry_msgs::PoseStamped> *present_detections;
         std::vector<Action> action_queue;
-        Action *present_action; /* points to the action_queue action */
+        Action present_action; /* points to the action_queue action */
         uint8_t action_tracker; /* this should determine where the present_action pointer points */
         std::string name;
         bool trial_complete;
