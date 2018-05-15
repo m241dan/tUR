@@ -22,10 +22,10 @@
  * length4 wrist to end-effector
  */
 
-#define length1 3.0
-#define length2 9.7
+#define length1 2.6
+#define length2 12.6
 #define length3 9.01
-#define length4 10.00
+#define length4 11.00
 
 using namespace Eigen;
 
