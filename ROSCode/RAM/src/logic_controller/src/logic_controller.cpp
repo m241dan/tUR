@@ -14,14 +14,6 @@ int main( int argc, char **argv )
     setupSubscribers( ros_handle );
     setupCallbackFunctions( ros_handle );
 
-    /*
-    Trial test_trial( "test" );
-    geometry_msgs::Pose present_position;
-    test_trial.setPresentKinematics( &present_position );
-    geometry_msgs::PoseArray test= test_trial.generateWaypoints();
-    std::cout << test << std::endl;
-     */
-
     ros::spin();
 }
 
@@ -48,7 +40,7 @@ void setupSubscribers( ros::NodeHandle &ros_handle )
 
 void setupCallbackFunctions( ros::NodeHandle &ros_handle )
 {
-
+    state_machine_timer = ros_handle.createTimer( ros::Duration( 0.1 ), stateMachine );
 }
 
 void enqueueTrialHandler( const std_msgs::UInt16::ConstPtr &message )
@@ -89,4 +81,101 @@ void smStateHandler( const std_msgs::String::ConstPtr &message )
 void trialModeHandler( const std_msgs::UInt8::ConstPtr &message )
 {
 
+}
+
+/*
+ * Timer Functions
+ */
+void stateMachine( const ros::TimerEvent &event )
+{
+    forceTransition( getTransition() );
+    action();
+}
+
+/*
+ * State Machine Functiions
+ */
+void forceTransition( LOGIC_STATE transition_to )
+{
+    LOGIC_STATE prev_state = state;
+
+    state = transition_to;
+
+    if( state != prev_state )
+    {
+        /* onExit bits */
+        switch( prev_state )
+        {
+            default: break;
+        }
+
+        /* onEnter bits */
+        switch( state )
+        {
+            default: break;
+            case MANUAL_STATE:
+                /* send reset waypoint queue to arm */
+                break;
+        }
+    }
+
+}
+
+LOGIC_STATE getTransition()
+{
+    LOGIC_STATE transition_to = state;
+
+    if( inputs.trial_mode == 4 )
+    {
+        transition_to = MANUAL_STATE;
+    }
+    else
+    {
+        switch( state )
+        {
+            default:
+                break;
+            case MANUAL_STATE:
+                transition_to = WAITING_STATE;
+                break;
+            case WAITING_STATE:
+                if( inputs.trials_queue.size() > 0 )
+                {
+                    transition_to = LOADING_STATE;
+                }
+                break;
+            case LOADING_STATE:
+                transition_to = PERFORM_STATE;
+                break;
+            case PERFORM_STATE:
+                if( inputs.arm_waypoint_queue_size == 0 )
+                    transition_to = VERIFY_STATE;
+                break;
+            case VERIFY_STATE:
+                if( inputs.present_trial->isActionComplete() )
+                {
+                    if( inputs.present_trial->isTrialComplete() )
+                    {
+                        inputs.present_trial = nullptr;
+                        inputs.trials_queue.erase( inputs.trials_queue.begin() );
+                        transition_to = WAITING_STATE;
+                    }
+                    else
+                    {
+                        transition_to = LOADING_STATE;
+                    }
+                }
+                break;
+        }
+    }
+
+    return transition_to;
+}
+
+void action()
+{
+    switch( state )
+    {
+        default: break;
+    }
 }
