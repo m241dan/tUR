@@ -22,8 +22,9 @@ int main( int argc, char **argv )
  */
 void setupPublishers( ros::NodeHandle &ros_handle )
 {
-    waypoint_publisher = ros_handle.advertise<geometry_msgs::Pose>( "arm/waypoint", 10 );
+    waypoint_publisher = ros_handle.advertise<geometry_msgs::Pose>( "arm/waypoint", 100 );
     queue_resetter = ros_handle.advertise<std_msgs::UInt8>( "arm/queue_reset", 10 );
+    logic_state_machine_state = ros_handle.advertise<std_msgs::UInt8>( "logic/state_machine", 10 );
 }
 
 void setupSubscribers( ros::NodeHandle &ros_handle )
@@ -112,6 +113,10 @@ void stateMachine( const ros::TimerEvent &event )
 {
     forceTransition( getTransition() );
     action();
+
+    std_msgs::UInt8 present_state;
+    present_state.data = state;
+    logic_state_machine_state.publish( present_state );
 }
 
 /*
@@ -171,7 +176,7 @@ LOGIC_STATE getTransition()
                 transition_to = PERFORM_STATE;
                 break;
             case PERFORM_STATE:
-                if( inputs.arm_waypoint_queue_size == 0 )
+                if( fabs( ros::Time::now().toSec() - inputs.valid_perform ) > 5 && inputs.arm_waypoint_queue_size == 0 )
                     transition_to = VERIFY_STATE;
                 break;
             case VERIFY_STATE:
@@ -220,11 +225,14 @@ void action()
 
             if( inputs.present_trial ) /* again, if a trial gets reset */
             {
+                std::cout << "Present Trial exists..." << std::endl;
+
                 geometry_msgs::PoseArray waypoints = inputs.present_trial->generateWaypoints();
                 for( int i = 0; i < waypoints.poses.size(); i++ )
                 {
                     waypoint_publisher.publish( waypoints.poses.at( i ));
                 }
+                inputs.valid_perform = ros::Time::now().toSec();
             }
             break;
         }
