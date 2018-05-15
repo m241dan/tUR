@@ -14,7 +14,8 @@
 #include <vector>
 #include "state_machine/Error.h"
 #include "dynamixel_workbench_msgs/XH.h"
-#include "logic_controller/trial.h"
+#include "logic_controller/shared_types.h"
+
 
 /*
  * Publishers
@@ -42,6 +43,13 @@ ros::Subscriber trial_mode_setter; /* std_msgs UInt8 */
 ros::Timer state_machine_timer;
 
 /*
+ * State Machine Vars
+ */
+
+LOGIC_STATE state;
+InputsTable inputs;
+
+/*
  * Boot Functions
  */
 void setupPublishers( ros::NodeHandle &ros_handle );
@@ -61,5 +69,17 @@ void goalKinematicsHandler( const geometry_msgs::Pose::ConstPtr &message );
 void desiredModeHandler( const std_msgs::UInt8::ConstPtr &message );
 void smStateHandler( const std_msgs::String::ConstPtr &message );
 void trialModeHandler( const std_msgs::UInt8::ConstPtr &message );
+
+/*
+ * Timer Functions
+ */
+void stateMachine( const ros::TimerEvent &event );
+
+/*
+ * State Machine Functions
+ */
+void forceTransition( LOGIC_STATE transition_to );
+LOGIC_STATE getTransition();
+void action();
 
 #endif //LOGIC_CONTROLLER_H
