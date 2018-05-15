@@ -89,10 +89,22 @@ iGoState GoState::internalTransition()
                 {
                     double to_goal = abs( inputs->servos[i].Present_Position - inputs->servos[i].Goal_Position );
                     std::cout << "ToGoal[" << i << "]: " << to_goal << std::endl;
-                    if( to_goal > ARRIVAL_THRESHOLD)
+
+                    if( inputs->waypoint_queue.size() > 1 )
                     {
-                        has_arrived = false;
-                        break;
+                        if( to_goal > TRAVELING_ARRIVAL_THRESHOLD)
+                        {
+                            has_arrived = false;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        if( to_goal > ARRIVAL_THRESHOLD )
+                        {
+                            has_arrived = false;
+                            break;
+                        }
                     }
 
                 }
