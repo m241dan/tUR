@@ -17,7 +17,7 @@ Trial::Trial( std::string trial_name ) : name( trial_name ), action_tracker( 0 )
         action.z = 10.0;
         action.velocity = 20;
         action.type = DISCRETE_W;
-        action.precision = 10;
+        action.precision = 5;
         action.shape = "linear";
 
         action_queue.push_back( action );
@@ -43,7 +43,7 @@ Trial::Trial( std::string trial_name ) : name( trial_name ), action_tracker( 0 )
         action.z = 5.0;
         action.velocity = 20;
         action.type = DISCRETE_R;
-        action.precision = 6;
+        action.precision = 5;
         action.shape = "linear";
 
         action_queue.push_back( action );
@@ -57,7 +57,7 @@ Trial::Trial( std::string trial_name ) : name( trial_name ), action_tracker( 0 )
         action.x = -5.0;
         action.y = 10.0;
         action.z = 5.0;
-        action.shape = "parabolic";
+        action.shape = "linear";
 
         action_queue.push_back( action );
     }
