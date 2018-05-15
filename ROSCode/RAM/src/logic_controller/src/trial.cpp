@@ -8,7 +8,18 @@ Trial::Trial( std::string trial_name ) : name( trial_name ), action_tracker(0), 
 {
     //load trial with Lua
     //load actions with Lua
+    if( name == "discrete_w" )
+    {
 
+    }
+    else if( name == "discrete_r" )
+    {
+
+    }
+    else
+    {
+        /* mixed */
+    }
     present_action = &action_queue.front();
 }
 
