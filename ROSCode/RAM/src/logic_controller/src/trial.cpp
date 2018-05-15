@@ -174,7 +174,7 @@ bool Trial::verifyAction()
             if( fabs( present_kinematics->position.x - present_action->x ) < WORLD_ERROR &&
                 fabs( present_kinematics->position.y - present_action->y ) < WORLD_ERROR &&
                 fabs( present_kinematics->position.z - present_action->z ) < WORLD_ERROR &&
-                fabs( present_kinematics->orientation.w - present_action->eeo < WORLD_ERROR  )
+                fabs( present_kinematics->orientation.w - present_action->eeo ) < WORLD_ERROR )
                 verified = true;
             break;
         case DISCRETE_R:
