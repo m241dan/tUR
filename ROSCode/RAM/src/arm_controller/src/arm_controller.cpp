@@ -55,7 +55,7 @@ void setupPublishers( ros::NodeHandle &ros_handle )
 
 void setupSubscribers( ros::NodeHandle &ros_handle )
 {
-    enqueue_waypoint = ros_handle.subscribe( "arm/waypoint", 10, enqueueHandler );
+    enqueue_waypoint = ros_handle.subscribe( "arm/waypoint", 100, enqueueHandler );
     reset_queue = ros_handle.subscribe( "arm/queue_reset", 10, resetQueueHandler );
     operation_mode = ros_handle.subscribe( "arm/mode_setter", 10, operationModeHandler );
 }
@@ -173,7 +173,7 @@ void updateAndPublishCurrentLocation()
     inputs.current_position.position.y = coords.y;
     inputs.current_position.position.z = coords.z;
 
-    inputs.current_position.orientation.x = end_effector_orientation;
+    inputs.current_position.orientation.w = end_effector_orientation;
 
     /*
      * Publish Portion
@@ -278,7 +278,8 @@ void stateMachineLoop( const ros::TimerEvent& event )
     }
 
     /* publish general data */
-    goal_kinematics.publish( inputs.waypoint_queue.front() );
+    if( inputs.waypoint_queue.size() > 0 )
+        goal_kinematics.publish( inputs.waypoint_queue.front() );
 
     publishStateMachineMode();
     publishQueueSize();
