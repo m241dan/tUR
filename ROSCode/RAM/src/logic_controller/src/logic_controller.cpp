@@ -14,6 +14,9 @@ int main( int argc, char **argv )
     setupSubscribers( ros_handle );
     setupCallbackFunctions( ros_handle );
 
+    lua_State *lua_handle = luaL_newstate();
+    luaL_openlibs(lua_handle);
+
     ros::spin();
 }
 

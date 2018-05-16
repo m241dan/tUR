@@ -12,6 +12,12 @@
 #include "logic_controller/action.h"
 #include <tuple>
 
+extern "C" {
+    #include "lua.h"
+    #include "lauxlib.h"
+    #include "lualib.h"
+}
+
 #define WORLD_ERROR 0.1
 
 class Trial

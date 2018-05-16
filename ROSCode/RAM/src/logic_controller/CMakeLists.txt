@@ -10,6 +10,9 @@ find_package(catkin REQUIRED COMPONENTS
   apriltags_ros
 )
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(lua liblua REQUIRED)
+
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES logic_controller
@@ -20,6 +23,7 @@ catkin_package(
 include_directories(
  include
   ${catkin_INCLUDE_DIRS}
+  ${lua_INCLUDE_DIR}
 )
 
 add_executable(${PROJECT_NAME}
@@ -31,9 +35,10 @@ add_executable(${PROJECT_NAME}
 #	src/VerifyState.cpp
 	include/state_machine/Error.cpp
 )
-
-add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
-
 target_link_libraries(${PROJECT_NAME}
    ${catkin_LIBRARIES}
+   ${lua_LIBRARIES}
 )
+
+#add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
+

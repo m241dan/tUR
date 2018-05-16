@@ -16,6 +16,10 @@
 #include "dynamixel_workbench_msgs/XH.h"
 #include "logic_controller/shared_types.h"
 
+#include "lua.h"
+#include "lauxlib.h"
+#include "lualib.h"
+
 
 /*
  * Publishers
