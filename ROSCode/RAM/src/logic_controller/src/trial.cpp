@@ -84,7 +84,109 @@ Trial::Trial( std::string trial_name ) : name( trial_name ), action_tracker( 0 )
 
         action_queue.push_back( action );
     }
-    action_tracker = 0;
+}
+
+Trial::Trial( std::string trial_name, lua_State *lua, bool &success ) : name(trial_name), action_tracker(0), trial_complete( false )
+{
+    std::stringstream ss;
+    ss << "/home/korisd/tUR/ROSCode/RAM/src/logic_controller/scripts/" << trial_name << ".lua";
+
+    std::cout << "Path: " << ss.str().c_str() << std::endl;
+    if( luaL_loadfile( lua, ss.str().c_str() ) || lua_pcall( lua, 0, 1, 0 ) )
+    {
+        messaging::errorMsg( __FUNCTION__, lua_tostring( lua, -1 ) );
+        success = false;
+    }
+    else
+    {
+        /* factor to function */
+        lua_len( lua, -1 );
+        int size = lua_tointeger( lua, -1 );
+        lua_pop( lua, 1 );
+
+
+        for( int i = 1; i < size+1; i++ )
+        {
+            Action action;
+            /* stack: trial table */
+            /* get the action at i */
+            lua_pushinteger( lua, i );
+            lua_gettable( lua, -2 );
+
+            /*
+             * Velocity
+             */
+            /* stack: trial table -> action[i] */
+            lua_pushstring( lua, "velocity" );
+            /* stack: trial table -> action[i] -> "velocity" */
+            lua_gettable( lua, -2 );
+            /* stack: trial table -> action[i] -> velocity_num */
+            action.velocity = (uint8_t )lua_tointeger( lua, -1 );
+            lua_pop( lua, 1 );
+            /* stack: trial table -> action[i] */
+
+            /*
+             * Type
+             */
+            lua_pushstring( lua, "type" );
+            lua_gettable( lua, -2 );
+            action.type = (ActionType)lua_tointeger( lua, -1 );
+            lua_pop( lua, 1 );
+
+            /*
+             * Precision
+             */
+            lua_pushstring( lua, "precision" );
+            lua_gettable( lua, -2 );
+            action.precision = (uint8_t)lua_tointeger( lua, -1 );
+            lua_pop( lua, 1 );
+
+            /*
+             * Shape
+             */
+            lua_pushstring( lua, "shape" );
+            lua_gettable( lua, -2 );
+            action.shape = std::string( lua_tostring( lua, -1 ) );
+            lua_pop( lua, 1 );
+
+            /*
+             * EEO
+             */
+            lua_pushstring( lua, "eeo" );
+            lua_gettable( lua, -2 );
+            action.eeo = lua_tonumber( lua, -1 );
+            lua_pop( lua, 1 );
+
+            /*
+             * X
+             */
+            lua_pushstring( lua, "x" );
+            lua_gettable( lua, -2 );
+            action.x = lua_tonumber( lua, -1 );
+            lua_pop( lua, 1 );
+
+            /*
+             * Y
+             */
+            lua_pushstring( lua, "y" );
+            lua_gettable( lua, -2 );
+            action.y = lua_tonumber( lua, -1 );
+            lua_pop( lua, 1 );
+
+            /*
+             * Z
+             */
+            lua_pushstring( lua, "z" );
+            lua_gettable( lua, -2 );
+            action.z = lua_tonumber( lua, -1 );
+            lua_pop( lua, 2 ); /* pop the number and the action off */
+            /* stack: trial table */
+            action_queue.push_back( action );
+        }
+        lua_pop( lua, 1 );
+        /* stack: nil */
+        success = true;
+    }
 }
 
 void Trial::setPresentKinematics( geometry_msgs::Pose *pk )
@@ -188,10 +290,7 @@ geometry_msgs::PoseArray Trial::generateWaypoints()
                     pose.orientation.w += D * t;
                     pose.orientation.z = present_action.velocity;
 
-                    std::cout << "Pose.x" << pose.position.x << std::endl;
-                    std::cout << "Pose.y" << pose.position.y << std::endl;
-                    std::cout << "Pose.z" << pose.position.z << std::endl;
-                    std::cout << "Pose.w" << pose.orientation.w << std::endl;
+
                     waypoints.poses.push_back( pose );
                 }
                 break;
