@@ -14,7 +14,8 @@ int main( int argc, char **argv )
     setupSubscribers( ros_handle );
     setupCallbackFunctions( ros_handle );
 
-    lua_State *lua_handle = luaL_newstate();
+    /* init the lua stuff */
+    lua_handle = luaL_newstate();
     luaL_openlibs(lua_handle);
 
     ros::spin();
@@ -50,21 +51,13 @@ void setupCallbackFunctions( ros::NodeHandle &ros_handle )
 void enqueueTrialHandler( const std_msgs::UInt16::ConstPtr &message )
 {
     /* going to write some temporary trial loading code to test things */
-    std::string trial_name = "";
+    bool success = false;
+    std::stringstream ss;
+    std::string name;
 
-    if( message->data == 1 )
-        trial_name = "discrete_w";
-    else if( message->data == 2 )
-    {
-        trial_name = "discrete_r";
-    }
-    else
-    {
-        trial_name = "discrete_mixed";
-    }
-    Trial test( trial_name );
-    test.setPresentKinematics( &inputs.present_kinematics );
-    inputs.trials_queue.push_back( test );
+    Trial trial( ss.str(), lua_handle, success );
+    trial.setPresentKinematics( &inputs.present_kinematics );
+    inputs.trials_queue.push_back( trial );
 
 }
 
