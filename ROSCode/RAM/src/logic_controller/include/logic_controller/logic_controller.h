@@ -15,11 +15,13 @@
 #include "state_machine/Error.h"
 #include "dynamixel_workbench_msgs/XH.h"
 #include "logic_controller/shared_types.h"
+#include <sstream>
 
-#include "lua.h"
-#include "lauxlib.h"
-#include "lualib.h"
-
+extern "C" {
+    #include "lua.h"
+    #include "lauxlib.h"
+    #include "lualib.h"
+}
 
 /*
  * Publishers
@@ -46,7 +48,10 @@ ros::Subscriber trial_mode_setter; /* std_msgs UInt8 */
  * Timers
  */
 ros::Timer state_machine_timer;
-
+/*
+ * Subscriber Globals (I hate ROS sometimes...)
+ */
+lua_State *lua_handle;
 /*
  * State Machine Vars
  */
