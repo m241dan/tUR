@@ -11,6 +11,7 @@
 #include <geometry_msgs/PoseArray.h>
 #include "logic_controller/action.h"
 #include <tuple>
+#include "state_machine/Error.h"
 
 extern "C" {
     #include "lua.h"
@@ -24,6 +25,7 @@ class Trial
 {
     public:
         Trial( std::string trial_name );
+        Trial( std::string trial_name, lua_State *lua, bool &success );
         void setPresentKinematics( geometry_msgs::Pose *pk );
         void setPresentDetections( std::vector<geometry_msgs::PoseStamped> *pd );
         geometry_msgs::PoseArray generateWaypoints();  //generates waypoints for an action based on present_kinematics and present_detections
