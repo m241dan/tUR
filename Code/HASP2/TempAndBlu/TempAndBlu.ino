@@ -15,7 +15,7 @@ void loop()
 {
     sensors.requestTemperatures();
 
-    Serial.println( String( millis() ) + "," +
-                    String( sensors.getTempCByIndex(0) ) + "," +
+    Serial.println( String( millis() ) + "ms, \t" +
+                    String( sensors.getTempCByIndex(0) ) + " C, \t" +
                     String( sensors.getTempCByIndex(1) ) );
 }
