@@ -1,10 +1,5 @@
 <launch>
     <arg name="cam_config" default="file:///home/ubuntu/tUR/ROSCode/RAM/camera_info/ost.yaml"/>
-    <arg name="show_tag_detections" default="false"/>
-
-    <node name="arm_controller" pkg="arm_controller" type="arm_controller" />
-    <node name="logic_controller" pkg="logic_controller" type="logic_controller" />
-
 
     <arg name="dev1" default="/dev/video0"/>
     <arg name="dev2" default="/dev/video1"/>
