@@ -1,5 +1,5 @@
 <launch>
-    <arg name="cam_config" default="file:///home/ubuntu/tUR/ROSCode/RAM/camera_info/ost.yaml"/>
+    <arg name="cam_config" default="file:///home/ubuntu/tUR/ROSCode/OBSERVATION/camera_info/ost.yaml"/>
 
     <arg name="dev1" default="/dev/video0"/>
     <arg name="dev2" default="/dev/video1"/>
@@ -53,6 +53,7 @@
         <param name="camera_info_url" value="$(arg cam_config)"/>
     </node>
 
+    <!-- Currently not running
     <node name="usb_cam_4" pkg="usb_cam" type="usb_cam_node" output="screen" >
         <param name="video_device" value="$(arg dev4)" />
         <param name="video_location" value="$(arg vid4)" />
@@ -63,6 +64,6 @@
         <param name="camera_frame_id" value="usb_cam" />
         <param name="io_method" value="mmap"/>
         <param name="camera_info_url" value="$(arg cam_config)"/>
-    </node>
+    </node> -->
 
 </launch>
