@@ -1,8 +1,11 @@
-*cmake-build-debug*
+*~
+*.swp
+\#*#
+.cmake-build-debug*
 *.idea*
-*devel*
-*build*
-*log*
-*.catkin_tools*
+devel
+build
+logs
+.catkin_tools
 CMakeLists.txt
-*a.out
+a.out
