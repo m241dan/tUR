@@ -10,3 +10,6 @@
 [submodule "ROSCode/RAM/src/apriltags_ros"]
 	path = ROSCode/RAM/src/apriltags_ros
 	url = https://github.com/BCLab-UNM/apriltags_ros
+[submodule "ROSCode/RAM/src/usb_cam"]
+	path = ROSCode/RAM/src/usb_cam
+	url = https://github.com/ros-drivers/usb_cam
