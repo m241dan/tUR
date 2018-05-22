@@ -1,0 +1,73 @@
+<launch>
+    <arg name="cam_config" default="file:///home/ubuntu/tUR/ROSCode/RAM/camera_info/ost.yaml"/>
+    <arg name="show_tag_detections" default="false"/>
+
+    <node name="arm_controller" pkg="arm_controller" type="arm_controller" />
+    <node name="logic_controller" pkg="logic_controller" type="logic_controller" />
+
+
+    <arg name="dev1" default="/dev/video0"/>
+    <arg name="dev2" default="/dev/video1"/>
+    <arg name="dev3" default="/dev/video2"/>
+    <arg name="dev4" default="/dev/video3"/>
+
+
+    <arg name="vid1" default="/home/ubuntu/Videos/vid1/"/>
+    <arg name="vid2" default="/home/ubuntu/Videos/vid2/"/>
+    <arg name="vid3" default="/home/ubuntu/Videos/vid3/"/>
+    <arg name="vid4" default="/home/ubuntu/Videos/vid4/"/>
+
+    <arg name="pic1" default="/home/ubuntu/Pictures/pic1/"/>
+    <arg name="pic2" default="/home/ubuntu/Pictures/pic2/"/>
+    <arg name="pic3" default="/home/ubuntu/Pictures/pic3/"/>
+    <arg name="pic4" default="/home/ubuntu/Pictures/pic4/"/>
+
+    <node name="usb_cam_1" pkg="usb_cam" type="usb_cam_node" output="screen" >
+        <param name="video_device" value="$(arg dev1)" />
+        <param name="video_location" value="$(arg vid1)" />
+        <param name="pic_location" value="$(arg pic1)" />
+        <param name="image_width" value="720"/>
+        <param name="image_height" value="480"/>
+        <param name="pixel_format" value="yuyv"/>
+        <param name="camera_frame_id" value="usb_cam" />
+        <param name="io_method" value="mmap"/>
+        <param name="camera_info_url" value="$(arg cam_config)"/>
+    </node>
+
+    <node name="usb_cam_2" pkg="usb_cam" type="usb_cam_node" output="screen" >
+        <param name="video_device" value="$(arg dev2)" />
+        <param name="video_location" value="$(arg vid2)" />
+        <param name="pic_location" value="$(arg pic2)" />
+        <param name="image_width" value="720"/>
+        <param name="image_height" value="480"/>
+        <param name="pixel_format" value="yuyv"/>
+        <param name="camera_frame_id" value="usb_cam" />
+        <param name="io_method" value="mmap"/>
+        <param name="camera_info_url" value="$(arg cam_config)"/>
+    </node>
+
+    <node name="usb_cam_3" pkg="usb_cam" type="usb_cam_node" output="screen" >
+        <param name="video_device" value="$(arg dev3)" />
+        <param name="video_location" value="$(arg vid3)" />
+        <param name="pic_location" value="$(arg pic3)" />
+        <param name="image_width" value="720"/>
+        <param name="image_height" value="480"/>
+        <param name="pixel_format" value="yuyv"/>
+        <param name="camera_frame_id" value="usb_cam" />
+        <param name="io_method" value="mmap"/>
+        <param name="camera_info_url" value="$(arg cam_config)"/>
+    </node>
+
+    <node name="usb_cam_4" pkg="usb_cam" type="usb_cam_node" output="screen" >
+        <param name="video_device" value="$(arg dev4)" />
+        <param name="video_location" value="$(arg vid4)" />
+        <param name="pic_location" value="$(arg pic4)" />
+        <param name="image_width" value="720"/>
+        <param name="image_height" value="480"/>
+        <param name="pixel_format" value="yuyv"/>
+        <param name="camera_frame_id" value="usb_cam" />
+        <param name="io_method" value="mmap"/>
+        <param name="camera_info_url" value="$(arg cam_config)"/>
+    </node>
+
+</launch>
