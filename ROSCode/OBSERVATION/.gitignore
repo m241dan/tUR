@@ -1,0 +1,11 @@
+*~
+*.swp
+\#*#
+.cmake-build-debug*
+*.idea*
+devel
+build
+logs
+.catkin_tools
+CMakeLists.txt
+a.out
