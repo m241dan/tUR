@@ -1,4 +1,39 @@
 <launch>
+    <arg name="cam_config" default="file:///home/korisd/tUR/ROSCode/RAM/camera_info/ost.yaml"/>
+    <arg name="show_tag_detections" default="true"/>
+
     <node launch-prefix="xterm -e gdb -ex run --args" name="arm_controller" pkg="arm_controller" type="arm_controller" />
     <node launch-prefix="xterm -e gdb -ex run --args" name="logic_controller" pkg="logic_controller" type="logic_controller" />
+
+  <arg name="dev1" default="/dev/video1" />
+
+  <node name="usb_cam_one" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <param name="video_device" value="$(arg dev1)" />
+    <param name="image_width" value="720" />
+    <param name="image_height" value="480" />
+    <param name="pixel_format" value="yuyv" />
+    <param name="camera_frame_id" value="usb_cam" />
+    <param name="io_method" value="mmap"/>
+    <param name="camera_info_url" value="$(arg cam_config)" />
+  </node>
+
+  <node pkg="apriltags_ros" type="apriltag_detector_node" name="apriltag_detector_one" output="screen">
+    <remap from="camera_info" to="/usb_cam_one/camera_info"/>
+    <remap from="image_rect" to="/usb_cam_one/image_raw"/>
+    <remap from="tag_detections_image" to="/apriltag_one_detections" />
+    <remap from="tag_detections" to="/apriltags_one" />
+    <!-- Select the tag family: 16h5, 25h7, 25h9, 36h9, or 36h11(default) -->
+    <param name="tag_family" type="str" value="16h5" />
+
+    <rosparam param="tag_descriptions">[
+         {id: 10, size: 0.00173}, {id: 11, size: 0.00173}, {id: 23, size: 0.00173},
+         {id: 29, size: 0.00173}, {id: 24, size: 0.00173}, {id: 17, size: 0.00173} ]
+    </rosparam>
+  </node>
+
+  <node name="image_view" pkg="image_view" type="image_view">
+
+    <remap from="image" to="/apriltag_one_detections"/>
+    <param name="autosize" value="true" />
+  </node>
 </launch>
