@@ -55,6 +55,8 @@ void enqueueTrialHandler( const std_msgs::UInt16::ConstPtr &message )
     std::stringstream ss;
     std::string name;
 
+    ss << "trial" << message->data;
+
     Trial trial( ss.str(), lua_handle, success );
     trial.setPresentKinematics( &inputs.present_kinematics );
     inputs.trials_queue.push_back( trial );
