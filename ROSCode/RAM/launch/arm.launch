@@ -3,13 +3,11 @@
     <arg name="show_tag_detections" default="true"/>
 
     <!-- edited out for operation on pi because it doesnt have xterm 
-    <node launch-prefix="xterm -e gdb -ex run (double -)args" name="arm_controller" pkg="arm_controller" type="arm_controller" />
-    <node name="logic_controller" pkg="logic_controller" type="logic_controller" />
-    -->
-
-    
-    <node name="arm_controller" pkg="arm_controller" type="arm_controller" />
+    <node launch-prefix="xterm -e gdb -ex run --args" name="arm_controller" pkg="arm_controller" type="arm_controller" />
     <node launch-prefix="xterm -e gdb -ex run --args" name="logic_controller" pkg="logic_controller" type="logic_controller" />
+    -->
+    <node name="logic_controller" pkg="logic_controller" type="logic_controller" />
+    <node name="arm_controller" pkg="arm_controller" type="arm_controller" />
 
   <arg name="dev1" default="/dev/video0" />
 

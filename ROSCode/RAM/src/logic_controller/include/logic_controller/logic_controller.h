@@ -30,6 +30,7 @@ ros::Publisher waypoint_publisher;  /* geometry_msgs Pose */
 ros::Publisher queue_resetter;      /* std_msgs UInt8 */
 ros::Publisher logic_state_machine_state; /* std_msgs UInt8 */
 //ros::Publisher trial_data; /* custom msg... */
+ros::Publisher repeater_publisher;
 
 /*
  * Subscribers
@@ -48,6 +49,7 @@ ros::Subscriber trial_mode_setter; /* std_msgs UInt8 */
  * Timers
  */
 ros::Timer state_machine_timer;
+ros::Timer repeater_timer;
 /*
  * Subscriber Globals (I hate ROS sometimes...)
  */
@@ -84,6 +86,7 @@ void trialModeHandler( const std_msgs::UInt8::ConstPtr &message );
  * Timer Functions
  */
 void stateMachine( const ros::TimerEvent &event );
+void repeaterFun( const ros::TimerEvent &event );
 
 /*
  * State Machine Functions

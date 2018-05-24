@@ -16,7 +16,7 @@
 #define GO_SYNCHRONIZED_STATE "go_synchronized_state"
 
 #define MAX_VELOCITY 20
-#define PID_I_GAIN 150
+#define PID_I_GAIN 300
 
 
 enum

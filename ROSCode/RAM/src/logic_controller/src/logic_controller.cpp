@@ -29,6 +29,7 @@ void setupPublishers( ros::NodeHandle &ros_handle )
     waypoint_publisher = ros_handle.advertise<geometry_msgs::Pose>( "arm/waypoint", 100 );
     queue_resetter = ros_handle.advertise<std_msgs::UInt8>( "arm/queue_reset", 10 );
     logic_state_machine_state = ros_handle.advertise<std_msgs::UInt8>( "logic/state_machine", 10 );
+    repeater_publisher = ros_handle.advertise<std_msgs::UInt16>( "logic/trial", 10 );
 }
 
 void setupSubscribers( ros::NodeHandle &ros_handle )
@@ -46,6 +47,7 @@ void setupSubscribers( ros::NodeHandle &ros_handle )
 void setupCallbackFunctions( ros::NodeHandle &ros_handle )
 {
     state_machine_timer = ros_handle.createTimer( ros::Duration( 0.1 ), stateMachine );
+    repeater_timer = ros_handle.createTimer( ros::Duration( 10 ), repeaterFun );
 }
 
 void enqueueTrialHandler( const std_msgs::UInt16::ConstPtr &message )
@@ -115,6 +117,16 @@ void stateMachine( const ros::TimerEvent &event )
     std_msgs::UInt8 present_state;
     present_state.data = state;
     logic_state_machine_state.publish( present_state );
+}
+
+void repeaterFun( const ros::TimerEvent &event )
+{
+    if( inputs.trials_queue.size() == 0 )
+    {
+        std_msgs::UInt16 trial_num;
+        trial_num.data = 1;
+        repeater_publisher.publish( trial_num );
+    }
 }
 
 /*
@@ -223,8 +235,6 @@ void action()
 
             if( inputs.present_trial ) /* again, if a trial gets reset */
             {
-                std::cout << "Present Trial exists..." << std::endl;
-
                 geometry_msgs::PoseArray waypoints = inputs.present_trial->generateWaypoints();
                 for( int i = 0; i < waypoints.poses.size(); i++ )
                 {
