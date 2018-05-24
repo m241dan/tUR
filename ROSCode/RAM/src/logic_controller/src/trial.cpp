@@ -89,7 +89,7 @@ Trial::Trial( std::string trial_name ) : name( trial_name ), action_tracker( 0 )
 Trial::Trial( std::string trial_name, lua_State *lua, bool &success ) : name(trial_name), action_tracker(0), trial_complete( false )
 {
     std::stringstream ss;
-    ss << "/home/korisd/tUR/ROSCode/RAM/src/logic_controller/scripts/" << trial_name << ".lua";
+    ss << "/home/ubuntu/tUR/ROSCode/RAM/src/logic_controller/scripts/" << trial_name << ".lua";
 
     std::cout << "Path: " << ss.str().c_str() << std::endl;
     if( luaL_loadfile( lua, ss.str().c_str() ) || lua_pcall( lua, 0, 1, 0 ) )

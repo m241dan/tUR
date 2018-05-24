@@ -1,5 +1,5 @@
 <launch>
-    <arg name="cam_config" default="file:///home/korisd/tUR/ROSCode/RAM/camera_info/ost.yaml"/>
+    <arg name="cam_config" default="file:///home/ubuntu/tUR/ROSCode/RAM/camera_info/ost.yaml"/>
     <arg name="show_tag_detections" default="true"/>
 
     <!-- edited out for operation on pi because it doesnt have xterm 
