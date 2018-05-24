@@ -7,7 +7,7 @@
 
 #include "ArmState.h"
 
-#define TRAVELING_ARRIVAL_THRESHOLD 30
+#define TRAVELING_ARRIVAL_THRESHOLD 150
 #define ARRIVAL_THRESHOLD 2
 
 typedef enum
