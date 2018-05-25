@@ -3,7 +3,8 @@
 //
 
 #include "arm_controller/arm_controller.h"
-
+#include <iostream>
+#include <fstream>
 /*
  * MAIN FUNCTION
  */
@@ -146,6 +147,16 @@ bool readAndUpdateServos()
         bench.itemWrite( id, "Velocity_Limit", MAX_VELOCITY );
         bench.itemWrite( id, "Position_I_Gain", PID_I_GAIN );
         std::cout << "Servo[" << id << "] Present/Goal[" << inputs.servos[i].Present_Position << "/" << inputs.servos[i].Goal_Position << "]" << std::endl;
+
+        {
+            std::ofstream myfile;
+            std::stringstream ss;
+            ss << "/home/ubuntu/Servo" << id << ".txt";
+
+            myfile.open( ss.str().c_str(), std::ios::app );
+            myfile << ros::Time::now().toSec() << " : " << inputs.servos[i].Present_Temperature << std::endl;
+            myfile.close();
+        }
     }
     return success;
 }
