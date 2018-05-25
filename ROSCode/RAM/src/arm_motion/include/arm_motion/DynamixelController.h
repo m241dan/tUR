@@ -17,18 +17,16 @@ class DynamixelController
 
             if( _valid )
             {
-                ROS_INFO( "%s: Successful startup of Dynamixel Bus %s", __FUNCTION__, bus );
-                if( verifyServos )
+                ROS_INFO( "%s: Successful startup of Dynamixel Bus %s", __FUNCTION__, bus.c_str() );
+                if( verifyServos() )
                 {
                     ROS_INFO( "%s: Servos verified and online.", __FUNCTION__ );
                 }
             }
             else
             {
-                ROS_INFO( "%s: Failed to startup Dynamixel Bus %s", __FUNCTION__, bus );
+                ROS_INFO( "%s: Failed to startup Dynamixel Bus %s", __FUNCTION__, bus.c_str() );
             }
-
-
         }
 
     protected:
@@ -93,7 +91,7 @@ class DynamixelController
         {
             for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
             {
-                _bench.itemWrite()
+              //  _bench.itemWrite();
             }
         }
 

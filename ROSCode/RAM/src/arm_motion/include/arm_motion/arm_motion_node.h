@@ -7,7 +7,7 @@
 
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
-#include <arm_motion/ArmMotionAction.h>
+#include "arm_motion/ArmMotionAction.h"
 
 enum
 {
@@ -26,7 +26,7 @@ typedef struct servo_command
     int32_t value = 0;
 } ServoCommand;
 
-const std::string valid_commands[MAX_COMMANDS] = {
+const std::string valid_commands[MAX_COMMAND] = {
         "Model_Number", "Firmware_Version", "ID",
         "Baud_Rate", "Return_Delay_Time", "Drive_Mode",
         "Operating_Mode", "Secondary_ID", "Protocol_Version",
