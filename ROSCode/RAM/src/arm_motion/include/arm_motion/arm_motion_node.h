@@ -9,10 +9,19 @@
 #include <sensor_msgs/JointState.h>
 #include "arm_motion/ArmMotionAction.h"
 
+/*
+ * Servo Info
+ * For new servos, add them here
+ */
 enum
 {
     ROTATION_SERVO = 0, SHOULDER_SERVO,
     ELBOW_SERVO, WRIST_SERVO, MAX_SERVO
+};
+
+const std::string servo_topic_names[MAX_SERVO] = {
+        "servo_info/rotation", "servo_info/shoulder",
+        "servo_info/elbow", "servo_info/wrist"
 };
 
 #define MAX_VELOCITY 20
