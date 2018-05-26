@@ -8,6 +8,7 @@
 #include "arm_motion/arm_motion_node.h"
 #include <dynamixel_workbench_toolbox/dynamixel_workbench.h>
 #include <dynamixel_workbench_msgs/XH.h>
+#include <vector>
 
 class DynamixelController
 {
@@ -15,7 +16,7 @@ class DynamixelController
         DynamixelController( std::string bus );
         bool benchWrite( ServoCommand com );
         int32_t benchRead( uint8_t id, std::string command );
-
+        std::vector<int> &getServoPositions();
     protected:
         /*
          * functions
@@ -30,6 +31,7 @@ class DynamixelController
         void updateAndPublishServoInfo( const ros::TimerEvent &event );
         void updateServos();
         void publishServoInfo();
+
 
         /*
          * variables
