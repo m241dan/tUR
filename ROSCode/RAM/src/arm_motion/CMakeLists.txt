@@ -104,7 +104,7 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES arm_motion
+#  LIBRARIES arm_motion
   CATKIN_DEPENDS actionlib actionlib_msgs dynamixel_workbench_msgs dynamixel_workbench_toolbox geometry_msgs message_generation roscpp std_msgs message_runtime sensor_msgs
 #  DEPENDS system_lib
 )
@@ -117,6 +117,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
   include
+  ../../devel/include #This is a nasty hack for custom messages
   ${catkin_INCLUDE_DIRS}
 )
 
