@@ -16,7 +16,7 @@ class MotionActor
         {
             action_server.registerGoalCallback( boost::bind( &MotionActor::goalCallBack, this ) );
             action_server.registerPreemptCallback( boost::bind( &MotionActor::preemptCallBack, this ) );
-            action_timer = node_handle.createTimer( ros::Duration(0.1), boost::bind( &MotionActor::motionChecker, this, _1 ) );
+            action_timer = node_handle.createTimer( ros::Duration(0.1), boost::bind( &MotionActor::motionMonitor, this, _1 ) );
             action_timer.stop();
         }
 
@@ -30,7 +30,7 @@ class MotionActor
             }
             goal_step = 0;
             goal_max = (uint8_t)joint_goals[0].position.size();
-            performMotion(); //the first, as soon as it receives the goal
+            performMotionStep(); //the first, as soon as it receives the goal
             action_timer.start();
         }
 
@@ -39,12 +39,16 @@ class MotionActor
 
         }
 
-        void motionChecker( const ros::TimerEvent &event )
+        void motionMonitor( const ros::TimerEvent &event )
         {
 
         };
 
-        bool performMotion()
+        bool checkMotionStep()
+        {
+
+        }
+        bool performMotionStep()
         {
             bool success = true;
             if( goal_step != goal_max )
