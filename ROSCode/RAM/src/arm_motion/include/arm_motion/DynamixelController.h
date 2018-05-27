@@ -20,6 +20,9 @@ class DynamixelController
         bool torqueOn();
         bool torqueOff();
         bool holdPosition();
+        bool changePosition( uint8_t id, uint32_t position );
+        bool changeVelocity( uint8_t id, uint32_t velocity );
+
     protected:
         /*
          * functions
