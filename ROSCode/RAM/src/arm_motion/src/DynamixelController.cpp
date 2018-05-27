@@ -66,7 +66,7 @@ int32_t DynamixelController::benchRead( uint8_t id, std::string command )
 std::vector<int> &DynamixelController::getServoPositions()
 {
     static std::vector<int> servo_positions;
-    for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
+    for( int i = 0; i < MAX_SERVO; i++ )
     {
         servo_positions.push_back( servo_info[i].Present_Position );
     }
@@ -89,7 +89,7 @@ bool DynamixelController::holdPosition()
 
     com.command = "Goal_Position";
 
-    for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
+    for( int i = 0; i < MAX_SERVO; i++ )
     {
         com.id = i + 1;
         com.value = servo_info[i].Present_Position;
@@ -97,6 +97,28 @@ bool DynamixelController::holdPosition()
     }
 
     return analyzeServoResponse( __FUNCTION__, servo_response );
+}
+
+bool DynamixelController::changePosition( uint8_t id, uint32_t position)
+{
+    ServoCommand com;
+
+    com.id = id;
+    com.command = "Goal_Position";
+    com.value = position;
+
+    return benchWrite( com );
+}
+
+bool DynamixelController::changeVelocity( uint8_t id, uint32_t velocity )
+{
+    ServoCommand com;
+
+    com.id = id;
+    com.command = "Profile_Velocity";
+    com.value = velocity;
+
+    return benchWrite( com );
 }
 
 /*
@@ -161,16 +183,17 @@ void DynamixelController::initializeServos()
     ServoCommand max_vel;
     ServoCommand pid_i_gain;
 
+    /* this part can be possible wrapped up with some Lua config files */
     max_vel.command = "Velocity_Limit";
     max_vel.value = MAX_VELOCITY;
     pid_i_gain.command = "Position_I_Gain";
     pid_i_gain.value = PID_I_GAIN;
 
-    for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
+    for( int i = 0; i < MAX_SERVO; i++ )
     {
-        int id = i + 1;
-        max_vel.id = (uint8_t)id;
-        pid_i_gain.id = (uint8_t)id;
+        uint8_t id = i + 1;
+        max_vel.id = id;
+        pid_i_gain.id = id;
 
         benchWrite( max_vel );
         benchWrite( pid_i_gain );
@@ -187,7 +210,7 @@ bool DynamixelController::validCommand( ServoCommand com )
      * Then, check the command field to make sure its valid
      * If the command shows up in the valid_commands table, it's good.
      */
-    if( com.id < ROTATION_SERVO || com.id > MAX_SERVO )
+    if( com.id < 0 || com.id > MAX_SERVO )
     {
         ROS_INFO( "%s: ID[%d] is outside acceptable ranges.", __FUNCTION__, com.id );
     }
@@ -214,7 +237,7 @@ bool DynamixelController::validCommand( ServoCommand com )
 
 void DynamixelController::setupPublishers()
 {
-    for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
+    for( int i = 0; i < MAX_SERVO; i++ )
         servo_info_publishers[i] = node_handle.advertise<dynamixel_workbench_msgs::XH>( servo_topic_names[i].c_str(), 10 );
 
 }
@@ -232,14 +255,14 @@ void DynamixelController::updateAndPublishServoInfo( const ros::TimerEvent &even
 
 inline void DynamixelController::updateServos()
 {
-    for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
+    for( int i = 0; i < MAX_SERVO; i++ )
     {
         /*
          * This is going to be very explicit but slightly slower in the growth department.
          * However, since this doesn't really have to deal with success checking, it should be fine.
          */
-        int id = i + 1;
-        servo_info[i].ID = (uint8_t)id;
+        uint8_t id = i + 1;
+        servo_info[i].ID = id;
         servo_info[i].Torque_Enable = (uint8_t)  _bench.itemRead(id, "Torque_Enable");
         servo_info[i].Goal_Position = (uint32_t) _bench.itemRead(id, "Goal_Position");
         servo_info[i].Present_Position = _bench.itemRead(id, "Present_Position");
@@ -252,7 +275,7 @@ inline void DynamixelController::updateServos()
 
 inline void DynamixelController::publishServoInfo()
 {
-    for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
+    for( int i = 0; i < MAX_SERVO; i++ )
     {
         servo_info_publishers[i].publish( servo_info[i] );
     }
@@ -267,7 +290,7 @@ bool DynamixelController::changeTorqueEnable( uint8_t value )
     com.command = "Torque_Enable";
     com.value = value;
 
-    for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
+    for( int i = 0; i < MAX_SERVO; i++ )
     {
         com.id = i + 1;
         servo_response[i] = benchWrite( com );
@@ -275,11 +298,12 @@ bool DynamixelController::changeTorqueEnable( uint8_t value )
 
     return analyzeServoResponse( __FUNCTION__, servo_response );
 }
+
 bool DynamixelController::analyzeServoResponse( std::string fun_name, bool *responses )
 {
     bool result = true;
 
-    for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
+    for( int i = 0; i < MAX_SERVO; i++ )
     {
         if( !responses[i] )
         {
