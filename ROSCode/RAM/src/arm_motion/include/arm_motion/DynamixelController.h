@@ -17,6 +17,9 @@ class DynamixelController
         bool benchWrite( ServoCommand com );
         int32_t benchRead( uint8_t id, std::string command );
         std::vector<int> &getServoPositions();
+        bool torqueOn();
+        bool torqueOff();
+        bool holdPosition();
     protected:
         /*
          * functions
@@ -31,6 +34,9 @@ class DynamixelController
         void updateAndPublishServoInfo( const ros::TimerEvent &event );
         void updateServos();
         void publishServoInfo();
+        bool changeTorqueEnable( uint8_t value );
+        bool analyzeServoResponse( std::string fun_name, bool *responses );
+
 
 
         /*
