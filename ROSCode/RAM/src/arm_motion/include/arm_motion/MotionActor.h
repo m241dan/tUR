@@ -24,11 +24,12 @@ class MotionActor
         void goalCallBack()
         {
             /*setup the new motion*/
-            rotation_goal = action_server.acceptNewGoal()->rotation;
-            shoulder_goal = action_server.acceptNewGoal()->shoulder;
-            elbow_goal = action_server.acceptNewGoal()->elbow;
-            wrist_goal = action_server.acceptNewGoal()->wrist;
+            for( int i = 0; i < MAX_SERVO; i++ )
+            {
+                joint_goals[i] = action_server.acceptNewGoal()->joints[i];
+            }
             goal_step = 0;
+            goal_max = (uint8_t)joint_goals[0].position.size();
             action_timer.start();
         }
 
@@ -42,19 +43,38 @@ class MotionActor
 
         };
 
-        void performMotion()
+        bool performMotion()
         {
-            if( goal_step != rotation_goal.size() )
+            bool success = true;
+            if( goal_step != goal_max )
             {
-                ServoCommand com;
-                com.command = "Goal_Position";
+                for( uint8_t i = 0; i < MAX_SERVO; i++ )
+                {
+                    uint8_t id = i + (uint8_t)1;
+                    uint32_t position = (uint32_t)joint_goals[i].position[goal_step];
+                    uint32_t velocity = (uint32_t)joint_goals[i].velocity[goal_step];
 
+                    bool status = _controller.changePosition( id, position );
+                    if( !status )
+                    {
+                        ROS_INFO( "%s: failed to write goal position[%d] to servo[%d]", __FUNCTION__, position, id );
+                        success = false;
+                    }
 
+                    status = _controller.changeVelocity( id, velocity );
+                    if( !status )
+                    {
+                        ROS_INFO( "%s: failed to write profile velocity[%d] to servo[%d}", __FUNCTION__, velocity, id );
+                        success = false;
+                    }
+                }
             }
             else
             {
                 ROS_INFO( "%s: attempting to perform a goal[%d}] outside the bounds of the goal vectors.", __FUNCTION__, goal_step );
+                success = false;
             }
+            return success;
         }
         /*
          * ROS Stuff
@@ -72,14 +92,12 @@ class MotionActor
         /*
          * Dynamixel Controller
          */
-        DynamixelController _controller;
+        DynamixelController &_controller;
 
         /* Joint Goals */
-        std::vector<sensor_msgs::JointState> rotation_goal;
-        std::vector<sensor_msgs::JointState> shoulder_goal;
-        std::vector<sensor_msgs::JointState> elbow_goal;
-        std::vector<sensor_msgs::JointState> wrist_goal;
+        sensor_msgs::JointState joint_goals[MAX_SERVO];
         uint8_t goal_step;
+        uint8_t goal_max;
 };
 
 
