@@ -32,18 +32,35 @@ bool DynamixelController::benchWrite( ServoCommand com )
 {
     bool success = false;
 
-    if( validCommand( com ))
-        success = _bench.itemWrite( com.id, com.command.c_str(), com.value );
+    if( _valid )
+    {
+        if( validCommand( com ))
+            success = _bench.itemWrite( com.id, com.command.c_str(), com.value );
 
-    if( !success )
-        ROS_INFO( "%s: failed to write command { %d, %s, %d }", __FUNCTION__, com.id, com.command.c_str(), com.value );
-
+        if( !success )
+            ROS_INFO( "%s: failed to write command { %d, %s, %d }", __FUNCTION__, com.id, com.command.c_str(),
+                      com.value );
+    }
+    else
+    {
+        ROS_INFO( "%s: attempt made when controller is invalid", __FUNCTION__ );
+    }
     return success;
 }
 
 int32_t DynamixelController::benchRead( uint8_t id, std::string command )
 {
-    return _bench.itemRead( id, command.c_str() );
+    int32_t ret = -1;
+
+    if( _valid )
+    {
+        ret = _bench.itemRead( id, command.c_str() );
+    }
+    else
+    {
+        ROS_INFO( "%s: attempt made when controller is invalid", __FUNCTION__ );
+    }
+    return ret;
 }
 
 std::vector<int> &DynamixelController::getServoPositions()
@@ -54,6 +71,32 @@ std::vector<int> &DynamixelController::getServoPositions()
         servo_positions.push_back( servo_info[i].Present_Position );
     }
     return servo_positions;
+}
+
+inline bool DynamixelController::torqueOn()
+{
+    changeTorqueEnable( 1 );
+}
+
+inline bool DynamixelController::torqueOff()
+{
+    changeTorqueEnable( 0 );
+}
+bool DynamixelController::holdPosition()
+{
+    ServoCommand com;
+    bool servo_response[MAX_SERVO];
+
+    com.command = "Goal_Position";
+
+    for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
+    {
+        com.id = i + 1;
+        com.value = servo_info[i].Present_Position;
+        servo_response[i] = benchWrite( com );
+    }
+
+    return analyzeServoResponse( __FUNCTION__, servo_response );
 }
 
 /*
@@ -215,3 +258,36 @@ inline void DynamixelController::publishServoInfo()
     }
 
 }
+
+bool DynamixelController::changeTorqueEnable( uint8_t value )
+{
+    ServoCommand com;
+    bool servo_response[MAX_SERVO];
+
+    com.command = "Torque_Enable";
+    com.value = value;
+
+    for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
+    {
+        com.id = i + 1;
+        servo_response[i] = benchWrite( com );
+    }
+
+    return analyzeServoResponse( __FUNCTION__, servo_response );
+}
+bool DynamixelController::analyzeServoResponse( std::string fun_name, bool *responses )
+{
+    bool result = true;
+
+    for( int i = ROTATION_SERVO; i < MAX_SERVO; i++ )
+    {
+        if( !responses[i] )
+        {
+            ROS_INFO( "%s: %s did not respond to command", fun_name.c_str(), servo_names[i].c_str() );
+            result = false;
+        }
+    }
+
+    return result;
+}
+
