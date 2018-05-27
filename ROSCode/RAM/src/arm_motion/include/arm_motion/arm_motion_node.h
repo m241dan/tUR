@@ -24,6 +24,10 @@ const std::string servo_topic_names[MAX_SERVO] = {
         "servo_info/elbow", "servo_info/wrist"
 };
 
+const std::string servo_names[MAX_SERVO] = {
+        "rotation servo", "shoulder servo",
+        "elbow servo", "wrist servo"
+};
 #define MAX_VELOCITY 20
 #define PID_I_GAIN 300
 #define MAX_COMMAND 51
