@@ -1,15 +1,8 @@
 #goal definition
-sensor_msgs/JointState[] rotation
-sensor_msgs/JointState[] shoulder
-sensor_msgs/JointState[] elbow
-sensor_msgs/JointState[] wrist
+sensor_msgs/JointState[] joints
 ---
 #result definition
 bool success
 ---
 #feedback definition
-sensor_msgs/JointState rotation
-sensor_msgs/JointState shoulder
-sensor_msgs/JointState elbow
-sensor_msgs/JointState wrist
 uint8 on_step
