@@ -30,6 +30,7 @@ class MotionActor
             }
             goal_step = 0;
             goal_max = (uint8_t)joint_goals[0].position.size();
+            performMotion(); //the first, as soon as it receives the goal
             action_timer.start();
         }
 
