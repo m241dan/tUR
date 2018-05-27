@@ -12,3 +12,4 @@ sensor_msgs/JointState rotation
 sensor_msgs/JointState shoulder
 sensor_msgs/JointState elbow
 sensor_msgs/JointState wrist
+uint8 on_step
