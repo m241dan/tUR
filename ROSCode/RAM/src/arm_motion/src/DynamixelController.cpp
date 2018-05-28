@@ -63,9 +63,9 @@ int32_t DynamixelController::benchRead( uint8_t id, std::string command )
     return ret;
 }
 
-std::vector<int> &DynamixelController::getServoPositions()
+std::vector<int32_t> &DynamixelController::getServoPositions()
 {
-    static std::vector<int> servo_positions;
+    static std::vector<int32_t> servo_positions;
     for( int i = 0; i < MAX_SERVO; i++ )
     {
         servo_positions.push_back( servo_info[i].Present_Position );
