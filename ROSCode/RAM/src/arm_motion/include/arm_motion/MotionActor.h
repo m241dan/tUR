@@ -8,6 +8,7 @@
 #include "arm_motion/arm_motion_node.h"
 #include <actionlib/server/simple_action_server.h>
 #include "arm_motion/DynamixelController.h"
+#include <vector>
 
 class MotionActor
 {
@@ -36,7 +37,7 @@ class MotionActor
 
         void preemptCallBack()
         {
-
+            action_server.setPreempted();
         }
 
         void motionMonitor( const ros::TimerEvent &event )
@@ -46,7 +47,19 @@ class MotionActor
 
         bool checkMotionStep()
         {
+            bool arrived = true;
+            std::vector<int32_t> servo_position = _controller.getServoPositions();
 
+            for( int i = 0; i < MAX_SERVO; i++ )
+            {
+                if( abs( servo_position[i] - (int32_t)joint_goals[i].position[goal_step] )
+                    > (int32_t)joint_goals[i].effort[goal_step] )
+                {
+                    arrived = false;
+                    break;
+                }
+            }
+            return arrived;
         }
         bool performMotionStep()
         {
