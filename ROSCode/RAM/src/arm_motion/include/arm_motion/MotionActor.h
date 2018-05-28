@@ -13,7 +13,7 @@
 class MotionActor
 {
     public:
-        MotionActor( std::string name, DynamixelController controller );
+        MotionActor( std::string name, DynamixelController &controller );
     protected:
         void goalCallBack();
         void preemptCallBack();
