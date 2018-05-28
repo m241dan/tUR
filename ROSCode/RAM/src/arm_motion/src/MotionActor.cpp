@@ -41,9 +41,16 @@ void MotionActor::motionMonitor( const ros::TimerEvent &event )
             if( goal_step != goal_max )
             {
                 /* if we haven't completed motion */
-                performMotionStep();
-                feedback.on_step = goal_step;
-                action_server.publishFeedback( feedback );
+                if( !performMotionStep() )
+                {
+                    result.success = false;
+                    action_server.setAborted( result );
+                }
+                else
+                {
+                    feedback.on_step = goal_step;
+                    action_server.publishFeedback( feedback );
+                }
             }
             else
             {
@@ -60,7 +67,7 @@ void MotionActor::motionMonitor( const ros::TimerEvent &event )
     }
 }
 
-void MotionActor::checkMotionStep()
+bool MotionActor::checkMotionStep()
 {
     bool arrived = true;
     std::vector<int32_t> servo_position = _controller.getServoPositions();
@@ -77,7 +84,7 @@ void MotionActor::checkMotionStep()
     return arrived;
 }
 
-void MotionActor::performMotionStep()
+bool MotionActor::performMotionStep()
 {
     bool success = true;
     if( goal_step != goal_max )
