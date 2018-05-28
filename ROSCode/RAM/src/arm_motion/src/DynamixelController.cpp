@@ -183,21 +183,26 @@ void DynamixelController::initializeServos()
 {
     ServoCommand max_vel;
     ServoCommand pid_i_gain;
+    ServoCommand pro_vel;
 
     /* this part can be possible wrapped up with some Lua config files */
     max_vel.command = "Velocity_Limit";
     max_vel.value = MAX_VELOCITY;
     pid_i_gain.command = "Position_I_Gain";
     pid_i_gain.value = PID_I_GAIN;
+    pro_vel.command = "Profile_Velocity";
+    pro_vel.value = MAX_VELOCITY;
 
     for( int i = 0; i < MAX_SERVO; i++ )
     {
         uint8_t id = i + 1;
         max_vel.id = id;
         pid_i_gain.id = id;
+        pro_vel.id = id;
 
         _bench.reboot( id );
         benchWrite( max_vel );
+        benchWrite( pro_vel );
         benchWrite( pid_i_gain );
     }
     ROS_INFO( "%s: complete", __FUNCTION__ );
