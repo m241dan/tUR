@@ -37,12 +37,37 @@ class MotionActor
 
         void preemptCallBack()
         {
-            action_server.setPreempted();
+            result.success = false;
+            action_server.setPreempted( result );
         }
 
         void motionMonitor( const ros::TimerEvent &event )
         {
-
+            if( action_server.isActive() )
+            {
+                if( checkMotionStep() ); // check for arrival
+                {
+                    goal_step++;
+                    if( goal_step != goal_max )
+                    {
+                        /* if we haven't completed motion */
+                        performMotionStep();
+                        feedback.on_step = goal_step;
+                        action_server.publishFeedback( feedback );
+                    }
+                    else
+                    {
+                        /* motion is completed */
+                        result.success = true;
+                        action_server.setSucceeded( result );
+                    }
+                }
+            }
+            else
+            {
+                /* we got preempted */
+                action_timer.stop();
+            }
         };
 
         bool checkMotionStep()
@@ -101,9 +126,9 @@ class MotionActor
         /* Action Server */
         actionlib::SimpleActionServer<arm_motion::ArmMotionAction> action_server;
         std::string action_name;
-        arm_motion::ArmMotionActionGoal goal;
-        arm_motion::ArmMotionActionFeedback feedback;
-        arm_motion::ArmMotionActionResult result;
+        arm_motion::ArmMotionGoal goal;
+        arm_motion::ArmMotionFeedback feedback;
+        arm_motion::ArmMotionResult result;
         /* Action Timer */
         ros::Timer action_timer;
 
