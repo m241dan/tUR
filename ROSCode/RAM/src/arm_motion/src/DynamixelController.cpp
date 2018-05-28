@@ -19,6 +19,7 @@ DynamixelController::DynamixelController( std::string bus )
             ROS_INFO( "%s: Servos verified and online.", __FUNCTION__ );
             ROS_INFO( "%s: Servo defaults being send.", __FUNCTION__ );
             initializeServos();
+            torqueOn();
             setupPublishers();
             setupTimer();
         }
@@ -195,9 +196,11 @@ void DynamixelController::initializeServos()
         max_vel.id = id;
         pid_i_gain.id = id;
 
+        _bench.reboot( id );
         benchWrite( max_vel );
         benchWrite( pid_i_gain );
     }
+    ROS_INFO( "%s: complete", __FUNCTION__ );
 }
 
 bool DynamixelController::validCommand( ServoCommand com )
