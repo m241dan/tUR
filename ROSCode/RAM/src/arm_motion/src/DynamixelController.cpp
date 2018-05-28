@@ -25,7 +25,7 @@ DynamixelController::DynamixelController( std::string bus )
     }
     else
     {
-        ROS_INFO( "%s: Failed to startup Dynamixel Bus %s", __FUNCTION__, bus.c_str());
+        ROS_ERROR( "%s: Failed to startup Dynamixel Bus %s", __FUNCTION__, bus.c_str());
     }
 }
 bool DynamixelController::benchWrite( ServoCommand com )
@@ -38,12 +38,12 @@ bool DynamixelController::benchWrite( ServoCommand com )
             success = _bench.itemWrite( com.id, com.command.c_str(), com.value );
 
         if( !success )
-            ROS_INFO( "%s: failed to write command { %d, %s, %d }", __FUNCTION__, com.id, com.command.c_str(),
+            ROS_ERROR( "%s: failed to write command { %d, %s, %d }", __FUNCTION__, com.id, com.command.c_str(),
                       com.value );
     }
     else
     {
-        ROS_INFO( "%s: attempt made when controller is invalid", __FUNCTION__ );
+        ROS_ERROR( "%s: attempt made when controller is invalid", __FUNCTION__ );
     }
     return success;
 }
@@ -58,7 +58,7 @@ int32_t DynamixelController::benchRead( uint8_t id, std::string command )
     }
     else
     {
-        ROS_INFO( "%s: attempt made when controller is invalid", __FUNCTION__ );
+        ROS_ERROR( "%s: attempt made when controller is invalid", __FUNCTION__ );
     }
     return ret;
 }
@@ -132,7 +132,7 @@ void DynamixelController::validateBus()
 
 void DynamixelController::invalidateBus()
 {
-    ROS_INFO( "Dynamixel bus has been invalidated." );
+    ROS_ERROR( "Dynamixel bus has been invalidated." );
     _valid = false;
 }
 
@@ -164,7 +164,7 @@ bool DynamixelController::verifyServos( int expected_number )
             {
                 if( servo_ids[i] == 0 )
                 {
-                    ROS_INFO( "%s: found a servo with the ID of zero.", __FUNCTION__ );
+                    ROS_ERROR( "%s: found a servo with the ID of zero.", __FUNCTION__ );
                     success = false;
                 }
             }
@@ -172,7 +172,7 @@ bool DynamixelController::verifyServos( int expected_number )
     }
     else
     {
-        ROS_INFO( "%s: bus is invalid.", __FUNCTION__ );
+        ROS_ERROR( "%s: bus is invalid.", __FUNCTION__ );
         success = false;
     }
     return success;
@@ -212,11 +212,11 @@ bool DynamixelController::validCommand( ServoCommand com )
      */
     if( com.id < 0 || com.id > MAX_SERVO )
     {
-        ROS_INFO( "%s: ID[%d] is outside acceptable ranges.", __FUNCTION__, com.id );
+        ROS_ERROR( "%s: ID[%d] is outside acceptable ranges.", __FUNCTION__, com.id );
     }
     else if( com.command == "" )
     {
-        ROS_INFO( "%s: Attempting to send a \"\" command ", __FUNCTION__ );
+        ROS_ERROR( "%s: Attempting to send a \"\" command ", __FUNCTION__ );
     }
     else
     {
@@ -229,7 +229,7 @@ bool DynamixelController::validCommand( ServoCommand com )
             }
         }
         if( !valid )
-            ROS_INFO( "%s: Command \"%s\" is invalid for X Series.", __FUNCTION__, com.command.c_str());
+            ROS_ERROR( "%s: Command \"%s\" is invalid for X Series.", __FUNCTION__, com.command.c_str());
     }
 
     return valid;
@@ -307,7 +307,7 @@ bool DynamixelController::analyzeServoResponse( std::string fun_name, bool *resp
     {
         if( !responses[i] )
         {
-            ROS_INFO( "%s: %s did not respond to command", fun_name.c_str(), servo_names[i].c_str() );
+            ROS_ERROR( "%s: %s did not respond to command", fun_name.c_str(), servo_names[i].c_str() );
             result = false;
         }
     }

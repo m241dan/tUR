@@ -62,21 +62,21 @@ class MotionActor
                     bool status = _controller.changePosition( id, position );
                     if( !status )
                     {
-                        ROS_INFO( "%s: failed to write goal position[%d] to servo[%d]", __FUNCTION__, position, id );
+                        ROS_ERROR( "%s: failed to write goal position[%d] to servo[%d]", __FUNCTION__, position, id );
                         success = false;
                     }
 
                     status = _controller.changeVelocity( id, velocity );
                     if( !status )
                     {
-                        ROS_INFO( "%s: failed to write profile velocity[%d] to servo[%d}", __FUNCTION__, velocity, id );
+                        ROS_ERROR( "%s: failed to write profile velocity[%d] to servo[%d}", __FUNCTION__, velocity, id );
                         success = false;
                     }
                 }
             }
             else
             {
-                ROS_INFO( "%s: attempting to perform a goal[%d}] outside the bounds of the goal vectors.", __FUNCTION__, goal_step );
+                ROS_ERROR( "%s: attempting to perform a goal[%d}] outside the bounds of the goal vectors.", __FUNCTION__, goal_step );
                 success = false;
             }
             return success;
