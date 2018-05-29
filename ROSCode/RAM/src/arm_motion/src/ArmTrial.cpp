@@ -6,7 +6,7 @@
 
 ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool &success ) : _trial_name(trial_name),
                                                                               _active(false), _complete(false),
-                                                                              _on_action(0)
+                                                                              _on_action(0), _action_client( _node_handle, "arm_driver", true )
 {
     std::stringstream ss;
     ss << "/home/korisd/tUR/ROSCode/RAM/src/logic_controller/scripts/" << trial_name << ".lua";
@@ -109,6 +109,10 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool &success ) : _t
         setupSubscribers();
         setupTimers();
     }
+}
+ArmTrial::~ArmTrial()
+{
+
 }
 
 void ArmTrial::setupSubscribers()
