@@ -1,4 +1,5 @@
 <launch>
     <arg name="dynamixel_bus" default="/dev/ttyUSB0" />
     <node launch-prefix="xterm -e gdb -ex run --args" name="arm_motion_driver" pkg="arm_motion" type="arm_motion_driver" />
+    <node launch-prefix="xterm -e gdb -ex run --args" name="arm_motion_kinematics" pkg="arm_motion" type="arm_motion_kinematics" />
 </launch>
