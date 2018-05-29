@@ -24,8 +24,8 @@ class ArmTrial
         /*
          * Functions
          */
-        void trialOperation( const ros::TimerEvent &event );
         void setupTimers();
+        void trialOperation( const ros::TimerEvent &event );
         /*
          * Variables
          */
