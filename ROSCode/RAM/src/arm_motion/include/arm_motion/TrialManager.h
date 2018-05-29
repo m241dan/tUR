@@ -30,6 +30,9 @@ class TrialManager
 
         void enqueueTrial( const std_msgs::UInt8ConstPtr &msg );
         void trialMonitor( const ros::TimerEvent &event );
+        bool nextTrial();
+        void pauseMonitor();
+        void resumeMonitor();
         /*
          * Variables
          */
