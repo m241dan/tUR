@@ -7,7 +7,6 @@
 
 #include "arm_motion/arm_motion_node.h"
 #include <dynamixel_workbench_toolbox/dynamixel_workbench.h>
-#include <dynamixel_workbench_msgs/XH.h>
 #include <vector>
 
 class DynamixelController
@@ -51,6 +50,7 @@ class DynamixelController
         ros::NodeHandle node_handle;
         /* Publishers */
         ros::Publisher servo_info_publishers[MAX_SERVO];
+        ros::Publisher servo_joint_publisher;
         /* Timers */
         ros::Timer servo_info_timer;
 
@@ -59,6 +59,7 @@ class DynamixelController
          */
         DynamixelWorkbench _bench;
         dynamixel_workbench_msgs::XH servo_info[MAX_SERVO];
+        sensor_msgs::JointState joints;
         bool _valid;
 
 };

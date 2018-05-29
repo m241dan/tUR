@@ -7,7 +7,11 @@
 
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
+#include <geometry_msgs/Pose.h>
 #include "arm_motion/ArmMotionAction.h"
+#include <dynamixel_workbench_msgs/XH.h>
+#include <apriltags_ros/AprilTagDetectionArray.h>
+
 
 /*
  * Servo Info
