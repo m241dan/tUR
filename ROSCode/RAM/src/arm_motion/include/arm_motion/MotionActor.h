@@ -9,6 +9,8 @@
 #include <actionlib/server/simple_action_server.h>
 #include "arm_motion/DynamixelController.h"
 #include <vector>
+#include "arm_motion/ArmMotionAction.h"
+
 
 class MotionActor
 {
