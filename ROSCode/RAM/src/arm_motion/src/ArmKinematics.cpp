@@ -4,7 +4,7 @@
 
 #include "arm_motion/ArmKinematics.h"
 
-ArmKinematics::ArmKinematics()
+ArmKinematics::ArmKinematics( std::string test )
 {
     setupSubscribers();
     setupPublishers();
@@ -12,7 +12,7 @@ ArmKinematics::ArmKinematics()
 
 void ArmKinematics::setupSubscribers()
 {
-    _joints_sub = _node_handle.subscribe( "/kinematics/joints_in_radians", 10, &ArmKinematics::servoInfoHandler, this );
+    _joints_sub = _node_handle.subscribe( "kinematics/joints_in_radians", 10, &ArmKinematics::servoInfoHandler, this );
 }
 
 void ArmKinematics::setupPublishers()
@@ -37,13 +37,14 @@ void ArmKinematics::updateServoForwardKinematics()
     double r[MAX_SERVO] = { 0, length2, length3, length4 };
     double d[MAX_SERVO] = { length1, 0, 0, 0 };
 
+    DHMatrices.clear();
     for( int i = 0; i < MAX_SERVO; i++ )
     {
-        DHMatrices[i] = HomogenousDHMatrix( _joints.position[i] + theta[i],
-                                            alpha[i], r[i], d[i] );
+        DHMatrices.push_back( HomogenousDHMatrix( _joints.position[i] + theta[i],
+                                            alpha[i], r[i], d[i] ) );
     }
     Matrix4 Final = DHMatrices[0];
-    for( int i = 0; i < MAX_SERVO; i++ )
+    for( int i = 1; i < MAX_SERVO; i++ )
     {
         Final *= DHMatrices[i];
     }
@@ -60,7 +61,7 @@ void ArmKinematics::publishServoForwardKinematics()
     _servo_fk_publisher.publish( _servo_based_fk );
 }
 
-Matrix4 ArmKinematics::HomogenousDHMatrix( float theta, float alpha, float r, float d )
+Matrix4 ArmKinematics::HomogenousDHMatrix( double theta, double alpha, double r, double d )
 {
     Matrix4 h_dh_matrix;
 

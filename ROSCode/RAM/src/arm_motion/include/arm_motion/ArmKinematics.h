@@ -19,7 +19,7 @@ typedef Eigen::Matrix<float,4,4> Matrix4;
 class ArmKinematics
 {
     public:
-        ArmKinematics();
+        ArmKinematics( std::string test );
     protected:
         /*
          * Functions
@@ -32,7 +32,7 @@ class ArmKinematics
         void updateServoForwardKinematics();
         void publishServoForwardKinematics();
 
-        Matrix4 HomogenousDHMatrix( float theta, float alpha, float r, float d );
+        Matrix4 HomogenousDHMatrix( double theta, double alpha, double r, double d );
 
         /*
          * Variables

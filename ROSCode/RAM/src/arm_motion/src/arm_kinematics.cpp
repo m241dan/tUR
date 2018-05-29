@@ -9,7 +9,8 @@ int main( int argc, char **argv )
 {
     ros::init( argc, argv, "arm_kinematics" );
 
-    ArmKinematics kinematics();
+    ROS_INFO( "Arm Kinematics Node Booting" );
+    ArmKinematics kinematics( "something" );
 
     ros::spin();
     return 0;
