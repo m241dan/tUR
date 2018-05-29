@@ -23,6 +23,13 @@ DynamixelController::DynamixelController( std::string bus )
             setupPublishers();
             setupTimer();
         }
+        for( int i = 0; i < MAX_SERVO; i++ )
+        {
+            joints.position.push_back( 0.0 );
+            joints.velocity.push_back( 0.0 );
+            joints.effort.push_back( 0.0 );
+            joints.name.push_back( servo_names[i] );
+        }
     }
     else
     {
@@ -247,7 +254,7 @@ void DynamixelController::setupPublishers()
 {
     for( int i = 0; i < MAX_SERVO; i++ )
         servo_info_publishers[i] = node_handle.advertise<dynamixel_workbench_msgs::XH>( servo_topic_names[i].c_str(), 10 );
-    servo_joint_publisher = node_handle.advertise<sensor_msgs::JointState>( "kinematics/joints_in_radian", 10 );
+    servo_joint_publisher = node_handle.advertise<sensor_msgs::JointState>( "kinematics/joints_in_radians", 10 );
 
 }
 
