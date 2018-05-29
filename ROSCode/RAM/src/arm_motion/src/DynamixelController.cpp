@@ -19,7 +19,7 @@ DynamixelController::DynamixelController( std::string bus )
             ROS_INFO( "%s: Servos verified and online.", __FUNCTION__ );
             ROS_INFO( "%s: Servo defaults being send.", __FUNCTION__ );
             initializeServos();
-            torqueOn();
+           // torqueOn();
             setupPublishers();
             setupTimer();
         }
@@ -247,6 +247,7 @@ void DynamixelController::setupPublishers()
 {
     for( int i = 0; i < MAX_SERVO; i++ )
         servo_info_publishers[i] = node_handle.advertise<dynamixel_workbench_msgs::XH>( servo_topic_names[i].c_str(), 10 );
+    servo_joint_publisher = node_handle.advertise<sensor_msgs::JointState>( "kinematics/joints_in_radian", 10 );
 
 }
 
@@ -277,8 +278,13 @@ inline void DynamixelController::updateServos()
         servo_info[i].Present_Velocity = _bench.itemRead(id, "Present_Velocity");
         servo_info[i].Profile_Velocity = (uint32_t) _bench.itemRead(id, "Profile_Velocity");
         servo_info[i].Present_Temperature = (uint8_t) _bench.itemRead(id, "Present_Temperature");
-    }
+        servo_info[i].Present_Current = (int16_t) _bench.itemRead( id, "Present_Current" );
 
+        joints.position[i] = _bench.convertValue2Radian( id, servo_info[i].Present_Position );
+        joints.velocity[i] = servo_info[i].Present_Velocity;
+        joints.effort[i] = servo_info[i].Present_Current;
+    }
+    joints.position[3] *= (-1); //specific to our arm
 }
 
 inline void DynamixelController::publishServoInfo()
@@ -287,6 +293,7 @@ inline void DynamixelController::publishServoInfo()
     {
         servo_info_publishers[i].publish( servo_info[i] );
     }
+    servo_joint_publisher.publish( joints );
 
 }
 
