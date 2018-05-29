@@ -137,6 +137,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable( ${PROJECT_NAME}_driver src/arm_motion_driver.cpp src/MotionActor.cpp src/DynamixelController.cpp)
 add_executable( ${PROJECT_NAME}_kinematics src/arm_kinematics.cpp src/ArmKinematics.cpp )
+add_executable( ${PROJECT_NAME}_trial src/arm_trial.cpp src/ArmTrial.cpp )
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -148,6 +149,7 @@ add_executable( ${PROJECT_NAME}_kinematics src/arm_kinematics.cpp src/ArmKinemat
 ## same as for the library above
 add_dependencies(${PROJECT_NAME}_driver ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(${PROJECT_NAME}_kinematics ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_trial ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_driver
@@ -155,7 +157,10 @@ target_link_libraries(${PROJECT_NAME}_driver
 )
 
 target_link_libraries(${PROJECT_NAME}_kinematics
-   ${catkin_LIBRARIES}
+        ${catkin_LIBRARIES}
+)
+target_link_libraries(${PROJECT_NAME}_trial
+        ${catkin_LIBRARIES}
 )
 #############
 ## Install ##
