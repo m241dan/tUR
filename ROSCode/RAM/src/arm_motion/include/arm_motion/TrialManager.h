@@ -44,7 +44,7 @@ class TrialManager
 
         /* Lua Specific */
         lua_State *_lua_handle;
-        std::vector<ArmTrial> _trial_queue;
+        std::vector<ArmTrial*> _trial_queue;
 };
 
 

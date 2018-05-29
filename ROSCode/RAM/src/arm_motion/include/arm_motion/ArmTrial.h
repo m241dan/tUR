@@ -22,20 +22,10 @@ class ArmTrial
 {
     public:
         ArmTrial( std::string trial_name, lua_State *lua, bool &success );
-        ArmTrial( ArmTrial&& other ) : _trial_name(std::move(other._trial_name)),
-                                       _active(other._active),
-                                       _complete(other._complete),
-                                       _on_action(other._on_action),
-                                       _action_client(std::move(other._action_client))
-
-        {
-
-        }
         ~ArmTrial();
         bool isActive();
         bool isComplete();
         bool start();
-        ArmTrial& operator=(const ArmTrial& other) = default;
 
     protected:
         /*
