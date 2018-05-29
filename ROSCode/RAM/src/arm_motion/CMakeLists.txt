@@ -23,6 +23,8 @@ find_package(catkin REQUIRED COMPONENTS
 # find_package(Boost REQUIRED COMPONENTS system)
 # find_package(catkin REQUIRED COMPONENTS actionlib_msgs sensor_msgs)
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(lua liblua REQUIRED)
 
 
 ################################################
@@ -120,6 +122,7 @@ include_directories(
   include
   ../../devel/include #This is a nasty hack for custom messages
   ${catkin_INCLUDE_DIRS}
+  ${lua_INCLUDE_DIR}
 )
 
 ## Declare a C++ library
@@ -137,7 +140,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable( ${PROJECT_NAME}_driver src/arm_motion_driver.cpp src/MotionActor.cpp src/DynamixelController.cpp)
 add_executable( ${PROJECT_NAME}_kinematics src/arm_kinematics.cpp src/ArmKinematics.cpp )
-add_executable( ${PROJECT_NAME}_trial src/arm_trial.cpp src/ArmTrial.cpp )
+add_executable( ${PROJECT_NAME}_trial src/arm_trial.cpp src/ArmTrial.cpp src/TrialManager.cpp )
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -153,7 +156,7 @@ add_dependencies(${PROJECT_NAME}_trial ${${PROJECT_NAME}_EXPORTED_TARGETS} ${cat
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_driver
-   ${catkin_LIBRARIES}
+        ${catkin_LIBRARIES}
 )
 
 target_link_libraries(${PROJECT_NAME}_kinematics
@@ -161,6 +164,7 @@ target_link_libraries(${PROJECT_NAME}_kinematics
 )
 target_link_libraries(${PROJECT_NAME}_trial
         ${catkin_LIBRARIES}
+        ${lua_LIBRARIES}
 )
 #############
 ## Install ##
