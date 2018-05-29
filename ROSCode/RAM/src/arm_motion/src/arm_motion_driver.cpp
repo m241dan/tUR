@@ -12,9 +12,13 @@ int main( int argc, char **argv )
     ros::init( argc, argv, "arm_driver" );
     ros::NodeHandle node_handle;
 
+    ROS_INFO( "Arm Driver Node: Boot Starting" );
+
     node_handle.param( "bus_name", bus );
     DynamixelController controller( bus );
     MotionActor actor( ros::this_node::getName(), controller );
+    ROS_INFO( "Arm Driver Node: Boot Complete" );
+    ROS_INFO( "Arm Driver Node: Spinning with no issue" );
     ros::spin();
     return 0;
 }
