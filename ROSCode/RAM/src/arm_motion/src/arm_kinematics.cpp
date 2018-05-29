@@ -2,21 +2,14 @@
 // Created by korisd on 5/28/18.
 //
 
-#include <ros/ros.h>
-#include <math.h>
-#include <apriltags_ros/AprilTagDetectionArray.h>
-#include <geometry_msgs/Pose.h>
-
-ros::Subscriber april_tag_detection;
-
-void aprilHandler( const apriltags_ros::AprilTagDetectionArray::ConstPtr &msg );
+#include "arm_motion/arm_motion_node.h"
+#include "arm_motion/ArmKinematics.h"
 
 int main( int argc, char **argv )
 {
     ros::init( argc, argv, "arm_kinematics" );
-    ros::NodeHandle node_handle;
 
-    april_tag_detection = node_handle.subscribe( "/apriltags_one", 10, aprilHandler );
+    ArmKinematics kinematics();
 
     ros::spin();
     return 0;
@@ -31,13 +24,6 @@ void aprilHandler( const apriltags_ros::AprilTagDetectionArrayConstPtr &msg )
         double y = pose.orientation.y;
         double z = pose.orientation.z;
         double w = pose.orientation.w;
-
-        /*
-        double yaw = asin(
-                (2 * x * y ) + (2 * z * w));
-        double roll = atan2( ( 2 * y * w ) + ( 2 * x * z ), 1 - ( 2 * y * y ) - ( 2 * z * z ) );
-        double pitch = atan2( ( 2* x * w ) + ( 2 * y * z ), 1 - ( 2 * x * x ) - ( 2 * z * z ) );
-*/
 
         /*
          * Copied straight from https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
