@@ -29,7 +29,6 @@ kinematics::Joints kinematics::inverseKinematics(kinematics::Coordinates desired
     set_one._4 = theta_4;
 
     return set_one;
-    return set_one;
 };
 
 std::tuple<kinematics::Coordinates,double> kinematics::forwardKinematics(kinematics::Joints joints)
