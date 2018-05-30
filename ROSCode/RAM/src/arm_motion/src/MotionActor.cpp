@@ -94,7 +94,7 @@ bool MotionActor::performMotionStep()
         for( uint8_t i = 0; i < MAX_SERVO; i++ )
         {
             uint8_t id = i + (uint8_t)1;
-            uint32_t position = (uint32_t)joint_goals[i].position[goal_step];
+            double position =  joint_goals[i].position[goal_step];
             uint32_t velocity = (uint32_t)joint_goals[i].velocity[goal_step];
 
             bool status = _controller.changePosition( id, position );

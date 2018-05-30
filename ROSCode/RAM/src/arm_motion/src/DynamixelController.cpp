@@ -118,6 +118,17 @@ bool DynamixelController::changePosition( uint8_t id, uint32_t position)
     return benchWrite( com );
 }
 
+bool DynamixelController::changePosition( uint8_t id, double radian )
+{
+    ServoCommand com;
+
+    com.id = id;
+    com.command = "Goal_Position";
+    com.value = _bench.convertRadian2Value( id, radian );
+
+    return benchWrite( com );
+}
+
 bool DynamixelController::changeVelocity( uint8_t id, uint32_t velocity )
 {
     ServoCommand com;
