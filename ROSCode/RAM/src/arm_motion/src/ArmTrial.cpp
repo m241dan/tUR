@@ -190,27 +190,16 @@ void ArmTrial::generateMotion()
     /*
      * generate constants that will be used to determine goal points along the path of the motion
      */
-    std::tuple<double,double,double,double> constants = generateConstants( motion_goal, action.precision );
-    const double A = std::get<0>( constants );
-    const double B = std::get<1>( constants );
-    const double C = std::get<2>( constants );
-    const double D = std::get<3>( constants );
+    PathConstants constants = generateConstants( motion_goal, action.precision );
+
 
     /* generate the goal points along the path of the motion */
-    std::vector<geometry_msgs::Pose> motion_steps;
-    for( int i = 1; i <= action.precision; i++ )
-    {
-        double t = (double)i;
-        geometry_msgs::Pose motion_pose;
-        motion_pose.position.x = A * t;
-        motion_pose.position.y = B * t;
-        motion_pose.position.z = C * t;
-        motion_pose.orientation.w = D * t;
-        motion_steps.push_back( motion_pose );
-    }
+    std::vector<geometry_msgs::Pose> motion_path;
+    generatePath( &motion_path, constants, (double)action.precision );
 
-    /* buid the joint_goals to send to the action server based on our goal_points */
+    /* build the joint_goals to send to the action server based on our goal_points */
     std::vector<sensor_msgs::JointState> joint_goals;
+    buildJointStates( &joint_goals, &motion_path );
 
 
 }
@@ -243,7 +232,7 @@ geometry_msgs::Pose ArmTrial::generateMotionGoalPose( Action a )
     return pose;
 }
 
-std::tuple<double,double,double,double> ArmTrial::generateConstants( geometry_msgs::Pose pose, uint8_t precision )
+PathConstants ArmTrial::generateConstants( geometry_msgs::Pose pose, uint8_t precision )
 {
     double A = 0.;
     double B = 0.;
@@ -256,5 +245,29 @@ std::tuple<double,double,double,double> ArmTrial::generateConstants( geometry_ms
     C = pose.position.z / t;
     D = pose.orientation.w / t;
 
-    return std::make_tuple( A, B, C, D );
+    return MAKE_PATH_CONSTANTS( A, B, C, D );
+}
+
+void ArmTrial::generatePath( std::vector<geometry_msgs::Pose> *path, PathConstants constants, uint8_t precision )
+{
+    const double A = std::get<0>( constants );
+    const double B = std::get<1>( constants );
+    const double C = std::get<2>( constants );
+    const double D = std::get<3>( constants );
+
+    for( int i = 1; i < precision; i++ )
+    {
+        double t = (double)i;
+        geometry_msgs::Pose motion_pose;
+        motion_pose.position.x = A * t;
+        motion_pose.position.y = B * t;
+        motion_pose.position.z = C * t;
+        motion_pose.orientation.w = D * t;
+        path->push_back( motion_pose );
+    }
+}
+
+void ArmTrial::buildJointStates( std::vector<sensor_msgs::JointState> *goals, std::vector<geometry_msgs::Pose> *path )
+{
+
 }
