@@ -254,10 +254,12 @@ PathConstants ArmTrial::generateConstants( geometry_msgs::Pose pose, uint8_t pre
     double D = 0.;
     double t = (double) precision;
 
-    A = pose.position.x / t;
-    B = pose.position.y / t;
-    C = pose.position.z / t;
-    D = pose.orientation.w / t;
+
+
+    A = ( _servo_based_fk_pose.position.x - pose.position.x ) / t;
+    B = ( _servo_based_fk_pose.position.y - pose.position.y ) / t;
+    C = ( _servo_based_fk_pose.position.z - pose.position.z ) / t;
+    D = ( _servo_based_fk_pose.orientation.w - pose.orientation.w ) / t;
 
     return MAKE_PATH_CONSTANTS( A, B, C, D );
 }
@@ -273,10 +275,10 @@ void ArmTrial::generatePath( std::vector<geometry_msgs::Pose> *path, PathConstan
     {
         double t = (double)i;
         geometry_msgs::Pose motion_pose;
-        motion_pose.position.x = A * t;
-        motion_pose.position.y = B * t;
-        motion_pose.position.z = C * t;
-        motion_pose.orientation.w = D * t;
+        motion_pose.position.x = _servo_based_fk_pose.position.x + A * t;
+        motion_pose.position.y = _servo_based_fk_pose.position.y + B * t;
+        motion_pose.position.z = _servo_based_fk_pose.position.z + C * t;
+        motion_pose.orientation.w = _servo_based_fk_pose.orientation.w + D * t;
         path->push_back( motion_pose );
     }
 }
@@ -357,6 +359,7 @@ void ArmTrial::motionFeedbackCallback( const arm_motion::ArmMotionActionFeedback
 
 JointPositions ArmTrial::inverseKinematics( geometry_msgs::Pose pose )
 {
+    /*
     ROS_INFO( "Goal Pose: X[%f] Y[%f] Z[%f] E[%f]", pose.position.x, pose.position.y, pose.position.z, pose.orientation.w );
     double theta_1 = atan2( pose.position.y, pose.position.x );
     pose.position.z -= length1;
@@ -381,6 +384,29 @@ JointPositions ArmTrial::inverseKinematics( geometry_msgs::Pose pose )
     double theta_2 = alpha + beta + gamma;
     double theta_3 = (-1) * ( M_PI -  acos( ( length2 * length2 + length3 * length3 - CQ * CQ ) / ( 2 * length2 * length3 ) ) );
     double theta_4 = pose.orientation.w - theta_2 - theta_3;
+*/
+    double x = pose.position.x;
+    double y = pose.position.y;
+    double z = pose.position.z;
+    double w = pose.orientation.w;
+
+    /* new kinematics by hand minus the theta_4 part */
+
+    double X_new = sqrt( x * x + y * y );
+    double theta_1 = atan2( y, x );
+    double X_c = X_new - length4*cos(w);
+    double Z_c = z + length4*sin(w);
+    double Z_l = Z_c - length1;
+    double length5 = sqrt( X_c * X_c + Z_l * Z_l );
+    double alpha = acos( (length5 * length5 - length2 * length2 - length3 * length3 ) / ( (-2) * length2 * length3 ) );
+    double theta_3 = (-1) * (M_PI - alpha);
+    double Z_new = z - length1;
+    double alpha_4 = atan2( Z_new, X_new );
+    double length6 = sqrt( Z_new * Z_new + X_new * X_new );
+    double alpha_3 = acos( ( length4 * length4 - length5 * length5 - length6 * length6 ) / ( (-2) * length5 * length6 ) );
+    double alpha_2 = acos( ( length3 * length3 - length5 * length5 - length2 * length2 ) / ( (-2) * length5 * length2 ) );
+    double theta_2 = alpha_2 + alpha_3 + alpha_4;
+    double theta_4 = w - theta_2 - theta_3;
 
     JointPositions joints;
     joints.push_back( theta_1 );

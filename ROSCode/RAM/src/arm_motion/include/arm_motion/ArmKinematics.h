@@ -11,9 +11,9 @@
 
 /* should read this in from Lua */
 #define length1 2.6
-#define length2 14.6
-#define length3 9.01
-#define length4 11.00
+#define length2 14.465
+#define length3 8.927
+#define length4 11.055
 typedef Eigen::Matrix<float,4,4> Matrix4;
 
 class ArmKinematics
