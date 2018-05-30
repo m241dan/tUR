@@ -27,7 +27,7 @@ typedef std::vector<double> JointPositions;
  * TODO: update these if they change in both places
  */
 #define length1 2.6
-#define length2 12.6
+#define length2 14.6
 #define length3 9.01
 #define length4 11.00
 

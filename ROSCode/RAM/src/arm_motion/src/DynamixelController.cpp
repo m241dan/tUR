@@ -19,7 +19,7 @@ DynamixelController::DynamixelController( std::string bus )
             ROS_INFO( "%s: Servos verified and online.", __FUNCTION__ );
             ROS_INFO( "%s: Servo defaults being send.", __FUNCTION__ );
             initializeServos();
-           // torqueOn();
+            //torqueOn();
             setupPublishers();
             setupTimer();
         }
@@ -81,6 +81,16 @@ std::vector<int32_t> &DynamixelController::getServoPositions()
     return servo_positions;
 }
 
+std::vector<int32_t> &DynamixelController::getServoGoals()
+{
+    static std::vector<int32_t> servo_goals;
+    for( int i = 0; i < MAX_SERVO; i++ )
+    {
+        servo_goals.push_back( servo_info[i].Goal_Position );
+    }
+    return servo_goals;
+}
+
 inline bool DynamixelController::torqueOn()
 {
     changeTorqueEnable( 1 );
@@ -110,7 +120,6 @@ bool DynamixelController::holdPosition()
 bool DynamixelController::changePosition( uint8_t id, uint32_t position)
 {
     ServoCommand com;
-
     com.id = id;
     com.command = "Goal_Position";
     com.value = position;
@@ -121,6 +130,7 @@ bool DynamixelController::changePosition( uint8_t id, uint32_t position)
 bool DynamixelController::changePosition( uint8_t id, double radian )
 {
     ServoCommand com;
+    ROS_INFO( "%s: ID[%d] Position[%f]", __FUNCTION__, (int)id, radian );
 
     com.id = id;
     com.command = "Goal_Position";
@@ -325,7 +335,7 @@ bool DynamixelController::changeTorqueEnable( uint8_t value )
 
     for( int i = 0; i < MAX_SERVO; i++ )
     {
-        com.id = i + 1;
+        com.id = (uint8_t)(i + 1);
         servo_response[i] = benchWrite( com );
     }
 

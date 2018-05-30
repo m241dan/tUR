@@ -16,6 +16,7 @@ class DynamixelController
         bool benchWrite( ServoCommand com );
         int32_t benchRead( uint8_t id, std::string command );
         std::vector<int32_t> &getServoPositions();
+        std::vector<int32_t> &getServoGoals();
         bool torqueOn();
         bool torqueOff();
         bool holdPosition();

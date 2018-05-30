@@ -36,6 +36,7 @@ void MotionActor::motionMonitor( const ros::TimerEvent &event )
 {
     if( action_server.isActive() )
     {
+        ROS_INFO( "%s: is active", __FUNCTION__ );
         if( checkMotionStep() ); // check for arrival
         {
             goal_step++;
@@ -71,12 +72,11 @@ void MotionActor::motionMonitor( const ros::TimerEvent &event )
 bool MotionActor::checkMotionStep()
 {
     bool arrived = true;
-    std::vector<int32_t> servo_position = _controller.getServoPositions();
-
+    std::vector<int32_t> servo_positions = _controller.getServoPositions();
+    std::vector<int32_t> servo_goals = _controller.getServoGoals();
     for( int i = 0; i < MAX_SERVO; i++ )
     {
-        if( abs( servo_position[i] - (int32_t)joint_goals[i].position[goal_step] )
-            > (int32_t)joint_goals[i].effort[goal_step] )
+        if( abs( servo_positions[i] - servo_goals[i] ) > (int32_t)joint_goals[i].effort[goal_step] )
         {
             arrived = false;
             break;
@@ -87,11 +87,14 @@ bool MotionActor::checkMotionStep()
 
 bool MotionActor::performMotionStep()
 {
+    ROS_INFO( "performing motion step" );
     bool success = true;
     if( goal_step != goal_max )
     {
+        ROS_INFO( "performing interior step" );
         for( uint8_t i = 0; i < MAX_SERVO; i++ )
         {
+            ROS_INFO( "performing loop" );
             uint8_t id = i + (uint8_t)1;
             double position =  joint_goals[i].position[goal_step];
             uint32_t velocity = (uint32_t)joint_goals[i].velocity[goal_step];

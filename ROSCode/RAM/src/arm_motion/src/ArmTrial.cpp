@@ -3,7 +3,7 @@
 //
 
 #include "arm_motion/ArmTrial.h"
-
+#include <math.h>
 ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _trial_name(trial_name),
                                                                               _active(false), _complete(false),
                                                                               _on_action(0), _action_client( _node_handle, "arm_motion_driver", true )
@@ -294,6 +294,13 @@ void ArmTrial::buildJointsPosition( std::vector<sensor_msgs::JointState> *goals,
             goals->at(j).position.push_back( all_joints[j] );
         }
     }
+    for( int i = 0; i < MAX_SERVO; i++ )
+    {
+        for( int j = 0; j < goals->front().position.size(); j++ )
+        {
+            ROS_INFO( "Servo[%d]: Position[%f]", i+1, goals->at(i).position[j] );
+        }
+    }
 }
 
 void ArmTrial::buildJointsVelocity( std::vector<sensor_msgs::JointState> *goals, uint8_t velocity )
@@ -350,6 +357,7 @@ void ArmTrial::motionFeedbackCallback( const arm_motion::ArmMotionActionFeedback
 
 JointPositions ArmTrial::inverseKinematics( geometry_msgs::Pose pose )
 {
+    ROS_INFO( "Goal Pose: X[%f] Y[%f] Z[%f] E[%f]", pose.position.x, pose.position.y, pose.position.z, pose.orientation.w );
     double theta_1 = atan2( pose.position.y, pose.position.x );
     pose.position.z -= length1;
     pose.position.x = sqrt( pose.position.x * pose.position.x + pose.position.y * pose.position.y );
@@ -360,7 +368,15 @@ JointPositions ArmTrial::inverseKinematics( geometry_msgs::Pose pose )
 
     double gamma = atan2( pose.position.z, pose.position.x );
     double beta = acos( ( CQ * CQ + CP * CP - length4 * length4 ) / ( 2 * CQ * CP ) );
+    ROS_INFO( "CQ[%f] length2[%f] length4[%f]", CQ, length2, length4 );
+    ROS_INFO( "acos( %f )", ( CQ * CQ + length2 * length2 - length3 * length3 ) / ( 2 * CQ * length2) );
     double alpha = acos( ( CQ * CQ + length2 * length2 - length3 * length3 ) / ( 2 * CQ * length2) );
+    if( boost::math::isnan<double>( gamma ) )
+        ROS_INFO( "gamma is nan" );
+    if( boost::math::isnan<double>( beta ) )
+        ROS_INFO( "beta is nan" );
+    if( boost::math::isnan<double>( alpha ) )
+        ROS_INFO( "alpha is nan" );
 
     double theta_2 = alpha + beta + gamma;
     double theta_3 = (-1) * ( M_PI -  acos( ( length2 * length2 + length3 * length3 - CQ * CQ ) / ( 2 * length2 * length3 ) ) );
@@ -371,5 +387,9 @@ JointPositions ArmTrial::inverseKinematics( geometry_msgs::Pose pose )
     joints.push_back( theta_2 );
     joints.push_back( theta_3 );
     joints.push_back( theta_4 );
+    for( int i = 0; i < MAX_SERVO; i++ )
+    {
+        ROS_INFO( "Inverse Kinematics: Joint[%d] Theta[%f]", i+1, joints[i] );
+    }
     return joints;
 }
