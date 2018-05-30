@@ -14,7 +14,6 @@ TrialManager::TrialManager( std::string name )
 
 void TrialManager::setupSubscribers()
 {
-    ROS_INFO( "trial/selector" );
     trial_selector = _node_handle.subscribe( "trial/selector", 10, &TrialManager::enqueueTrial, this );
 }
 
