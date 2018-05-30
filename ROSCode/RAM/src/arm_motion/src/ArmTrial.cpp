@@ -6,10 +6,11 @@
 
 ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _trial_name(trial_name),
                                                                               _active(false), _complete(false),
-                                                                              _on_action(0), _action_client( _node_handle, "arm_driver", true )
+                                                                              _on_action(0), _action_client( _node_handle, "arm_motion_driver", true )
 {
+    //TODO: this needs to be handled via config stuff
     std::stringstream ss;
-    ss << "/home/korisd/tUR/ROSCode/RAM/src/logic_controller/scripts/" << trial_name << ".lua";
+    ss << "/home/korisd/tUR/ROSCode/RAM/src/arm_motion/scripts/" << trial_name << ".lua";
 
     std::cout << "Path: " << ss.str().c_str() << std::endl;
     if( luaL_loadfile( lua, ss.str().c_str() ) || lua_pcall( lua, 0, 1, 0 ) )
@@ -127,7 +128,7 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _t
         /* stack: nil */
         setupSubscribers();
         setupTimers();
-        *success = _action_client.waitForServer( ros::Duration( 2 ) );
+        *success = _action_client.waitForServer( ros::Duration( 10 ) );
     }
 }
 ArmTrial::~ArmTrial()
@@ -204,6 +205,7 @@ void ArmTrial::generateMotion()
     /* build the joint_goals to send to the action server based on our goal_points */
     std::vector<sensor_msgs::JointState> joint_goals( MAX_SERVO );
     buildJointsPosition( &joint_goals, &motion_path );
+    buildJointsVelocity( &joint_goals, action.velocity );
     buildJointsEffort( &joint_goals, action.smoothness, action.tolerance );
 
     arm_motion::ArmMotionGoal action_goal;
@@ -213,7 +215,7 @@ void ArmTrial::generateMotion()
                              boost::bind( &ArmTrial::motionCompleteCallback, this, _1, _2 ),
                              actionlib::SimpleActionClient<arm_motion::ArmMotionAction>::SimpleActiveCallback(),
                              actionlib::SimpleActionClient<arm_motion::ArmMotionAction>::SimpleFeedbackCallback() );
-                         //    boost::bind( &ArmTrial::motionFeedbackCallback, this, _1 ) );
+                         //TODO: figure out how to bind the feedback    boost::bind( &ArmTrial::motionFeedbackCallback, this, _1 ) );
 }
 
 geometry_msgs::Pose ArmTrial::generateMotionGoalPose( Action a )
@@ -267,7 +269,7 @@ void ArmTrial::generatePath( std::vector<geometry_msgs::Pose> *path, PathConstan
     const double C = std::get<2>( constants );
     const double D = std::get<3>( constants );
 
-    for( int i = 1; i < precision; i++ )
+    for( int i = 1; i <= precision; i++ )
     {
         double t = (double)i;
         geometry_msgs::Pose motion_pose;
@@ -289,20 +291,32 @@ void ArmTrial::buildJointsPosition( std::vector<sensor_msgs::JointState> *goals,
         /* put for each servo its goal for path i */
         for( int j = 0; j < MAX_SERVO; j++ )
         {
-            goals->at(j).position[i] = all_joints[j];
+            goals->at(j).position.push_back( all_joints[j] );
         }
     }
+}
+
+void ArmTrial::buildJointsVelocity( std::vector<sensor_msgs::JointState> *goals, uint8_t velocity )
+{
+    for( int i = 0; i < goals->size(); i++ )
+    {
+        for( int j = 0; j < goals->at(i).position.size(); j++ )
+        {
+            goals->at(i).velocity.push_back( (double)velocity );
+        }
+    }
+
 }
 
 void ArmTrial::buildJointsEffort( std::vector<sensor_msgs::JointState> *goals, uint16_t smoothness, uint16_t tolerance )
 {
     for( int i = 0; i < goals->size(); i++ )
     {
-        for( int j = 0; j < goals->at(i).effort.size(); j++ )
+        for( int j = 0; j < ( goals->at(i).position.size()- 1 ); j++ )
         {
-            goals->at( i ).effort[j] = (double)smoothness;
+            goals->at( i ).effort.push_back( (double)smoothness );
         }
-        goals->at(i).effort.back() = (double)tolerance;
+        goals->at(i).effort.push_back( (double)tolerance );
     }
 }
 
