@@ -97,19 +97,21 @@ bool MotionActor::performMotionStep()
             double position =  joint_goals[i].position[goal_step];
             uint32_t velocity = (uint32_t)joint_goals[i].velocity[goal_step];
 
-            bool status = _controller.changePosition( id, position );
+            bool status = _controller.changeVelocity( id, velocity );
+            if( !status )
+            {
+                ROS_ERROR( "%s: failed to write profile velocity[%d] to servo[%d}", __FUNCTION__, velocity, id );
+                success = false;
+            }
+
+            status = _controller.changePosition( id, position );
             if( !status )
             {
                 ROS_ERROR( "%s: failed to write goal position[%d] to servo[%d]", __FUNCTION__, position, id );
                 success = false;
             }
 
-            status = _controller.changeVelocity( id, velocity );
-            if( !status )
-            {
-                ROS_ERROR( "%s: failed to write profile velocity[%d] to servo[%d}", __FUNCTION__, velocity, id );
-                success = false;
-            }
+
         }
     }
     else
