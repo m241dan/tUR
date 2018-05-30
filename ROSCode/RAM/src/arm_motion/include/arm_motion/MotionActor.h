@@ -41,7 +41,7 @@ class MotionActor
         DynamixelController &_controller;
 
         /* Joint Goals */
-        sensor_msgs::JointState joint_goals[MAX_SERVO];
+        std::vector<sensor_msgs::JointState> joint_goals;
         uint8_t goal_step;
         uint8_t goal_max;
 };
