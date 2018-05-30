@@ -99,7 +99,7 @@ bool DynamixelController::holdPosition()
 
     for( int i = 0; i < MAX_SERVO; i++ )
     {
-        com.id = i + 1;
+        com.id = (uint8_t)(i + 1);
         com.value = servo_info[i].Present_Position;
         servo_response[i] = benchWrite( com );
     }
@@ -213,7 +213,7 @@ void DynamixelController::initializeServos()
 
     for( int i = 0; i < MAX_SERVO; i++ )
     {
-        uint8_t id = i + 1;
+        uint8_t id = (uint8_t)(i + 1);
         max_vel.id = id;
         pid_i_gain.id = id;
         pro_vel.id = id;
