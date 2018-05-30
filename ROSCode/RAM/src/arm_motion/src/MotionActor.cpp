@@ -7,20 +7,19 @@
 MotionActor::MotionActor( std::string name, DynamixelController &controller ) :
         action_server( node_handle, name, false ),
         action_name(name),
-        _controller(controller)
+        _controller(controller),
+        joint_goals(4)
 {
     action_server.registerGoalCallback( boost::bind( &MotionActor::goalCallBack, this ) );
     action_server.registerPreemptCallback( boost::bind( &MotionActor::preemptCallBack, this ) );
+    action_server.start();
     action_timer = node_handle.createTimer( ros::Duration(0.1), boost::bind( &MotionActor::motionMonitor, this, _1 ), false, false );
 }
 
 void MotionActor::goalCallBack()
 {
     /*setup the new motion*/
-    for( int i = 0; i < MAX_SERVO; i++ )
-    {
-        joint_goals[i] = action_server.acceptNewGoal()->joints[i];
-    }
+    joint_goals = action_server.acceptNewGoal()->joints;
     goal_step = 0;
     goal_max = (uint8_t)joint_goals[0].position.size();
     performMotionStep(); //the first, as soon as it receives the goal
@@ -100,14 +99,14 @@ bool MotionActor::performMotionStep()
             bool status = _controller.changeVelocity( id, velocity );
             if( !status )
             {
-                ROS_ERROR( "%s: failed to write profile velocity[%d] to servo[%d}", __FUNCTION__, velocity, id );
+                ROS_ERROR( "%s: failed to write profile velocity[%d] to servo[%d]", __FUNCTION__, velocity, id );
                 success = false;
             }
 
             status = _controller.changePosition( id, position );
             if( !status )
             {
-                ROS_ERROR( "%s: failed to write goal position[%d] to servo[%d]", __FUNCTION__, position, id );
+                ROS_ERROR( "%s: failed to write goal position[%f] to servo[%d]", __FUNCTION__, position, id );
                 success = false;
             }
 
