@@ -56,6 +56,7 @@ class ArmTrial
         PathConstants generateConstants( geometry_msgs::Pose pose, uint8_t precision );
         void generatePath( std::vector<geometry_msgs::Pose> *path, PathConstants constants, uint8_t precision );
         void buildJointsPosition( std::vector<sensor_msgs::JointState> *goals, std::vector<geometry_msgs::Pose> *path );
+        void buildJointsVelocity( std::vector<sensor_msgs::JointState> *goals, uint8_t velocity );
         void buildJointsEffort( std::vector<sensor_msgs::JointState> *goals, uint16_t smoothness, uint16_t tolerance );
 
         void motionCompleteCallback( const actionlib::SimpleClientGoalState &state, const arm_motion::ArmMotionResultConstPtr &result );
