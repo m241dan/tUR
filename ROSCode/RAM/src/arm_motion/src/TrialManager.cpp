@@ -14,6 +14,7 @@ TrialManager::TrialManager( std::string name )
 
 void TrialManager::setupSubscribers()
 {
+    ROS_INFO( "trial/selector" );
     trial_selector = _node_handle.subscribe( "trial/selector", 10, &TrialManager::enqueueTrial, this );
 }
 
@@ -38,7 +39,7 @@ void TrialManager::enqueueTrial( const std_msgs::UInt8ConstPtr &msg )
     std::stringstream ss;
     bool success = false;
 
-    ss << "trial" << msg->data;
+    ss << "trial" << (int)msg->data;
 
     _trial_queue.push_back( new ArmTrial( ss.str(), _lua_handle, &success ) );
     if( success )
