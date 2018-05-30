@@ -271,3 +271,29 @@ void ArmTrial::buildJointStates( std::vector<sensor_msgs::JointState> *goals, st
 {
 
 }
+
+JointPositions ArmTrial::inverseKinematics( geometry_msgs::Pose pose )
+{
+    double theta_1 = atan2( pose.position.y, pose.position.x );
+    pose.position.z -= length1;
+    pose.position.x = sqrt( pose.position.x * pose.position.x + pose.position.y * pose.position.y );
+    double x_q = pose.position.x - length4*cos(pose.orientation.w);
+    double z_q = pose.position.z - length4*sin(pose.orientation.w);
+    double CQ = sqrt( x_q * x_q + z_q * z_q );
+    double CP = sqrt( pose.position.x * pose.position.x + pose.position.z * pose.position.z );
+
+    double gamma = atan2( pose.position.z, pose.position.x );
+    double beta = acos( ( CQ * CQ + CP * CP - length4 * length4 ) / ( 2 * CQ * CP ) );
+    double alpha = acos( ( CQ * CQ + length2 * length2 - length3 * length3 ) / ( 2 * CQ * length2) );
+
+    double theta_2 = alpha + beta + gamma;
+    double theta_3 = (-1) * ( M_PI -  acos( ( length2 * length2 + length3 * length3 - CQ * CQ ) / ( 2 * length2 * length3 ) ) );
+    double theta_4 = pose.orientation.w - theta_2 - theta_3;
+
+    JointPositions joints;
+    joints.push_back( theta_1 );
+    joints.push_back( theta_2 );
+    joints.push_back( theta_3 );
+    joints.push_back( theta_4 );
+    return joints;
+}
