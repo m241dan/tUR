@@ -24,6 +24,8 @@ typedef struct trial_action
     double gripper_lin = 0.0;
     uint8_t velocity = 20;
     uint8_t precision = 0;
+    uint16_t smoothness = 150;
+    uint16_t tolerance = 2;
     std::string shape = "linear";
     uint8_t tag_id = 0;
 } Action;

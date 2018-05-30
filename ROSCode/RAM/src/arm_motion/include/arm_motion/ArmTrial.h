@@ -10,7 +10,7 @@
 #include "arm_motion/Action.h"
 #include <vector>
 #include <actionlib/client/simple_action_client.h>
-#include <utility>
+#include <tuple>
 
 extern "C" {
     #include "lua.h"
@@ -35,6 +35,9 @@ class ArmTrial
         void setupTimers();
         void trialOperation( const ros::TimerEvent &event );
         void servoBasedFK( const geometry_msgs::Pose::ConstPtr &pose );
+        void generateMotion();
+        geometry_msgs::Pose generateMotionGoalPose( Action a );
+        std::tuple<double,double,double,double> generateConstants( geometry_msgs::Pose pose, uint8_t precision );
         /*
          * Variables
          */
