@@ -34,6 +34,10 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _t
             lua_gettable( lua, -2 );
 
             /*
+             * TODO: check for nils!!!
+             * TODO: FACTOR
+             */
+            /*
              * Velocity
              */
             /* stack: trial table -> action[i] */
@@ -179,7 +183,7 @@ bool ArmTrial::start()
 
 void ArmTrial::generateMotion()
 {
-    Action &action = _actions.front();
+    Action &action = _actions[_on_action];
 
     /*
      * TODO: currently this is all based on server kinematics only, eventually will be some
@@ -198,10 +202,18 @@ void ArmTrial::generateMotion()
     generatePath( &motion_path, constants, (double)action.precision );
 
     /* build the joint_goals to send to the action server based on our goal_points */
-    std::vector<sensor_msgs::JointState> joint_goals;
-    buildJointStates( &joint_goals, &motion_path );
+    std::vector<sensor_msgs::JointState> joint_goals( MAX_SERVO );
+    buildJointsPosition( &joint_goals, &motion_path );
+    buildJointsEffort( &joint_goals, action.smoothness, action.tolerance );
 
+    arm_motion::ArmMotionGoal action_goal;
+    action_goal.joints = joint_goals;
 
+    _action_client.sendGoal( action_goal,
+                             boost::bind( &ArmTrial::motionCompleteCallback, this, _1, _2 ),
+                             actionlib::SimpleActionClient<arm_motion::ArmMotionAction>::SimpleActiveCallback(),
+                             actionlib::SimpleActionClient<arm_motion::ArmMotionAction>::SimpleFeedbackCallback() );
+                         //    boost::bind( &ArmTrial::motionFeedbackCallback, this, _1 ) );
 }
 
 geometry_msgs::Pose ArmTrial::generateMotionGoalPose( Action a )
@@ -267,7 +279,57 @@ void ArmTrial::generatePath( std::vector<geometry_msgs::Pose> *path, PathConstan
     }
 }
 
-void ArmTrial::buildJointStates( std::vector<sensor_msgs::JointState> *goals, std::vector<geometry_msgs::Pose> *path )
+void ArmTrial::buildJointsPosition( std::vector<sensor_msgs::JointState> *goals, std::vector<geometry_msgs::Pose> *path )
+{
+    /* go through the path */
+    for( int i = 0; i < path->size(); i++ )
+    {
+        /* gives us our joints in radians for path i */
+        JointPositions all_joints = inverseKinematics( path->at(i) );
+        /* put for each servo its goal for path i */
+        for( int j = 0; j < MAX_SERVO; j++ )
+        {
+            goals->at(j).position[i] = all_joints[j];
+        }
+    }
+}
+
+void ArmTrial::buildJointsEffort( std::vector<sensor_msgs::JointState> *goals, uint16_t smoothness, uint16_t tolerance )
+{
+    for( int i = 0; i < goals->size(); i++ )
+    {
+        for( int j = 0; j < goals->at(i).effort.size(); j++ )
+        {
+            goals->at( i ).effort[j] = (double)smoothness;
+        }
+        goals->at(i).effort.back() = (double)tolerance;
+    }
+}
+
+
+void ArmTrial::motionCompleteCallback( const actionlib::SimpleClientGoalState &state,
+                                       const arm_motion::ArmMotionResultConstPtr &result )
+{
+    if( result->success )
+    {
+        _on_action++;
+        if( _on_action >= _actions.size() )
+        {
+            _complete = true;
+        }
+        else
+        {
+            generateMotion();
+        }
+    }
+    else
+    {
+        ROS_ERROR( "%s: reporting that Motion has failed.", __FUNCTION__ );
+        _complete = true;
+    }
+}
+
+void ArmTrial::motionFeedbackCallback( const arm_motion::ArmMotionActionFeedbackConstPtr &feedback )
 {
 
 }
