@@ -21,7 +21,7 @@ extern "C" {
 class ArmTrial
 {
     public:
-        ArmTrial( std::string trial_name, lua_State *lua, bool &success );
+        ArmTrial( std::string trial_name, lua_State *lua, bool *success );
         ~ArmTrial();
         bool isActive();
         bool isComplete();

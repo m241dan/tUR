@@ -40,7 +40,7 @@ void TrialManager::enqueueTrial( const std_msgs::UInt8ConstPtr &msg )
 
     ss << "trial" << msg->data;
 
-    _trial_queue.push_back( new ArmTrial( ss.str(), _lua_handle, success ) );
+    _trial_queue.push_back( new ArmTrial( ss.str(), _lua_handle, &success ) );
     if( success )
     {
         if( _trial_queue.size() == 1 )  //only trial in the queue, start trial and start monitor ( theoretically they should both be paused )

@@ -4,7 +4,7 @@
 
 #include "arm_motion/ArmTrial.h"
 
-ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool &success ) : _trial_name(trial_name),
+ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _trial_name(trial_name),
                                                                               _active(false), _complete(false),
                                                                               _on_action(0), _action_client( _node_handle, "arm_driver", true )
 {
@@ -15,7 +15,7 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool &success ) : _t
     if( luaL_loadfile( lua, ss.str().c_str() ) || lua_pcall( lua, 0, 1, 0 ) )
     {
         ROS_ERROR( "%s: %s", __FUNCTION__, lua_tostring( lua, -1 ) );
-        success = false;
+        *success = false;
     }
     else
     {
@@ -105,7 +105,7 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool &success ) : _t
         }
         lua_pop( lua, 1 );
         /* stack: nil */
-        success = true;
+        *success = true;
         setupSubscribers();
         setupTimers();
     }
