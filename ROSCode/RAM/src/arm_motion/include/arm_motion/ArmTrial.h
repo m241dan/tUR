@@ -18,6 +18,9 @@ extern "C" {
     #include "lualib.h"
 }
 
+typedef std::tuple<double,double,double,double> PathConstants;
+#define MAKE_PATH_CONSTANTS( A, B, C, D ) std::make_tuple( A, B, C, D )
+
 class ArmTrial
 {
     public:
@@ -37,7 +40,10 @@ class ArmTrial
         void servoBasedFK( const geometry_msgs::Pose::ConstPtr &pose );
         void generateMotion();
         geometry_msgs::Pose generateMotionGoalPose( Action a );
-        std::tuple<double,double,double,double> generateConstants( geometry_msgs::Pose pose, uint8_t precision );
+        PathConstants generateConstants( geometry_msgs::Pose pose, uint8_t precision );
+        void generatePath( std::vector<geometry_msgs::Pose> *path, PathConstants constants, uint8_t precision );
+        void buildJointStates( std::vector<sensor_msgs::JointState> *goals, std::vector<geometry_msgs::Pose> *path );
+
         /*
          * Variables
          */
