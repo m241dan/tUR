@@ -19,7 +19,7 @@ DynamixelController::DynamixelController( std::string bus )
             ROS_INFO( "%s: Servos verified and online.", __FUNCTION__ );
             ROS_INFO( "%s: Servo defaults being send.", __FUNCTION__ );
             initializeServos();
-            torqueOn();
+            //torqueOn();
             setupPublishers();
             setupTimer();
         }

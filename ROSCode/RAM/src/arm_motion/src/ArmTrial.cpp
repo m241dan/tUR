@@ -256,10 +256,10 @@ PathConstants ArmTrial::generateConstants( geometry_msgs::Pose pose, uint8_t pre
 
 
 
-    A = ( _servo_based_fk_pose.position.x - pose.position.x ) / t;
-    B = ( _servo_based_fk_pose.position.y - pose.position.y ) / t;
-    C = ( _servo_based_fk_pose.position.z - pose.position.z ) / t;
-    D = ( _servo_based_fk_pose.orientation.w - pose.orientation.w ) / t;
+    A = ( pose.position.x - _servo_based_fk_pose.position.x ) / t;
+    B = ( pose.position.y - _servo_based_fk_pose.position.y ) / t;
+    C = ( pose.position.z - _servo_based_fk_pose.position.y ) / t;
+    D = ( pose.orientation.w - _servo_based_fk_pose.orientation.w ) / t;
 
     return MAKE_PATH_CONSTANTS( A, B, C, D );
 }
@@ -391,22 +391,52 @@ JointPositions ArmTrial::inverseKinematics( geometry_msgs::Pose pose )
     double w = pose.orientation.w;
 
     /* new kinematics by hand minus the theta_4 part */
-
+    ROS_INFO( "PK: X[%f] Y[%f] Z[%f] E[%f]", _servo_based_fk_pose.position.x, _servo_based_fk_pose.position.y, _servo_based_fk_pose.position.z, _servo_based_fk_pose.orientation.w );
+    ROS_INFO( "X[%f] Y[%f] Z[%f] E[%f]", x, y, z, w );
     double X_new = sqrt( x * x + y * y );
+        ROS_INFO( "X_new: %f", X_new );
+
     double theta_1 = atan2( y, x );
+        ROS_INFO( "Theta_1: %f", theta_1 );
+
     double X_c = X_new - length4*cos(w);
-    double Z_c = z + length4*sin(w);
+        ROS_INFO( "X_c: %f", X_c );
+
+    double Z_c = z + length4*sin((-1)*w);
+        ROS_INFO( "Z_c: %f", Z_c );
+
     double Z_l = Z_c - length1;
+        ROS_INFO( "Z_l: %f", Z_l );
+
     double length5 = sqrt( X_c * X_c + Z_l * Z_l );
+        ROS_INFO( "Length5: %f", length5 );
+
     double alpha = acos( (length5 * length5 - length2 * length2 - length3 * length3 ) / ( (-2) * length2 * length3 ) );
+        ROS_INFO( "Alpha: %f", alpha );
+
     double theta_3 = (-1) * (M_PI - alpha);
+        ROS_INFO( "Theta_3: %f", theta_3 );
+
     double Z_new = z - length1;
+        ROS_INFO( "Z_new: %f", Z_new );
+
     double alpha_4 = atan2( Z_new, X_new );
+        ROS_INFO( "Alpha_4: %f", alpha_4 );
+
     double length6 = sqrt( Z_new * Z_new + X_new * X_new );
+        ROS_INFO( "Length6: %f", length6 );
+
     double alpha_3 = acos( ( length4 * length4 - length5 * length5 - length6 * length6 ) / ( (-2) * length5 * length6 ) );
+        ROS_INFO( "Alpha_3: %f", alpha_3 );
+
     double alpha_2 = acos( ( length3 * length3 - length5 * length5 - length2 * length2 ) / ( (-2) * length5 * length2 ) );
+        ROS_INFO( "Alpha_2: %f", alpha_2 );
+
     double theta_2 = alpha_2 + alpha_3 + alpha_4;
+        ROS_INFO( "Theta_2: %f", theta_2 );
+
     double theta_4 = w - theta_2 - theta_3;
+        ROS_INFO( "Theta_4: %f", theta_4 );
 
     JointPositions joints;
     joints.push_back( theta_1 );
