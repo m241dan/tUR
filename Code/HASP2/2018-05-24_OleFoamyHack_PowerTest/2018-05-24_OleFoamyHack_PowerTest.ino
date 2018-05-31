@@ -40,6 +40,7 @@ void setup()
 {
     pinMode( A14, INPUT ); //input from the pincher
     pinMode( A15, INPUT ); //input from the wrist
+    pinMode( A12, INPUT ); //input from the potentiometer
     Serial.begin(9600);
 
     servo_pinch.attach( SERVO_PINCH );
@@ -96,7 +97,7 @@ void loop()
   Serial.print( "Pincher " + String( pincher_position ) );
   Serial.print( " Wrist " + String( wrist_position ) );
   Serial.println( " PWM " + String( wrist_pwm ) );
-  delay( 100 );
+  delay( 75 );
 }
 //void loop()
 //{

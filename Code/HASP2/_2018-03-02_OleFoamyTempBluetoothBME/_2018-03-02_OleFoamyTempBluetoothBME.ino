@@ -25,11 +25,12 @@ void setup()
 void loop()
 {
     sensors.requestTemperatures();
-
-    Serial.print( "Therms: " + String(millis()) + " msec, " +
-                    String( sensors.getTempCByIndex(0) ) + " C  , " +
+    int secs = millis() / 1000; //Oh my God I'm such a kludge. -JA
+    Serial.print( String(secs) + " s, \t" +
+                    String( sensors.getTempCByIndex(0) ) + " C\t " +
                     String( sensors.getTempCByIndex(1) ) + " C\t " +
-                    String( sensors.getTempCByIndex(2) ) + " C\t ");
+                    String( sensors.getTempCByIndex(2) ) + " C\t " +
+                    String( sensors.getTempCByIndex(3) ) + " C\t ");
 
     Serial.print("BMETemp = ");
     Serial.print(bme.readTemperature());
