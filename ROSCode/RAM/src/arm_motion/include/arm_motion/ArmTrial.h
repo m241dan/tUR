@@ -19,10 +19,8 @@ extern "C" {
 }
 
 typedef std::tuple<double,double,double,double> PathConstants;
-#define MAKE_PATH_CONSTANTS( A, B, C, D ) std::make_tuple( A, B, C, D )
-
 typedef std::vector<double> JointPositions;
-
+typedef std::vector<geometry_msgs::Pose> Path;
 /*
  * TODO: update these if they change in both places
  */
@@ -54,7 +52,7 @@ class ArmTrial
          */
         geometry_msgs::Pose generateMotionGoalPose( Action a );
         PathConstants generateConstants( geometry_msgs::Pose pose, uint8_t precision );
-        void generatePath( std::vector<geometry_msgs::Pose> *path, PathConstants constants, uint8_t precision );
+        Path generatePath( std::vector<geometry_msgs::Pose> *path, PathConstants constants, uint8_t precision );
         void buildJointsPosition( std::vector<sensor_msgs::JointState> *goals, std::vector<geometry_msgs::Pose> *path );
         void buildJointsVelocity( std::vector<sensor_msgs::JointState> *goals, uint8_t velocity );
         void buildJointsEffort( std::vector<sensor_msgs::JointState> *goals, uint16_t smoothness, uint16_t tolerance );

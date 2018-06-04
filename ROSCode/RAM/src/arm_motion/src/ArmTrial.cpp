@@ -199,8 +199,7 @@ void ArmTrial::generateMotion()
 
 
     /* generate the goal points along the path of the motion */
-    std::vector<geometry_msgs::Pose> motion_path;
-    generatePath( &motion_path, constants, (double)action.precision );
+    std::vector<geometry_msgs::Pose> motion_path = generatePath( constants, (double)action.precision );
 
     /* build the joint_goals to send to the action server based on our goal_points */
     std::vector<sensor_msgs::JointState> joint_goals( MAX_SERVO );
@@ -261,11 +260,12 @@ PathConstants ArmTrial::generateConstants( geometry_msgs::Pose pose, uint8_t pre
     C = ( pose.position.z - _servo_based_fk_pose.position.y ) / t;
     D = ( pose.orientation.w - _servo_based_fk_pose.orientation.w ) / t;
 
-    return MAKE_PATH_CONSTANTS( A, B, C, D );
+    return std::make_tuple( A, B, C, D );
 }
 
-void ArmTrial::generatePath( std::vector<geometry_msgs::Pose> *path, PathConstants constants, uint8_t precision )
+Path ArmTrial::generatePath( PathConstants constants, uint8_t precision )
 {
+    Path path;
     const double A = std::get<0>( constants );
     const double B = std::get<1>( constants );
     const double C = std::get<2>( constants );
@@ -279,8 +279,9 @@ void ArmTrial::generatePath( std::vector<geometry_msgs::Pose> *path, PathConstan
         motion_pose.position.y = _servo_based_fk_pose.position.y + B * t;
         motion_pose.position.z = _servo_based_fk_pose.position.z + C * t;
         motion_pose.orientation.w = _servo_based_fk_pose.orientation.w + D * t;
-        path->push_back( motion_pose );
+        path.push_back( motion_pose );
     }
+    return path;
 }
 
 void ArmTrial::buildJointsPosition( std::vector<sensor_msgs::JointState> *goals, std::vector<geometry_msgs::Pose> *path )
