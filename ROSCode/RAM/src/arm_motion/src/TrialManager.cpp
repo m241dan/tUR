@@ -40,7 +40,7 @@ void TrialManager::enqueueTrial( const std_msgs::UInt8ConstPtr &msg )
 
     ss << "trial" << (int)msg->data;
 
-    _trial_queue.push_back( new ArmTrial( ss.str(), _lua_handle, &success ) );
+    _trial_queue.push_back( std::unique_ptr<ArmTrial>( new ArmTrial( ss.str(), _lua_handle, &success ) ) );
     if( success )
     {
         if( _trial_queue.size() == 1 )  //only trial in the queue, start trial and start monitor ( theoretically they should both be paused )
@@ -52,8 +52,6 @@ void TrialManager::enqueueTrial( const std_msgs::UInt8ConstPtr &msg )
     else
     {
         ROS_INFO( "%s: failed to enqueue %s", __FUNCTION__, ss.str().c_str() );
-        ArmTrial *trial = _trial_queue.back();
-        delete trial;
         _trial_queue.pop_back();    //trial on there is a dead trial, so get rid of it
     }
 }
@@ -87,8 +85,6 @@ void TrialManager::trialMonitor( const ros::TimerEvent &event )
 bool TrialManager::nextTrial()
 {
     //report data here?
-    ArmTrial *trial = _trial_queue.front();
-    delete trial;
     _trial_queue.erase( _trial_queue.begin() );
     return !_trial_queue.empty();
 }
