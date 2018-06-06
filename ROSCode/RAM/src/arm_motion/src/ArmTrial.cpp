@@ -3,7 +3,6 @@
 //
 
 #include "arm_motion/ArmTrial.h"
-#include <math.h>
 ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _trial_name(trial_name),
                                                                               _active(false), _complete(false),
                                                                               _on_action(0), _action_client( _node_handle, "arm_motion_driver", true )
@@ -187,8 +186,7 @@ void ArmTrial::generateMotion()
     Action &action = _actions[_on_action];
 
     /*
-     * TODO: currently this is all based on server kinematics only, eventually will be some
-     * TODO: approximation of both vision and servo kinematics
+     * TODO: currently this is all based on servo kinematics only, eventually will be some approximation of both vision and servo kinematics
      */
     /* figure out our final goal based on type of action */
     geometry_msgs::Pose motion_goal = generateMotionGoalPose( action );
