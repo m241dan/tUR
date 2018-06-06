@@ -7,7 +7,7 @@
 
 #include "arm_motion/arm_motion_node.h"
 #include "arm_motion/ArmMotionAction.h"
-#include "arm_motion/Action.h"
+#include "arm_motion/MotionGuidelines.h"
 #include <vector>
 #include <actionlib/client/simple_action_client.h>
 #include <tuple>
@@ -51,7 +51,7 @@ class ArmTrial
         /*
          * TODO: turn path planning into its own node someday
          */
-        geometry_msgs::Pose generateMotionGoalPose( Action a );
+        geometry_msgs::Pose generateMotionGoalPose( MotionGuidelines motion );
         PathConstants generateConstants( geometry_msgs::Pose pose, uint8_t precision );
         Path generatePath( PathConstants constants, uint8_t precision );
         void buildJointsPosition( std::vector<sensor_msgs::JointState> *goals, std::vector<geometry_msgs::Pose> *path );
@@ -80,8 +80,8 @@ class ArmTrial
 
         bool _active;
         bool _complete;
-        std::vector<Action> _actions;
-        unsigned long _on_action;
+        std::vector<MotionGuidelines> _motions;
+        unsigned long _on_motion;
 };
 
 

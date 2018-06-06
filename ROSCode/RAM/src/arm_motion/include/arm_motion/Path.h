@@ -7,11 +7,12 @@
 
 #include "arm_motion/arm_motion_node.h"
 #include <geometry_msgs/PoseArray.h>
+#include <arm_motion/action.h>
 
 class Path
 {
     public:
-        Path( geometry_msgs::Pose )
+        Path();
     protected:
 };
 

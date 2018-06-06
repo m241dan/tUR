@@ -5,7 +5,7 @@
 #include "arm_motion/ArmTrial.h"
 ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _trial_name(trial_name),
                                                                               _active(false), _complete(false),
-                                                                              _on_action(0), _action_client( _node_handle, "arm_motion_driver", true )
+                                                                              _on_motion(), _action_client( _node_handle, "arm_motion_driver", true )
 {
     //TODO: this needs to be handled via config stuff
     std::stringstream ss;
@@ -21,15 +21,15 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _t
     {
         /* factor to function */
         lua_len( lua, -1 );
-        int size = lua_tointeger( lua, -1 );
+        int size = (int)lua_tointeger( lua, -1 );
         lua_pop( lua, 1 );
 
 
         for( int i = 1; i < size+1; i++ )
         {
-            Action action;
+            MotionGuidelines motion;
             /* stack: trial table */
-            /* get the action at i */
+            /* get the motion at i */
             lua_pushinteger( lua, i );
             lua_gettable( lua, -2 );
 
@@ -40,21 +40,21 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _t
             /*
              * Velocity
              */
-            /* stack: trial table -> action[i] */
+            /* stack: trial table -> motion[i] */
             lua_pushstring( lua, "velocity" );
-            /* stack: trial table -> action[i] -> "velocity" */
+            /* stack: trial table -> motion[i] -> "velocity" */
             lua_gettable( lua, -2 );
-            /* stack: trial table -> action[i] -> velocity num */
-            action.velocity = (uint8_t )lua_tointeger( lua, -1 );
+            /* stack: trial table -> motion[i] -> velocity num */
+            motion.velocity = (uint8_t )lua_tointeger( lua, -1 );
             lua_pop( lua, 1 );
-            /* stack: trial table -> action[i] */
+            /* stack: trial table -> motion[i] */
 
             /*
              * Type
              */
             lua_pushstring( lua, "type" );
             lua_gettable( lua, -2 );
-            action.type = (ActionType)lua_tointeger( lua, -1 );
+            motion.type = (MotionType)lua_tointeger( lua, -1 );
             lua_pop( lua, 1 );
 
             /*
@@ -62,7 +62,7 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _t
              */
             lua_pushstring( lua, "precision" );
             lua_gettable( lua, -2 );
-            action.precision = (uint8_t)lua_tointeger( lua, -1 );
+            motion.precision = (uint8_t)lua_tointeger( lua, -1 );
             lua_pop( lua, 1 );
 
             /*
@@ -70,7 +70,7 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _t
              */
             lua_pushstring( lua, "smoothness" );
             lua_gettable( lua, -2 );
-            action.smoothness = (uint16_t)lua_tointeger( lua, -1 );
+            motion.smoothness = (uint16_t)lua_tointeger( lua, -1 );
             lua_pop( lua, 1 );
 
             /*
@@ -78,7 +78,7 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _t
              */
             lua_pushstring( lua, "tolerance" );
             lua_gettable( lua, -2 );
-            action.tolerance = (uint16_t)lua_tointeger( lua, - 1 );
+            motion.tolerance = (uint16_t)lua_tointeger( lua, - 1 );
             lua_pop( lua, 1 );
 
             /*
@@ -86,7 +86,7 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _t
              */
             lua_pushstring( lua, "shape" );
             lua_gettable( lua, -2 );
-            action.shape = std::string( lua_tostring( lua, -1 ) );
+            motion.shape = std::string( lua_tostring( lua, -1 ) );
             lua_pop( lua, 1 );
 
             /*
@@ -94,7 +94,7 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _t
              */
             lua_pushstring( lua, "eeo" );
             lua_gettable( lua, -2 );
-            action.eeo = lua_tonumber( lua, -1 );
+            motion.eeo = lua_tonumber( lua, -1 );
             lua_pop( lua, 1 );
 
             /*
@@ -102,7 +102,7 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _t
              */
             lua_pushstring( lua, "x" );
             lua_gettable( lua, -2 );
-            action.x = lua_tonumber( lua, -1 );
+            motion.x = lua_tonumber( lua, -1 );
             lua_pop( lua, 1 );
 
             /*
@@ -110,7 +110,7 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _t
              */
             lua_pushstring( lua, "y" );
             lua_gettable( lua, -2 );
-            action.y = lua_tonumber( lua, -1 );
+            motion.y = lua_tonumber( lua, -1 );
             lua_pop( lua, 1 );
 
             /*
@@ -118,10 +118,10 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _t
              */
             lua_pushstring( lua, "z" );
             lua_gettable( lua, -2 );
-            action.z = lua_tonumber( lua, -1 );
-            lua_pop( lua, 2 ); /* pop the number and the action off */
+            motion.z = lua_tonumber( lua, -1 );
+            lua_pop( lua, 2 ); /* pop the number and the motion off */
             /* stack: trial table */
-            _actions.push_back( action );
+            _motions.push_back( motion );
         }
         lua_pop( lua, 1 );
         /* stack: nil */
@@ -183,27 +183,27 @@ bool ArmTrial::start()
 
 void ArmTrial::generateMotion()
 {
-    Action &action = _actions[_on_action];
+    MotionGuidelines &motion = _motions[_on_motion];
 
     /*
      * TODO: currently this is all based on servo kinematics only, eventually will be some approximation of both vision and servo kinematics
      */
-    /* figure out our final goal based on type of action */
-    geometry_msgs::Pose motion_goal = generateMotionGoalPose( action );
+    /* figure out our final goal based on type of motion */
+    geometry_msgs::Pose motion_goal = generateMotionGoalPose( motion );
     /*
      * generate constants that will be used to determine goal points along the path of the motion
      */
-    PathConstants constants = generateConstants( motion_goal, action.precision );
+    PathConstants constants = generateConstants( motion_goal, motion.precision );
 
 
     /* generate the goal points along the path of the motion */
-    std::vector<geometry_msgs::Pose> motion_path = generatePath( constants, (double)action.precision );
+    std::vector<geometry_msgs::Pose> motion_path = generatePath( constants, (double)motion.precision );
 
-    /* build the joint_goals to send to the action server based on our goal_points */
+    /* build the joint_goals to send to the motion server based on our goal_points */
     std::vector<sensor_msgs::JointState> joint_goals( MAX_SERVO );
     buildJointsPosition( &joint_goals, &motion_path );
-    buildJointsVelocity( &joint_goals, action.velocity );
-    buildJointsEffort( &joint_goals, action.smoothness, action.tolerance );
+    buildJointsVelocity( &joint_goals, motion.velocity );
+    buildJointsEffort( &joint_goals, motion.smoothness, motion.tolerance );
 
     arm_motion::ArmMotionGoal action_goal;
     action_goal.joints = joint_goals;
@@ -215,28 +215,28 @@ void ArmTrial::generateMotion()
                          //TODO: figure out how to bind the feedback    boost::bind( &ArmTrial::motionFeedbackCallback, this, _1 ) );
 }
 
-geometry_msgs::Pose ArmTrial::generateMotionGoalPose( Action a )
+geometry_msgs::Pose ArmTrial::generateMotionGoalPose( MotionGuidelines motion )
 {
     geometry_msgs::Pose pose;
 
-    pose.orientation.z = a.velocity;
-    switch( a.type )
+    pose.orientation.z = motion.velocity;
+    switch( motion.type )
     {
-        default: ROS_ERROR( "%s: action contains bad type", __FUNCTION__ ); break;
+        default: ROS_ERROR( "%s: Motion contains bad type", __FUNCTION__ ); break;
         case VISION:break;
         case DISCRETE_R:
         {
-            pose.position.x = _servo_based_fk_pose.position.x + a.x;
-            pose.position.y = _servo_based_fk_pose.position.y + a.y;
-            pose.position.z = _servo_based_fk_pose.position.z + a.z;
-            pose.orientation.w = _servo_based_fk_pose.orientation.w + a.eeo;
+            pose.position.x = _servo_based_fk_pose.position.x + motion.x;
+            pose.position.y = _servo_based_fk_pose.position.y + motion.y;
+            pose.position.z = _servo_based_fk_pose.position.z + motion.z;
+            pose.orientation.w = _servo_based_fk_pose.orientation.w + motion.eeo;
             break;
         }
         case DISCRETE_W:
-            pose.position.x = a.x;
-            pose.position.y = a.y;
-            pose.position.z = a.z;
-            pose.orientation.w = a.eeo;
+            pose.position.x = motion.x;
+            pose.position.y = motion.y;
+            pose.position.z = motion.z;
+            pose.orientation.w = motion.eeo;
             break;
     }
 
@@ -250,8 +250,6 @@ PathConstants ArmTrial::generateConstants( geometry_msgs::Pose pose, uint8_t pre
     double C = 0.;
     double D = 0.;
     double t = (double) precision;
-
-
 
     A = ( pose.position.x - _servo_based_fk_pose.position.x ) / t;
     B = ( pose.position.y - _servo_based_fk_pose.position.y ) / t;
@@ -334,8 +332,8 @@ void ArmTrial::motionCompleteCallback( const actionlib::SimpleClientGoalState &s
 {
     if( result->success )
     {
-        _on_action++;
-        if( _on_action >= _actions.size() )
+        _on_motion++;
+        if( _on_motion >= _motions.size() )
         {
             _complete = true;
         }

@@ -10,7 +10,7 @@ require('types')
 
 --trial 1
 return {
-    [1] =  { x =  6.0, y =  6.0, z = 7, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear" };
+    [1] =  { x =  12.0, y =  12.0, z = 12, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 5, shape = "linear" };
 
 
     --    [1] = { x = 12.0, y = 12.0, z = 10.0, eeo = 0.0, velocity = 20, type = DISCRETE_W, precision = 2, shape = "linear" };
