@@ -52,11 +52,10 @@ pkg_check_modules(lua liblua REQUIRED)
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+add_message_files(
+   FILES
+   action.msg
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -140,7 +139,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable( ${PROJECT_NAME}_driver src/arm_motion_driver.cpp src/MotionActor.cpp src/DynamixelController.cpp)
 add_executable( ${PROJECT_NAME}_kinematics src/arm_kinematics.cpp src/ArmKinematics.cpp )
-add_executable( ${PROJECT_NAME}_trial src/arm_trial.cpp src/ArmTrial.cpp src/TrialManager.cpp )
+add_executable( ${PROJECT_NAME}_trial src/arm_trial.cpp src/ArmTrial.cpp src/TrialManager.cpp src/Path.cpp )
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
