@@ -3,6 +3,8 @@
 //
 
 #include "arm_motion/ArmTrial.h"
+
+
 ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _trial_name(trial_name),
                                                                               _active(false), _complete(false),
                                                                               _on_motion(), _action_client( _node_handle, "arm_motion_driver", true )
@@ -27,7 +29,7 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _t
 
         for( int i = 1; i < size+1; i++ )
         {
-            MotionGuidelines motion;
+            arm_motion::MotionMsg motion;
             /* stack: trial table */
             /* get the motion at i */
             lua_pushinteger( lua, i );
@@ -54,7 +56,7 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _t
              */
             lua_pushstring( lua, "type" );
             lua_gettable( lua, -2 );
-            motion.type = (MotionType)lua_tointeger( lua, -1 );
+            motion.type = (uint8_t)lua_tointeger( lua, -1 );
             lua_pop( lua, 1 );
 
             /*
@@ -183,7 +185,7 @@ bool ArmTrial::start()
 
 void ArmTrial::generateMotion()
 {
-    MotionGuidelines &motion = _motions[_on_motion];
+    arm_motion::MotionMsg &motion = _motions[_on_motion];
 
     /*
      * TODO: currently this is all based on servo kinematics only, eventually will be some approximation of both vision and servo kinematics
@@ -215,7 +217,7 @@ void ArmTrial::generateMotion()
                          //TODO: figure out how to bind the feedback    boost::bind( &ArmTrial::motionFeedbackCallback, this, _1 ) );
 }
 
-geometry_msgs::Pose ArmTrial::generateMotionGoalPose( MotionGuidelines motion )
+geometry_msgs::Pose ArmTrial::generateMotionGoalPose( arm_motion::MotionMsg motion )
 {
     geometry_msgs::Pose pose;
 
@@ -249,7 +251,7 @@ PathConstants ArmTrial::generateConstants( geometry_msgs::Pose pose, uint8_t pre
     double B = 0.;
     double C = 0.;
     double D = 0.;
-    double t = (double) precision;
+    auto t = (double) precision;
 
     A = ( pose.position.x - _servo_based_fk_pose.position.x ) / t;
     B = ( pose.position.y - _servo_based_fk_pose.position.y ) / t;

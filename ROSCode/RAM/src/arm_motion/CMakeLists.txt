@@ -54,7 +54,7 @@ pkg_check_modules(lua liblua REQUIRED)
 ## Generate messages in the 'msg' folder
 add_message_files(
    FILES
-   ActionMsg.msg
+   MotionMsg.msg
 )
 
 ## Generate services in the 'srv' folder
