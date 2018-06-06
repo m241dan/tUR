@@ -11,6 +11,7 @@
 #include <vector>
 #include <actionlib/client/simple_action_client.h>
 #include <tuple>
+#include <cmath>
 
 extern "C" {
     #include "lua.h"
@@ -52,7 +53,7 @@ class ArmTrial
          */
         geometry_msgs::Pose generateMotionGoalPose( Action a );
         PathConstants generateConstants( geometry_msgs::Pose pose, uint8_t precision );
-        Path generatePath( std::vector<geometry_msgs::Pose> *path, PathConstants constants, uint8_t precision );
+        Path generatePath( PathConstants constants, uint8_t precision );
         void buildJointsPosition( std::vector<sensor_msgs::JointState> *goals, std::vector<geometry_msgs::Pose> *path );
         void buildJointsVelocity( std::vector<sensor_msgs::JointState> *goals, uint8_t velocity );
         void buildJointsEffort( std::vector<sensor_msgs::JointState> *goals, uint16_t smoothness, uint16_t tolerance );
