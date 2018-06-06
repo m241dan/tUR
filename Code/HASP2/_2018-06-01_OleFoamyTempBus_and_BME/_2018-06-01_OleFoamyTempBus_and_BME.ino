@@ -35,6 +35,8 @@ void loop()
 {
     sensors_ch1.requestTemperatures();
     sensors_ch2.requestTemperatures();
+    sensors_ch3.requestTemperatures();
+    sensors_ch4.requestTemperatures();
     int secs = millis() / 1000; //Oh my God I'm such a kludge. -JA
     Serial.println("*------------------------------------------*");
     Serial.print( String(secs) + " s, \tBANK 1: " + 
