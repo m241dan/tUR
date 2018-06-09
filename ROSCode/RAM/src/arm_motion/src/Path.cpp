@@ -85,7 +85,7 @@ void Path::pathToJointPositions()
             joints = inverseKinematics( pose );
             for( auto pos : joints.position )
             {
-                if( isnan( pos ) )
+                if( std::isnan( pos ) )
                 {
                     valid = false;
                     if( pose.position.z < 20.0 )
@@ -94,7 +94,7 @@ void Path::pathToJointPositions()
                     }
                     else
                     {
-                        pose.orientation.w += M_PI/8
+                        pose.orientation.w += M_PI/8;
                     }
                     break;
                 }

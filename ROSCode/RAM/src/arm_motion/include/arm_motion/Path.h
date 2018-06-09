@@ -10,6 +10,7 @@
 #include <arm_motion/MotionMsg.h>
 #include <sensor_msgs/JointState.h>
 #include <tuple>
+#include <cmath>
 
 const double length1 = 2.6;
 const double length2 = 15.465;
