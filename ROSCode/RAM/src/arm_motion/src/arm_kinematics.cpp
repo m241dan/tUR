@@ -5,10 +5,13 @@
 #include "arm_motion/arm_motion_node.h"
 #include "arm_motion/ArmKinematics.h"
 
+void aprilHandler( const apriltags_ros::AprilTagDetectionArrayConstPtr &msg );
+
 int main( int argc, char **argv )
 {
     ros::init( argc, argv, "arm_kinematics" );
-
+    ros::NodeHandle nh;
+    ros::Subscriber april_tags = nh.subscribe( "apriltag_detections_one/", 10, aprilHandler );
     ROS_INFO( "Arm Kinematics Node: Boot Starting" );
     ArmKinematics kinematics( "something" );
     ROS_INFO( "Arm Kinematics Node: Boot Complete" );
@@ -45,6 +48,15 @@ void aprilHandler( const apriltags_ros::AprilTagDetectionArrayConstPtr &msg )
         double siny = 2 * ( w * z + x * y );
         double cosy = 1 - 2 * ( y * y + z * z );
         yaw = atan2( siny, cosy );
+
+        if( roll < 0 )
+        {
+            roll += M_PI;
+            roll *= (-1);
+        }
+        else if( roll > 0 )
+            roll = M_PI - roll;
+
         ROS_INFO( "Tag - Roll: %f Pitch: %f Yaw: %f", roll, pitch, yaw );
     }
 }
