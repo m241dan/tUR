@@ -23,7 +23,7 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _t
     {
         /* factor to function */
         lua_len( lua, -1 );
-        int size = (int)lua_tointeger( lua, -1 );
+        auto size = (int)lua_tointeger( lua, -1 );
         lua_pop( lua, 1 );
 
 
@@ -47,7 +47,7 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _t
             /* stack: trial table -> motion[i] -> "velocity" */
             lua_gettable( lua, -2 );
             /* stack: trial table -> motion[i] -> velocity num */
-            motion.velocity = (uint8_t )lua_tointeger( lua, -1 );
+            motion.velocity = (uint8_t)lua_tointeger( lua, -1 );
             lua_pop( lua, 1 );
             /* stack: trial table -> motion[i] */
 
@@ -133,10 +133,6 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _t
         *success = _action_client.waitForServer( ros::Duration( 10 ) );
     }
 }
-ArmTrial::~ArmTrial()
-{
-
-}
 
 void ArmTrial::setupSubscribers()
 {
@@ -194,7 +190,7 @@ void ArmTrial::generateMotion()
     {
         arm_motion::ArmMotionGoal action_goal;
         action_goal.joints = srv.response.joints;
-        for( auto joint : action_goal.joints )
+        for( const auto &joint : action_goal.joints )
         {
             std::cout << joint << std::endl;
         }

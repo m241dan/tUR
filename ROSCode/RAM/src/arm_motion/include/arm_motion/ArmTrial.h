@@ -35,7 +35,7 @@ class ArmTrial
 {
     public:
         ArmTrial( std::string trial_name, lua_State *lua, bool *success );
-        ~ArmTrial();
+        ~ArmTrial() = default;
         bool isActive();
         bool isComplete();
         bool start();

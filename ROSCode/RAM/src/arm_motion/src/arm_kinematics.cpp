@@ -19,7 +19,7 @@ int main( int argc, char **argv )
 
 void aprilHandler( const apriltags_ros::AprilTagDetectionArrayConstPtr &msg )
 {
-    if( msg->detections.size() > 0 )
+    if( !msg->detections.empty() )
     {
         geometry_msgs::Pose pose = msg->detections[0].pose.pose;
         double x = pose.orientation.x;
