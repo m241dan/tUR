@@ -29,6 +29,8 @@ class Path
         void setJointPositionVelocities();
         void setJointPositionEffort();
 
+        sensor_msgs::JointState inverseKinematics( geometry_msgs::Pose &pose );
+
         arm_motion::MotionMsg _motion_guidelines;
         geometry_msgs::Pose _present_pose;
         geometry_msgs::Pose _final_pose;
