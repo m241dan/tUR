@@ -94,6 +94,7 @@ bool MotionActor::performMotionStep()
         ROS_INFO( "performing interior step" );
         for( uint8_t i = 0; i < MAX_SERVO; i++ )
         {
+            // TODO: this builds it wrong, it should be each part of the vector is a position and the JointState vector within is for each joint
             ROS_INFO( "performing loop" );
             uint8_t id = i + (uint8_t)1;
             double position =  joint_goals[i].position[goal_step];
