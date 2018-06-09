@@ -1,0 +1,3 @@
+arm_motion/MotionMsg motion
+---
+sensor_msgs/JointState[] joints
