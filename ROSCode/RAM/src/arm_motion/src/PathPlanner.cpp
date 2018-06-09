@@ -27,7 +27,9 @@ void PathPlanner::servoBasedFK( const geometry_msgs::Pose::ConstPtr &pose )
 
 bool PathPlanner::planPath( arm_motion::PathService::Request &guidelines, arm_motion::PathService::Response &path )
 {
+    ROS_INFO( "PathX[%f]", guidelines.motion.x );
     Path new_path( guidelines.motion, _servo_based_fk_pose );
+    path.joints = new_path.getPath();
 
     return true;
 }

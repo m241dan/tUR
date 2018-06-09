@@ -12,6 +12,7 @@
 #include <actionlib/client/simple_action_client.h>
 #include <tuple>
 #include <cmath>
+#include "arm_motion/PathService.h"
 
 extern "C" {
     #include "lua.h"
@@ -48,23 +49,8 @@ class ArmTrial
         void trialOperation( const ros::TimerEvent &event );
         void servoBasedFK( const geometry_msgs::Pose::ConstPtr &pose );
         void generateMotion();
-        /*
-         * TODO: turn path planning into its own node someday
-         */
-        geometry_msgs::Pose generateMotionGoalPose( arm_motion::MotionMsg motion );
-        PathConstants generateConstants( geometry_msgs::Pose pose, uint8_t precision );
-        Path generatePath( PathConstants constants, uint8_t precision );
-        void buildJointsPosition( std::vector<sensor_msgs::JointState> *goals, std::vector<geometry_msgs::Pose> *path );
-        void buildJointsVelocity( std::vector<sensor_msgs::JointState> *goals, uint8_t velocity );
-        void buildJointsEffort( std::vector<sensor_msgs::JointState> *goals, uint16_t smoothness, uint16_t tolerance );
-
         void motionCompleteCallback( const actionlib::SimpleClientGoalState &state, const arm_motion::ArmMotionResultConstPtr &result );
         void motionFeedbackCallback( const arm_motion::ArmMotionActionFeedbackConstPtr &feedback );
-
-        /*
-         * TODO: put inverse kinematics into the kinematics node
-         */
-        JointPositions inverseKinematics( geometry_msgs::Pose pose );
 
         /*
          * Variables
@@ -72,6 +58,7 @@ class ArmTrial
         /* ROS Specific */
         ros::NodeHandle _node_handle;
         ros::Subscriber _servo_based_fk_subscriber;
+        ros::ServiceClient _path_service;
         ros::Timer _run_timer;
         actionlib::SimpleActionClient<arm_motion::ArmMotionAction> _action_client;
 
