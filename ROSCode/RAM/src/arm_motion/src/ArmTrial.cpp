@@ -73,6 +73,7 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _t
             lua_pushstring( lua, "smoothness" );
             lua_gettable( lua, -2 );
             motion.smoothness = (uint16_t)lua_tointeger( lua, -1 );
+            ROS_INFO( "Smoothness[%d]", (int)motion.smoothness );
             lua_pop( lua, 1 );
 
             /*
@@ -193,6 +194,11 @@ void ArmTrial::generateMotion()
     {
         arm_motion::ArmMotionGoal action_goal;
         action_goal.joints = srv.response.joints;
+        for( auto joint : action_goal.joints )
+        {
+            std::cout << joint << std::endl;
+        }
+
         _action_client.sendGoal( action_goal,
                                  boost::bind( &ArmTrial::motionCompleteCallback, this, _1, _2 ),
                                  actionlib::SimpleActionClient<arm_motion::ArmMotionAction>::SimpleActiveCallback(),

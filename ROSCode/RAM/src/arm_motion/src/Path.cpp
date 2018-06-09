@@ -135,14 +135,14 @@ void Path::pathToJointPositions()
 
 void Path::setJointPositionVelocities()
 {
-    for( auto joint : _output_joint_states )
+    for( auto &joint : _output_joint_states )
     {
         double max_travel = *std::max_element( joint.position.begin(), joint.position.end());
         for( auto position : joint.position )
         {
             double velocity_mutiplier = position / max_travel;
             //This ensures that we always have a joint velocity of at least 2. Which is really slow, so plenty of time to interrupt
-            double velocity = 2.0 + (double)_motion_guidelines.velocity * velocity_mutiplier;
+            double velocity = 2.0 + fabs( (double)_motion_guidelines.velocity * velocity_mutiplier );
             joint.velocity.push_back( velocity );
         }
     }
@@ -150,14 +150,15 @@ void Path::setJointPositionVelocities()
 
 void Path::setJointPositionEffort()
 {
-    for( auto joint : _output_joint_states )
+    for( auto &joint : _output_joint_states )
     {
-        joint.effort = std::vector<double>( joint.position.size(), _motion_guidelines.smoothness );
+        ROS_INFO( "Smoothness[%d]", (int)_motion_guidelines.smoothness );
+        joint.effort = std::vector<double>( joint.position.size(), (double)_motion_guidelines.smoothness );
     }
-    auto last_effort = _output_joint_states.back().effort;
-    for( auto effort : last_effort )
+    auto &last_effort = _output_joint_states.back().effort;
+    for( auto &effort : last_effort )
     {
-        effort = _motion_guidelines.tolerance;
+        effort = (double)_motion_guidelines.tolerance;
     }
 }
 
