@@ -64,6 +64,47 @@ struct ambient_packet
 	signed short       ambpacket_dallas16_temp;
 };
 
+struct arm_packet
+{
+    unsigned char      arm_header = '\x33';
+    time_t             arm_time_recorded;
+
+    signed char        arm_turntable_temp;
+	unsigned char      arm_turntable_velo;
+    signed short       arm_turntable_goal;
+    signed short       arm_turntable_posi;
+    bool               arm_turntable_onoff;
+	
+    signed char        arm_shoulder_temp;
+	unsigned char      arm_shoulder_velo;
+    signed short       arm_shoulder_goal;
+    signed short       arm_shoulder_posi;
+    bool               arm_shoulder_onoff;
+	
+    signed char        arm_elbow_temp;
+	unsigned char      arm_elbow_velo;
+    signed short       arm_elbow_goal;
+    signed short       arm_elbow_posi;
+    bool               arm_elbow_onoff;
+
+    signed char        arm_wrist_temp;
+	unsigned char      arm_wrist_velo;
+    signed short       arm_wrist_goal;
+    signed short       arm_wrist_posi;
+    bool               arm_wrist_onoff;
+	
+	signed char        arm_gripper_temp;
+	unsigned char      arm_gripper_velo;
+    signed short       arm_gripper_goal;
+    signed short       arm_gripper_posi;
+    bool               arm_gripper_onoff;
+	
+	signed short       arm_armposition_in_mm_X;
+	signed short       arm_armposition_in_mm_Y;
+	signed short       arm_armposition_in_mm_Z;
+	signed short       arm_armorientation_in_rads;
+};
+
 struct bbox_packet
 {
     unsigned char      bbox_header = '\x32';
