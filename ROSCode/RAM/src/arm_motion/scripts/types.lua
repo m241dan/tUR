@@ -7,6 +7,6 @@
 --
 
 
-VISION = 0;
+VISION = 2;
 DISCRETE_R = 1;
-DISCRETE_W = 2;
+DISCRETE_W = 0;

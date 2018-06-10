@@ -22,6 +22,11 @@ enum
     ELBOW_SERVO, WRIST_SERVO, MAX_SERVO
 };
 
+enum
+{
+    DISCRETE_W, DISCRETE_R, VISION
+};
+
 const std::string servo_topic_names[MAX_SERVO] = {
         "servo_info/rotation", "servo_info/shoulder",
         "servo_info/elbow", "servo_info/wrist"

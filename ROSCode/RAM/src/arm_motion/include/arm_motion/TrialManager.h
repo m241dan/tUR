@@ -8,6 +8,7 @@
 #include "arm_motion/arm_motion_node.h"
 #include "arm_motion/ArmTrial.h"
 #include <vector>
+#include <memory>
 
 extern "C" {
 #include "lua.h"
@@ -44,7 +45,7 @@ class TrialManager
 
         /* Lua Specific */
         lua_State *_lua_handle;
-        std::vector<ArmTrial*> _trial_queue;
+        std::vector<std::unique_ptr<ArmTrial>> _trial_queue;
 };
 
 

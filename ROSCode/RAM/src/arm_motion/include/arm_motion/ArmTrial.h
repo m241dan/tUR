@@ -7,10 +7,12 @@
 
 #include "arm_motion/arm_motion_node.h"
 #include "arm_motion/ArmMotionAction.h"
-#include "arm_motion/Action.h"
+#include <arm_motion/MotionMsg.h>
 #include <vector>
 #include <actionlib/client/simple_action_client.h>
 #include <tuple>
+#include <cmath>
+#include "arm_motion/PathService.h"
 
 extern "C" {
     #include "lua.h"
@@ -19,10 +21,8 @@ extern "C" {
 }
 
 typedef std::tuple<double,double,double,double> PathConstants;
-#define MAKE_PATH_CONSTANTS( A, B, C, D ) std::make_tuple( A, B, C, D )
-
 typedef std::vector<double> JointPositions;
-
+typedef std::vector<geometry_msgs::Pose> Path;
 /*
  * TODO: update these if they change in both places
  */
@@ -35,7 +35,7 @@ class ArmTrial
 {
     public:
         ArmTrial( std::string trial_name, lua_State *lua, bool *success );
-        ~ArmTrial();
+        ~ArmTrial() = default;
         bool isActive();
         bool isComplete();
         bool start();
@@ -49,23 +49,8 @@ class ArmTrial
         void trialOperation( const ros::TimerEvent &event );
         void servoBasedFK( const geometry_msgs::Pose::ConstPtr &pose );
         void generateMotion();
-        /*
-         * TODO: turn path planning into its own node someday
-         */
-        geometry_msgs::Pose generateMotionGoalPose( Action a );
-        PathConstants generateConstants( geometry_msgs::Pose pose, uint8_t precision );
-        void generatePath( std::vector<geometry_msgs::Pose> *path, PathConstants constants, uint8_t precision );
-        void buildJointsPosition( std::vector<sensor_msgs::JointState> *goals, std::vector<geometry_msgs::Pose> *path );
-        void buildJointsVelocity( std::vector<sensor_msgs::JointState> *goals, uint8_t velocity );
-        void buildJointsEffort( std::vector<sensor_msgs::JointState> *goals, uint16_t smoothness, uint16_t tolerance );
-
         void motionCompleteCallback( const actionlib::SimpleClientGoalState &state, const arm_motion::ArmMotionResultConstPtr &result );
         void motionFeedbackCallback( const arm_motion::ArmMotionActionFeedbackConstPtr &feedback );
-
-        /*
-         * TODO: put inverse kinematics into the kinematics node
-         */
-        JointPositions inverseKinematics( geometry_msgs::Pose pose );
 
         /*
          * Variables
@@ -73,6 +58,7 @@ class ArmTrial
         /* ROS Specific */
         ros::NodeHandle _node_handle;
         ros::Subscriber _servo_based_fk_subscriber;
+        ros::ServiceClient _path_service;
         ros::Timer _run_timer;
         actionlib::SimpleActionClient<arm_motion::ArmMotionAction> _action_client;
 
@@ -81,8 +67,8 @@ class ArmTrial
 
         bool _active;
         bool _complete;
-        std::vector<Action> _actions;
-        unsigned long _on_action;
+        std::vector<arm_motion::MotionMsg> _motions;
+        unsigned long _on_motion;
 };
 
 

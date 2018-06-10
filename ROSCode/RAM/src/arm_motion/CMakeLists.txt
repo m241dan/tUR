@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   sensor_msgs
   apriltags_ros
+  geometry_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -52,18 +53,16 @@ pkg_check_modules(lua liblua REQUIRED)
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+add_message_files(
+   FILES
+   MotionMsg.msg
+)
 
-## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+# Generate services in the 'srv' folder
+ add_service_files(
+   FILES
+   PathService.srv
+)
 
 ## Generate actions in the 'action' folder
 add_action_files(
@@ -140,7 +139,8 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable( ${PROJECT_NAME}_driver src/arm_motion_driver.cpp src/MotionActor.cpp src/DynamixelController.cpp)
 add_executable( ${PROJECT_NAME}_kinematics src/arm_kinematics.cpp src/ArmKinematics.cpp )
-add_executable( ${PROJECT_NAME}_trial src/arm_trial.cpp src/ArmTrial.cpp src/TrialManager.cpp )
+add_executable( ${PROJECT_NAME}_trial src/arm_trial.cpp src/ArmTrial.cpp src/TrialManager.cpp src/Path.cpp )
+add_executable( ${PROJECT_NAME}_path src/path_planning.cpp src/PathPlanner.cpp src/Path.cpp )
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -153,6 +153,7 @@ add_executable( ${PROJECT_NAME}_trial src/arm_trial.cpp src/ArmTrial.cpp src/Tri
 add_dependencies(${PROJECT_NAME}_driver ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(${PROJECT_NAME}_kinematics ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(${PROJECT_NAME}_trial ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_path ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_driver
@@ -161,10 +162,13 @@ target_link_libraries(${PROJECT_NAME}_driver
 
 target_link_libraries(${PROJECT_NAME}_kinematics
         ${catkin_LIBRARIES}
-)
+        )
 target_link_libraries(${PROJECT_NAME}_trial
         ${catkin_LIBRARIES}
         ${lua_LIBRARIES}
+)
+target_link_libraries(${PROJECT_NAME}_path
+        ${catkin_LIBRARIES}
 )
 #############
 ## Install ##
