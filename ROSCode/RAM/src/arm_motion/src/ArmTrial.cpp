@@ -5,7 +5,7 @@
 #include "arm_motion/ArmTrial.h"
 
 
-ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _trial_name(trial_name),
+ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, geometry_msgs::Pose &pose, bool *success ) : _servo_based_fk_pose(pose),_trial_name(trial_name),
                                                                               _active(false), _complete(false),
                                                                               _on_motion(), _action_client( _node_handle, "arm_motion_driver", true )
 {
@@ -128,15 +128,14 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, bool *success ) : _t
         }
         lua_pop( lua, 1 );
         /* stack: nil */
-        setupSubscribers();
+        setupServiceClient();
         setupTimers();
         *success = _action_client.waitForServer( ros::Duration( 10 ) );
     }
 }
 
-void ArmTrial::setupSubscribers()
+void ArmTrial::setupServiceClient()
 {
-    _servo_based_fk_subscriber = _node_handle.subscribe( "kinematics/servo_based_fk", 10, &ArmTrial::servoBasedFK, this );
     _path_service = _node_handle.serviceClient<arm_motion::PathService>("plan_a_path");
 }
 void ArmTrial::setupTimers()
@@ -152,6 +151,7 @@ void ArmTrial::trialOperation( const ros::TimerEvent &event )
 void ArmTrial::servoBasedFK( const geometry_msgs::Pose::ConstPtr &pose )
 {
     _servo_based_fk_pose = *pose;
+    ROS_INFO( "%s: RECEIving fk", __FUNCTION__ );
 }
 
 bool ArmTrial::isActive()
@@ -186,6 +186,8 @@ void ArmTrial::generateMotion()
     arm_motion::PathService srv;
 
     srv.request.motion = _motions[_on_motion];
+    srv.request.present_position = _servo_based_fk_pose;
+    std::cout << "Sending FK: " << _servo_based_fk_pose << std::endl;
     if( _path_service.call( srv ) )
     {
         arm_motion::ArmMotionGoal action_goal;

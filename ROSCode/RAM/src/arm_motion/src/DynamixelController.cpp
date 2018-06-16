@@ -19,7 +19,7 @@ DynamixelController::DynamixelController( std::string bus )
             ROS_INFO( "%s: Servos verified and online.", __FUNCTION__ );
             ROS_INFO( "%s: Servo defaults being send.", __FUNCTION__ );
             initializeServos();
-            //torqueOn();
+            torqueOn();
             setupPublishers();
             setupTimer();
         }
@@ -74,6 +74,7 @@ int32_t DynamixelController::benchRead( uint8_t id, std::string command )
 std::vector<int32_t> &DynamixelController::getServoPositions()
 {
     static std::vector<int32_t> servo_positions;
+    servo_positions.clear();
     for( int i = 0; i < MAX_SERVO; i++ )
     {
         servo_positions.push_back( servo_info[i].Present_Position );
@@ -84,6 +85,7 @@ std::vector<int32_t> &DynamixelController::getServoPositions()
 std::vector<int32_t> &DynamixelController::getServoGoals()
 {
     static std::vector<int32_t> servo_goals;
+    servo_goals.clear();
     for( int i = 0; i < MAX_SERVO; i++ )
     {
         servo_goals.push_back( servo_info[i].Goal_Position );
@@ -312,7 +314,7 @@ inline void DynamixelController::updateServos()
         joints.velocity[i] = servo_info[i].Present_Velocity;
         joints.effort[i] = servo_info[i].Present_Current;
     }
-    joints.position[3] *= (-1); //specific to our arm
+    //joints.position[3] *= (-1); //specific to our arm
 }
 
 inline void DynamixelController::publishServoInfo()

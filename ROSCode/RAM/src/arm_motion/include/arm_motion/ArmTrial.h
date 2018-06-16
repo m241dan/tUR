@@ -34,7 +34,7 @@ typedef std::vector<geometry_msgs::Pose> Path;
 class ArmTrial
 {
     public:
-        ArmTrial( std::string trial_name, lua_State *lua, bool *success );
+        ArmTrial( std::string trial_name, lua_State *lua, geometry_msgs::Pose &pose, bool *success );
         ~ArmTrial() = default;
         bool isActive();
         bool isComplete();
@@ -44,7 +44,7 @@ class ArmTrial
         /*
          * Functions
          */
-        void setupSubscribers();
+        void setupServiceClient();
         void setupTimers();
         void trialOperation( const ros::TimerEvent &event );
         void servoBasedFK( const geometry_msgs::Pose::ConstPtr &pose );
@@ -63,7 +63,7 @@ class ArmTrial
         actionlib::SimpleActionClient<arm_motion::ArmMotionAction> _action_client;
 
         std::string _trial_name;
-        geometry_msgs::Pose _servo_based_fk_pose;
+        geometry_msgs::Pose &_servo_based_fk_pose;
 
         bool _active;
         bool _complete;
