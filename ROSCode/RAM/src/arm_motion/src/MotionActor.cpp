@@ -13,7 +13,7 @@ MotionActor::MotionActor( std::string name, DynamixelController &controller ) :
     action_server.registerGoalCallback( boost::bind( &MotionActor::goalCallBack, this ) );
     action_server.registerPreemptCallback( boost::bind( &MotionActor::preemptCallBack, this ) );
     action_server.start();
-    action_timer = node_handle.createTimer( ros::Duration(0.1), boost::bind( &MotionActor::motionMonitor, this, _1 ), false, false );
+    action_timer = node_handle.createTimer( ros::Duration(0.05), boost::bind( &MotionActor::motionMonitor, this, _1 ), false, false );
 }
 
 void MotionActor::goalCallBack()
