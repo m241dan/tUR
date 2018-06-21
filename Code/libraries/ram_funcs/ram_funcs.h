@@ -133,10 +133,12 @@ struct pathlog_packet
 	unsigned short     pathlog_current_pos_joint2;
 	unsigned short     pathlog_current_pos_joint3;
 	unsigned short     pathlog_current_pos_joint4;
+	unsigned short     pathlog_current_pos_joint5;
 	unsigned short     pathlog_total_trial_count;
 	unsigned short     pathlog_trial_ID;
 	time_t             pathlog_pathstep_time_start;
 	time_t             pathlog_pathstep_time_end;
+	unsigned short     pathlog_gripper_position;
 };
 
 /*
