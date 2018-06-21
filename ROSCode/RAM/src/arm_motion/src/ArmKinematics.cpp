@@ -32,10 +32,10 @@ void ArmKinematics::updateServoForwardKinematics()
     std::vector<Matrix4> DHMatrices;
 
     /* need to load DH parameters in from LUA */
-    double theta[MAX_SERVO] = { 0, 0, 0, 0 };
-    double alpha[MAX_SERVO] = { M_PI_2, 0 , 0, 0};
-    double r[MAX_SERVO] = { 0, length2, length3, length4 };
-    double d[MAX_SERVO] = { length1, 0, 0, 0 };
+    const double theta[MAX_SERVO] = { 0         , 0         , 0         , 0         };
+    const double alpha[MAX_SERVO] = { M_PI_2    , 0         , 0         , 0         };
+    const double r[MAX_SERVO] =     { 0         , length2   , length3   , length4   };
+    const double d[MAX_SERVO] =     { length1   , 0         , 0         , 0         };
 
     DHMatrices.clear();
     for( int i = 0; i < MAX_SERVO; i++ )
@@ -43,11 +43,7 @@ void ArmKinematics::updateServoForwardKinematics()
         DHMatrices.push_back( HomogenousDHMatrix( _joints.position[i] + theta[i],
                                             alpha[i], r[i], d[i] ) );
     }
-    Matrix4 Final = DHMatrices[0];
-    for( int i = 1; i < MAX_SERVO; i++ )
-    {
-        Final *= DHMatrices[i];
-    }
+    Matrix4 Final = DHMatrices[0] * DHMatrices[1] * DHMatrices[2] * DHMatrices[3];
 
     _servo_based_fk.position.x = Final( 0, 3 );
     _servo_based_fk.position.y = Final( 1, 3 );

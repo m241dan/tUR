@@ -1,3 +1,4 @@
 arm_motion/MotionMsg motion
+geometry_msgs/Pose present_position
 ---
 sensor_msgs/JointState[] joints

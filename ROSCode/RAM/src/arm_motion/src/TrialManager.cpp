@@ -15,6 +15,7 @@ TrialManager::TrialManager( std::string name )
 void TrialManager::setupSubscribers()
 {
     trial_selector = _node_handle.subscribe( "trial/selector", 10, &TrialManager::enqueueTrial, this );
+    servo_based_fk_subscriber = _node_handle.subscribe( "kinematics/servo_based_fk", 10, &TrialManager::servoFK, this );
 }
 
 void TrialManager::setupPublishers()
@@ -40,7 +41,7 @@ void TrialManager::enqueueTrial( const std_msgs::UInt8ConstPtr &msg )
 
     ss << "trial" << (int)msg->data;
 
-    _trial_queue.push_back( std::unique_ptr<ArmTrial>( new ArmTrial( ss.str(), _lua_handle, &success ) ) );
+    _trial_queue.push_back( std::unique_ptr<ArmTrial>( new ArmTrial( ss.str(), _lua_handle, _servo_based_fk, &success ) ) );
     if( success )
     {
         if( _trial_queue.size() == 1 )  //only trial in the queue, start trial and start monitor ( theoretically they should both be paused )
@@ -54,6 +55,12 @@ void TrialManager::enqueueTrial( const std_msgs::UInt8ConstPtr &msg )
         ROS_INFO( "%s: failed to enqueue %s", __FUNCTION__, ss.str().c_str() );
         _trial_queue.pop_back();    //trial on there is a dead trial, so get rid of it
     }
+}
+
+void TrialManager::servoFK( const geometry_msgs::PoseConstPtr &msg )
+{
+    _servo_based_fk = *msg;
+    std::cout << "Receiving FK" << std::endl;
 }
 
 void TrialManager::trialMonitor( const ros::TimerEvent &event )

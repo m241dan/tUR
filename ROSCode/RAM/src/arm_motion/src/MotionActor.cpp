@@ -13,7 +13,7 @@ MotionActor::MotionActor( std::string name, DynamixelController &controller ) :
     action_server.registerGoalCallback( boost::bind( &MotionActor::goalCallBack, this ) );
     action_server.registerPreemptCallback( boost::bind( &MotionActor::preemptCallBack, this ) );
     action_server.start();
-    action_timer = node_handle.createTimer( ros::Duration(0.1), boost::bind( &MotionActor::motionMonitor, this, _1 ), false, false );
+    action_timer = node_handle.createTimer( ros::Duration(0.05), boost::bind( &MotionActor::motionMonitor, this, _1 ), false, false );
 }
 
 void MotionActor::goalCallBack()
@@ -21,7 +21,7 @@ void MotionActor::goalCallBack()
     /*setup the new motion*/
     joint_goals = action_server.acceptNewGoal()->joints;
     goal_step = 0;
-    goal_max = (uint8_t)joint_goals[0].position.size();
+    goal_max = (uint8_t)joint_goals.size();
     performMotionStep(); //the first, as soon as it receives the goal
     action_timer.start();
 }
@@ -37,10 +37,11 @@ void MotionActor::motionMonitor( const ros::TimerEvent &event )
     if( action_server.isActive() )
     {
         ROS_INFO( "%s: is active", __FUNCTION__ );
-        if( checkMotionStep() ); // check for arrival
+        if( checkMotionStep() ) // check for arrival
         {
             goal_step++;
-            if( goal_step != goal_max )
+            ROS_INFO( "%s: goal_step[%d] goal_max[%d]", __FUNCTION__, goal_step, goal_max );
+            if( goal_step < goal_max )
             {
                 /* if we haven't completed motion */
                 if( !performMotionStep() )
@@ -77,10 +78,12 @@ bool MotionActor::checkMotionStep()
 
     for( int i = 0; i < MAX_SERVO; i++ )
     {
-        auto tolerance = (int32_t)joint_goals.front().effort[i]; //oddly this works out that we can use the same i for all three
+        auto tolerance = (int32_t)joint_goals[goal_step].effort[i]; //oddly this works out that we can use the same i for all three
         ROS_INFO( "%s: checking tolerance: %d ", __FUNCTION__, (int)tolerance );
+        ROS_INFO( "%s: Servo[%d]: Current Position [%d] Goal Position [%d]", __FUNCTION__, i, servo_positions[i], servo_goals[i] );
         if( abs( servo_positions[i] - servo_goals[i] ) > tolerance )
         {
+            ROS_INFO( "%s: NOT ARRIVED!!!!!!", __FUNCTION__ );
             arrived = false;
             break;
         }
@@ -96,10 +99,11 @@ bool MotionActor::performMotionStep()
     {
         ROS_INFO( "performing loop" );
         uint8_t id = 0;
-        for( auto velocity : joint_goals.front().velocity )
+        for( auto velocity : joint_goals[goal_step].velocity )
         {
+            id++;
             ROS_INFO( "%s: attempting to write id[%d] and velocity[%d]", __FUNCTION__, (int)id, (int)velocity );
-            if( !_controller.changeVelocity( ++id, (uint32_t )velocity ) )
+            if( !_controller.changeVelocity( id, (uint32_t )velocity ) )
             {
                 ROS_ERROR( "%s: failed to write profile velocity[%d] to servo[%d]", __FUNCTION__, (int)velocity, (int)id );
                 success = false;
@@ -107,10 +111,11 @@ bool MotionActor::performMotionStep()
         }
 
         id = 0;
-        for( auto position : joint_goals.front().position )
+        for( auto position : joint_goals[goal_step].position )
         {
+            id++;
             ROS_INFO( "%s: attempting to write id[%d] and position[%f]", __FUNCTION__, (int)id, position );
-            if(! _controller.changePosition( ++id, position ) )
+            if(! _controller.changePosition( id, position ) )
             {
                 ROS_ERROR( "%s: failed to write goal position[%f] to servo[%d]", __FUNCTION__, position, (int)id );
                 success = false;

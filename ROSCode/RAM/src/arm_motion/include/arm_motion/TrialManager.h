@@ -30,6 +30,7 @@ class TrialManager
         void setupLua();
 
         void enqueueTrial( const std_msgs::UInt8ConstPtr &msg );
+        void servoFK( const geometry_msgs::PoseConstPtr &msg );
         void trialMonitor( const ros::TimerEvent &event );
         bool nextTrial();
         void pauseMonitor();
@@ -37,9 +38,11 @@ class TrialManager
         /*
          * Variables
          */
+        geometry_msgs::Pose _servo_based_fk;
         /* Ros Specific */
         ros::NodeHandle _node_handle;
         ros::Subscriber trial_selector;
+        ros::Subscriber servo_based_fk_subscriber;
 
         ros::Timer _trial_monitor;
 
