@@ -8,7 +8,7 @@ struct data_packet
     unsigned char       datapacket_header[2] = { '\x1' , '\x21' };
     unsigned char       datapacket_i2cID;
     time_t              datapacket_time_sent_to_HASP;
-    time_t              datapacket_time_sent_to_mgr;
+    time_t              datapacket_time_sent_to_mngr;
     unsigned char       datapacket_num_data_chunks;
     unsigned char       datapacket_sizeof_data_chunks[2];
     unsigned char       datapacket_checksumz[28];
@@ -120,6 +120,23 @@ struct bbox_packet
     signed short       bbox_potentiometer_knob;
     signed short       bbox_UNUSED01;
     signed short       bbox_UNUSED02;
+};
+
+struct pathlog_packet
+{
+    unsigned char      pathlog_header = '\x35';
+    double             pathlog_target_pos_x;
+	double             pathlog_target_pos_y;
+	double             pathlog_target_pos_z;
+	double             pathlog_target_pos_angle;
+	unsigned short     pathlog_current_pos_joint1;
+	unsigned short     pathlog_current_pos_joint2;
+	unsigned short     pathlog_current_pos_joint3;
+	unsigned short     pathlog_current_pos_joint4;
+	unsigned short     pathlog_total_trial_count;
+	unsigned short     pathlog_trial_ID;
+	time_t             pathlog_pathstep_time_start;
+	time_t             pathlog_pathstep_time_end;
 };
 
 /*
