@@ -19,7 +19,6 @@ find_package(catkin REQUIRED COMPONENTS
   apriltags_ros
   geometry_msgs
 )
-
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 # find_package(catkin REQUIRED COMPONENTS actionlib_msgs sensor_msgs)
@@ -162,7 +161,7 @@ target_link_libraries(${PROJECT_NAME}_driver
 
 target_link_libraries(${PROJECT_NAME}_kinematics
         ${catkin_LIBRARIES}
-        )
+)
 target_link_libraries(${PROJECT_NAME}_trial
         ${catkin_LIBRARIES}
         ${lua_LIBRARIES}
