@@ -10,10 +10,6 @@
 #include <eigen3/Eigen/Eigen>
 
 /* should read this in from Lua */
-#define length1 2.6
-#define length2 14.465
-#define length3 8.927
-#define length4 11.055
 typedef Eigen::Matrix<float,4,4> Matrix4;
 
 class ArmKinematics
@@ -33,7 +29,7 @@ class ArmKinematics
         void publishServoForwardKinematics();
 
         Matrix4 HomogenousDHMatrix( double theta, double alpha, double r, double d );
-
+        void KDL_FK();
         /*
          * Variables
          */
