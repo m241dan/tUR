@@ -22,6 +22,7 @@ DynamixelController::DynamixelController( std::string bus )
             torqueOn();
             setupPublishers();
             setupTimer();
+            changePosition( WRIST_ROT_SERVO+1, 0.0 );
         }
         for( int i = 0; i < MAX_SERVO; i++ )
         {
@@ -134,9 +135,17 @@ bool DynamixelController::changePosition( uint8_t id, double radian )
     ServoCommand com;
     ROS_INFO( "%s: ID[%d] Position[%f]", __FUNCTION__, (int)id, radian );
 
+    if( id == 4 )
+        radian *= -1;
+
+    std::cout << std::endl;
+    std::cout << "ID[" << (int)id << "] Present[" << servo_info[id-1].Present_Position << "] Goal[" << servo_info[id-1].Goal_Position << "]" << std::endl;
+
+    std::cout << "Radian Goal[" << radian << "]" << std::endl;
     com.id = id;
     com.command = "Goal_Position";
-    com.value = _bench.convertRadian2Value( id, radian );
+    com.value = _bench.convertRadian2Value( id, (float)radian );
+    std::cout << "New Goal[" << (int)com.value << "]" << std::endl;
 
     return benchWrite( com );
 }
@@ -175,7 +184,7 @@ bool DynamixelController::verifyServos( int expected_number )
     {
 
         uint8_t num_servos;
-        uint8_t servo_ids[4] = {0, 0, 0, 0};
+        uint8_t servo_ids[MAX_SERVO] = {0, 0, 0, 0, 0};
 
         _bench.scan( servo_ids, &num_servos, expected_number );
 
@@ -191,7 +200,7 @@ bool DynamixelController::verifyServos( int expected_number )
              * make sure there are no zero ID servos
              * this is sort of a useless test... but humor me for now
              */
-            for( int i = 0; i < 4; i++ )
+            for( int i = 0; i < MAX_SERVO; i++ )
             {
                 if( servo_ids[i] == 0 )
                 {
@@ -314,7 +323,7 @@ inline void DynamixelController::updateServos()
         joints.velocity[i] = servo_info[i].Present_Velocity;
         joints.effort[i] = servo_info[i].Present_Current;
     }
-    //joints.position[3] *= (-1); //specific to our arm
+    joints.position[3] *= (-1); //specific to our arm
 }
 
 inline void DynamixelController::publishServoInfo()
