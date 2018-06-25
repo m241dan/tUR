@@ -19,7 +19,8 @@
 enum
 {
     ROTATION_SERVO = 0, SHOULDER_SERVO,
-    ELBOW_SERVO, WRIST_SERVO, MAX_SERVO
+    ELBOW_SERVO, WRIST_SERVO, WRIST_ROT_SERVO,
+    MAX_SERVO
 };
 
 enum
@@ -29,17 +30,22 @@ enum
 
 const std::string servo_topic_names[MAX_SERVO] = {
         "servo_info/rotation", "servo_info/shoulder",
-        "servo_info/elbow", "servo_info/wrist"
+        "servo_info/elbow", "servo_info/wrist",
+        "servo_info/wrist_rotation"
 };
 
 const std::string servo_names[MAX_SERVO] = {
         "rotation servo", "shoulder servo",
-        "elbow servo", "wrist servo"
+        "elbow servo", "wrist servo",
+        "wrist rotation servo"
 };
 #define MAX_VELOCITY 20
 #define PID_I_GAIN 300
 #define MAX_COMMAND 51
-
+const double length1 = 2.6;
+const double length2 = 15.465;
+const double length3 = 8.927;
+const double length4 = 13.00;
 typedef struct servo_command
 {
     uint8_t id = 0;
