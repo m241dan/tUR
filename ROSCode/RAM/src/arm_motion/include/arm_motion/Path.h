@@ -12,11 +12,6 @@
 #include <tuple>
 #include <cmath>
 
-const double length1 = 2.6;
-const double length2 = 15.465;
-const double length3 = 8.927;
-const double length4 = 11.055;
-
 class Path
 {
     public:
