@@ -76,7 +76,7 @@ bool MotionActor::checkMotionStep()
     std::vector<int32_t> servo_positions = _controller.getServoPositions();
     std::vector<int32_t> servo_goals = _controller.getServoGoals();
 
-    for( int i = 0; i < MAX_SERVO; i++ )
+    for( int i = 0; i < MAX_SERVO-1; i++ )
     {
         auto tolerance = (int32_t)joint_goals[goal_step].effort[i]; //oddly this works out that we can use the same i for all three
         ROS_INFO( "%s: checking tolerance: %d ", __FUNCTION__, (int)tolerance );
