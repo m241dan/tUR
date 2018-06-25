@@ -29,26 +29,16 @@ void ArmKinematics::servoInfoHandler( const sensor_msgs::JointState::ConstPtr &j
 
 void ArmKinematics::updateServoForwardKinematics()
 {
-    std::vector<Matrix4> DHMatrices;
 
-    /* need to load DH parameters in from LUA */
-    const double theta[MAX_SERVO] = { 0         , 0         , 0         , 0         };
-    const double alpha[MAX_SERVO] = { M_PI_2    , 0         , 0         , 0         };
-    const double r[MAX_SERVO] =     { 0         , length2   , length3   , length4   };
-    const double d[MAX_SERVO] =     { length1   , 0         , 0         , 0         };
-
-    DHMatrices.clear();
-    for( int i = 0; i < MAX_SERVO; i++ )
-    {
-        DHMatrices.push_back( HomogenousDHMatrix( _joints.position[i] + theta[i],
-                                            alpha[i], r[i], d[i] ) );
-    }
-    Matrix4 Final = DHMatrices[0] * DHMatrices[1] * DHMatrices[2] * DHMatrices[3];
+    Matrix4 H0_1    = HomogenousDHMatrix( _joints.position[0], M_PI_2, 0, length1 );
+    Matrix4 H1_2    = HomogenousDHMatrix( _joints.position[1], 0, length2, 0 );
+    Matrix4 H2_3    = HomogenousDHMatrix( _joints.position[2], 0, length3, 0 );
+    Matrix4 H3_4    = HomogenousDHMatrix( _joints.position[3], 0, length4, 0 );
+    Matrix4 Final   = H0_1 * H1_2 * H2_3 * H3_4;
 
     _servo_based_fk.position.x = Final( 0, 3 );
     _servo_based_fk.position.y = Final( 1, 3 );
     _servo_based_fk.position.z = Final( 2, 3 );
-    /* ugly, should be handled with a lua config for universality */
     _servo_based_fk.orientation.w = _joints.position[1] + _joints.position[2] + _joints.position[3];
 }
 
@@ -61,10 +51,10 @@ Matrix4 ArmKinematics::HomogenousDHMatrix( double theta, double alpha, double r,
 {
     Matrix4 h_dh_matrix;
 
-    h_dh_matrix << cos(theta), (-1.0)*sin(theta)*cos(alpha), sin(theta)*sin(alpha), r*cos(theta),
-            sin(theta), cos(theta)*cos(alpha), (-1.0)*cos(theta)*sin(alpha), r*sin(theta),
-            0, sin(alpha), cos(alpha), d,
-            0, 0, 0, 1;
+    h_dh_matrix <<  cos(theta),    -sin(theta)*cos(alpha),          sin(theta)*sin(alpha),  r*cos(theta),
+                    sin(theta),     cos(theta)*cos(alpha),         -cos(theta)*sin(alpha),  r*sin(theta),
+                    0,              sin(alpha),                     cos(alpha),             d,
+                    0,              0,                              0,                      1;
 
     return h_dh_matrix;
 }
