@@ -110,14 +110,15 @@ struct bbox_packet
     unsigned char      bbox_header = '\x32';
     time_t             bbox_time_recorded;
 	
-    bool               bbox_rocker_horiz;
-    bool               bbox_rocker_verti;
-    bool               bbox_toggle_horiz;
-    bool               bbox_toggle_verti;
-    bool               bbox_blubutton;
-    bool               bbox_flap;
-    signed short       bbox_potentiometer_lever;
-    signed short       bbox_potentiometer_knob;
+    byte               bbox_rocker_horiz;
+    byte               bbox_rocker_verti;
+    byte               bbox_toggle_horiz;
+    byte               bbox_toggle_verti;
+    byte               bbox_button_blu;
+	byte               bbox_button_blu_press_recorded;
+    byte               bbox_flap;
+    byte               bbox_potentiometer_lever;
+    byte               bbox_potentiometer_knob;
     signed short       bbox_UNUSED01;
     signed short       bbox_UNUSED02;
 };
