@@ -1,5 +1,6 @@
 <launch>
     <arg name="cam_config" default="file:///home/korisd/mylaptop_cam_calib/ost.yaml"/>
+    <!-- <arg name="cam_config" default="file:///home/korisd/tUR/ROSCode/RAM/camera_info/ost.yaml"/> -->
     <arg name="dev1" default="/dev/video0" />
     <arg name="dynamixel_bus" default="/dev/ttyUSB0" />
     <env name="LUA_PATH" value="$(env HOME)/tUR/ROSCode/RAM/src/arm_motion/scripts/?.lua" />
@@ -10,7 +11,8 @@
 
    <node name="usb_cam_one" pkg="usb_cam" type="usb_cam_node" output="screen" >
       <param name="video_device" value="$(arg dev1)" />
-      <param name="image_width" value="640" />
+      <!-- <param name="image_width" value="720" /> -->
+      <!-- <param name="image_width" value="680" /> -->
       <param name="image_height" value="480" />
       <param name="pixel_format" value="yuyv" />
       <param name="camera_frame_id" value="usb_cam" />
@@ -25,7 +27,15 @@
       <remap from="tag_detections" to="/apriltag_detections_one" />
       <param name="tag_family" type="str" value="16h5" />
       <rosparam param="tag_descriptions">[
-          {id:  0,  size: 0.046} ]
+          {id:  0,  size: 0.046},
+          {id:  2,  size: 0.046},
+          {id:  3,  size: 0.046},
+          {id:  6,  size: 0.046},
+          {id:  8,  size: 0.046},
+          {id:  12,  size: 0.046},
+          {id:  27,  size: 0.046},
+          {id:  28,  size: 0.046},
+          {id:  29,  size: 0.046} ]
       </rosparam>
    </node>
 </launch>
