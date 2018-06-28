@@ -3,6 +3,8 @@
 
 #include "Time.h";
 
+int DEADZONE_WIDTH = 2; //By how many units (range 0-100) does the potentiometer ignore noise. 2 may be a touch high; consider nudging down to 1 later. -JA
+
 struct data_packet
 {
     unsigned char       datapacket_header[2] = { '\x1' , '\x21' };
@@ -110,17 +112,54 @@ struct bbox_packet
     unsigned char      bbox_header = '\x32';
     time_t             bbox_time_recorded;
 	
-    byte               bbox_rocker_horiz;
-    byte               bbox_rocker_verti;
-    byte               bbox_toggle_horiz;
-    byte               bbox_toggle_verti;
-    byte               bbox_button_blu;
-	byte               bbox_button_blu_press_recorded;
-    byte               bbox_flap;
-    byte               bbox_potentiometer_lever;
-    byte               bbox_potentiometer_knob;
-    signed short       bbox_UNUSED01;
-    signed short       bbox_UNUSED02;
+    byte               bbox_rocker_horiz  = 0;
+    byte               bbox_rocker_verti  = 0;
+    byte               bbox_toggle_horiz  = 0;
+    byte               bbox_toggle_verti  = 0;
+    byte               bbox_button_blu = 0;
+    byte               bbox_button_blu_press_recorded = 0;
+    byte               bbox_flap = 0;
+    byte               bbox_potentiometer_lever = 0;
+    byte               bbox_potentiometer_knob = 0;
+    bool operator==(const bbox_packet& rhs)
+    {
+        bool same = true;
+        if (bbox_rocker_horiz != rhs.bbox_rocker_horiz)
+        {
+          same = false;
+        }
+        if (bbox_rocker_verti != rhs.bbox_rocker_verti)
+        {
+          same = false;
+        }
+        if (bbox_toggle_horiz != rhs.bbox_toggle_horiz)
+        {
+          same = false;
+        }
+        if (bbox_toggle_verti != rhs.bbox_toggle_verti)
+        {
+          same = false;
+        }
+        if (bbox_button_blu_press_recorded != rhs.bbox_button_blu_press_recorded)
+        {
+          same = false;
+        }
+        if (bbox_flap != rhs.bbox_flap)
+        {
+          same = false;
+        }
+        //Put in a dead zone so that the pots don't give false-positive changes.
+		if ((bbox_potentiometer_lever > (rhs.bbox_potentiometer_lever + DEADZONE_WIDTH)) || (bbox_potentiometer_lever < (rhs.bbox_potentiometer_lever - DEADZONE_WIDTH)))
+        {
+          same = false;
+        }
+		//Put in a dead zone so that the pots don't give false-positive changes.
+		if ((bbox_potentiometer_knob > (rhs.bbox_potentiometer_knob + DEADZONE_WIDTH)) || (bbox_potentiometer_knob < (rhs.bbox_potentiometer_knob - DEADZONE_WIDTH)))
+        {
+          same = false;
+        }
+    return same;  
+	};
 };
 
 struct pathlog_packet

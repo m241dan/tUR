@@ -19,7 +19,7 @@ int present_bbox_button_blu_press_recorded    = 0;
 int present_bbox_flap;
 int present_bbox_potentiometer_lever = 0;
 int present_bbox_potentiometer_knob = 0;
-float potentiometer_truncator_hack = 10.23;
+float potentiometer_truncator_hack = 10.23; //So defined because the default range of this pot is 0-1023
 
 //Build a data structure to condense all bbox information into an easily-checkable blurb
 /*TODO
@@ -28,68 +28,10 @@ float potentiometer_truncator_hack = 10.23;
  * swap this out for an instantiation of the struct already canned in the header file
  * also maybe move the comparator over to there?
  */
-struct busyboxdata
-{
-  byte bbox_rocker_horiz  = 0;
-  byte bbox_rocker_verti  = 0;
-  byte bbox_toggle_horiz  = 0;
-  byte bbox_toggle_verti  = 0;
-  byte bbox_button_blu = 0;
-  byte bbox_button_blu_press_recorded = 0;
-  byte bbox_flap = 0;
-  byte bbox_potentiometer_lever = 0;
-  byte bbox_potentiometer_knob = 0;
-  /* DIY function to compare structs of type 'busyboxdata' to one another since struct comparison isn't native. */
-  /* TODO
-   *  TODO
-   *  TODO
-   *  TODO
-   *  replace with memcmp
-   *  and then QA line by line with DK
-   *  TODO
-   */
-  bool operator==(const busyboxdata& rhs)
-  {
-    bool same = true;
-    if (bbox_rocker_horiz != rhs.bbox_rocker_horiz)
-    {
-      same = false;
-    }
-    if (bbox_rocker_verti != rhs.bbox_rocker_verti)
-    {
-      same = false;
-    }
-    if (bbox_toggle_horiz != rhs.bbox_toggle_horiz)
-    {
-      same = false;
-    }
-    if (bbox_toggle_verti != rhs.bbox_toggle_verti)
-    {
-      same = false;
-    }
-    if (bbox_button_blu_press_recorded != rhs.bbox_button_blu_press_recorded)
-    {
-      same = false;
-    }
-    if (bbox_flap != rhs.bbox_flap)
-    {
-      same = false;
-    }
-    if (bbox_potentiometer_lever != rhs.bbox_potentiometer_lever)
-    {
-      same = false;
-    }
-    if (bbox_potentiometer_knob != rhs.bbox_potentiometer_knob)
-    {
-      same = false;
-    }
-    return same;
-  }
-};
 
 // Don't forget to actually create a datum of the type defined above!
-busyboxdata busyboxdata_present;
-busyboxdata busyboxdata_lastsent;
+bbox_packet busyboxdata_present;
+bbox_packet busyboxdata_lastsent;
 
 void setup() 
 {
@@ -120,7 +62,7 @@ void loop()
   Serial.print("Btn: \t");
   if (present_bbox_button_blu == HIGH) 
   {
-    Serial.print("ON\t");
+    Serial.print("--\t"); // N.B. that this is inverted from how one might expect.
     /*
      * TODO
      * TODO
@@ -131,7 +73,7 @@ void loop()
   }
   else
   {
-    Serial.print("--\t");
+    Serial.print("ON\t");
   }
   
   Serial.print("RockH: \t");
