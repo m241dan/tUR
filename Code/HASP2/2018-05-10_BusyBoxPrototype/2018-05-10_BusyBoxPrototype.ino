@@ -1,40 +1,44 @@
+/*  Sketch to run the 2018 HASP RAM BusyBox.
+ *  Listens to its various components (buttons, switches, 
+ *  potentiometers, and maybe eventually Hall sensors) 
+ *  then reports status changes back to the Master.
+ *  
+ *  June 2018 -DK & JA
+ */
 #include "ram_funcs.h";
+#include <Wire.h>
 
-//Assign variable names to switch and LED pins for convenience
-const int BUTTON_BLU    = 24;     //blue button pin
-const int ROCKER_HORIZ  = 23;   //horizontal rocker switch (black)
-const int ROCKER_VERTI  = 22;   //vertical rocker switch (black)
-const int TOGGLE_HORIZ  = 5;   //horizontal toggle switch (metal)
-const int TOGGLE_VERTI  = 6;   //vertical toggle switch (metal)
+byte x = 0;
+const int BUTTON_BLU      = 24;     //blue button pin
+const int ROCKER_HORIZ    = 23;   //horizontal rocker switch (black)
+const int ROCKER_VERTI    = 22;   //vertical rocker switch (black)
+const int TOGGLE_HORIZ    = 5;   //horizontal toggle switch (metal)
+const int TOGGLE_VERTI    = 6;   //vertical toggle switch (metal)
 const int POTENTIOM_LEVER = A0;        //potentiometer (ANALOG pin, not digital)
-const int POTENTIOM_KNOB = A1;         //potentiometer (ANALOG pin, not digital)
+const int POTENTIOM_KNOB  = A1;         //potentiometer (ANALOG pin, not digital)
 
 //Define variables for pin states, set to LOW
-int present_bbox_rocker_horiz  = 0;
-int present_bbox_rocker_verti  = 0;
-int present_bbox_toggle_horiz  = 0;
-int present_bbox_toggle_verti  = 0;
-int present_bbox_button_blu    = 0;
+int present_bbox_rocker_horiz    = 0;
+int present_bbox_rocker_verti    = 0;
+int present_bbox_toggle_horiz    = 0;
+int present_bbox_toggle_verti    = 0;
+int present_bbox_button_blu      = 0;
 int present_bbox_button_blu_press_recorded    = 0;
-int present_bbox_flap;
+int present_bbox_flap            = 0;
 int present_bbox_potentiometer_lever = 0;
 int present_bbox_potentiometer_knob = 0;
-float potentiometer_truncator_hack = 10.23; //So defined because the default range of this pot is 0-1023
+float potentiometer_truncator_hack = 10.23; //Thus defined because the default range of this pot is 0-1023
 
-//Build a data structure to condense all bbox information into an easily-checkable blurb
-/*TODO
- * TODO
- * TODO
- * swap this out for an instantiation of the struct already canned in the header file
- * also maybe move the comparator over to there?
- */
-
-// Don't forget to actually create a datum of the type defined above!
+// Don't forget to actually create a datum of the type defined in the header!
 bbox_packet busyboxdata_present;
 bbox_packet busyboxdata_lastsent;
 
 void setup() 
 {
+  //Stuff for I2C chatter
+  Wire.begin(I2CADDRESS_BBOX); // join i2c bus (address optional for master)
+  Wire.onRequest(requestEvent); // register event
+
   //initialize switches as inputs
   pinMode(BUTTON_BLU,     INPUT_PULLUP);
   pinMode(ROCKER_HORIZ,   INPUT_PULLUP);
@@ -57,12 +61,12 @@ void loop()
   present_bbox_toggle_horiz  = digitalRead(TOGGLE_HORIZ);
   present_bbox_toggle_verti  = digitalRead(TOGGLE_VERTI);
   present_bbox_potentiometer_lever     = analogRead(POTENTIOM_LEVER);
+  present_bbox_potentiometer_knob     = analogRead(POTENTIOM_KNOB);
 
-  Serial.print("BBox ");
   Serial.print("Btn: \t");
   if (present_bbox_button_blu == HIGH) 
   {
-    Serial.print("--\t"); // N.B. that this is inverted from how one might expect.
+    Serial.print("--\t"); // N.B. that this is inverted due to pulldown. -JA
   }
   else
   {
@@ -118,16 +122,13 @@ void loop()
     busyboxdata_present.bbox_toggle_verti  = 0;
   }
 
-  /* Bundle up the data into struct. */
-  
-  
   /*Hack the 0-1023 range of the potentiometer down to 0-100 to reduce data 
   and clean out noise. 100% my idea. I'm so smart. -JA*/
   present_bbox_potentiometer_lever = present_bbox_potentiometer_lever / potentiometer_truncator_hack;
   busyboxdata_present.bbox_potentiometer_lever = (int)present_bbox_potentiometer_lever;
   Serial.print("Pot: ");
   Serial.print((int)present_bbox_potentiometer_lever);
-  
+   
   /*Clean up the end of the line and wait a bit.*/
   Serial.println("");
   if ( busyboxdata_present == busyboxdata_lastsent)
@@ -141,9 +142,28 @@ void loop()
   }
   else
   {
-    Serial.println("Change detected!\t" + String(busyboxdata_present.bbox_button_blu_press_recorded));
-    //TODO TODO SEND THE DATA HERE
-    busyboxdata_lastsent = busyboxdata_present;
+    Serial.println("Change detected!\t" + String(busyboxdata_present.bbox_button_blu_press_recorded));   
+    requestEvent();
   }
   delay(250);
+}
+
+// function that executes whenever data is requested by master
+// this function is registered as an event, see setup()
+void requestEvent() 
+{
+  if (!( busyboxdata_present == busyboxdata_lastsent))
+  {
+    //If we have something to send, transmit the data, and stow our current values into the persistent comparator.  
+    Wire.write((byte*)&busyboxdata_present, sizeof(bbox_packet));
+    busyboxdata_lastsent = busyboxdata_present;
+  }
+  else
+  {
+    //If we don't have something to send, send back a series of '1's (TODO remove later)
+    for (int q = 0; q++; q < sizeof(bbox_packet))
+    {
+      Wire.write(1);  
+    }
+  }
 }

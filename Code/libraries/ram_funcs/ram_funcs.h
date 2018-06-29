@@ -3,7 +3,16 @@
 
 #include "Time.h";
 
-int DEADZONE_WIDTH = 1; //By how many units (range 0-100) does the potentiometer ignore noise. 2 may be a touch high; consider nudging down to 1 later. -JA
+unsigned char DEADZONE_WIDTH = 1; //By how many units (range 0-100) does the potentiometer ignore noise. 2 may be a touch high; consider nudging down to 1 later. -JA
+
+// I2C ADDRESSING
+// Arduino pin 4 (the data, or SDA, pin) is WHT wire
+// Arduino pin 5 (the clock, or SCL, pin) is YEL wire
+unsigned char I2CADDRESS_MASTER  = 0;
+unsigned char I2CADDRESS_BBOX    = 2;
+unsigned char I2CADDRESS_AMBIENT = 4;
+unsigned char I2CADDRESS_PI_CAM  = 8;
+unsigned char I2CADDRESS_PI_ARM  = 10;
 
 struct data_packet
 {
@@ -121,6 +130,8 @@ struct bbox_packet
     byte               bbox_flap = 0;
     byte               bbox_potentiometer_lever = 0;
     byte               bbox_potentiometer_knob = 0;
+	
+	//Overloaded operator to support struct-to-struct comparison. Needs to be replaced with memcmp.
     bool operator==(const bbox_packet& rhs)
     {
         bool same = true;
