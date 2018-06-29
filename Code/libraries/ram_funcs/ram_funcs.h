@@ -3,7 +3,7 @@
 
 #include "Time.h";
 
-int DEADZONE_WIDTH = 2; //By how many units (range 0-100) does the potentiometer ignore noise. 2 may be a touch high; consider nudging down to 1 later. -JA
+int DEADZONE_WIDTH = 1; //By how many units (range 0-100) does the potentiometer ignore noise. 2 may be a touch high; consider nudging down to 1 later. -JA
 
 struct data_packet
 {
@@ -117,7 +117,7 @@ struct bbox_packet
     byte               bbox_toggle_horiz  = 0;
     byte               bbox_toggle_verti  = 0;
     byte               bbox_button_blu = 0;
-    byte               bbox_button_blu_press_recorded = 0;
+    int                bbox_button_blu_press_recorded = 0;
     byte               bbox_flap = 0;
     byte               bbox_potentiometer_lever = 0;
     byte               bbox_potentiometer_knob = 0;

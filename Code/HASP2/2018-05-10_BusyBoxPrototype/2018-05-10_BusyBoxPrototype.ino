@@ -63,17 +63,11 @@ void loop()
   if (present_bbox_button_blu == HIGH) 
   {
     Serial.print("--\t"); // N.B. that this is inverted from how one might expect.
-    /*
-     * TODO
-     * TODO
-     * TODO
-     * Implement logic that checks if a button press was queued up and if so stow it into button_press_recorded etc.
-     * TODO
-     */
   }
   else
   {
     Serial.print("ON\t");
+    busyboxdata_present.bbox_button_blu_press_recorded++;
   }
   
   Serial.print("RockH: \t");
@@ -138,13 +132,18 @@ void loop()
   Serial.println("");
   if ( busyboxdata_present == busyboxdata_lastsent)
   {
-    Serial.println("No change since last message.");
+    Serial.println("No change since last message.\t" + String(busyboxdata_present.bbox_button_blu_press_recorded));
+    //Wait until the button is depressed again before resetting the button-press-recorded var.
+    if (present_bbox_button_blu == HIGH)
+    {
+      busyboxdata_present.bbox_button_blu_press_recorded = 0;
+    }
   }
   else
   {
-    Serial.println("Change detected!");
+    Serial.println("Change detected!\t" + String(busyboxdata_present.bbox_button_blu_press_recorded));
     //TODO TODO SEND THE DATA HERE
     busyboxdata_lastsent = busyboxdata_present;
   }
-  delay(500);
+  delay(250);
 }
