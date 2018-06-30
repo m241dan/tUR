@@ -11,7 +11,7 @@ require('types')
 --trial 1
 return {
    -- [1] =  { x = 0.0, y = 0.0, z = 5.0, eeo = 0, velocity = 20, type = DISCRETE_R, precision = 5, shape = "linear", smoothness=200, tolerance=2 };
-      [1] =  { x =  2.0, y =  0.0, z = 0.0, eeo = 0, velocity = 20, type = DISCRETE_R, precision = 25, shape = "linear", smoothness=200, tolerance=2 };
+      [1] =  { x =  -7.0, y =  0.0, z = 0.0, eeo = 0, velocity = 20, type = DISCRETE_R, precision = 25, shape = "linear", smoothness=200, tolerance=2 };
   --  [3] =  { x =  10.0, y =  0.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_R, precision = 20, shape = "linear", smoothness=200, tolerance=2 };
    -- [4] =  { x =  10.0, y =  0.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_R, precision = 20, shape = "linear", smoothness=200, tolerance=2 };
 

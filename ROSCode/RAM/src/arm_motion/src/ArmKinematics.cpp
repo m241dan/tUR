@@ -13,6 +13,7 @@ ArmKinematics::ArmKinematics( std::string test )
 void ArmKinematics::setupSubscribers()
 {
     _joints_sub = _node_handle.subscribe( "kinematics/joints_in_radians", 10, &ArmKinematics::servoInfoHandler, this );
+    _camera_one_tags = _node_handle.subscribe( "apriltag_detections_one", 10, &ArmKinematics::camOneTagHandler, this );
 }
 
 void ArmKinematics::setupPublishers()
@@ -25,6 +26,14 @@ void ArmKinematics::servoInfoHandler( const sensor_msgs::JointState::ConstPtr &j
     _joints = *joints;
     updateServoForwardKinematics();
     publishServoForwardKinematics();
+}
+
+void ArmKinematics::camOneTagHandler( const apriltags_ros::AprilTagDetectionArrayConstPtr &tags )
+{
+    _tags_seen = *tags;
+    std::cout << _tags_seen << std::endl;
+    updateVisionForwardKinematics();
+    publishVisionForwardKinematics();
 }
 
 void ArmKinematics::updateServoForwardKinematics()
@@ -47,6 +56,112 @@ void ArmKinematics::publishServoForwardKinematics()
     _servo_fk_publisher.publish( _servo_based_fk );
 }
 
+void ArmKinematics::updateVisionForwardKinematics()
+{
+
+    const double z_dist = 0.0349;
+    const double y_dist = 0.0222;
+    const double x_dist = 0.0667;
+    const double h_dist = sqrt( y_dist * y_dist + z_dist * z_dist );
+    /*
+     * These will eventually be used when the cameras are in a set position, for now, meh
+     */
+     double yaw_offset = 0.0;
+     double roll_offset = 0.0;
+     double pitch_offset = 0.0;
+
+
+    convertTagsQuaternionToRPY();
+
+    geometry_msgs::Pose pose;
+    bool found = false;
+    for( auto tag : _tags_seen.detections )
+    {
+        if( tag.id == 8 )
+        {
+            pose = tag.pose.pose;
+            found = true;
+            break;
+        }
+    }
+
+    if( found )
+    {
+        /*
+         * Remember this is wonky because april tag detections are on a different coordinate system
+         */
+        double y_roll = h_dist * cos( pose.orientation.z );
+        double z_roll = h_dist * sin( 45 - pose.orientation.z );
+
+        double z_theta = x_dist * sin( pose.orientation.x );
+        double x_theta = x_dist * cos( pose.orientation.x );
+
+        double y_yaw = x_theta * sin( pose.orientation.y );
+        double x_yaw = x_theta * cos( pose.orientation.y );
+
+
+    }
+
+}
+
+void ArmKinematics::publishVisionForwardKinematics()
+{
+
+}
+
+void ArmKinematics::convertTagsQuaternionToRPY()
+{
+    if( !_tags_seen.detections.empty())
+    {
+        for( auto &tag : _tags_seen.detections )
+        {
+            geometry_msgs::Pose &pose = tag.pose.pose;
+            const double x = pose.orientation.x;
+            const double y = pose.orientation.y;
+            const double z = pose.orientation.z;
+            const double w = pose.orientation.w;
+
+            /*
+             * Copied straight from https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+             */
+            double roll, pitch, yaw;
+
+            double sinr = 2.0 * (w * x + y * z);
+            double cosr = 1 - 2 * (x * x + y * y);
+            roll = atan2( sinr, cosr );
+
+            double sinp = 2 * (w * y - z * x);
+            if( fabs( sinp ) >= 1 )
+                pitch = copysign( M_PI / 2, sinp );
+            else
+                pitch = asin( sinp );
+
+            double siny = 2 * (w * z + x * y);
+            double cosy = 1 - 2 * (y * y + z * z);
+            yaw = atan2( siny, cosy );
+
+            if( roll < 0 )
+            {
+                roll += M_PI;
+                roll *= (-1);
+            }
+            else if( roll > 0 )
+                roll = M_PI - roll;
+
+            pose.orientation.x = roll;
+            pose.orientation.y = pitch;
+            pose.orientation.z = yaw;
+            pose.orientation.w = 0.0f;
+            ROS_INFO( "Tag - Roll: %f Pitch: %f Yaw: %f", tag.pose.pose.orientation.x,
+                                                          tag.pose.pose.orientation.y,
+                                                          tag.pose.pose.orientation.z );
+
+        }
+
+
+
+    }
+}
 Matrix4 ArmKinematics::HomogenousDHMatrix( double theta, double alpha, double r, double d )
 {
     Matrix4 h_dh_matrix;
