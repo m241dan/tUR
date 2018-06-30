@@ -4,6 +4,7 @@
     <arg name="dev1" default="/dev/video1" />
     <arg name="dynamixel_bus" default="/dev/ttyUSB0" />
     <env name="LUA_PATH" value="$(env HOME)/tUR/ROSCode/RAM/src/arm_motion/scripts/?.lua" />
+    <env name="RAM_SCRIPTS" value="$(env HOME)/tUR/ROSCode/RAM/src/arm_motion/scripts/" />
     <node launch-prefix="xterm -e gdb -ex run --args" name="arm_motion_driver" pkg="arm_motion" type="arm_motion_driver" />
     <node launch-prefix="xterm -e gdb -ex run --args" name="arm_motion_kinematics" pkg="arm_motion" type="arm_motion_kinematics" />
     <node launch-prefix="xterm -e gdb -ex run --args" name="arm_motion_trial" pkg="arm_motion" type="arm_motion_trial" />

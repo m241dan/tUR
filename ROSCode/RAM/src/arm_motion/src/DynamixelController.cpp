@@ -23,6 +23,7 @@ DynamixelController::DynamixelController( std::string bus )
             setupPublishers();
             setupTimer();
             changePosition( WRIST_ROT_SERVO+1, 0.0 );
+            changePosition( GRIPPER_SERVO+1, M_PI_4 );
         }
         for( int i = 0; i < MAX_SERVO; i++ )
         {

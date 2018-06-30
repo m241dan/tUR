@@ -11,9 +11,8 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, geometry_msgs::Pose 
 {
     //TODO: this needs to be handled via config stuff
     std::stringstream ss;
-    ss << "/home/korisd/tUR/ROSCode/RAM/src/arm_motion/scripts/" << trial_name << ".lua";
+    ss << std::getenv( "RAM_SCRIPTS" ) << trial_name << ".lua";
 
-    std::cout << "Path: " << ss.str().c_str() << std::endl;
     if( luaL_loadfile( lua, ss.str().c_str() ) || lua_pcall( lua, 0, 1, 0 ) )
     {
         ROS_ERROR( "%s: %s", __FUNCTION__, lua_tostring( lua, -1 ) );
@@ -151,7 +150,6 @@ void ArmTrial::trialOperation( const ros::TimerEvent &event )
 void ArmTrial::servoBasedFK( const geometry_msgs::Pose::ConstPtr &pose )
 {
     _servo_based_fk_pose = *pose;
-    ROS_INFO( "%s: RECEIving fk", __FUNCTION__ );
 }
 
 bool ArmTrial::isActive()
@@ -187,7 +185,6 @@ void ArmTrial::generateMotion()
 
     srv.request.motion = _motions[_on_motion];
     srv.request.present_position = _servo_based_fk_pose;
-    std::cout << "Sending FK: " << _servo_based_fk_pose << std::endl;
     if( _path_service.call( srv ) )
     {
         arm_motion::ArmMotionGoal action_goal;

@@ -23,13 +23,6 @@ extern "C" {
 typedef std::tuple<double,double,double,double> PathConstants;
 typedef std::vector<double> JointPositions;
 typedef std::vector<geometry_msgs::Pose> Path;
-/*
- * TODO: update these if they change in both places
- */
-#define length1 2.6
-#define length2 14.465
-#define length3 8.927
-#define length4 11.055
 
 class ArmTrial
 {
