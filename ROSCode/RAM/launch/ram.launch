@@ -1,26 +1,71 @@
 <launch>
-    <!-- <arg name="cam_config" default="file:///home/korisd/mylaptop_cam_calib/ost.yaml"/> -->
-    <arg name="cam_config" default="file:///home/korisd/tUR/ROSCode/RAM/camera_info/ost.yaml"/>
-    <arg name="dev1" default="/dev/video1" />
+    <!-- GENERAL CONFIG SPACE -->
+    <arg name="peeper_config" default="file://$(env HOME)/tUR/ROSCode/RAM/camera_info/peeper.yaml"/>
+    <arg name="lapcam_config" default="file://$(env HOME)/tUR/ROSCode/RAM/camera_info/laptop.yaml" unless="$(env IS_RPI)" />
+    <arg name="dev1" default="/dev/video0" />
+    <arg name="dev2" default="/dev/video1" />
     <arg name="dynamixel_bus" default="/dev/ttyUSB0" />
     <env name="LUA_PATH" value="$(env HOME)/tUR/ROSCode/RAM/src/arm_motion/scripts/?.lua" />
     <env name="RAM_SCRIPTS" value="$(env HOME)/tUR/ROSCode/RAM/src/arm_motion/scripts/" />
+
+    <!-- ARM MOTION SECTION -->
+
     <node launch-prefix="xterm -e gdb -ex run --args" name="arm_motion_driver" pkg="arm_motion" type="arm_motion_driver" />
     <node launch-prefix="xterm -e gdb -ex run --args" name="arm_motion_kinematics" pkg="arm_motion" type="arm_motion_kinematics" />
     <node launch-prefix="xterm -e gdb -ex run --args" name="arm_motion_trial" pkg="arm_motion" type="arm_motion_trial" />
     <node launch-prefix="xterm -e gdb -ex run --args" name="arm_motion_path" pkg="arm_motion" type="arm_motion_path" />
 
-   <node name="usb_cam_one" pkg="usb_cam" type="usb_cam_node" output="screen" >
-      <param name="video_device" value="$(arg dev1)" />
-      <param name="image_width" value="720" />
-      <!-- <param name="image_width" value="680" /> -->
-      <param name="image_height" value="480" />
-      <param name="pixel_format" value="yuyv" />
-      <param name="camera_frame_id" value="usb_cam" />
-      <param name="io_method" value="mmap"/>
-      <param name="camera_info_url" value="$(arg cam_config)" />
-   </node>
+   <!-- CAMERA SECTION -->
+   <!-- FOR OPERATION ON FULLY EQUIPPED RPI -->
 
+   <group if="$(env IS_RPI)">
+     <node name="usb_cam_one" pkg="usb_cam" type="usb_cam_node" output="screen" >
+        <param name="video_device" value="$(arg dev1)" />
+        <param name="image_width" value="720" />
+        <param name="image_height" value="480" />
+        <param name="pixel_format" value="yuyv" />
+        <param name="camera_frame_id" value="usb_cam" />
+        <param name="io_method" value="mmap"/>
+        <param name="camera_info_url" value="$(arg peeper_config)" />
+     </node>
+
+     <node name="usb_cam_two" pkg="usb_cam" type="usb_cam_node" output="screen" >
+        <param name="video_device" value="$(arg dev2)" />
+        <param name="image_width" value="720" />
+        <param name="image_height" value="480" />
+        <param name="pixel_format" value="yuyv" />
+        <param name="camera_frame_id" value="usb_cam" />
+        <param name="io_method" value="mmap"/>
+        <param name="camera_info_url" value="$(arg peeper_config)" />
+     </node>
+
+     <node type="raspicam_node" pkg="raspicam_node" name="raspicam_node" output="screen">
+        <param name="camera_info_url" value="package://raspicam_node/camera_info/camerav2_410x308.yaml"/>
+        <param name="width" value="410"/>
+        <param name="height" value="308"/>
+
+        <param name="framerate" value="30"/>
+        <param name="exposure_mode" value="antishake"/>
+        <param name="shutter_speed" value="0"/>
+
+        <param name="camera_frame_id" value="raspicam"/>
+     </node>
+   </group>
+
+   <!-- FOR MY LAPTOP -->
+   <group unless="$(env IS_RPI)">
+     <node name="usb_cam_one" pkg="usb_cam" type="usb_cam_node" output="screen" >
+        <param name="video_device" value="$(arg dev1)" />
+        <param name="image_width" value="680" />
+        <param name="image_height" value="480" />
+        <param name="pixel_format" value="yuyv" />
+        <param name="camera_frame_id" value="usb_cam" />
+        <param name="io_method" value="mmap"/>
+        <param name="camera_info_url" value="$(arg lapcam_config)" />
+     </node>
+   </group>
+
+   <!-- APRIL TAG DETECTOR SECTION -->
    <node name="apriltag_detector_one" pkg="apriltags_ros" type="apriltag_detector_node" >
       <remap from="camera_info" to="/usb_cam_one/camera_info" />
       <remap from="image_rect" to="/usb_cam_one/image_raw" />
@@ -38,5 +83,49 @@
           {id:  28,  size: 0.0175},
           {id:  29,  size: 0.0175} ]
       </rosparam>
-   </node>
+      <param name="projected_optics" type="bool" value="true" />
+   </node> 
+
+   <group if="$(env IS_RPI)">
+      <node name="apriltag_detector_two" pkg="apriltags_ros" type="apriltag_detector_node" >
+         <remap from="camera_info" to="/usb_cam_two/camera_info" />
+         <remap from="image_rect" to="/usb_cam_two/image_raw" />
+         <remap from="tag_detections_image" to="/apriltag_detections_one_img" />
+         <remap from="tag_detections" to="/apriltag_detections_one" />
+         <param name="tag_family" type="str" value="16h5" />
+         <rosparam param="tag_descriptions">[
+            {id:  0,  size: 0.0175},
+            {id:  2,  size: 0.0175},
+            {id:  3,  size: 0.0175},
+            {id:  6,  size: 0.0175},
+            {id:  8,  size: 0.0175}, 
+            {id:  12,  size: 0.0175},
+            {id:  27,  size: 0.0175},
+            {id:  28,  size: 0.0175},
+            {id:  29,  size: 0.0175} ]
+         </rosparam>
+         <param name="projected_optics" type="bool" value="true" />
+      </node>
+
+      <node name="apriltag_detector_three" pkg="apriltags_ros" type="apriltag_detector_node" >
+         <remap from="camera_info" to="/raspicam_node/camera_info" />
+         <remap from="image_rect" to="/raspicam_node/compressed" />
+         <remap from="tag_detections_image" to="/apriltag_detections_one_img" />
+         <remap from="tag_detections" to="/apriltag_detections_one" />
+         <param name="image_transport" type="str" value="compressed" />
+         <param name="tag_family" type="str" value="16h5" />
+         <rosparam param="tag_descriptions">[
+            {id:  0,  size: 0.0175},
+            {id:  2,  size: 0.0175},
+            {id:  3,  size: 0.0175},
+            {id:  6,  size: 0.0175},
+            {id:  8,  size: 0.0175}, 
+            {id:  12,  size: 0.0175},
+            {id:  27,  size: 0.0175},
+            {id:  28,  size: 0.0175},
+            {id:  29,  size: 0.0175} ]
+         </rosparam>
+         <param name="projected_optics" type="bool" value="true" />
+      </node>
+   </group>
 </launch>
