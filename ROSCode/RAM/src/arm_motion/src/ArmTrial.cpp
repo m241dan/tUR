@@ -11,7 +11,7 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, geometry_msgs::Pose 
 {
     //TODO: this needs to be handled via config stuff
     std::stringstream ss;
-    ss << std::getenv( "RAM_SCRIPTS" ) << trial_name << ".lua";
+    ss << std::getenv( ram_scripts ) << trial_name << ".lua";
 
     if( luaL_loadfile( lua, ss.str().c_str() ) || lua_pcall( lua, 0, 1, 0 ) )
     {

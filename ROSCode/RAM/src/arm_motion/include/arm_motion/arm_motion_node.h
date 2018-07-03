@@ -49,6 +49,8 @@ const double length1 = 2.6;
 const double length2 = 15.465;
 const double length3 = 8.927;
 const double length4 = 13.00;
+const char * const ram_scripts = "RAM_SCRIPTS";
+
 typedef struct servo_command
 {
     uint8_t id = 0;

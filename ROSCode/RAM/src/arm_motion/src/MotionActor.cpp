@@ -79,11 +79,11 @@ bool MotionActor::checkMotionStep()
     for( int i = 0; i < MAX_ARM_SERVO; i++ )
     {
         auto tolerance = (int32_t)joint_goals[goal_step].effort[i]; //oddly this works out that we can use the same i for all three
-        ROS_INFO( "%s: checking tolerance: %d ", __FUNCTION__, (int)tolerance );
-        ROS_INFO( "%s: Servo[%d]: Current Position [%d] Goal Position [%d]", __FUNCTION__, i, servo_positions[i], servo_goals[i] );
+        //ROS_INFO( "%s: checking tolerance: %d ", __FUNCTION__, (int)tolerance );
+        //ROS_INFO( "%s: Servo[%d]: Current Position [%d] Goal Position [%d]", __FUNCTION__, i, servo_positions[i], servo_goals[i] );
         if( abs( servo_positions[i] - servo_goals[i] ) > tolerance )
         {
-            ROS_INFO( "%s: NOT ARRIVED!!!!!!", __FUNCTION__ );
+            //ROS_INFO( "%s: NOT ARRIVED!!!!!!", __FUNCTION__ );
             arrived = false;
             break;
         }
