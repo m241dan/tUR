@@ -2,7 +2,7 @@
 #include <Wire.h>
 #include <ram_funcs.h>
 
-
+image_packet test;
 
 void setup() {  
   Wire.begin(I2CADDRESS_AMBIENT);
@@ -22,7 +22,11 @@ void loop() {
 
 void i2cRequest( )
 {
-  Serial.println( "Received a request for bytes" );
-  Wire.write( random( 5, 15 ) );
+  Serial.println( "Received a request for data" );
+  test.imagepacket_position = random( 1, 5 );
+  test.imagepacket_photo_number = 10;
+  test.imagepacket_meat[0] = 69;
+  test.imagepacket_meat[50] = 96;
+  Wire.write( (byte *)&test, sizeof( image_packet ) );
 }
 

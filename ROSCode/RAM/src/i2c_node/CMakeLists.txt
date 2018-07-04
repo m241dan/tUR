@@ -107,7 +107,7 @@ pkg_check_modules( wiringPi libwiringpi REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES i2c_node
 #  CATKIN_DEPENDS roscpp std_msgs
 #  DEPENDS system_lib
@@ -120,7 +120,7 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  include
   ${catkin_INCLUDE_DIRS}
   ${wiringPi_INCLUDE_DIRS}
 )

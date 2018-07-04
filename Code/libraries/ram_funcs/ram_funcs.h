@@ -1,8 +1,9 @@
 #ifndef ram_funcs_h
 #define ram_funcs_h
 
-#include "time.h";
-
+#include "time.h"
+#include <array>
+typedef unsigned char byte;
 unsigned char DEADZONE_WIDTH = 1; //By how many units (range 0-100) does the potentiometer ignore noise. 2 may be a touch high; consider nudging down to 1 later. -JA
 
 // I2C ADDRESSING
@@ -31,6 +32,17 @@ struct image_packet
     unsigned short imagepacket_photo_number;
     unsigned short imagepacket_sizeof_photo;
     unsigned char imagepacket_meat[462];
+    image_packet( std::array<byte, 468> buf)
+    {
+        imagepacket_header = buf[0];
+        imagepacket_position = buf[1];
+        imagepacket_photo_number = *((unsigned short *)&buf[2]);
+        imagepacket_sizeof_photo = *((unsigned short *)&buf[4]);
+        auto it = buf.begin();
+        it += 6;
+        for( int x = 0; it != buf.end(); it++, x++ )
+            imagepacket_meat[x] = *it;
+    }
 };
 
 struct ambient_packet
