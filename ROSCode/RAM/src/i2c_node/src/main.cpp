@@ -5,8 +5,17 @@
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
 #include <i2c_node/ram_funcs.h>
+#include <i2c_node/ram_registers.h>
 
-const int ARDUINO_ADDR = 0x04;
+struct ArduinoRegisters
+{
+    ADA_input_register ada_input_register;
+    ADA_output_register ada_output_register;
+    explicit ArduinoRegisters( unsigned long itr ) : ada_output_register( itr )
+    {
+
+    }
+};
 
 int main( int argc, char *argv[] )
 {
@@ -15,25 +24,18 @@ int main( int argc, char *argv[] )
     std::chrono::seconds sleep_duration(2);
     while( arduino_handler == -1 )
     {
-        arduino_handler = wiringPiI2CSetup( ARDUINO_ADDR );
-        std::cout << "I2C Device: " << ARDUINO_ADDR << " not detected." << std::endl;
+        arduino_handler = wiringPiI2CSetup( I2CADDRESS_ADA );
+        std::cout << "I2C Device: " << I2CADDRESS_ADA << " not detected." << std::endl;
     }
+    unsigned long internal_time_register = 0;
+    ArduinoRegisters registers( internal_time_register );
 
     while( !shutdown )
     {
-        int data = wiringPiI2CReadReg8( arduino_handler, 0x00 );
-        if( data == 0x30 )
-        {
-            byte buf[sizeof(image_packet)] = { 0 };
-            read( arduino_handler, buf, sizeof(image_packet) );
-
-            image_packet received(buf);
-            std::cout << "imagepacket_position[" << received.imagepacket_position << "]" << std::endl;
-            std::cout << "imagepacket_photo_number[" << received.imagepacket_photo_number << "]" << std::endl;
-            std::cout << "imagepacket_meat_0[" << received.imagepacket_meat[0] << "]" << std::endl;
-            std::cout << "imagepacket_meat_50[" << received.imagepacket_meat[50] << "]" << std::endl;
-        }
-        std::cout << "Data returned is " << data << std::endl;
+        read( arduino_handler, (byte *)&registers.ada_output_register, sizeof( ADA_output_register));
+        std::cout << "Arduino's Time is: " << registers.ada_output_register.time_register << std::endl;
+        std::this_thread::sleep_for( sleep_duration );
+        write( arduino_handler, (byte *)&registers.ada_input_register, sizeof( ADA_input_register));
         std::this_thread::sleep_for( sleep_duration );
     }
 

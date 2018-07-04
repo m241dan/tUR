@@ -1,6 +1,6 @@
-#include "ram_funcs.h"
+#include "hasp_arduino_sysclock.h"
 
-ArduinoSysClock::ArduinoSysClock( unsigned long &cr ) : clock_register(cr)
+ArduinoSysClock::ArduinoSysClock( unsigned long &cr ) : clock_register(cr), sync_to(0UL), last_received(0UL)
 {
     clock_register = 0;
 }

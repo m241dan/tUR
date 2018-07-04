@@ -3,13 +3,13 @@
 
 #include "time.h"
 typedef unsigned char byte;
-unsigned char DEADZONE_WIDTH = 1; //By how many units (range 0-100) does the potentiometer ignore noise. 2 may be a touch high; consider nudging down to 1 later. -JA
+const unsigned char DEADZONE_WIDTH = 1; //By how many units (range 0-100) does the potentiometer ignore noise. 2 may be a touch high; consider nudging down to 1 later. -JA
 
 // I2C ADDRESSING
 // Arduino pin 4 (the data, or SDA, pin) is WHT wire
 // Arduino pin 5 (the clock, or SCL, pin) is YEL wire
-unsigned char I2CADDRESS_BBOX = 2;
-unsigned char I2CADDRESS_AMBIENT = 4;
+const unsigned char I2CADDRESS_BBOX = 0x02;
+const unsigned char I2CADDRESS_ADA  = 0x04;
 
 struct data_packet
 {
