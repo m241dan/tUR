@@ -11,9 +11,6 @@ ADA_input_register  input_register;
 
 void writeRegisters( int num_bytes )
 {
-    Serial.println( "Amount availble: " + String(Wire.available()) );
-    Serial.println( "Size of ADA_input_register: " + String(sizeof(ADA_input_register)) );
-    Serial.println( "Receiving a write" );
     /* If we have a complete register written in there, read it */
     if( Wire.available() == sizeof( ADA_input_register ) )
     {
@@ -34,13 +31,11 @@ void writeRegisters( int num_bytes )
          */
         if( input_register.verifyCheckSums() )
         {
-            Serial.println( "Write Success" );
             output_register.write_fault = 0;
            //if fresh_packet is set, raise a downlink flag
         }
         else
         {
-            Serial.println( "Write failed." );
             output_register.write_fault = 1;
         }
     }
@@ -48,7 +43,6 @@ void writeRegisters( int num_bytes )
 
 void readRegisters()
 {
-    Serial.println( "My time is: " + String( output_register.time_register ) );
     output_register.setCheckSums();
     Wire.write( (byte *)&output_register, sizeof( ADA_output_register ) );
 }
@@ -63,6 +57,15 @@ void setup()
     Wire.onReceive( writeRegisters );
 
     sys_clock.syncClock( 1234470131, millis() );
+}
+
+void serialEvent()
+{
+    if( Serial.available() )
+    {
+        Serial.flush();
+        output_register.ambpacket_bme01_temp = 50;
+    }
 }
 
 void updateTime()
