@@ -1,7 +1,7 @@
 #include <thread>
 #include <chrono>
 #include <iostream>
-#include <array>
+#include <unistd.h>
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
 #include <i2c_node/ram_funcs.h>
@@ -25,9 +25,7 @@ int main( int argc, char *argv[] )
         if( data == 0x30 )
         {
             byte buf[sizeof(image_packet)] = { 0 };
-            buf[0] = (byte)data;
-            for( int x = 1; x < sizeof(image_packet); x++ )
-                buf[x] = (byte)wiringPiI2CReadReg8( arduino_handler, 0x00 );
+            read( arduino_handler, buf, sizeof(image_packet) );
 
             image_packet received(buf);
             std::cout << "imagepacket_position[" << received.imagepacket_position << "]" << std::endl;
