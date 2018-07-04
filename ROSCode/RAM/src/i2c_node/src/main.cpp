@@ -25,14 +25,19 @@ int main( int argc, char *argv[] )
     while( arduino_handler == -1 )
     {
         arduino_handler = wiringPiI2CSetup( I2CADDRESS_ADA );
-        std::cout << "I2C Device: " << I2CADDRESS_ADA << " not detected." << std::endl;
+        if( arduino_handler == -1 )
+            std::cout << "ADA not detected" << std::endl;
+        else
+            std::cout << "ADA detected" << std::endl;
     }
+    std::cout << "Getting here before segging" << std::endl;
     unsigned long internal_time_register = 0;
     ArduinoRegisters registers( internal_time_register );
 
     while( !shutdown )
     {
         read( arduino_handler, (byte *)&registers.ada_output_register, sizeof( ADA_output_register));
+        std::cout << "completing the read" << std::endl;
         std::cout << "Arduino's Time is: " << registers.ada_output_register.time_register << std::endl;
         std::this_thread::sleep_for( sleep_duration );
         write( arduino_handler, (byte *)&registers.ada_input_register, sizeof( ADA_input_register));
