@@ -1,3 +1,5 @@
+#include <errno.h>
+#include <string.h>
 #include <thread>
 #include <chrono>
 #include <iostream>
@@ -45,7 +47,8 @@ int main( int argc, char *argv[] )
             std::cout << "Read CheckSum: Failed" << std::endl;
         std::this_thread::sleep_for( sleep_duration );
         registers.ada_input_register.setCheckSums();
-        write( arduino_handler, (byte *)&registers.ada_input_register, sizeof( ADA_input_register));
+        ssize_t n = write( arduino_handler, (byte *)&registers.ada_input_register, 200);
+        std::cout << "Reason: " <<  strerror(errno) << std::endl;
         std::this_thread::sleep_for( sleep_duration );
     }
 
