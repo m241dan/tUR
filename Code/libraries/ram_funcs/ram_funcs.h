@@ -31,6 +31,7 @@ struct image_packet
     unsigned short imagepacket_photo_number;
     unsigned short imagepacket_sizeof_photo;
     unsigned char imagepacket_meat[462];
+    image_packet() {}
     image_packet( byte buf[] )
     {
         imagepacket_header = buf[0];
