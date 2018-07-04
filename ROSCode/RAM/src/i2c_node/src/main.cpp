@@ -33,11 +33,24 @@ int main( int argc, char *argv[] )
 
     while( !shutdown )
     {
-        read( arduino_handler, (byte *)&registers.ada_output_register, sizeof( ADA_output_register));
-        std::cout << "completing the read" << std::endl;
-        std::cout << "Arduino's Time is: " << registers.ada_output_register.time_register << std::endl;
+        ADA_output_register new_read;
+        read( arduino_handler, (byte *)&new_read, sizeof( ADA_output_register));
+        if( new_read.verifyCheckSums() )
+        {
+            // check differences for setting flags
+            registers.ada_output_register = new_read;
+            std::cout << "Read CheckSum: Success" << std::endl;
+            std::cout << "Arduino's Time is: " << registers.ada_output_register.time_register << std::endl;
+        }
+        else
+            std::cout << "Read CheckSum: Failed" << std::endl;
         std::this_thread::sleep_for( sleep_duration );
+
         write( arduino_handler, (byte *)&registers.ada_input_register, sizeof( ADA_input_register));
+        if( registers.ada_input_register.verifyCheckSums() )
+            std::cout << "Read CheckSum: Success" << std::endl;
+        else
+            std::cout << "Read CheckSum: Failed" << std::endl;
         std::this_thread::sleep_for( sleep_duration );
     }
 
