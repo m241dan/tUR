@@ -2,7 +2,6 @@
 #define ram_funcs_h
 
 #include "time.h"
-#include <array>
 typedef unsigned char byte;
 unsigned char DEADZONE_WIDTH = 1; //By how many units (range 0-100) does the potentiometer ignore noise. 2 may be a touch high; consider nudging down to 1 later. -JA
 
