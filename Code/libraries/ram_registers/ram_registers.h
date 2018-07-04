@@ -5,7 +5,7 @@
 
 struct ADA_output_register
 {
-    unsigned char check_one = '\xDE';
+    unsigned char check_one = 0;
     unsigned long time_register;
 
     signed short ambpacket_bme01_temp;
@@ -23,7 +23,7 @@ struct ADA_output_register
     signed short ambpacket_bme04_temp;
     signed short ambpacket_bme04_pres;
     unsigned char ambpacket_bme04_humi;
-    unsigned char check_two = '\xAD';
+    unsigned char check_two = 0;
     signed short ambpacket_dallas01_temp;
     signed short ambpacket_dallas02_temp;
     signed short ambpacket_dallas03_temp;
@@ -40,10 +40,15 @@ struct ADA_output_register
     signed short ambpacket_dallas14_temp;
     signed short ambpacket_dallas15_temp;
     signed short ambpacket_dallas16_temp;
-    unsigned char check_three = '\xAF';
+    unsigned char check_three = 0;
     unsigned long packets_sent = 0;
     unsigned char write_fault = 0;
-
+    void setCheckSums()
+    {
+        check_one = '\xDE';
+        check_two = '\xAD';
+        check_three = '\xAF';
+    }
     bool verifyCheckSums()
     {
         bool verified = false;
@@ -61,13 +66,19 @@ struct ADA_output_register
 
 struct ADA_input_register
 {
-    unsigned char check_one = '\xFE';
+    unsigned char check_one = 0;
     unsigned long last_write;
     unsigned char fresh_packet;
-    unsigned char check_two = '\xDA';
+    unsigned char check_two = 0;
     data_packet packet;
-    unsigned char check_three = '\xFF';
+    unsigned char check_three = 0;
 
+    void setCheckSums()
+    {
+        check_one = '\xFE';
+        check_two = '\xDA';
+        check_three = '\xFF';
+    }
     bool verifyCheckSums()
     {
         bool verified = false;

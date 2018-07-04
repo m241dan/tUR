@@ -44,7 +44,7 @@ int main( int argc, char *argv[] )
         else
             std::cout << "Read CheckSum: Failed" << std::endl;
         std::this_thread::sleep_for( sleep_duration );
-
+        registers.ada_input_register.setCheckSums();
         write( arduino_handler, (byte *)&registers.ada_input_register, sizeof( ADA_input_register));
         std::this_thread::sleep_for( sleep_duration );
     }
