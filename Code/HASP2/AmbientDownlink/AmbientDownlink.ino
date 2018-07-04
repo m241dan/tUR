@@ -51,7 +51,6 @@ void readRegisters()
     Serial.println( "My time is: " + String( output_register.time_register ) );
     output_register.setCheckSums();
     Wire.write( (byte *)&output_register, sizeof( ADA_output_register ) );
-    Serial.println( "Size of output register: " + String( sizeof( ADA_output_register ) ) );
 }
 
 void setup()
@@ -60,7 +59,6 @@ void setup()
     while( !Serial );
 
     Wire.begin( I2CADDRESS_ADA );
-    Wire.setClock( 10000 );
     Wire.onRequest( readRegisters );
     Wire.onReceive( writeRegisters );
 

@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
+#include <wiringSerial.h>
 #include <i2c_node/ram_funcs.h>
 #include <i2c_node/ram_registers.h>
 
@@ -18,8 +19,9 @@ struct ArduinoRegisters
 int main( int argc, char *argv[] )
 {
     bool shutdown = false;
-    int arduino_handler = -1;
     std::chrono::seconds sleep_duration(2);
+    /*
+    int arduino_handler = -1;
     while( arduino_handler == -1 )
     {
         arduino_handler = wiringPiI2CSetup( I2CADDRESS_ADA );
@@ -49,6 +51,19 @@ int main( int argc, char *argv[] )
         registers.ada_input_register.setCheckSums();
         ssize_t n = write( arduino_handler, (byte *)&registers.ada_input_register, 200);
         std::cout << "Reason: " <<  strerror(errno) << std::endl;
+        std::this_thread::sleep_for( sleep_duration );
+    }
+     */
+
+    int serial_handle = -1;
+    while( serial_handle == -1 )
+    {
+        serial_handle = serialOpen( "/ttyS0", 9600 );
+    }
+
+    while( !shutdown )
+    {
+        serialPrintf( serial_handle, "This is a test" );
         std::this_thread::sleep_for( sleep_duration );
     }
 
