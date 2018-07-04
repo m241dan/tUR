@@ -6,7 +6,7 @@
 struct ADA_output_register
 {
     unsigned char check_one = '\xDE';
-    unsigned long &time_register;
+    unsigned long time_register;
 
     signed short ambpacket_bme01_temp;
     signed short ambpacket_bme01_pres;
@@ -44,7 +44,6 @@ struct ADA_output_register
     unsigned long packets_sent = 0;
     unsigned char write_fault = 0;
 
-    ADA_output_register( unsigned long &tr ) : time_register(tr) {}
     bool verifyCheckSums()
     {
         bool verified = false;

@@ -11,10 +11,6 @@ struct ArduinoRegisters
 {
     ADA_input_register ada_input_register;
     ADA_output_register ada_output_register;
-    explicit ArduinoRegisters( unsigned long itr ) : ada_output_register( itr )
-    {
-
-    }
 };
 
 int main( int argc, char *argv[] )
@@ -31,8 +27,9 @@ int main( int argc, char *argv[] )
             std::cout << "ADA detected" << std::endl;
     }
     std::cout << "Getting here before segging" << std::endl;
-    unsigned long internal_time_register = 0;
-    ArduinoRegisters registers( internal_time_register );
+
+    ArduinoRegisters registers;
+    unsigned long &internal_time_register = registers.ada_output_register.time_register;
 
     while( !shutdown )
     {

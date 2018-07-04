@@ -6,8 +6,8 @@
 /* Internal Time Register, all other registers will reference this */
 unsigned long       internal_time_register  = 0;
 ArduinoSysClock     sys_clock               ( internal_time_register );
-ADA_output_register output_register         ( internal_time_register );
-ADA_input_register  input_register          ;
+ADA_output_register output_register;;
+ADA_input_register  input_register;
 
 void writeRegisters( int num_bytes )
 {
@@ -57,7 +57,14 @@ void setup()
     Wire.onReceive( writeRegisters );
 
     sys_clock.syncClock( 1234470131, millis() );
+    
 
+}
+
+void updateTime()
+{
+    sys_clock.updateClock( millis() );
+    output_register.time_register = internal_time_register;
 }
 
 void loop()
@@ -65,5 +72,5 @@ void loop()
     //check for uplink
     //check for downlink flag
       // downlink and increase count so that rpi knows packet has gone out
-    sys_clock.updateClock( millis() );
+    updateTime();
 }
