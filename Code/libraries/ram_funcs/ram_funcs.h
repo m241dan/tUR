@@ -32,16 +32,14 @@ struct image_packet
     unsigned short imagepacket_photo_number;
     unsigned short imagepacket_sizeof_photo;
     unsigned char imagepacket_meat[462];
-    image_packet( std::array<byte, 468> buf)
+    image_packet( byte buf[] )
     {
         imagepacket_header = buf[0];
         imagepacket_position = buf[1];
         imagepacket_photo_number = *((unsigned short *)&buf[2]);
         imagepacket_sizeof_photo = *((unsigned short *)&buf[4]);
-        auto it = buf.begin();
-        it += 6;
-        for( int x = 0; it != buf.end(); it++, x++ )
-            imagepacket_meat[x] = *it;
+        for( int x = 0; x < 462; x++ )
+            imagepacket_meat[x] = buf[x+6];
     }
 };
 

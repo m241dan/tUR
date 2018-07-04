@@ -24,12 +24,10 @@ int main( int argc, char *argv[] )
         int data = wiringPiI2CReadReg8( arduino_handler, 0x00 );
         if( data == 0x31 )
         {
-            std::array<byte, sizeof(image_packet)> buf = { 0 };
+            byte buf[sizeof(image_packet)] = { 0 };
             buf[0] = (byte)data;
-            auto it = buf.begin();
-            for( ; it != buf.end(); it++ )
-                *it = (byte)wiringPiI2CReadReg8( arduino_handler, 0x00 );
-
+            for( int x = 1; x < sizeof(image_packet); x++ )
+                buf[x] = (byte)wiringPiI2CReadReg8( arduino_handler, 0x00 );
 
             image_packet received(buf);
             std::cout << "imagepacket_position[" << received.imagepacket_position << "]" << std::endl;
