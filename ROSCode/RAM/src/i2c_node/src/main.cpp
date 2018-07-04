@@ -26,7 +26,6 @@ int main( int argc, char *argv[] )
         else
             std::cout << "ADA detected" << std::endl;
     }
-    std::cout << "Getting here before segging" << std::endl;
 
     ArduinoRegisters registers;
     unsigned long &internal_time_register = registers.ada_output_register.time_register;
@@ -47,10 +46,6 @@ int main( int argc, char *argv[] )
         std::this_thread::sleep_for( sleep_duration );
 
         write( arduino_handler, (byte *)&registers.ada_input_register, sizeof( ADA_input_register));
-        if( registers.ada_input_register.verifyCheckSums() )
-            std::cout << "Read CheckSum: Success" << std::endl;
-        else
-            std::cout << "Read CheckSum: Failed" << std::endl;
         std::this_thread::sleep_for( sleep_duration );
     }
 
