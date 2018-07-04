@@ -22,7 +22,7 @@ int main( int argc, char *argv[] )
     while( !shutdown )
     {
         int data = wiringPiI2CReadReg8( arduino_handler, 0x00 );
-        if( data == 0x31 )
+        if( data == 0x30 )
         {
             byte buf[sizeof(image_packet)] = { 0 };
             buf[0] = (byte)data;
