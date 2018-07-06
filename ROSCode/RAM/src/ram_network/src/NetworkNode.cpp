@@ -144,13 +144,18 @@ void NetworkNode::networkLoop( const ros::TimerEvent &event )
         BBOX_output_register new_read;
         read( _handles.bbox, (byte *)&new_read, sizeof( BBOX_output_register ) );
 
+        char buf[512];
+        snprintf( buf, sizeof( BBOX_output_register ), "%s", (char *)&new_read );
+
+        ROS_INFO( "Output:\n%s", buf );
+
         if( new_read.verifyCheckSums() )
         {
             _registers.bbox_output_register = new_read;
         }
         else
         {
-            ROS_ERROR( "%s: BBox Check Sums bad: check_one[%cu] check_two[%cu], check_three[%cu]", __FUNCTION__, new_read.check_one, new_read.check_two, new_read.check_three );
+            ROS_ERROR( "%s: BBox Check Sums bad: check_one[%d] check_two[%d], check_three[%d]", __FUNCTION__, (int)new_read.check_one, (int)new_read.check_two, (int)new_read.check_three );
             // TODO report fault somewhere
         }
 
