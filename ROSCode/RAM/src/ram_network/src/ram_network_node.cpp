@@ -1,4 +1,5 @@
 #include <ram_network/ram_network.h>
+#include <ram_network/NetworkNode.h>
 
 int main( int argc, char *argv[] )
 {

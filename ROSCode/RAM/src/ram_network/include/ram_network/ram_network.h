@@ -13,7 +13,6 @@
 #include <wiringSerial.h>
 #include <ram_network/ram_funcs.h>
 #include <ram_network/ram_registers.h>
-#include <ram_network/NetworkNode.h>
 #include <ros/ros.h>
 
 struct ArduinoRegisters

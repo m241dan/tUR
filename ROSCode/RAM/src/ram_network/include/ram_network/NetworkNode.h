@@ -23,7 +23,7 @@ class NetworkNode
         void openBBoxI2C();
 
 
-        void networkLoop();
+        void networkLoop( const ros::TimerEvent &event );
         void handleSerial();
         void handleAda();
         void handleBBox();

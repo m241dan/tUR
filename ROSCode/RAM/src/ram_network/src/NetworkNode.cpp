@@ -1,9 +1,7 @@
 //
 // Created by korisd on 7/5/18.
 //
-
-#include <ram_network/ram_network.h>
-#include "ram_network/NetworkNode.h"
+#include <ram_network/NetworkNode.h>
 
 NetworkNode::NetworkNode()
 {
@@ -11,6 +9,11 @@ NetworkNode::NetworkNode()
     setupI2CConnections();
     setupServices();
     setupTimers();
+}
+
+void NetworkNode::setupServices()
+{
+
 }
 
 void NetworkNode::setupSerialConnection()
@@ -21,7 +24,7 @@ void NetworkNode::setupSerialConnection()
         _handles.serial = serialOpen( serialAddress, serialBaud );
         if( _handles.serial != -1 )
         {
-            ROS_INFO( "%s: Serial successfully connected" );
+            ROS_INFO( "%s: Serial successfully connected", __FUNCTION__ );
         }
         else if( attempts++ > serialLimit )
         {
@@ -52,7 +55,7 @@ void NetworkNode::openBBoxI2C()
     _handles.bbox = wiringPiI2CSetup( I2CADDRESS_BBOX );
 }
 
-void NetworkNode::networkLoop()
+void NetworkNode::networkLoop( const ros::TimerEvent &event )
 {
     if( _handles.serial != -1 )
     {
@@ -164,5 +167,10 @@ void NetworkNode::networkLoop()
         //downlinking
         downlinkPacket();
     }
+
+}
+
+void NetworkNode::downlinkPacket()
+{
 
 }
