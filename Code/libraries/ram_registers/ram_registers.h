@@ -43,6 +43,7 @@ struct ADA_output_register
     unsigned char check_three = 0;
     unsigned long packets_sent = 0;
     unsigned char write_fault = 0;
+    char english_sys_msg[30];
     void setCheckSums()
     {
         check_one = '\xDE';
@@ -108,6 +109,7 @@ struct BB_output_register
     unsigned char bbox_potentiomer_knob;
     unsigned char write_fault = 0;
     unsigned char check_three = 0;
+    char english_sys_msg[30];
 
     void setCheckSums()
     {

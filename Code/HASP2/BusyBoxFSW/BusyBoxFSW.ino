@@ -3,22 +3,22 @@
 #include <ram_registers.h>
 #include <hasp_arduino_sysclock.h>
 
-ADA_output_register output_register;
-ADA_input_register  input_register;
+BB_output_register  output_register;
+BB_input_register   input_register;
 ArduinoSysClock     sys_clock( output_register.time_register );
 
 /* i2c write event (onReceive) */
 void writeRegisters( int num_bytes )
 {
     /* If we have a complete register written in there, read it */
-    if( Wire.available() == sizeof( ADA_input_register ) )
+    if( Wire.available() == sizeof( BB_input_register ) )
     {
         /*
          * I don't have direct access to the buffer to do a memcpy, so I'll just use a byte pointer
          * Theoretically, this should be safe because the sizes of the register and the buffer are the "same" 
          */
         byte *input_ptr = (byte *)&input_register;
-        for( int x = 0; x < sizeof( ADA_input_register ); x++ )
+        for( int x = 0; x < sizeof( BB_input_register ); x++ )
         {
             *input_ptr++ = Wire.read();
         }
@@ -44,12 +44,12 @@ void writeRegisters( int num_bytes )
 void readRegisters()
 {
     output_register.setCheckSums();
-    Wire.write( (byte *)&output_register, sizeof( ADA_output_register ) );
+    Wire.write( (byte *)&output_register, sizeof( BB_output_register ) );
 }
 
 void setup()
 {
-    Wire.begin( I2CADDRESS_ADA );
+    Wire.begin( I2CADDRESS_BBOX );
     Wire.onRequest( readRegisters );
     Wire.onReceive( writeRegisters );
 
@@ -58,6 +58,5 @@ void setup()
 
 void loop()
 {
-    //read temperature
-    sys_clock.updateClock( millis() );    
+    sys_clock.updateClock( millis() );
 }
