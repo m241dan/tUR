@@ -150,6 +150,7 @@ void NetworkNode::networkLoop( const ros::TimerEvent &event )
         }
         else
         {
+            ROS_ERROR( "%s: BBox Check Sums bad", __FUNCTION__ );
             // TODO report fault somewhere
         }
 
@@ -171,7 +172,7 @@ void NetworkNode::networkLoop( const ros::TimerEvent &event )
     ROS_INFO( "Sync   Time: %lu", _registers.gps_time_sync );
     ROS_INFO( "System Time: %lu", _registers.ard_time_sync );
     ROS_INFO( "ADA    Time: %lu", _registers.ada_output_register.time_register );
-    ROS_INFO( "BBOX   TIME: %lu", _registers.bbox_output_register.time_register );
+    ROS_INFO( "BBOX   Time: %lu", _registers.bbox_output_register.time_register );
 }
 
 void NetworkNode::downlinkPacket()
