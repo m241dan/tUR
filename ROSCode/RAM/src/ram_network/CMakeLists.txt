@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(i2c_node)
+project(ram_network)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+# add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -15,11 +15,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
-#find_package( Threads REQUIRED )
-
-find_package(PkgConfig REQUIRED)
-pkg_check_modules( wiringPi libwiringpi REQUIRED)
-
+find_package( PkgConfig REQUIRED )
+pkg_check_modules( wiringPi libwiringpi REQUIRED )
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -107,8 +104,8 @@ pkg_check_modules( wiringPi libwiringpi REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include include/i2c_node
-#  LIBRARIES i2c_node
+  INCLUDE_DIRS include include/ram_network
+#  LIBRARIES ram_network
 #  CATKIN_DEPENDS roscpp std_msgs
 #  DEPENDS system_lib
 )
@@ -121,14 +118,14 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
   include
-  include/i2c_node
+  include/ram_network
   ${catkin_INCLUDE_DIRS}
   ${wiringPi_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/i2c_node.cpp
+#   src/${PROJECT_NAME}/ram_network.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -139,7 +136,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(${PROJECT_NAME}_node src/main.cpp src/NetworkNode.cpp)
+add_executable(${PROJECT_NAME}_node src/ram_network_node.cpp src/NetworkNode.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -152,7 +149,7 @@ add_executable(${PROJECT_NAME}_node src/main.cpp src/NetworkNode.cpp)
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
- target_link_libraries(${PROJECT_NAME}_node
+   target_link_libraries(${PROJECT_NAME}_node
    ${catkin_LIBRARIES}
    ${wiringPi_LIBRARIES}
  )
@@ -197,7 +194,7 @@ add_executable(${PROJECT_NAME}_node src/main.cpp src/NetworkNode.cpp)
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_i2c_node.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_ram_network.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

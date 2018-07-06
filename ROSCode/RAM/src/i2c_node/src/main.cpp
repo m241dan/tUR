@@ -1,14 +1,4 @@
-#include <errno.h>
-#include <string.h>
-#include <thread>
-#include <chrono>
-#include <iostream>
-#include <unistd.h>
-#include <wiringPi.h>
-#include <wiringPiI2C.h>
-#include <wiringSerial.h>
-#include <i2c_node/ram_funcs.h>
-#include <i2c_node/ram_registers.h>
+#include <i2c_node.h>
 
 struct ArduinoRegisters
 {
@@ -18,8 +8,8 @@ struct ArduinoRegisters
 
 int main( int argc, char *argv[] )
 {
+    ros::init
     bool shutdown = false;
-    std::chrono::seconds sleep_duration(2);
     /*
     int arduino_handler = -1;
     while( arduino_handler == -1 )
