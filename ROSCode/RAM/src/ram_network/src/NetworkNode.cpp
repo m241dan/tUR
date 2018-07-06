@@ -138,7 +138,7 @@ void NetworkNode::networkLoop( const ros::TimerEvent &event )
             _registers.bbox_input_register.last_write = _registers.ard_time_sync;
             //TODO commanding
         }
-        _registers.ada_input_register.setCheckSums();
+        _registers.bbox_input_register.setCheckSums();
         write( _handles.bbox, (byte *)&_registers.bbox_input_register, sizeof( BBOX_input_register ) );
 
         BBOX_output_register new_read;

@@ -49,7 +49,7 @@ void readRegisters()
 
 void setup()
 {
-    Wire.begin( I2CADDRESS_BBOX );
+    Wire.begin( 0x06 ); //I2CADDRESS_BBOX );
     Wire.onRequest( readRegisters );
     Wire.onReceive( writeRegisters );
 
