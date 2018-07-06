@@ -5,10 +5,11 @@
 
 /* Internal Time Register, all other registers will reference this */
 unsigned long       internal_time_register  = 0;
-ArduinoSysClock     sys_clock               ( internal_time_register );
 ADA_output_register output_register;
 ADA_input_register  input_register;
+ArduinoSysClock     sys_clock               ( output_register.time_register );
 
+/* i2c write event (onReceive) */
 void writeRegisters( int num_bytes )
 {
     /* If we have a complete register written in there, read it */
@@ -32,7 +33,7 @@ void writeRegisters( int num_bytes )
         if( input_register.verifyCheckSums() )
         {
             output_register.write_fault = 0;
-           //if fresh_packet is set, raise a downlink flag
+            sys_clock.syncClock( input_register.sync_to, millis() );    
         }
         else
         {
@@ -41,10 +42,21 @@ void writeRegisters( int num_bytes )
     }
 }
 
+/* i2c read event (onRequest) */
 void readRegisters()
 {
     output_register.setCheckSums();
     Wire.write( (byte *)&output_register, sizeof( ADA_output_register ) );
+}
+
+/* Serial Read Event */
+void serialEvent()
+{
+    if( Serial.available() )
+    {
+        Serial.flush();
+        output_register.ambpacket_bme01_temp = 50;
+    }
 }
 
 void setup()
@@ -59,23 +71,8 @@ void setup()
     sys_clock.syncClock( 1234470131, millis() );
 }
 
-void serialEvent()
-{
-    if( Serial.available() )
-    {
-        Serial.flush();
-        output_register.ambpacket_bme01_temp = 50;
-    }
-}
-
-void updateTime()
-{
-    sys_clock.updateClock( millis() );
-    output_register.time_register = internal_time_register;
-}
-
 void loop()
 {
     //read temperature
-    updateTime();
+    sys_clock.updateClock( millis() );    
 }

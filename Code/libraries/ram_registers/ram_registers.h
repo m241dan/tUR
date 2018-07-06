@@ -106,6 +106,7 @@ struct BB_output_register
     unsigned char bbox_button_blu;
     unsigned char bbox_potentiometer_lever;
     unsigned char bbox_potentiomer_knob;
+    unsigned char write_fault = 0;
     unsigned char check_three = 0;
 
     void setCheckSums()
