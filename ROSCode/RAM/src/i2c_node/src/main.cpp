@@ -58,7 +58,7 @@ int main( int argc, char *argv[] )
     int serial_handle = -1;
     while( serial_handle == -1 )
     {
-        serial_handle = serialOpen( "/ttyS0", 9600 );
+        serial_handle = serialOpen( "/ttyAMA0", 9600 );
     }
 
     while( !shutdown )

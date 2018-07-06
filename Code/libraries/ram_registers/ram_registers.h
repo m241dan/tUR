@@ -68,9 +68,8 @@ struct ADA_input_register
 {
     unsigned char check_one = 0;
     unsigned long last_write;
-    unsigned char fresh_packet;
     unsigned char check_two = 0;
-    data_packet packet;
+    unsigned long sync_to;
     unsigned char check_three = 0;
 
     void setCheckSums()
@@ -95,11 +94,57 @@ struct ADA_input_register
 };
 
 
+struct BB_output_register
+{
+    unsigned char check_one = 0;
+    unsigned long time_register;
+    unsigned char bbox_rocker_horiz;
+    unsigned char bbox_rocker_verti;
+    unsigned char bbox_toggle_horiz;
+    unsigned char bbox_toggle_verti;
+    unsigned char check_two = 0;
+    unsigned char bbox_button_blu;
+    unsigned char bbox_potentiometer_lever;
+    unsigned char bbox_potentiomer_knob;
+    unsigned char check_three = 0;
+
+    void setCheckSums()
+    {
+        check_one = '\xBB';
+        check_two = '\xBE';
+        check_three = '\xEF';
+    }
+
+    bool verifyCheckSums()
+    {
+        bool verified = false;
+
+        if( check_one == '\xBB' &&
+            check_two == '\xBE' &&
+            check_three == '\xEF' )
+        {
+            verified = true;
+        }
+
+        return verified;
+    }
+
+};
+
 struct BB_input_register
 {
-    unsigned char check_one = '\xBB';
-    unsigned char check_two = '\xFA';
-    unsigned char check_three = '\xFE';
+    unsigned char check_one = 0;
+    unsigned long last_write;
+    unsigned char check_two = 0;
+    unsigned long sync_to;
+    unsigned char check_three = 0;
+
+    void setCheckSums()
+    {
+        check_one = '\xBB';
+        check_two = '\xFA';
+        check_three = '\xFE';
+    }
 
     bool verifyCheckSums()
     {

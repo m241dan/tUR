@@ -15,8 +15,8 @@ struct data_packet
 {
     unsigned char datapacket_header[2] = {'\x1', '\x21'};
     unsigned char datapacket_i2cID;
-    time_t datapacket_time_sent_to_HASP;
-    time_t datapacket_time_sent_to_mngr;
+    unsigned long datapacket_time_sent_to_HASP;
+    unsigned long datapacket_time_sent_to_mngr;
     unsigned char datapacket_num_data_chunks;
     unsigned char datapacket_sizeof_data_chunks[2];
     unsigned char datapacket_checksumz[28];
