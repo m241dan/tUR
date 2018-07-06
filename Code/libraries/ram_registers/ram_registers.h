@@ -77,7 +77,7 @@ struct ADA_input_register
     unsigned char command_id;
     unsigned char command_param;
     unsigned char check_two = 0;
-    unsigned char new_sync = 0;
+    unsigned char new_sync = 1;
     unsigned long sync_to = 1530844583;;
     unsigned char check_three = 0;
 

@@ -129,7 +129,27 @@ void NetworkNode::networkLoop()
 
     if( _handles.bbox != -1 )
     {
-        _registers.bbox_input_register.sync_to = _registers.ard_time_sync;
+        _registers.bbox_input_register.sync_to = _registers.ard_time_sync; // always write time
+        if( !_registers.bbox_output_register.write_fault )
+        {
+            _registers.bbox_input_register.last_write = _registers.ard_time_sync;
+            //TODO commanding
+        }
+        _registers.ada_input_register.setCheckSums();
+        write( _handles.bbox, (byte *)&_registers.bbox_input_register, sizeof( BBOX_input_register ) );
+
+        BBOX_output_register new_read;
+        read( _handles.bbox, (byte *)&new_read, sizeof( BBOX_output_register ) );
+
+        if( new_read.verifyCheckSums() )
+        {
+            _registers.bbox_output_register = new_read;
+        }
+        else
+        {
+            // TODO report fault somewhere
+        }
+
     }
     else
     {
