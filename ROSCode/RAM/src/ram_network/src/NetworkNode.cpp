@@ -150,7 +150,7 @@ void NetworkNode::networkLoop( const ros::TimerEvent &event )
         }
         else
         {
-            ROS_ERROR( "%s: BBox Check Sums bad", __FUNCTION__ );
+            ROS_ERROR( "%s: BBox Check Sums bad: check_one[%cu] check_two[%cu], check_three[%cu]", __FUNCTION__, new_read.check_one, new_read.check_two, new_read.check_three );
             // TODO report fault somewhere
         }
 

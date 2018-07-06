@@ -37,7 +37,7 @@ struct fdHandles
 const char *const   serialAddress   = "/dev/ttyAMA0";
 const int           serialBaud      = 4800;
 const int           serialLimit     = 100; // amount of times to attempt opening a serial connection before failing
-const double        refreshRate     = 0.05; // 20Hz
+const double        refreshRate     = 0.1; // 10Hz
 
 #endif
 
