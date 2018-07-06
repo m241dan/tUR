@@ -22,7 +22,7 @@ void writeRegisters( int num_bytes )
         {
             *input_ptr++ = Wire.read();
         }
-
+        output_register.writes_received++;
         /*
          * Check the Data:
          *  - If its good, reset our fault flag
@@ -31,7 +31,8 @@ void writeRegisters( int num_bytes )
         if( input_register.verifyCheckSums() )
         {
             output_register.write_fault = 0;
-            sys_clock.syncClock( input_register.sync_to, millis() );    
+            if( input_register.new_sync )
+                sys_clock.syncClock( input_register.sync_to, millis() );    
         }
         else
         {

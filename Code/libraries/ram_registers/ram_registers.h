@@ -6,7 +6,7 @@
 struct ADA_output_register
 {
     unsigned char check_one = 0;
-    unsigned long time_register;
+    unsigned long time_register = 0;
 
     signed short ambpacket_bme01_temp;
     signed short ambpacket_bme01_pres;
@@ -41,9 +41,13 @@ struct ADA_output_register
     signed short ambpacket_dallas15_temp;
     signed short ambpacket_dallas16_temp;
     unsigned char check_three = 0;
-    unsigned long packets_sent = 0;
-    unsigned char write_fault = 0;
+    unsigned long reads_received = 0;
+    unsigned long writes_received = 0; // this will roll over, and that's okay
+    unsigned short commands_received = 0;
+    unsigned char write_fault = 0; // write checksums failed
+    unsigned char command_fault = 0;
     char english_sys_msg[30];
+
     void setCheckSums()
     {
         check_one = '\xDE';
@@ -69,8 +73,12 @@ struct ADA_input_register
 {
     unsigned char check_one = 0;
     unsigned long last_write;
+    unsigned char has_command;
+    unsigned char command_id;
+    unsigned char command_param;
     unsigned char check_two = 0;
-    unsigned long sync_to;
+    unsigned char new_sync = 0;
+    unsigned long sync_to = 1530844583;;
     unsigned char check_three = 0;
 
     void setCheckSums()
@@ -95,7 +103,7 @@ struct ADA_input_register
 };
 
 
-struct BB_output_register
+struct BBOX_output_register
 {
     unsigned char check_one = 0;
     unsigned long time_register;
@@ -107,7 +115,11 @@ struct BB_output_register
     unsigned char bbox_button_blu;
     unsigned char bbox_potentiometer_lever;
     unsigned char bbox_potentiomer_knob;
-    unsigned char write_fault = 0;
+    unsigned long reads_received = 0;
+    unsigned long writes_received = 0; // this will roll over, and that's okay
+    unsigned short commands_received = 0;
+    unsigned char write_fault = 0; // write checksums failed
+    unsigned char command_fault = 0;
     unsigned char check_three = 0;
     char english_sys_msg[30];
 
@@ -134,11 +146,14 @@ struct BB_output_register
 
 };
 
-struct BB_input_register
+struct BBOX_input_register
 {
     unsigned char check_one = 0;
     unsigned long last_write;
     unsigned char check_two = 0;
+    unsigned char has_command;
+    unsigned char command_id;
+    unsigned char command_param;
     unsigned long sync_to;
     unsigned char check_three = 0;
 
