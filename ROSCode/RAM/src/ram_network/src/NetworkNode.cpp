@@ -25,7 +25,7 @@ void NetworkNode::setupServices()
 
 void NetworkNode::setupSerialConnection()
 {
-    if( std::getenv( "IS_RPI" ) == "true" ) // allow me to do more testing on laptop, remove for flight?
+    if( std::getenv( "IS_RPI" ) == std::string( "true" ) ) // allow me to do more testing on laptop, remove for flight?
     {
         int attempts = 0;
         while( _handles.serial == -1 )
@@ -61,13 +61,13 @@ void NetworkNode::setupTimers()
 
 void NetworkNode::openAdaI2C()
 {
-    if( std::getenv( "IS_RPI" ) == "true" ) // allow me to do more testing on laptop
+    if( std::getenv( "IS_RPI" ) == std::string( "true" ) ) // allow me to do more testing on laptop
         _handles.ada = wiringPiI2CSetup( I2CADDRESS_ADA );
 }
 
 void NetworkNode::openBBoxI2C()
 {
-    if( std::getenv( "IS_RPI" ) == "true" ) // allow me to do more testing on laptop
+    if( std::getenv( "IS_RPI" ) == std::string( "true" ) ) // allow me to do more testing on laptop
         _handles.bbox = wiringPiI2CSetup( I2CADDRESS_BBOX );
 }
 
@@ -85,7 +85,7 @@ void NetworkNode::networkLoop( const ros::TimerEvent &event )
     }
     else
     {
-        if(  std::getenv( "IS_RPI" ) == "true" )
+        if(  std::getenv( "IS_RPI" ) == std::string( "true" ) )
         {
             ROS_ERROR( "%s: we are in pure autonomous mode, attempting to reestablish connection", __FUNCTION__ );
             setupSerialConnection();
