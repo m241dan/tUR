@@ -5,6 +5,7 @@
 #include <DallasTemperature.h>
 #include "Adafruit_Sensor.h"
 #include "Adafruit_BME280.h"
+#include <ram_commands.h>
 
 #define THERMO_CH1 9 //WHT
 #define THERMO_CH2 8 //BLU
