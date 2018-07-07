@@ -2,6 +2,7 @@
 #define ram_registers
 
 #include <ram_funcs.h>
+#include <cstring>
 
 struct ADA_output_register
 {
@@ -37,11 +38,26 @@ struct ADA_output_register
     signed short dallas16_temp = 0;
     unsigned char check_three = 0;
     unsigned long reads_received = 0;
-    unsigned long writes_received = 0; // this will roll over, and that's okay
+    unsigned long writes_received = 0;
     unsigned short commands_received = 0;
     unsigned char write_fault = 0; // write checksums failed
     unsigned char command_fault = 0;
+    unsigned char sd_fault = 0;
     char english_sys_msg[30];
+
+    char *serialize_csv()
+    {
+        static char buf[512];
+        memset( &buf[0], 0, sizeof( buf ) );
+
+        snprintf( buf, sizeof( buf ), "%lu,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
+            time_register, bme01_pres, bme01_temp, bme01_humi, bme02_pres, bme02_temp, bme02_humi,
+            dallas01_temp, dallas02_temp, dallas03_temp, dallas04_temp, dallas05_temp, dallas06_temp,
+            dallas07_temp, dallas08_temp, dallas09_temp, dallas10_temp, dallas11_temp, dallas12_temp,
+            dallas13_temp, dallas14_temp, dallas15_temp, dallas16_temp );
+        return buf;
+
+    }
 
     void setCheckSums()
     {
@@ -115,8 +131,23 @@ struct BBOX_output_register
     unsigned short commands_received = 0;
     unsigned char write_fault = 0; // write checksums failed
     unsigned char command_fault = 0;
+    unsigned char sd_fault = 0;
     unsigned char check_three = 0;
     char english_sys_msg[30];
+
+    char *serialize_csv()
+    {
+        static char buf[512];
+        memset( &buf[0], 0, sizeof( buf ) );
+
+        snprintf( buf, sizeof( buf ), "%lu,%d,%d,%d,%d,%d,%d,%d",
+                  time_register, rocker_horiz, rocker_verti,
+                  toggle_horiz, toggle_verti, button_blu,
+                  potentiometer_lever, potentiometer_knob );
+
+        return buf;
+
+    }
 
     void setCheckSums()
     {

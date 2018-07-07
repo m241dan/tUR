@@ -1,6 +1,8 @@
 #ifndef RAM_COMMANDS_H
 #define RAM_COMMANDS_H
 
+constexpr unsigned char RESET_BYTE = '\x31';
+
 constexpr unsigned char NETWORK_RESET[2]          = { '\x01', '\x31' };
 constexpr unsigned char NETWORK_SYSTEM[2]         = { '\x02', '\x32' };
 

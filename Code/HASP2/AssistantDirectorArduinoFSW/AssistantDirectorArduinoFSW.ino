@@ -6,6 +6,8 @@
 #include "Adafruit_Sensor.h"
 #include "Adafruit_BME280.h"
 #include <ram_commands.h>
+#include <SPI.h>
+#include <SD.h>
 
 #define THERMO_CH1 9 //WHT
 #define THERMO_CH2 8 //BLU
@@ -30,6 +32,11 @@ DallasTemperature   sensors_ch3 ( &oneWire_ch3 );
 DallasTemperature   sensors_ch4 ( &oneWire_ch4 );
 Adafruit_BME280     bme01       (BME_CS, BME_MOSI, BME_MISO, BME_SCK);
 Adafruit_BME280     bme02       (BME_DS, BME_MOSI, BME_MISO, BME_SCK);
+const int           SD_CARD     = 4; //"pin" for the SD card
+void        (*resetFunc)(void)  = 0;
+int                 write_rate  = 5000;     // 0.20 Hz or 5 seconds
+unsigned long       last_write  = 0;
+char log_name[15]               = { 0 };
 
 /* i2c write event (onReceive) */
 void writeRegisters( int num_bytes )
@@ -37,6 +44,8 @@ void writeRegisters( int num_bytes )
     /* If we have a complete register written in there, read it */
     if( Wire.available() == sizeof( ADA_input_register ) )
     {
+        output_register.write_fault = 0;
+        output_register.command_fault = 0;
         /*
          * I don't have direct access to the buffer to do a memcpy, so I'll just use a byte pointer
          * Theoretically, this should be safe because the sizes of the register and the buffer are the "same" 
@@ -56,7 +65,25 @@ void writeRegisters( int num_bytes )
         {
             output_register.write_fault = 0;
             if( input_register.new_sync )
-                sys_clock.syncClock( input_register.sync_to, millis() );    
+                sys_clock.syncClock( input_register.sync_to, millis() );
+            if( input_register.has_command )
+            {
+                switch( input_register.command_id )
+                {
+                    default:
+                        output_register.command_fault = 1;
+                        break;
+                    case AMBIENT_WRITE_RATE[0]:
+                        write_rate = (int)input_register.command_param;
+                        break;
+                    case AMBIENT_RESET[0]:
+                        if( input_register.command_param == RESET_BYTE )
+                            resetFunc();
+                        else
+                            output_register.command_fault = 1;
+                        break;
+                }
+            }
         }
         else
         {
@@ -83,6 +110,8 @@ void setup()
         output_register.bme02_fault = 1;
         
     sys_clock.syncClock( 1234470131, millis() );
+    if( !SD.begin( SD_CARD ) )
+        output_register.sd_fault = 1;
 }
 
 void loop()
