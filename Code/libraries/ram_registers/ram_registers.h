@@ -6,6 +6,7 @@
 
 struct NetworkHealth
 {
+    uint32_t system_time = 0;
     uint32_t serial_commands_received = 0;
     uint32_t serial_gtp_received = 0;
     uint8_t serial_connection_fault = 0;
@@ -43,12 +44,13 @@ struct NetworkHealth
         static char buf[512];
         memset( &buf[0], 0, sizeof( buf ) );
 
-        snprintf( buf, sizeof( buf ), "%du,%du,%c,%du,%du,%lu,%du,%lu,%du,%c,%c,%c,%c,%s,%du,%du,%lu,%du,%lu,%du,%c%c,%s",
-                  serial_commands_received, serial_gtp_received, serial_connection_fault,
+        snprintf( buf, sizeof( buf ), "%du,%du,%du,%d,%du,%du,%lu,%du,%lu,%du,%d,%d,%d,%d,%s,%du,%du,%lu,%du,%lu,%du,%d%d,%s,%d,%d,%d,%d,%d",
+                  system_time,serial_commands_received, serial_gtp_received, serial_connection_fault,
                   ada_commands_received, ada_command_faults, ada_writes_received, ada_write_faults, ada_reads_received,
                   ada_read_faults, ada_sd_fault, ada_connection_fault, ada_bme01_fault, ada_bme02_fault, ada_eng_sys_msg,
                   bbox_commands_received, bbox_command_faults, bbox_writes_received, bbox_write_faults, bbox_reads_received,
-                  bbox_read_faults, bbox_sd_fault, bbox_connection_fault, bbox_eng_sys_msg
+                  bbox_read_faults, bbox_sd_fault, bbox_connection_fault, bbox_eng_sys_msg, ada_commands, bbox_commands,
+                  cam_commands, arm_commands, netw_commands
         );
 
         return buf;
