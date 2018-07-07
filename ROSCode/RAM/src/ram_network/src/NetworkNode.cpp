@@ -23,9 +23,9 @@ void NetworkNode::setupServices()
 }
 void NetworkNode::startSerialAndI2C()
 {
-    _health.ada_connection_fault = openSerialConnection() == -1 ? (unsigned char)1: (unsigned char)0;
-    _health.bbox_connection_fault = openAdaI2C() == -1 ? (unsigned char)1 : (unsigned char)0;
-    openBBoxI2C();
+    _health.serial_connection_fault = openSerialConnection() == -1 ? (uint8_t )1: (uint8_t)0;
+    _health.ada_connection_fault = openAdaI2C() == -1 ? (uint8_t)1 : (uint8_t)0;
+    _health.bbox_connection_fault = openBBoxI2C() == -1 ? (uint8_t)1 : (uint8_t)0;
 }
 
 void NetworkNode::setupPublishers()
@@ -107,8 +107,8 @@ void NetworkNode::handleSerial()
         if(  std::getenv( "IS_RPI" ) == std::string( "true" ) )
         {
             ROS_ERROR( "%s: we are in pure autonomous mode, attempting to reestablish connection", __FUNCTION__ );
-             openSerialConnection();
-            _health.serial_connection_fault = 1;
+
+            _health.serial_connection_fault = openSerialConnection() == -1 ? (uint8_t)1 : (uint8_t)0;
         }
     }
 }
@@ -175,7 +175,7 @@ void NetworkNode::handleAda()
         /*
          * Attempt to open connection with ADA
          */
-        openAdaI2C();
+        _health.ada_connection_fault = openAdaI2C() == -1 ? (uint8_t)1 : (uint8_t)0;
     }
 }
 
@@ -211,7 +211,7 @@ void NetworkNode::handleBBox()
         /*
          * Attempt to open connection with BBox
          */
-        openBBoxI2C();
+        _health.bbox_connection_fault = openBBoxI2C() == -1 ? (uint8_t)1 : (uint8_t)0;
     }
 
 }
