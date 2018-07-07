@@ -3,9 +3,18 @@
 #include <ram_registers.h>
 #include <hasp_arduino_sysclock.h>
 
-BBOX_output_register  output_register;
-BBOX_input_register   input_register;
-ArduinoSysClock     sys_clock( output_register.time_register );
+BBOX_output_register    output_register;
+BBOX_input_register     input_register;
+ArduinoSysClock         sys_clock( output_register.time_register );
+const int               BUTTON_BLU      = 24;           //blue button pin
+const int               ROCKER_HORIZ    = 23;           //horizontal rocker switch (black)
+const int               ROCKER_VERTI    = 22;           //vertical rocker switch (black)
+const int               TOGGLE_HORIZ    = 5;            //horizontal toggle switch (metal)
+const int               TOGGLE_VERTI    = 6;            //vertical toggle switch (metal)
+const int               POTENTIOM_LEVER = A0;           //potentiometer (ANALOG pin, not digital)
+const int               POTENTIOM_KNOB  = A1;           //potentiometer (ANALOG pin, not digital)
+const float             POTENTIOM_TRUNC = 1023;
+void                 (*resetFunc)(void) = 0;
 
 /* i2c write event (onReceive) */
 void writeRegisters( int num_bytes )
@@ -54,10 +63,25 @@ void setup()
     Wire.onRequest( readRegisters );
     Wire.onReceive( writeRegisters );
 
+    pinMode(BUTTON_BLU,     INPUT_PULLUP);
+    pinMode(ROCKER_HORIZ,   INPUT_PULLUP);
+    pinMode(ROCKER_VERTI,   INPUT_PULLUP);
+    pinMode(TOGGLE_HORIZ,   INPUT_PULLUP);
+    pinMode(TOGGLE_VERTI,   INPUT_PULLUP);
+    pinMode(POTENTIOM_LEVER,INPUT_PULLUP);
+    pinMode(POTENTIOM_KNOB, INPUT_PULLUP);
+  
     sys_clock.syncClock( 1234470131, millis() );
 }
 
 void loop()
 {
+    output_register.rocker_horiz       = digitalRead( ROCKER_HORIZ     );
+    output_register.rocker_verti       = digitalRead( ROCKER_VERTI     );
+    output_register.toggle_horiz       = digitalRead( TOGGLE_HORIZ     );
+    output_register.toggle_verti       = digitalRead( TOGGLE_VERTI     );
+    output_register.button_blu         = digitalRead( BUTTON_BLU       );
+    output_register.potentiometer_lever= digitalRead( POTENTIOM_LEVER  );
+    output_register.potentiometer_knob = digitalRead( POTENTIOM_KNOB   );
     sys_clock.updateClock( millis() );
 }
