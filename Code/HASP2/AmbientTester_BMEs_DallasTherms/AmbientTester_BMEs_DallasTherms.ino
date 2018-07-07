@@ -2,10 +2,10 @@
 #include "Adafruit_Sensor.h"
 #include "Adafruit_BME280.h"
 
-#define THERMO_01 10
-#define THERMO_02 11
-#define THERMO_03 12
-#define THERMO_04 13
+#define THERMO_01 10 //Bank01
+#define THERMO_02 11 //Bank02
+#define THERMO_03 12 //Bank03
+#define THERMO_04 13 //Bank04
 #define BME_SCK 24
 #define BME_MOSI 23
 #define BME_MISO 22 
@@ -43,24 +43,25 @@ void loop()
     sensors_02.requestTemperatures();
     sensors_03.requestTemperatures();
     sensors_04.requestTemperatures();
-    int secs = millis() / 1000; //Oh my God I'm such a kludge. -JA
-    Serial.println( String(secs) + " s, \t" +
+    int secs = millis() / 1000; 
+    Serial.println( String(secs) + " s,");
+    Serial.println("Bank01\t" +
                     String( sensors_01.getTempCByIndex(0) ) + " C\t " +
                     String( sensors_01.getTempCByIndex(1) ) + " C\t " +
                     String( sensors_01.getTempCByIndex(2) ) + " C\t " +
                     String( sensors_01.getTempCByIndex(3) ) + " C\t ");
 
-    Serial.println( " \t" +
+    Serial.println( "Bank02\t" +
                     String( sensors_02.getTempCByIndex(0) ) + " C\t " +
                     String( sensors_02.getTempCByIndex(1) ) + " C\t " +
                     String( sensors_02.getTempCByIndex(2) ) + " C\t " +
                     String( sensors_02.getTempCByIndex(3) ) + " C\t ");
-    Serial.println( " \t" +
+    Serial.println( "Bank03\t" +
                     String( sensors_03.getTempCByIndex(0) ) + " C\t " +
                     String( sensors_03.getTempCByIndex(1) ) + " C\t " +
                     String( sensors_03.getTempCByIndex(2) ) + " C\t " +
                     String( sensors_03.getTempCByIndex(3) ) + " C\t ");
-    Serial.println( " \t" +
+    Serial.println( "Bank04\t" +
                     String( sensors_04.getTempCByIndex(0) ) + " C\t " +
                     String( sensors_04.getTempCByIndex(1) ) + " C\t " +
                     String( sensors_04.getTempCByIndex(2) ) + " C\t " +
@@ -82,5 +83,5 @@ void loop()
     Serial.print(bme00.readHumidity());
     Serial.println("%,\t");
     */
-    delay(1000);
+    delay(2500);
 }
