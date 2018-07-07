@@ -2,6 +2,8 @@
 #include <ram_funcs.h>
 #include <ram_registers.h>
 #include <hasp_arduino_sysclock.h>
+#include <ram_commands.h>
+
 
 BBOX_output_register    output_register;
 BBOX_input_register     input_register;
@@ -40,7 +42,14 @@ void writeRegisters( int num_bytes )
         if( input_register.verifyCheckSums() )
         {
             output_register.write_fault = 0;
-            sys_clock.syncClock( input_register.sync_to, millis() );    
+            sys_clock.syncClock( input_register.sync_to, millis() );
+            if( input_register.has_command )
+            {
+             //   switch( input_register.command_id )
+             //  {
+              //      case 
+              //  }
+            }
         }
         else
         {
