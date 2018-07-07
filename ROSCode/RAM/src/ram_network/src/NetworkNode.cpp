@@ -8,6 +8,7 @@ NetworkNode::NetworkNode()
     setupSerialConnection();
     setupI2CConnections();
     setupServices();
+    setupPublishers();
     setupTimers();
 }
 
