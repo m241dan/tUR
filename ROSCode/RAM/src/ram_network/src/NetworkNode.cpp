@@ -83,10 +83,10 @@ void NetworkNode::networkLoop( const ros::TimerEvent &event )
     handleAda();
     handleBBox();
     handleDownlink();
-    ROS_INFO( "Sync   Time: %lu", (unsigned long)_registers.gps_time_sync );
-    ROS_INFO( "System Time: %lu", (unsigned long)_registers.ard_time_sync );
-    ROS_INFO( "ADA    Time: %lu", (unsigned long)_registers.ada_output_register.time_register );
-    ROS_INFO( "BBOX   Time: %lu", (unsigned long)_registers.bbox_output_register.time_register );
+    ROS_INFO( "Sync   Time: %du", _registers.gps_time_sync );
+    ROS_INFO( "System Time: %du", _registers.ard_time_sync );
+    ROS_INFO( "ADA    Time: %du", _registers.ada_output_register.time_register );
+    ROS_INFO( "BBOX   Time: %du", _registers.bbox_output_register.time_register );
 }
 
 void NetworkNode::handleSerial()
@@ -280,26 +280,26 @@ void NetworkNode::networkHealth( const ros::TimerEvent &event )
 {
     ram_network::NetworkHealth msg;
 
-    msg.serial_commands_received    = (uint32_t )_health.serial_commands_received;
-    msg.serial_gtp_received         = (uint32_t)_health.serial_gtp_received;
+    msg.serial_commands_received    = _health.serial_commands_received;
+    msg.serial_gtp_received         = _health.serial_gtp_received;
     msg.serial_connection_fault     = _health.serial_connection_fault;
 
-    msg.ada_commands_received       = (uint32_t)_health.ada_commands_received;
-    msg.ada_command_faults          = (uint32_t)_health.ada_command_faults;
-    msg.ada_writes_received         = (uint32_t)_health.ada_writes_received;
-    msg.ada_write_faults            = (uint32_t)_health.ada_write_faults;
-    msg.ada_read_faults             = (uint32_t)_health.ada_read_faults;
+    msg.ada_commands_received       = _health.ada_commands_received;
+    msg.ada_command_faults          = _health.ada_command_faults;
+    msg.ada_writes_received         = _health.ada_writes_received;
+    msg.ada_write_faults            = _health.ada_write_faults;
+    msg.ada_read_faults             = _health.ada_read_faults;
     msg.ada_sd_fault                = _health.ada_sd_fault;
     msg.ada_connection_fault        = _health.ada_connection_fault;
     msg.ada_bme01_fault             = _health.ada_bme01_fault;
     msg.ada_bme02_fault             = _health.ada_bme02_fault;
     msg.ada_eng_msg                 = std::string( _health.ada_eng_sys_msg );
 
-    msg.bbox_commands_received      = (uint32_t)_health.bbox_commands_received;
-    msg.bbox_command_faults         = (uint32_t)_health.bbox_command_faults;
-    msg.bbox_writes_received        = (uint32_t)_health.bbox_writes_received;
-    msg.bbox_write_faults           = (uint32_t)_health.bbox_write_faults;
-    msg.bbox_read_faults            = (uint32_t)_health.bbox_read_faults;
+    msg.bbox_commands_received      = _health.bbox_commands_received;
+    msg.bbox_command_faults         = _health.bbox_command_faults;
+    msg.bbox_writes_received        = _health.bbox_writes_received;
+    msg.bbox_write_faults           = _health.bbox_write_faults;
+    msg.bbox_read_faults            = _health.bbox_read_faults;
     msg.bbox_sd_fault               = _health.bbox_sd_fault;
     msg.bbox_connection_fault       = _health.bbox_connection_fault;
     msg.bbox_eng_msg                = std::string( _health.bbox_eng_sys_msg );
