@@ -1,5 +1,3 @@
 <launch>
-    <node name="ram_network_master" pkg="ram_network" type="ram_network_node" >
-        <!-- <param name="use_sim_time" type="bool" value="true" /> -->
-    </node>
+    <node name="ram_network_master" pkg="ram_network" type="ram_network_node" />
 </launch>

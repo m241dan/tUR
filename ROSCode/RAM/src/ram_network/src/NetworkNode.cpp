@@ -122,6 +122,7 @@ void NetworkNode::networkLoop( const ros::TimerEvent &event )
                 _registers.ada_input_register.new_sync = 0;
             _registers.ada_output_register = new_read;
             _clock.clock = ros::Time( (double)_registers.ada_output_register.time_register );
+            _clock_publisher.publish( _clock );
         }
         else
         {
