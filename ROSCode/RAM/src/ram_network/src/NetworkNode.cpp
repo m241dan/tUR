@@ -173,7 +173,7 @@ void NetworkNode::networkLoop( const ros::TimerEvent &event )
         }
         else
         {
-            ROS_ERROR( "%s: BBox Check Sums bad: check_one[%d] check_two[%d], check_three[%d]", __FUNCTION__, (int)new_read.check_one, (int)new_read.check_two, (int)new_read.check_three );
+            //ROS_ERROR( "%s: BBox Check Sums bad: check_one[%d] check_two[%d], check_three[%d]", __FUNCTION__, (int)new_read.check_one, (int)new_read.check_two, (int)new_read.check_three );
             // TODO report fault somewhere
         }
 
@@ -212,6 +212,8 @@ void NetworkNode::handleCommand( ground_command com )
     uint8_t com_id = com.command[0];
     uint8_t com_args = com.command[1];
 
+    ROS_ERROR( "com_id[%d] com_args[%d]", (int)com_id, (int)com_args );
+
     if( com_id >= 0x1E )
     {
         _arm_commands.push( com );
@@ -227,6 +229,7 @@ void NetworkNode::handleCommand( ground_command com )
     else if( com_id >= 0x14 && com_id < 0x19 )
     {
         _ada_commands.push( com );
+        ROS_ERROR( "Added ADA command" );
     }
     else if( com_id >= 0x19 && com_id < 0x1E )
     {
