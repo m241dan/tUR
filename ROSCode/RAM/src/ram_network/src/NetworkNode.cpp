@@ -83,6 +83,7 @@ void NetworkNode::networkLoop( const ros::TimerEvent &event )
     handleAda();
     handleBBox();
     handleDownlink();
+    _health.system_time = _registers.ard_time_sync );
     ROS_INFO( "Sync   Time: %du", _registers.gps_time_sync );
     ROS_INFO( "System Time: %du", _registers.ard_time_sync );
     ROS_INFO( "ADA    Time: %du", _registers.ada_output_register.time_register );
@@ -210,6 +211,7 @@ void NetworkNode::handleBBox()
 
         if( new_read.verifyCheckSums() )
         {
+            _health.bbox_reads_received++;
             if( new_read.write_received )
                 _health.bbox_writes_received++;
             if( new_read.write_fault )
