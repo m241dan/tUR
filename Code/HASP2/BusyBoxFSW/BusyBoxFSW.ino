@@ -38,17 +38,21 @@ void writeRegisters( int num_bytes )
             output_register.write_fault = 1;
         }
     }
+    Serial.println( "Test" );
 }
 
 /* i2c read event (onRequest) */
 void readRegisters()
 {
+    Serial.println( "srsly tho..." );
     output_register.setCheckSums();
-    Wire.write( (byte *)&output_register, sizeof( BBOX_output_register ) );
+    Serial.println( "Check[" + String( output_register.check_one ) +"] Check[" + String( output_register.check_two ) + "] Check[" + String( output_register.check_three ) + "]" );
+  //  Wire.write( (byte *)&output_register, sizeof( BBOX_output_register ) );
 }
 
 void setup()
 {
+    Serial.begin( 9600 );
     Wire.begin( 0x06 ); //I2CADDRESS_BBOX );
     Wire.onRequest( readRegisters );
     Wire.onReceive( writeRegisters );

@@ -50,6 +50,7 @@ void readRegisters()
 
 void setup()
 {
+    Serial.begin( 115200 );
     Wire.begin( I2CADDRESS_ADA );
     Wire.onRequest( readRegisters );
     Wire.onReceive( writeRegisters );
@@ -59,6 +60,5 @@ void setup()
 
 void loop()
 {
-    //read temperature
     sys_clock.updateClock( millis() );    
 }
