@@ -21,7 +21,7 @@ const int               POTENTIOM_TRUNC = 1023;         //potentiometer truncato
 const int               SD_CARD         = 4;            //"pin" for the SD card
 void                 (*resetFunc)(void) = 0;            //calling this function will crash and reset the Arduino
 int                     write_rate      = 5000;         // 0.20 Hz or 5 Seconds
-unsigned long           last_write      = 0;
+uint32_t                last_write      = 0;
 char log_name[15]                       = { 0 };
 
 /* i2c write event (onReceive) */

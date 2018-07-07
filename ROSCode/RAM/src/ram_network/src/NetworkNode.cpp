@@ -141,12 +141,12 @@ void NetworkNode::handleAda()
 
         // write either new write or the same thing if there was a fault on the previous
         _registers.ada_input_register.setCheckSums();
-        write( _handles.ada, (byte *)&_registers.ada_input_register, sizeof( ADA_input_register ) );
+        write( _handles.ada, (uint8_t *)&_registers.ada_input_register, sizeof( ADA_input_register ) );
         // TODO bad write checking?
         // read
 
         ADA_output_register new_read;
-        read( _handles.ada, (byte *)&new_read, sizeof( ADA_output_register ) );
+        read( _handles.ada, (uint8_t *)&new_read, sizeof( ADA_output_register ) );
         // TODO verify read?
 
         // check sums ( if bad, toss the whole read )
@@ -207,10 +207,10 @@ void NetworkNode::handleBBox()
             //TODO commanding
         }
         _registers.bbox_input_register.setCheckSums();
-        write( _handles.bbox, (byte *)&_registers.bbox_input_register, sizeof( BBOX_input_register ) );
+        write( _handles.bbox, (uint8_t *)&_registers.bbox_input_register, sizeof( BBOX_input_register ) );
 
         BBOX_output_register new_read;
-        read( _handles.bbox, (byte *)&new_read, sizeof( BBOX_output_register ) );
+        read( _handles.bbox, (uint8_t *)&new_read, sizeof( BBOX_output_register ) );
 
         if( new_read.verifyCheckSums() )
         {

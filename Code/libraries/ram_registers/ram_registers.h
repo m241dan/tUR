@@ -44,7 +44,7 @@ struct NetworkHealth
         static char buf[512];
         memset( &buf[0], 0, sizeof( buf ) );
 
-        snprintf( buf, sizeof( buf ), "%d,%d,%d,%d,%d,%d,%llu,%d,%llu,%d,%d,%d,%d,%d,%s,%d,%d,%llu,%d,%llu,%d,%d%d,%s,%d,%d,%d,%d,%d",
+        snprintf( buf, sizeof( buf ), "%d,%d,%d,%d,%d,%d,%lu,%d,%lu,%d,%d,%d,%d,%d,%s,%d,%d,%lu,%d,%lu,%d,%d%d,%s,%d,%d,%d,%d,%d",
                   system_time,serial_commands_received, serial_gtp_received, serial_connection_fault,
                   ada_commands_received, ada_command_faults, ada_writes_received, ada_write_faults, ada_reads_received,
                   ada_read_faults, ada_sd_fault, ada_connection_fault, ada_bme01_fault, ada_bme02_fault, ada_eng_sys_msg,
@@ -62,33 +62,33 @@ struct ADA_output_register
     uint8_t check_one = 0;
     uint32_t time_register = 0;
 
-    signed short bme01_temp = 0;
-    signed short bme01_pres = 0;
+    int16_t bme01_temp = 0;
+    int16_t bme01_pres = 0;
     uint8_t bme01_humi = 0;
     uint8_t bme01_fault = 0;
 
-    signed short bme02_temp = 0;
-    signed short bme02_pres = 0;
+    int16_t bme02_temp = 0;
+    int16_t bme02_pres = 0;
     uint8_t bme02_humi = 0;
     uint8_t bme02_fault = 0;
 
     uint8_t check_two = 0;
-    signed short dallas01_temp = 0;
-    signed short dallas02_temp = 0;
-    signed short dallas03_temp = 0;
-    signed short dallas04_temp = 0;
-    signed short dallas05_temp = 0;
-    signed short dallas06_temp = 0;
-    signed short dallas07_temp = 0;
-    signed short dallas08_temp = 0;
-    signed short dallas09_temp = 0;
-    signed short dallas10_temp = 0;
-    signed short dallas11_temp = 0;
-    signed short dallas12_temp = 0;
-    signed short dallas13_temp = 0;
-    signed short dallas14_temp = 0;
-    signed short dallas15_temp = 0;
-    signed short dallas16_temp = 0;
+    int16_t dallas01_temp = 0;
+    int16_t dallas02_temp = 0;
+    int16_t dallas03_temp = 0;
+    int16_t dallas04_temp = 0;
+    int16_t dallas05_temp = 0;
+    int16_t dallas06_temp = 0;
+    int16_t dallas07_temp = 0;
+    int16_t dallas08_temp = 0;
+    int16_t dallas09_temp = 0;
+    int16_t dallas10_temp = 0;
+    int16_t dallas11_temp = 0;
+    int16_t dallas12_temp = 0;
+    int16_t dallas13_temp = 0;
+    int16_t dallas14_temp = 0;
+    int16_t dallas15_temp = 0;
+    int16_t dallas16_temp = 0;
     uint8_t check_three = 0;
     uint8_t write_received = 0;
     uint8_t command_received = 0;
