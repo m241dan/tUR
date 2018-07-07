@@ -30,6 +30,7 @@ void writeRegisters( int num_bytes )
     /* If we have a complete register written in there, read it */
     if( Wire.available() == sizeof( BBOX_input_register ) )
     {
+        output_register.write_received = 1;
         output_register.write_fault = 0;
         output_register.command_fault = 0;
         /*
@@ -41,7 +42,7 @@ void writeRegisters( int num_bytes )
         {
             *input_ptr++ = Wire.read();
         }
-        output_register.writes_received++;
+        
         /*
          * Check the Data:
          *  - If its good, reset our fault flag
@@ -49,7 +50,6 @@ void writeRegisters( int num_bytes )
          */
         if( input_register.verifyCheckSums() )
         {
-            output_register.write_fault = 0;
             sys_clock.syncClock( input_register.sync_to, millis() );
             if( input_register.has_command )
             {
@@ -63,7 +63,9 @@ void writeRegisters( int num_bytes )
                         break;
                      case BBOX_RESET[0]:
                         if( input_register.command_param == RESET_BYTE )
+                        {
                             resetFunc();
+                        }
                         else
                             output_register.command_fault = 1;
                         break;            
@@ -74,6 +76,10 @@ void writeRegisters( int num_bytes )
         {
             output_register.write_fault = 1;
         }
+    }
+    else
+    {
+        output_register.write_received = 0;
     }
     Serial.println( "Test" );
 }
@@ -129,6 +135,7 @@ void loop()
         else
         {
             log_file.println( output_register.serialize_csv() );
+            output_register.sd_fault = 0;
             log_file.close();
         }
         last_write = millis();

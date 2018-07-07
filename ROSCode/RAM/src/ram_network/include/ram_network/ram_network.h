@@ -19,11 +19,12 @@
 #include <std_msgs/UInt32.h>
 #include <ram_commands.h>
 #include <ram_network/HaspCommand.h>
+#include <ram_network/NetworkHealth.h>
 
 struct ArduinoRegisters
 {
-    unsigned long           &gps_time_sync;
-    unsigned long           &ard_time_sync;
+    uint32_t                &gps_time_sync;
+    uint32_t                &ard_time_sync;
     ADA_input_register      ada_input_register;
     ADA_output_register     ada_output_register;
     BBOX_input_register     bbox_input_register;
@@ -43,6 +44,7 @@ const char *const   serialAddress   = "/dev/ttyAMA0";
 const int           serialBaud      = 4800;
 const int           serialLimit     = 100; // amount of times to attempt opening a serial connection before failing
 const double        refreshRate     = 0.1; // 10Hz
+const double        healthRate      = 1; // 1Hz
 
 struct gtp
 {

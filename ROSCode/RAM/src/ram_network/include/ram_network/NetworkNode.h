@@ -15,14 +15,14 @@ class NetworkNode
     protected:
         void setupSubscribers(); // for simulating commanding
         void setupServices(); // for commanding
-        void setupSerialConnection();
+        void startSerialAndI2C();
         void setupI2CConnections();
         void setupPublishers();
         void setupTimers();
 
-
-        void openAdaI2C();
-        void openBBoxI2C();
+        int openSerialConnection();
+        int openAdaI2C();
+        int openBBoxI2C();
 
 
         void networkLoop( const ros::TimerEvent &event );
@@ -32,10 +32,12 @@ class NetworkNode
         void handleGTP( gtp time );
         void handleAda();
         void handleBBox();
+        void handleDownlink();
 
         void downlinkPacket();
         void buildPacket();
 
+        NetworkHealth                   _health;
         ArduinoRegisters                _registers;
         fdHandles                       _handles;
 
@@ -48,9 +50,17 @@ class NetworkNode
          * ROS Stuff
          */
         ros::NodeHandle                 _node_handle;
+        /* Main Operation */
         ros::Timer                      _network_loop;
+
+        /* Sim Clock */
         ros::Publisher                  _clock_publisher;
         rosgraph_msgs::Clock            _clock;
+
+        /* Network Health */
+        ros::Timer                      _network_health_timer;
+        ros::Publisher                  _network_health_publisher;
+        void networkHealth( const ros::TimerEvent &event );
 
         ros::Subscriber                 _simulated_command;
         ros::Subscriber                 _simulated_gtp;
