@@ -8,38 +8,38 @@ struct ADA_output_register
     unsigned char check_one = 0;
     unsigned long time_register = 0;
 
-    signed short ambpacket_bme01_temp;
-    signed short ambpacket_bme01_pres;
-    unsigned char ambpacket_bme01_humi;
+    signed short ambpacket_bme01_temp = 0;
+    signed short ambpacket_bme01_pres = 0;
+    unsigned char ambpacket_bme01_humi = 0;
 
-    signed short ambpacket_bme02_temp;
-    signed short ambpacket_bme02_pres;
-    unsigned char ambpacket_bme02_humi;
+    signed short ambpacket_bme02_temp = 0;
+    signed short ambpacket_bme02_pres = 0;
+    unsigned char ambpacket_bme02_humi = 0;
 
-    signed short ambpacket_bme03_temp;
-    signed short ambpacket_bme03_pres;
-    unsigned char ambpacket_bme03_humi;
+    signed short ambpacket_bme03_temp = 0;
+    signed short ambpacket_bme03_pres = 0;
+    unsigned char ambpacket_bme03_humi = 0;
 
-    signed short ambpacket_bme04_temp;
-    signed short ambpacket_bme04_pres;
-    unsigned char ambpacket_bme04_humi;
+    signed short ambpacket_bme04_temp = 0;
+    signed short ambpacket_bme04_pres = 0;
+    unsigned char ambpacket_bme04_humi = 0;
     unsigned char check_two = 0;
-    signed short ambpacket_dallas01_temp;
-    signed short ambpacket_dallas02_temp;
-    signed short ambpacket_dallas03_temp;
-    signed short ambpacket_dallas04_temp;
-    signed short ambpacket_dallas05_temp;
-    signed short ambpacket_dallas06_temp;
-    signed short ambpacket_dallas07_temp;
-    signed short ambpacket_dallas08_temp;
-    signed short ambpacket_dallas09_temp;
-    signed short ambpacket_dallas10_temp;
-    signed short ambpacket_dallas11_temp;
-    signed short ambpacket_dallas12_temp;
-    signed short ambpacket_dallas13_temp;
-    signed short ambpacket_dallas14_temp;
-    signed short ambpacket_dallas15_temp;
-    signed short ambpacket_dallas16_temp;
+    signed short ambpacket_dallas01_temp = 0;
+    signed short ambpacket_dallas02_temp = 0;
+    signed short ambpacket_dallas03_temp = 0;
+    signed short ambpacket_dallas04_temp = 0;
+    signed short ambpacket_dallas05_temp = 0;
+    signed short ambpacket_dallas06_temp = 0;
+    signed short ambpacket_dallas07_temp = 0;
+    signed short ambpacket_dallas08_temp = 0;
+    signed short ambpacket_dallas09_temp = 0;
+    signed short ambpacket_dallas10_temp = 0;
+    signed short ambpacket_dallas11_temp = 0;
+    signed short ambpacket_dallas12_temp = 0;
+    signed short ambpacket_dallas13_temp = 0;
+    signed short ambpacket_dallas14_temp = 0;
+    signed short ambpacket_dallas15_temp = 0;
+    signed short ambpacket_dallas16_temp = 0;
     unsigned char check_three = 0;
     unsigned long reads_received = 0;
     unsigned long writes_received = 0; // this will roll over, and that's okay
@@ -72,13 +72,13 @@ struct ADA_output_register
 struct ADA_input_register
 {
     unsigned char check_one = 0;
-    unsigned long last_write;
-    unsigned char has_command;
-    unsigned char command_id;
-    unsigned char command_param;
+    unsigned long last_write = 0;
+    unsigned char has_command = 0;
+    unsigned char command_id = 0;
+    unsigned char command_param = 0;
     unsigned char check_two = 0;
     unsigned char new_sync = 1;
-    unsigned long sync_to = 1530844583;;
+    unsigned long sync_to = 1530844583;
     unsigned char check_three = 0;
 
     void setCheckSums()
@@ -106,15 +106,15 @@ struct ADA_input_register
 struct BBOX_output_register
 {
     unsigned char check_one = 0;
-    unsigned long time_register;
-    unsigned char bbox_rocker_horiz;
-    unsigned char bbox_rocker_verti;
-    unsigned char bbox_toggle_horiz;
-    unsigned char bbox_toggle_verti;
+    unsigned long time_register = 0;
+    unsigned char bbox_rocker_horiz = 0;
+    unsigned char bbox_rocker_verti = 0;
+    unsigned char bbox_toggle_horiz = 0;
+    unsigned char bbox_toggle_verti = 0;
     unsigned char check_two = 0;
-    unsigned char bbox_button_blu;
-    unsigned char bbox_potentiometer_lever;
-    unsigned char bbox_potentiomer_knob;
+    unsigned char bbox_button_blu = 0;
+    unsigned char bbox_potentiometer_lever = 0;
+    unsigned char bbox_potentiomer_knob = 0;
     unsigned long reads_received = 0;
     unsigned long writes_received = 0; // this will roll over, and that's okay
     unsigned short commands_received = 0;
@@ -149,12 +149,12 @@ struct BBOX_output_register
 struct BBOX_input_register
 {
     unsigned char check_one = 0;
-    unsigned long last_write;
+    unsigned long last_write = 0;
     unsigned char check_two = 0;
-    unsigned char has_command;
-    unsigned char command_id;
-    unsigned char command_param;
-    unsigned long sync_to;
+    unsigned char has_command = 0;
+    unsigned char command_id = 0;
+    unsigned char command_param = 0;
+    unsigned long sync_to = 0;
     unsigned char check_three = 0;
 
     void setCheckSums()
