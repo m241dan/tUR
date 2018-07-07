@@ -5,6 +5,7 @@
 
 NetworkNode::NetworkNode()
 {
+    setupSubscribers();
     setupSerialConnection();
     setupI2CConnections();
     setupServices();
