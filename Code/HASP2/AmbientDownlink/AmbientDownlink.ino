@@ -76,8 +76,6 @@ void updateTime()
 
 void loop()
 {
-    //check for uplink
-    //check for downlink flag
-      // downlink and increase count so that rpi knows packet has gone out
+    //read temperature
     updateTime();
 }
