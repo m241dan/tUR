@@ -30,7 +30,7 @@ void CamMonitor::imageCallback( const sensor_msgs::Image::ConstPtr &msg )
             boost::filesystem::create_directories( _video_location );
 
         std::stringstream img_name;
-        img_name << _video_location << (double)ros::Time::now().toSec() << ".jpg"; //_clock.clock.toSec() << ".jpg";
+        img_name << _video_location << _clock.clock.toSec() << ".jpg";
 
         cv::imwrite( img_name.str(), _recent_img->image );
         _throttle_count = 0;
