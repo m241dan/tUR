@@ -207,11 +207,38 @@ void NetworkNode::parseSerial()
 
 void NetworkNode::handleCommand( ground_command com )
 {
+    uint8_t com_id = com.command[0];
+    uint8_t com_args = com.command[1];
 
+    if( com_id >= 0x1E )
+    {
+        _arm_commands.push( com );
+    }
+    else if( com_id >= 0x0A && com_id < 0x14 )
+    {
+        _cam_commands.push( com );
+    }
+    else if( com_id >= 0x01 && com_id < 0x0A )
+    {
+        _netw_commands.push( com );
+    }
+    else if( com_id >= 0x14 && com_id < 0x19 )
+    {
+        _ada_commands.push( com );
+    }
+    else if( com_id >= 0x19 && com_id < 0x1E )
+    {
+        _bbox_commands.push( com );
+    }
 }
 
 void NetworkNode::handleGTP( gtp time )
 {
+    std::string data( time.data );
+    std::string delim( "," );
+    std::string sync_time = data.substr(0, data.find(delim ));
+
+    _registers.gps_time_sync = std::stoul( sync_time );
 
 }
 
@@ -225,6 +252,7 @@ void NetworkNode::simulatedCommandCallback( const std_msgs::UInt8MultiArray::Con
     ground_command com;
     com.command[0] = msg->data[0];
     com.command[1] = msg->data[1];
+    handleCommand( com );
 
 }
 

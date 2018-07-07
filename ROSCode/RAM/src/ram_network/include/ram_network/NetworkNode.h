@@ -43,6 +43,7 @@ class NetworkNode
         std::queue<ground_command>      _bbox_commands;
         std::queue<ground_command>      _cam_commands;
         std::queue<ground_command>      _arm_commands;
+        std::queue<ground_command>      _netw_commands;
         /*
          * ROS Stuff
          */
