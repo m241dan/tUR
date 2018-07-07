@@ -1,0 +1,12 @@
+uint32 ada_commands_received 
+uint32 ada_command_faults 
+uint32 ada_writes_received 
+uint32 ada_write_faults 
+uint8 ada_sd_fault 
+uint8 ada_bme01_fault 
+uint8 ada_bme02_fault 
+uint32 bbox_commands_received 
+uint32 bbox_command_faults 
+uint32 bbox_writes_received 
+uint32 bbox_write_faults 
+uint8 bbox_sd_fault 

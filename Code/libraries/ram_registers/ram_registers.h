@@ -4,6 +4,23 @@
 #include <ram_funcs.h>
 #include <cstring>
 
+struct network_health
+{
+    unsigned long ada_commands_received = 0;
+    unsigned long ada_command_faults = 0;
+    unsigned long ada_writes_received = 0;
+    unsigned long ada_write_faults = 0;
+    unsigned char ada_sd_fault = 0;
+    unsigned char ada_bme01_fault = 0;
+    unsigned char ada_bme02_fault = 0;
+
+    unsigned long bbox_commands_received = 0;
+    unsigned long bbox_command_faults = 0;
+    unsigned long bbox_writes_received = 0;
+    unsigned long bbox_write_faults = 0;
+    unsigned char bbox_sd_fault = 0;
+};
+
 struct ADA_output_register
 {
     unsigned char check_one = 0;
@@ -37,9 +54,8 @@ struct ADA_output_register
     signed short dallas15_temp = 0;
     signed short dallas16_temp = 0;
     unsigned char check_three = 0;
-    unsigned long reads_received = 0;
-    unsigned long writes_received = 0;
-    unsigned short commands_received = 0;
+    unsigned char write_received = 0;
+    unsigned char command_received = 0;
     unsigned char write_fault = 0; // write checksums failed
     unsigned char command_fault = 0;
     unsigned char sd_fault = 0;

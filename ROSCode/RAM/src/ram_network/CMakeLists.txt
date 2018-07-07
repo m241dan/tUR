@@ -52,6 +52,7 @@ pkg_check_modules( wiringPi libwiringpi REQUIRED )
  add_message_files(
    FILES
    HaspCommand.msg
+   NetworkHealth.msg
 #   Message2.msg
  )
 
