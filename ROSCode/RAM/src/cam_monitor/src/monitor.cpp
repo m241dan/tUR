@@ -3,7 +3,7 @@
 int main( int argc, char *argv[] )
 {
     ros::init( argc, argv, "cam_monitor" );
-    CamMonitor();
+    CamMonitor monitor;
     ros::spin();
     return 0;
 }

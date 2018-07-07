@@ -4,11 +4,11 @@
 
 #include "cam_monitor/CamMonitor.h"
 
-CamMonitor::CamMonitor()
+CamMonitor::CamMonitor() : _node_handle("~")
 {
     _node_handle.param( "img_topic", _img_topic, std::string( "/usb_cam_one/image_raw" ) );
-    _node_handle.param( "video_location", _video_location, std::string( "~/Videos/" ) );
-    _node_handle.param( "snap_location", _snap_location, std::string( "~/Pictures/" ) );
+    _node_handle.param( "video_location", _video_location, std::string( "" ) );
+    _node_handle.param( "snap_location", _snap_location, std::string( "" ) );
     _image_sub  = _node_handle.subscribe( _img_topic, 10, &CamMonitor::imageCallback, this );
     _time_sub   = _node_handle.subscribe( "/clock", 10, &CamMonitor::timeCallback, this );
     _take_snap  = _node_handle.advertiseService( ( ros::this_node::getName() + "/takeSnap" ), &CamMonitor::serviceCallback, this );
@@ -28,6 +28,7 @@ void CamMonitor::imageCallback( const sensor_msgs::Image::ConstPtr &msg )
 
     std::stringstream img_name;
     img_name << _video_location << _clock.clock.toSec() << ".jpg";
+
     cv::imwrite( img_name.str(), _recent_img->image );
 }
 
