@@ -250,11 +250,11 @@ void NetworkNode::downlinkPacket()
 
 }
 
-void NetworkNode::simulatedCommandCallback( const std_msgs::UInt8MultiArray::ConstPtr &msg )
+void NetworkNode::simulatedCommandCallback( const ram_network::HaspCommand::ConstPtr &msg )
 {
     ground_command com;
-    com.command[0] = msg->data[0];
-    com.command[1] = msg->data[1];
+    com.command[0] = msg->com_id;
+    com.command[1] = msg->com_param;
     handleCommand( com );
 
 }

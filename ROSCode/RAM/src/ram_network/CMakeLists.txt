@@ -10,6 +10,7 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  message_generation
 )
 
 ## System dependencies are found with CMake's conventions
@@ -48,11 +49,11 @@ pkg_check_modules( wiringPi libwiringpi REQUIRED )
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
+ add_message_files(
+   FILES
+   HaspCommand.msg
 #   Message2.msg
-# )
+ )
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -69,10 +70,10 @@ pkg_check_modules( wiringPi libwiringpi REQUIRED )
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
+generate_messages(
 #   DEPENDENCIES
 #   std_msgs
-# )
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -106,7 +107,7 @@ pkg_check_modules( wiringPi libwiringpi REQUIRED )
 catkin_package(
   INCLUDE_DIRS include include/ram_network
 #  LIBRARIES ram_network
-#  CATKIN_DEPENDS roscpp std_msgs
+  CATKIN_DEPENDS roscpp std_msgs message_runtime
 #  DEPENDS system_lib
 )
 
@@ -119,6 +120,7 @@ catkin_package(
 include_directories(
   include
   include/ram_network
+  ../../devel/include #Nasty HACK for Clion
   ${catkin_INCLUDE_DIRS}
   ${wiringPi_INCLUDE_DIRS}
 )

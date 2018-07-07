@@ -55,7 +55,7 @@ class NetworkNode
         ros::Subscriber                 _simulated_command;
         ros::Subscriber                 _simulated_gtp;
 
-        void simulatedCommandCallback( const std_msgs::UInt8MultiArray::ConstPtr &msg );
+        void simulatedCommandCallback( const ram_network::HaspCommand::ConstPtr &msg );
         void simulatedGTPCallback( const std_msgs::UInt32::ConstPtr &msg );
 
 

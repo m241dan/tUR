@@ -18,6 +18,7 @@
 #include <std_msgs/UInt8MultiArray.h>
 #include <std_msgs/UInt32.h>
 #include <ram_commands.h>
+#include <ram_network/HaspCommand.h>
 
 struct ArduinoRegisters
 {
