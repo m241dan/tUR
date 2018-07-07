@@ -1,3 +1,5 @@
+#include <ram_funcs.h>
+
 String getNextFile( String name, String append )
 {
    String file_name;

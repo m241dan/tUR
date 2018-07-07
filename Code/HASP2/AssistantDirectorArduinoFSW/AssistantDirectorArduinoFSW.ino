@@ -112,6 +112,8 @@ void setup()
     sys_clock.syncClock( 1234470131, millis() );
     if( !SD.begin( SD_CARD ) )
         output_register.sd_fault = 1;
+    else
+        snprintf( log_name, sizeof( log_name ), "%s", getNextFile( "log", ".csv" ).c_str() );
 }
 
 void loop()
@@ -150,4 +152,19 @@ void loop()
     output_register.bme02_pres = bme02.readPressure() / 100.0F;
     
     sys_clock.updateClock( millis() );
+
+    if( !output_register.sd_fault && millis() - last_write > write_rate )
+    {
+        File log_file = SD.open( log_name, FILE_WRITE );
+        if( !log_file )
+        {
+            output_register.sd_fault = 1;
+        }
+        else
+        {
+            log_file.println( output_register.serialize_csv() );
+            log_file.close();
+        }
+        last_write = millis();
+    }
 }

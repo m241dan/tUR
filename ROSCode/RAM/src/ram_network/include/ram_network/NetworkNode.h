@@ -13,6 +13,7 @@ class NetworkNode
     public:
         NetworkNode();
     protected:
+        void setupSubscribers(); // for simulating commanding
         void setupServices(); // for commanding
         void setupSerialConnection();
         void setupI2CConnections();
@@ -26,6 +27,7 @@ class NetworkNode
 
         void networkLoop( const ros::TimerEvent &event );
         void handleSerial();
+        void parseSerial();
         void handleAda();
         void handleBBox();
 

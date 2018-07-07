@@ -121,6 +121,16 @@ void loop()
     
     if( !output_register.sd_fault && millis() - last_write > write_rate )
     {
+        File log_file = SD.open( log_name, FILE_WRITE );
+        if( !log_file )
+        {
+            output_register.sd_fault = 1;
+        }
+        else
+        {
+            log_file.println( output_register.serialize_csv() );
+            log_file.close();
+        }
         last_write = millis();
     }
 }

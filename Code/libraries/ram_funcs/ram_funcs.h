@@ -210,6 +210,7 @@ struct ground_command
 
 #if ARDUINO_ARCH_SAMD
     #include "Arduino.h"
+    #include "SD.h"
     String getNextFile( String name, String append );
 #endif
 

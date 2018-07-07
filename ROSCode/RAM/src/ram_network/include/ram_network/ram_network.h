@@ -15,6 +15,8 @@
 #include <ram_network/ram_registers.h>
 #include <ros/ros.h>
 #include <rosgraph_msgs/Clock.h>
+#include <std_msgs/Int8MultiArray.h>
+#include <std_msgs/UInt32.h>
 
 struct ArduinoRegisters
 {

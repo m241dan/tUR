@@ -5,6 +5,7 @@
 
 NetworkNode::NetworkNode()
 {
+
     setupSerialConnection();
     setupI2CConnections();
     setupServices();
@@ -19,18 +20,21 @@ void NetworkNode::setupServices()
 
 void NetworkNode::setupSerialConnection()
 {
-    int attempts = 0;
-    while( _handles.serial == -1 )
+    if( std::getenv( "IS_RPI" ) == "1" ) // allow me to do more testing on laptop
     {
-        _handles.serial = serialOpen( serialAddress, serialBaud );
-        if( _handles.serial != -1 )
+        int attempts = 0;
+        while( _handles.serial == -1 )
         {
-            ROS_INFO( "%s: Serial successfully connected", __FUNCTION__ );
-        }
-        else if( attempts++ > serialLimit )
-        {
-            ROS_ERROR( "%s: Serial failed to connect", __FUNCTION__ );
-            break;
+            _handles.serial = serialOpen( serialAddress, serialBaud );
+            if( _handles.serial != -1 )
+            {
+                ROS_INFO( "%s: Serial successfully connected", __FUNCTION__ );
+            }
+            else if( attempts++ > serialLimit )
+            {
+                ROS_ERROR( "%s: Serial failed to connect", __FUNCTION__ );
+                break;
+            }
         }
     }
 }
@@ -52,12 +56,14 @@ void NetworkNode::setupTimers()
 
 void NetworkNode::openAdaI2C()
 {
-    _handles.ada = wiringPiI2CSetup( I2CADDRESS_ADA );
+    if( std::getenv( "IS_RPI" ) == "1" ) // allow me to do more testing on laptop
+        _handles.ada = wiringPiI2CSetup( I2CADDRESS_ADA );
 }
 
 void NetworkNode::openBBoxI2C()
 {
-    _handles.bbox = wiringPiI2CSetup( I2CADDRESS_BBOX );
+    if( std::getenv( "IS_RPI" ) == "1" ) // allow me to do more testing on laptop
+        _handles.bbox = wiringPiI2CSetup( I2CADDRESS_BBOX );
 }
 
 void NetworkNode::networkLoop( const ros::TimerEvent &event )
@@ -74,8 +80,11 @@ void NetworkNode::networkLoop( const ros::TimerEvent &event )
     }
     else
     {
-        ROS_ERROR( "%s: we are in pure autonomous mode, attempting to reestablish connection", __FUNCTION__ );
-        setupSerialConnection();
+        if(  std::getenv( "IS_RPI" ) == "1" )
+        {
+            ROS_ERROR( "%s: we are in pure autonomous mode, attempting to reestablish connection", __FUNCTION__ );
+            setupSerialConnection();
+        }
     }
     if( _handles.ada != -1 )
     {
