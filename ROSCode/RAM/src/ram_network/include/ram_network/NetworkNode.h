@@ -16,6 +16,7 @@ class NetworkNode
         void setupServices(); // for commanding
         void setupSerialConnection();
         void setupI2CConnections();
+        void setupPublishers();
         void setupTimers();
 
 
@@ -43,6 +44,8 @@ class NetworkNode
          */
         ros::NodeHandle                 _node_handle;
         ros::Timer                      _network_loop;
+        ros::Publisher                  _clock_publisher;
+        rosgraph_msgs::Clock            _clock;
 
 
 

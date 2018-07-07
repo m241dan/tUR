@@ -40,6 +40,10 @@ void NetworkNode::setupI2CConnections()
     openBBoxI2C();
 }
 
+void NetworkNode::setupPublishers()
+{
+    _clock_publisher = _node_handle.advertise<rosgraph_msgs::Clock> ( "clock", 10 );
+}
 void NetworkNode::setupTimers()
 {
     _network_loop = _node_handle.createTimer( ros::Duration( refreshRate ), boost::bind( &NetworkNode::networkLoop, this, _1 ) );
@@ -116,6 +120,7 @@ void NetworkNode::networkLoop( const ros::TimerEvent &event )
             if( !new_read.write_fault )
                 _registers.ada_input_register.new_sync = 0;
             _registers.ada_output_register = new_read;
+            _clock.clock = ros::Time( _registers.ada_output_register.time_register )
         }
         else
         {
@@ -173,7 +178,6 @@ void NetworkNode::networkLoop( const ros::TimerEvent &event )
         //downlinking
         downlinkPacket();
     }
-
     ROS_INFO( "Sync   Time: %lu", _registers.gps_time_sync );
     ROS_INFO( "System Time: %lu", _registers.ard_time_sync );
     ROS_INFO( "ADA    Time: %lu", _registers.ada_output_register.time_register );
