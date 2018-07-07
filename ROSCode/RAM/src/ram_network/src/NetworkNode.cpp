@@ -120,7 +120,7 @@ void NetworkNode::networkLoop( const ros::TimerEvent &event )
             if( !new_read.write_fault )
                 _registers.ada_input_register.new_sync = 0;
             _registers.ada_output_register = new_read;
-            _clock.clock = ros::Time( _registers.ada_output_register.time_register )
+            _clock.clock = ros::Time( (double)_registers.ada_output_register.time_register );
         }
         else
         {
@@ -182,6 +182,7 @@ void NetworkNode::networkLoop( const ros::TimerEvent &event )
     ROS_INFO( "System Time: %lu", _registers.ard_time_sync );
     ROS_INFO( "ADA    Time: %lu", _registers.ada_output_register.time_register );
     ROS_INFO( "BBOX   Time: %lu", _registers.bbox_output_register.time_register );
+    ROS_INFO( "ROS    Time: %lu", (unsigned long)ros::Time::now().toSec() );
 }
 
 void NetworkNode::downlinkPacket()
