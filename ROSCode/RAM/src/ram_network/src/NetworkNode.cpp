@@ -103,8 +103,10 @@ void NetworkNode::networkLoop( const ros::TimerEvent &event )
             _registers.ada_input_register.command_param = 0;
             if( !_ada_commands.empty() )
             {
-                //TODO handle commading
-                //TODO if command fault is set, don't send any commands (let that be cleared by ground)
+                _registers.ada_input_register.has_command = 1;
+                _registers.ada_input_register.command_id = _ada_commands.front().command[0];
+                _registers.ada_input_register.command_param = _ada_commands.front().command[1];
+                //TODO if command fault is set, don't send any commands (let that be cleared by ground) (I THINK THIS WILL JUST A COUNTER AND NO RESETTING)
             }
             else
             {

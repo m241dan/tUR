@@ -64,7 +64,7 @@ void writeRegisters( int num_bytes )
         if( input_register.verifyCheckSums() )
         {
             output_register.write_fault = 0;
-            if( input_register.new_sync )
+            if( input_register.new_sync || input_register.sync_to > (unsigned long)( millis() / 1000.0F ) )
                 sys_clock.syncClock( input_register.sync_to, millis() );
             if( input_register.has_command )
             {
