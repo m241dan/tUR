@@ -22,6 +22,8 @@ class CamMonitor
         std::string             _img_topic;
         std::string             _video_location;
         std::string             _snap_location;
+        int                     _throttle;
+        int                     _throttle_count;
 
         void timeCallback( const rosgraph_msgs::Clock::ConstPtr &msg );
         void imageCallback( const sensor_msgs::Image::ConstPtr &msg );
