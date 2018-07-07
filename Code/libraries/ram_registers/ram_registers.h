@@ -12,8 +12,9 @@ struct NetworkHealth
 
     uint32_t ada_commands_received = 0;
     uint32_t ada_command_faults = 0;
-    uint32_t ada_writes_received = 0;
+    uint64_t ada_writes_received = 0;
     uint32_t ada_write_faults = 0;
+    uint64_t ada_reads_received = 0;
     uint32_t ada_read_faults = 0;
     uint8_t ada_sd_fault = 0;
     uint8_t ada_connection_fault = 0;
@@ -23,12 +24,35 @@ struct NetworkHealth
 
     uint32_t bbox_commands_received = 0;
     uint32_t bbox_command_faults = 0;
-    uint32_t bbox_writes_received = 0;
+    uint64_t bbox_writes_received = 0;
     uint32_t bbox_write_faults = 0;
+    uint64_t bbox_reads_received = 0;
     uint32_t bbox_read_faults = 0;
     uint8_t bbox_sd_fault = 0;
     uint8_t bbox_connection_fault = 0;
     char bbox_eng_sys_msg[30] = { 0 };
+
+    uint8_t ada_commands;
+    uint8_t bbox_commands;
+    uint8_t cam_commands;
+    uint8_t arm_commands;
+    uint8_t netw_commands;
+
+    char *serialize_csv()
+    {
+        static char buf[512];
+        memset( &buf[0], 0, sizeof( buf ) );
+
+        snprintf( buf, sizeof( buf ), "%du,%du,%c,%du,%du,%lu,%du,%lu,%du,%c,%c,%c,%c,%s,%du,%du,%lu,%du,%lu,%du,%c%c,%s",
+                  serial_commands_received, serial_gtp_received, serial_connection_fault,
+                  ada_commands_received, ada_command_faults, ada_writes_received, ada_write_faults, ada_reads_received,
+                  ada_read_faults, ada_sd_fault, ada_connection_fault, ada_bme01_fault, ada_bme02_fault, ada_eng_sys_msg,
+                  bbox_commands_received, bbox_command_faults, bbox_writes_received, bbox_write_faults, bbox_reads_received,
+                  bbox_read_faults, bbox_sd_fault, bbox_connection_fault, bbox_eng_sys_msg
+        );
+
+        return buf;
+    }
 };
 
 struct ADA_output_register

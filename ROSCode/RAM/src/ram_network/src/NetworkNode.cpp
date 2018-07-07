@@ -132,7 +132,6 @@ void NetworkNode::handleAda()
             _registers.ada_input_register.command_id = _ada_commands.front().command[0];
             _registers.ada_input_register.command_param = _ada_commands.front().command[1];
             _ada_commands.pop();
-            //TODO if command fault is set, don't send any commands (let that be cleared by ground) (I THINK THIS WILL JUST A COUNTER AND NO RESETTING)
         }
         else
         {
@@ -159,15 +158,29 @@ void NetworkNode::handleAda()
 
         if( new_read.verifyCheckSums() )
         {
-            if( !new_read.write_fault )
+            _health.ada_reads_received++;
+            if( new_read.write_received )
+                _health.ada_writes_received++;
+            if( new_read.command_received )
+                _health.ada_commands_received++;
+            if( new_read.command_fault )
+                _health.ada_command_faults++;
+
+            // since ADA is the sync arduino, it has a special flag that needs to be managed
+            if( new_read.write_fault )
+                _health.ada_write_faults++;
+            else
                 _registers.ada_input_register.new_sync = 0;
+            if( new_read.sd_fault )
+                _health.ada_sd_fault = 1;
+
             _registers.ada_output_register = new_read;
             _clock.clock = ros::Time( (double)_registers.ada_output_register.time_register );
             _clock_publisher.publish( _clock );
         }
         else
         {
-            // TODO report fault somewhere
+            _health.ada_read_faults++;
         }
     }
     else
@@ -197,10 +210,20 @@ void NetworkNode::handleBBox()
 
         if( new_read.verifyCheckSums() )
         {
+            if( new_read.write_received )
+                _health.bbox_writes_received++;
+            if( new_read.write_fault )
+                _health.bbox_write_faults++;
+            if( new_read.command_fault )
+                _health.bbox_command_faults++;
+            if( new_read.sd_fault )
+                _health.bbox_sd_fault = 1;
+
             _registers.bbox_output_register = new_read;
         }
         else
         {
+            _health.bbox_read_faults++;
             //ROS_ERROR( "%s: BBox Check Sums bad: check_one[%d] check_two[%d], check_three[%d]", __FUNCTION__, (int)new_read.check_one, (int)new_read.check_two, (int)new_read.check_three );
             // TODO report fault somewhere
         }
@@ -288,6 +311,7 @@ void NetworkNode::networkHealth( const ros::TimerEvent &event )
     msg.ada_command_faults          = _health.ada_command_faults;
     msg.ada_writes_received         = _health.ada_writes_received;
     msg.ada_write_faults            = _health.ada_write_faults;
+    msg.ada_reads_received          = _health.ada_reads_received;
     msg.ada_read_faults             = _health.ada_read_faults;
     msg.ada_sd_fault                = _health.ada_sd_fault;
     msg.ada_connection_fault        = _health.ada_connection_fault;
@@ -299,10 +323,17 @@ void NetworkNode::networkHealth( const ros::TimerEvent &event )
     msg.bbox_command_faults         = _health.bbox_command_faults;
     msg.bbox_writes_received        = _health.bbox_writes_received;
     msg.bbox_write_faults           = _health.bbox_write_faults;
+    msg.bbox_reads_received         = _health.bbox_reads_received;
     msg.bbox_read_faults            = _health.bbox_read_faults;
     msg.bbox_sd_fault               = _health.bbox_sd_fault;
     msg.bbox_connection_fault       = _health.bbox_connection_fault;
     msg.bbox_eng_msg                = std::string( _health.bbox_eng_sys_msg );
+
+    msg.ada_commands                = (uint8_t)_ada_commands.size();
+    msg.bbox_commands               = (uint8_t)_bbox_commands.size();
+    msg.cam_commands                = (uint8_t)_cam_commands.size();
+    msg.arm_commands                = (uint8_t)_arm_commands.size();
+    msg.netw_commands               = (uint8_t)_netw_commands.size();
 
     _network_health_publisher.publish(msg);
 }
