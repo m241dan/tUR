@@ -96,24 +96,24 @@ void NetworkNode::networkLoop( const ros::TimerEvent &event )
         /*
          * Write Time
          */
-        if( _registers.ada_output_register.write_fault )
+
+        _registers.ada_input_register.last_write = _registers.ard_time_sync;
+        _registers.ada_input_register.has_command = 0;
+        _registers.ada_input_register.command_id = 0;
+        _registers.ada_input_register.command_param = 0;
+        if( !_ada_commands.empty() )
         {
-            _registers.ada_input_register.last_write    = _registers.ard_time_sync;
-            _registers.ada_input_register.has_command   = 0;
-            _registers.ada_input_register.command_id    = 0;
-            _registers.ada_input_register.command_param = 0;
-            if( !_ada_commands.empty() )
-            {
-                _registers.ada_input_register.has_command = 1;
-                _registers.ada_input_register.command_id = _ada_commands.front().command[0];
-                _registers.ada_input_register.command_param = _ada_commands.front().command[1];
-                //TODO if command fault is set, don't send any commands (let that be cleared by ground) (I THINK THIS WILL JUST A COUNTER AND NO RESETTING)
-            }
-            else
-            {
-                _registers.ada_input_register.has_command   = 0;
-            }
+            _registers.ada_input_register.has_command = 1;
+            _registers.ada_input_register.command_id = _ada_commands.front().command[0];
+            _registers.ada_input_register.command_param = _ada_commands.front().command[1];
+            _ada_commands.pop();
+            //TODO if command fault is set, don't send any commands (let that be cleared by ground) (I THINK THIS WILL JUST A COUNTER AND NO RESETTING)
         }
+        else
+        {
+            _registers.ada_input_register.has_command = 0;
+        }
+
         // write either new write or the same thing if there was a fault on the previous
         _registers.ada_input_register.setCheckSums();
         write( _handles.ada, (byte *)&_registers.ada_input_register, sizeof( ADA_input_register ) );
