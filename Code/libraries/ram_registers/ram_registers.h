@@ -44,7 +44,7 @@ struct NetworkHealth
         static char buf[512];
         memset( &buf[0], 0, sizeof( buf ) );
 
-        snprintf( buf, sizeof( buf ), "%du,%du,%du,%d,%du,%du,%lu,%du,%lu,%du,%d,%d,%d,%d,%s,%du,%du,%lu,%du,%lu,%du,%d%d,%s,%d,%d,%d,%d,%d",
+        snprintf( buf, sizeof( buf ), "%d,%d,%d,%d,%d,%d,%llu,%d,%llu,%d,%d,%d,%d,%d,%s,%d,%d,%llu,%d,%llu,%d,%d%d,%s,%d,%d,%d,%d,%d",
                   system_time,serial_commands_received, serial_gtp_received, serial_connection_fault,
                   ada_commands_received, ada_command_faults, ada_writes_received, ada_write_faults, ada_reads_received,
                   ada_read_faults, ada_sd_fault, ada_connection_fault, ada_bme01_fault, ada_bme02_fault, ada_eng_sys_msg,
