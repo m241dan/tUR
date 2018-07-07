@@ -102,7 +102,7 @@ struct ADA_output_register
         static char buf[512];
         memset( &buf[0], 0, sizeof( buf ) );
 
-        snprintf( buf, sizeof( buf ), "%du,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
+        snprintf( buf, sizeof( buf ), "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
             time_register, bme01_pres, bme01_temp, bme01_humi, bme02_pres, bme02_temp, bme02_humi,
             dallas01_temp, dallas02_temp, dallas03_temp, dallas04_temp, dallas05_temp, dallas06_temp,
             dallas07_temp, dallas08_temp, dallas09_temp, dallas10_temp, dallas11_temp, dallas12_temp,
@@ -191,7 +191,7 @@ struct BBOX_output_register
         static char buf[512];
         memset( &buf[0], 0, sizeof( buf ) );
 
-        snprintf( buf, sizeof( buf ), "%du,%d,%d,%d,%d,%d,%d,%d",
+        snprintf( buf, sizeof( buf ), "%d,%d,%d,%d,%d,%d,%d,%d",
                   time_register, rocker_horiz, rocker_verti,
                   toggle_horiz, toggle_verti, button_blu,
                   potentiometer_lever, potentiometer_knob );

@@ -83,11 +83,11 @@ void NetworkNode::networkLoop( const ros::TimerEvent &event )
     handleAda();
     handleBBox();
     handleDownlink();
-    _health.system_time = _registers.ard_time_sync );
-    ROS_INFO( "Sync   Time: %du", _registers.gps_time_sync );
-    ROS_INFO( "System Time: %du", _registers.ard_time_sync );
-    ROS_INFO( "ADA    Time: %du", _registers.ada_output_register.time_register );
-    ROS_INFO( "BBOX   Time: %du", _registers.bbox_output_register.time_register );
+    _health.system_time = _registers.ard_time_sync;
+    ROS_INFO( "Sync   Time: %d", _registers.gps_time_sync );
+    ROS_INFO( "System Time: %d", _registers.ard_time_sync );
+    ROS_INFO( "ADA    Time: %d", _registers.ada_output_register.time_register );
+    ROS_INFO( "BBOX   Time: %d", _registers.bbox_output_register.time_register );
 }
 
 void NetworkNode::handleSerial()
@@ -174,7 +174,10 @@ void NetworkNode::handleAda()
                 _registers.ada_input_register.new_sync = 0;
             if( new_read.sd_fault )
                 _health.ada_sd_fault = 1;
-
+            if( new_read.bme01_fault )
+                _health.ada_bme01_fault = 1;
+            if( new_read.bme02_fault )
+                _health.ada_bme02_fault = 1;
             _registers.ada_output_register = new_read;
             _clock.clock = ros::Time( (double)_registers.ada_output_register.time_register );
             _clock_publisher.publish( _clock );
