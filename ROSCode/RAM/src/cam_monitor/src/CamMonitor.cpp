@@ -6,7 +6,7 @@
 
 CamMonitor::CamMonitor()
 {
-    _node_handle.param( "img_topic", _img_topic, std::string( "/usb_cam_node_one/image_raw" ) );
+    _node_handle.param( "img_topic", _img_topic, std::string( "/usb_cam_one/image_raw" ) );
     _node_handle.param( "video_location", _video_location, std::string( "~/Videos/" ) );
     _node_handle.param( "snap_location", _snap_location, std::string( "~/Pictures/" ) );
     _image_sub  = _node_handle.subscribe( _img_topic, 10, &CamMonitor::imageCallback, this );
