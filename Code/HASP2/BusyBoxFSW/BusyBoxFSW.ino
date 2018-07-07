@@ -59,7 +59,7 @@ void writeRegisters( int num_bytes )
                         output_register.command_fault = 1;
                         break;
                     case BBOX_WRITE_RATE[0]:
-                        write_rate = (int)input_register.command_param;
+                        write_rate = (int)input_register.command_param * 1000;
                         break;
                      case BBOX_RESET[0]:
                         if( input_register.command_param == RESET_BYTE )
