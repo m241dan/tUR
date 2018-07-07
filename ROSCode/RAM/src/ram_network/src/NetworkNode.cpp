@@ -194,7 +194,6 @@ void NetworkNode::networkLoop( const ros::TimerEvent &event )
     ROS_INFO( "System Time: %lu", _registers.ard_time_sync );
     ROS_INFO( "ADA    Time: %lu", _registers.ada_output_register.time_register );
     ROS_INFO( "BBOX   Time: %lu", _registers.bbox_output_register.time_register );
-    ROS_INFO( "ROS    Time: %lu", (unsigned long)ros::Time::now().toSec() );
 }
 
 void NetworkNode::handleSerial()
@@ -241,6 +240,7 @@ void NetworkNode::handleGTP( gtp time )
     std::string sync_time = data.substr(0, data.find(delim ));
 
     _registers.gps_time_sync = std::stoul( sync_time );
+    _registers.ada_input_register.new_sync = 1;
 
 }
 
