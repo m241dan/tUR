@@ -1,3 +1,4 @@
+uint32 system_time
 uint32 serial_commands_received
 uint32 serial_gtp_received
 uint8 serial_connection_fault

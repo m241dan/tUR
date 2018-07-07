@@ -303,6 +303,7 @@ void NetworkNode::networkHealth( const ros::TimerEvent &event )
 {
     ram_network::NetworkHealth msg;
 
+    msg.system_time                 = _health.system_time;
     msg.serial_commands_received    = _health.serial_commands_received;
     msg.serial_gtp_received         = _health.serial_gtp_received;
     msg.serial_connection_fault     = _health.serial_connection_fault;
