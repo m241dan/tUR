@@ -201,12 +201,7 @@ struct pathlog_packet
     unsigned short pathlog_gripper_position;
 };
 
-struct ground_command
-{
-    unsigned char header[2] = { '\x01', '\x02' };
-    unsigned char command[2] = { 0, 0 };
-    unsigned char terminator[3] = { '\x03', '\x0D', '\x0A' };
-};
+
 
 #if ARDUINO_ARCH_SAMD
     #include "Arduino.h"

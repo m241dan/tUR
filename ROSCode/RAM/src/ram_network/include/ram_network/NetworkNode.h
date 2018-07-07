@@ -28,6 +28,8 @@ class NetworkNode
         void networkLoop( const ros::TimerEvent &event );
         void handleSerial();
         void parseSerial();
+        void handleCommand( ground_command com );
+        void handleGTP( gtp time );
         void handleAda();
         void handleBBox();
 
@@ -48,6 +50,12 @@ class NetworkNode
         ros::Timer                      _network_loop;
         ros::Publisher                  _clock_publisher;
         rosgraph_msgs::Clock            _clock;
+
+        ros::Subscriber                 _simulated_command;
+        ros::Subscriber                 _simulated_gtp;
+
+        void simulatedCommandCallback( const std_msgs::UInt8MultiArray::ConstPtr &msg );
+        void simulatedGTPCallback( const std_msgs::UInt32::ConstPtr &msg );
 
 
 

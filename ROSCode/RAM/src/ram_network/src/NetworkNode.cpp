@@ -5,7 +5,6 @@
 
 NetworkNode::NetworkNode()
 {
-
     setupSerialConnection();
     setupI2CConnections();
     setupServices();
@@ -13,6 +12,11 @@ NetworkNode::NetworkNode()
     setupTimers();
 }
 
+void NetworkNode::setupSubscribers()
+{
+    _simulated_command  = _node_handle.subscribe( "hasp_command", 10, &NetworkNode::simulatedCommandCallback, this );
+    _simulated_gtp      = _node_handle.subscribe( "hasp_gtp", 10, &NetworkNode::simulatedGTPCallback, this );
+}
 void NetworkNode::setupServices()
 {
 
@@ -20,7 +24,7 @@ void NetworkNode::setupServices()
 
 void NetworkNode::setupSerialConnection()
 {
-    if( std::getenv( "IS_RPI" ) == "1" ) // allow me to do more testing on laptop
+    if( std::getenv( "IS_RPI" ) == "1" ) // allow me to do more testing on laptop, remove for flight?
     {
         int attempts = 0;
         while( _handles.serial == -1 )
@@ -191,7 +195,43 @@ void NetworkNode::networkLoop( const ros::TimerEvent &event )
     ROS_INFO( "ROS    Time: %lu", (unsigned long)ros::Time::now().toSec() );
 }
 
+void NetworkNode::handleSerial()
+{
+
+}
+
+void NetworkNode::parseSerial()
+{
+
+}
+
+void NetworkNode::handleCommand( ground_command com )
+{
+
+}
+
+void NetworkNode::handleGTP( gtp time )
+{
+
+}
+
 void NetworkNode::downlinkPacket()
 {
 
+}
+
+void NetworkNode::simulatedCommandCallback( const std_msgs::UInt8MultiArray::ConstPtr &msg )
+{
+    ground_command com;
+    com.command[0] = msg->data[0];
+    com.command[1] = msg->data[1];
+
+}
+
+void NetworkNode::simulatedGTPCallback( const std_msgs::UInt32::ConstPtr &msg )
+{
+    gtp time;
+
+    snprintf( (char *)time.data, sizeof( time.data ), "%d", msg->data );
+    handleGTP( time );
 }

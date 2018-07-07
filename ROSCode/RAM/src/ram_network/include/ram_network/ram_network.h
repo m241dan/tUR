@@ -15,8 +15,9 @@
 #include <ram_network/ram_registers.h>
 #include <ros/ros.h>
 #include <rosgraph_msgs/Clock.h>
-#include <std_msgs/Int8MultiArray.h>
+#include <std_msgs/UInt8MultiArray.h>
 #include <std_msgs/UInt32.h>
+#include <ram_commands.h>
 
 struct ArduinoRegisters
 {
@@ -41,6 +42,20 @@ const char *const   serialAddress   = "/dev/ttyAMA0";
 const int           serialBaud      = 4800;
 const int           serialLimit     = 100; // amount of times to attempt opening a serial connection before failing
 const double        refreshRate     = 0.1; // 10Hz
+
+struct gtp
+{
+    uint8_t header[2] = { '\x01', '\x30' };
+    char data[120] = "1234470131.649,$GPGGA,202212.00,3024.7205,N,09110.7264,W,1,06,1.69,00061,M,-025,M,,*51,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
+    uint8_t terminator[3] = { '\x03', '\x0D', '\x0A' };
+};
+
+struct ground_command
+{
+    uint8_t header[2] = { '\x01', '\x02' };
+    uint8_t command[2] = { 0, 0 };
+    uint8_t terminator[3] = { '\x03', '\x0D', '\x0A' };
+};
 
 #endif
 
