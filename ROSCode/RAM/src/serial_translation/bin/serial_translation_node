@@ -27,6 +27,8 @@ class SerialTranslationLayer:
 
     def incomingFromGround(self, msg):
         bytes = bytearray(len(msg.data))
+        print( len(msg.data) )
+        print( len(bytes) )
         for data in msg.data:
             bytes.append( data )
 

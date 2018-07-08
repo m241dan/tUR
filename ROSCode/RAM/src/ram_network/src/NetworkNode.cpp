@@ -102,12 +102,13 @@ void NetworkNode::handleSerial()
             while( serialDataAvail( _handles.serial ) )
             {
                 _buffer[_buffer_index++] = (char)serialGetchar( _handles.serial );
+                ROS_INFO( "Index[%d]: %c", _buffer_index-1, _buffer[_buffer_index-1] );
+
                 if( _buffer_index > 3 )
                 {
                     //remember its already been indexed by one, so have to look at least 1 back to start
                     if( possiblePacket() )
                     {
-                        ROS_INFO( "Index[%d]: %c", _buffer_index-1, _buffer[_buffer_index-1] );
                         if( isCommand() )
                         {
                             ground_command com;
