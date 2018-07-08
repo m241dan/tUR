@@ -351,15 +351,17 @@ data_packet NetworkNode::buildPacket()
         if( !_bbox_packets.empty() )
         {
             size_t room_remaining = MEAT_SIZE - data.sizeof_data_chunks;
+            ROS_INFO( "Room Remaining[%d]", (int)room_remaining );
+            ROS_INFO( "Num BB Packets[%d]", (int)_bbox_packets.size() );
             while( !_bbox_packets.empty() && room_remaining >= sizeof( bbox_packet ) )
             {
                 bbox_packet present_packet = _bbox_packets.front();
                 _bbox_packets.pop();
 
                 // reckless, but should never overrun
-                auto *ptr = (uint8_t *)&present_packet;
-                for( int x = 0; x < sizeof( bbox_packet ); x++ )
-                    data.meat[data.sizeof_data_chunks++] = *ptr++;
+             //   auto *ptr = (uint8_t *)&present_packet;
+             //   for( int x = 0; x < sizeof( bbox_packet ); x++ )
+             //       data.meat[data.sizeof_data_chunks++] = *ptr++;
             }
         }
     }
