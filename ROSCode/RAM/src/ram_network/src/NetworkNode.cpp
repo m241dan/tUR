@@ -370,7 +370,7 @@ bool NetworkNode::possiblePacket()
 bool NetworkNode::isCommand()
 {
     bool result = true;
-    unsigned int packet_start = _buffer_index-sizeof(gtp);
+    unsigned int packet_start = _buffer_index-sizeof(ground_command);
     ROS_INFO( "PacketStart:   %d", packet_start );
     ROS_INFO( "PacketStart+1: %d", packet_start+1 );
     if( _buffer[packet_start] != '\x01' ||
