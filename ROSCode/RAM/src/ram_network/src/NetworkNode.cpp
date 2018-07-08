@@ -99,6 +99,7 @@ void NetworkNode::handleSerial()
         // TODO below
         if( serialDataAvail( _handles.serial ) )
         {
+            ROS_INFO( "Available: %d", serialDataAvail( _handles.serial ) );
             while( serialDataAvail( _handles.serial ) )
             {
                 _buffer[_buffer_index++] = (char)serialGetchar( _handles.serial );
