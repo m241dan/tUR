@@ -39,8 +39,7 @@ void NetworkNode::setupTimers()
     _network_loop           = _node_handle.createTimer( ros::Duration( refreshRate ), boost::bind( &NetworkNode::networkLoop, this, _1 ) );
     _network_health_timer   = _node_handle.createTimer( ros::Duration( healthRate ), boost::bind( &NetworkNode::networkHealth, this, _1 ) );
     _rpi_commanding         = _node_handle.createTimer( ros::Duration( rpiComRate ), boost::bind( &NetworkNode::rpiCommanding, this, _1 ) );
-    _ambient_sample         = _node_handle.createTimer( ros::Duration( ambientRate ), boost::bind( &NetworkNode::ambientSample, this, _1 ) );
-    _bbox_sample            = _node_handle.createTimer( ros::Duration( bboxRate ), boost::bind( &NetworkNode::bboxSample, this, _1 ) );
+    _register_sample         = _node_handle.createTimer( ros::Duration( registerRate ), boost::bind( &NetworkNode::registerSample, this, _1 ) );
 }
 
 int NetworkNode::openSerialConnection()
@@ -341,12 +340,16 @@ void NetworkNode::handleGTP( gtp &time )
 
 void NetworkNode::downlinkPacket()
 {
-
+    buildPacket();
 }
 
 void NetworkNode::buildPacket()
 {
-
+    //check for image parts
+    //check for arm packets
+    //check for pathlog packets
+    //check for bbox packets
+    //
 }
 
 void NetworkNode::resetBuffer()
@@ -508,7 +511,14 @@ void NetworkNode::doNetworkCommand()
 
 }
 
-void NetworkNode::ambientSample( const ros::TimerEvent &event )
+
+void NetworkNode::registerSample( const ros::TimerEvent &event )
+{
+    ambientSample();
+    bboxSample();
+}
+
+void NetworkNode::ambientSample()
 {
     ambient_packet packet;
     ADA_output_register &register_ = _registers.ada_output_register;
@@ -543,7 +553,7 @@ void NetworkNode::ambientSample( const ros::TimerEvent &event )
     _ambient_packets.push( packet );
 }
 
-void NetworkNode::bboxSample( const ros::TimerEvent &event )
+void NetworkNode::bboxSample()
 {
     bbox_packet packet;
     BBOX_output_register &register_ = _registers.bbox_output_register;

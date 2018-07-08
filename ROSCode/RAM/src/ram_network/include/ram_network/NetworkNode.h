@@ -87,10 +87,10 @@ class NetworkNode
         void doCamCommand               ();
         void doNetworkCommand           ();
 
-        ros::Timer                      _ambient_sample;
-        void ambientSample              ( const ros::TimerEvent &event );
-        ros::Timer                      _bbox_sample;
-        void bboxSample                 ( const ros::TimerEvent &event );
+        ros::Timer                      _register_sample;
+        void registerSample             ( const ros::TimerEvent &event );
+        void ambientSample              ();
+        void bboxSample                 ();
 
         ros::Publisher                  _trial_publisher;
 
