@@ -5,7 +5,6 @@
 
 NetworkNode::NetworkNode()
 {
-    resetBuffer();
     setupSubscribers();
     startSerialAndI2C();
     setupServices();
@@ -59,6 +58,7 @@ int NetworkNode::openSerialConnection()
             }
         }
     }
+    resetBuffer();
     return _handles.serial;
 }
 
@@ -107,6 +107,7 @@ void NetworkNode::handleSerial()
                     //remember its already been indexed by one, so have to look at least 1 back to start
                     if( possiblePacket() )
                     {
+                        ROS_INFO( "Index[%d]: %c", _buffer_index-1, _buffer[_buffer_index-1] );
                         if( isCommand() )
                         {
                             ground_command com;
@@ -345,6 +346,7 @@ void NetworkNode::buildPacket()
 
 void NetworkNode::resetBuffer()
 {
+    serialFlush( _handles.serial );
     std::memset( &_buffer[0], 0, MAX_BUF );
     _buffer_index = 0;
 }
