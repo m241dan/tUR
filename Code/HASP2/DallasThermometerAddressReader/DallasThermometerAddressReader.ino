@@ -1,9 +1,16 @@
 //Tester to pull IDs of Dallas thermometers 
+//Make sure that you only connect one at a time when pulling addresses, obvs.
+//I don't know how it will handle multiples and don't care to experiment. -JA
+//I have it set to only read every 10 seconds; seems to support hot-swapping just fine,
+//but it's easier to copy from serial monitor with a low report rate. Change const below.
 
 #include <OneWire.h>
-#define THERMOPIN 13
+#define THERMOPIN 10
+#define READING_FREQUENCY_SECONDS 10
 
 OneWire  ds(THERMOPIN);  // This is the pin to connect to
+
+int milliseconds = READING_FREQUENCY_SECONDS * 1000;
 
 void setup(void) 
 {
@@ -20,8 +27,8 @@ void getDeviceAddress(void)
   /* initiate a search for the OneWire object we created and read its value into
   addr array we declared above*/
   
-  while(ds.search(addr)) {
-    Serial.println("The address is:\t");
+  while(ds.search(addr)) 
+  {
     //read each byte in the address array
     for( i = 0; i < 8; i++) {
       Serial.print("0x");
@@ -34,6 +41,7 @@ void getDeviceAddress(void)
         Serial.print(", ");
       }
     }
+    Serial.println(" ");
     // a check to make sure that what we read is correct.
     if ( OneWire::crc8( addr, 7) != addr[7]) {
         Serial.print("CRC is not valid!\n");
@@ -46,6 +54,6 @@ void getDeviceAddress(void)
 
 void loop(void) {
   getDeviceAddress();
-  delay(20000);
+  delay(milliseconds);
   // do nothing
 }

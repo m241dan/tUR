@@ -73,7 +73,8 @@ struct ADA_output_register
     uint8_t bme02_fault = 0;
 
     uint8_t check_two = 0;
-    int16_t dallas01_temp = 0;
+    int16_t dallas00_temp = 0; //HI DAN I MADE THIS EXTRA FOR YOU <3 <3 <3
+	int16_t dallas01_temp = 0;
     int16_t dallas02_temp = 0;
     int16_t dallas03_temp = 0;
     int16_t dallas04_temp = 0;
@@ -89,6 +90,7 @@ struct ADA_output_register
     int16_t dallas14_temp = 0;
     int16_t dallas15_temp = 0;
     int16_t dallas16_temp = 0;
+	int16_t dallas17_temp = 0; //HI DAN I MADE THIS EXTRA FOR YOU <3 <3 <3
     uint8_t check_three = 0;
     uint8_t write_received = 0;
     uint8_t command_received = 0;
