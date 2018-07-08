@@ -3,7 +3,7 @@
 //
 #include <ram_network/NetworkNode.h>
 
-NetworkNode::NetworkNode()
+NetworkNode::NetworkNode() : _downlink_when( (uint8_t)(1.00 / refreshRate) ), _downlink_counter(0)
 {
     setupSubscribers();
     startSerialAndI2C();
@@ -39,7 +39,8 @@ void NetworkNode::setupTimers()
     _network_loop           = _node_handle.createTimer( ros::Duration( refreshRate ), boost::bind( &NetworkNode::networkLoop, this, _1 ) );
     _network_health_timer   = _node_handle.createTimer( ros::Duration( healthRate ), boost::bind( &NetworkNode::networkHealth, this, _1 ) );
     _rpi_commanding         = _node_handle.createTimer( ros::Duration( rpiComRate ), boost::bind( &NetworkNode::rpiCommanding, this, _1 ) );
-
+    _ambient_sample         = _node_handle.createTimer( ros::Duration( ambientRate ), boost::bind( &NetworkNode::ambientSample, this, _1 ) );
+    _bbox_sample            = _node_handle.createTimer( ros::Duration( bboxRate ), boost::bind( &NetworkNode::bboxSample, this, _1 ) );
 }
 
 int NetworkNode::openSerialConnection()
@@ -86,7 +87,11 @@ void NetworkNode::networkLoop( const ros::TimerEvent &event )
     handleSerial();
     handleAda();
     handleBBox();
-    handleDownlink();
+    if( _downlink_counter++ < _downlink_when )
+    {
+        handleDownlink();
+        _downlink_counter = 0;
+    }
     _health.system_time = _registers.ard_time_sync;
     ROS_INFO( "Sync   Time: %d", _registers.gps_time_sync );
     ROS_INFO( "System Time: %d", _registers.ard_time_sync );
@@ -501,6 +506,19 @@ void NetworkNode::doCamCommand()
 }
 
 void NetworkNode::doNetworkCommand()
+{
+
+}
+
+void NetworkNode::ambientSample( const ros::TimerEvent &event )
+{
+    ambient_packet packet;
+    ADA_output_register &register_ = _registers.ada_output_register;
+
+    packet.amb
+}
+
+void NetworkNode::bboxSample( const ros::TimerEvent &event )
 {
 
 }

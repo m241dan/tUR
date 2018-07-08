@@ -53,49 +53,49 @@ struct image_packet
 
 struct ambient_packet
 {
-    uint8_t ambpacket_header = '\x31';
-    uint32_t ambpacket_time_recorded;
+    uint8_t header = '\x31';
+    uint32_t time_recorded;
 
-    int16_t ambpacket_bme01_temp;
-    int16_t ambpacket_bme01_pres;
-    uint8_t ambpacket_bme01_humi;
+    int16_t bme01_temp;
+    int16_t bme01_pres;
+    uint8_t bme01_humi;
 
-    int16_t ambpacket_bme02_temp;
-    int16_t ambpacket_bme02_pres;
-    uint8_t ambpacket_bme02_humi;
+    int16_t bme02_temp;
+    int16_t bme02_pres;
+    uint8_t bme02_humi;
 
-    int16_t ambpacket_dallas01_temp;
-    int16_t ambpacket_dallas02_temp;
-    int16_t ambpacket_dallas03_temp;
-    int16_t ambpacket_dallas04_temp;
-    int16_t ambpacket_dallas05_temp;
-    int16_t ambpacket_dallas06_temp;
-    int16_t ambpacket_dallas07_temp;
-    int16_t ambpacket_dallas08_temp;
-    int16_t ambpacket_dallas09_temp;
-    int16_t ambpacket_dallas10_temp;
-    int16_t ambpacket_dallas11_temp;
-    int16_t ambpacket_dallas12_temp;
-    int16_t ambpacket_dallas13_temp;
-    int16_t ambpacket_dallas14_temp;
-    int16_t ambpacket_dallas15_temp;
-    int16_t ambpacket_dallas16_temp;
+    int16_t dallas01_temp;
+    int16_t dallas02_temp;
+    int16_t dallas03_temp;
+    int16_t dallas04_temp;
+    int16_t dallas05_temp;
+    int16_t dallas06_temp;
+    int16_t dallas07_temp;
+    int16_t dallas08_temp;
+    int16_t dallas09_temp;
+    int16_t dallas10_temp;
+    int16_t dallas11_temp;
+    int16_t dallas12_temp;
+    int16_t dallas13_temp;
+    int16_t dallas14_temp;
+    int16_t dallas15_temp;
+    int16_t dallas16_temp;
 };
 
 struct bbox_packet
 {
-    uint8_t bbox_header = '\x32';
-    uint32_t bbox_time_recorded;
+    uint8_t header = '\x32';
+    uint32_t time_recorded;
 
-    uint8_t bbox_rocker_horiz = 0;
-    uint8_t bbox_rocker_verti = 0;
-    uint8_t bbox_toggle_horiz = 0;
-    uint8_t bbox_toggle_verti = 0;
-    uint8_t bbox_button_blu = 0;
-    uint32_t bbox_button_blu_press_recorded = 0;
-    uint8_t bbox_flap = 0;
-    uint8_t bbox_potentiometer_lever = 0;
-    uint8_t bbox_potentiometer_knob = 0;
+    uint8_t rocker_horiz = 0;
+    uint8_t rocker_verti = 0;
+    uint8_t toggle_horiz = 0;
+    uint8_t toggle_verti = 0;
+    uint8_t button_blu = 0;
+    uint32_t button_blu_press_recorded = 0;
+    uint8_t flap = 0;
+    uint8_t potentiometer_lever = 0;
+    uint8_t potentiometer_knob = 0;
 };
 
 struct arm_packet

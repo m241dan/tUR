@@ -49,6 +49,8 @@ const int           serialLimit     = 100; // amount of times to attempt opening
 const double        refreshRate     = 0.2; // 5Hz
 const double        healthRate      = 1; // 1Hz
 const double        rpiComRate      = 0.5; // 2Hz
+const double        ambientRate     = 5.0; // .2 Hz
+const double        bboxRate        = .5; // 2 Hz
 
 struct gtp
 {

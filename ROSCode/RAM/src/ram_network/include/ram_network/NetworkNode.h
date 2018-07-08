@@ -33,6 +33,8 @@ class NetworkNode
         void handleAda();
         void handleBBox();
         void handleDownlink();
+        uint8_t                         _downlink_counter;
+        const uint8_t                   _downlink_when;
 
         void downlinkPacket();
         void buildPacket();
@@ -54,6 +56,9 @@ class NetworkNode
         std::queue<ground_command>      _cam_commands;
         std::queue<ground_command>      _arm_commands;
         std::queue<ground_command>      _netw_commands;
+
+        std::queue<ambient_packet>      _ambient_packets;
+        std::queue<bbox_packet>         _bbox_packets;
         /*
          * ROS Stuff
          */
@@ -81,6 +86,11 @@ class NetworkNode
         void doArmCommand();
         void doCamCommand();
         void doNetworkCommand();
+
+        ros::Timer                      _ambient_sample;
+        void ambientSample( const ros::TimerEvent &event );
+        ros::Timer                      _bbox_sample;
+        void bboxSample( const ros::TimerEvent &event );
 
         ros::Publisher                  _trial_publisher;
 
