@@ -36,10 +36,11 @@ class NetworkNode
         uint8_t                         _downlink_counter;
         const uint8_t                   _downlink_when;
 
-        void downlinkPacket();
-        void buildPacket();
+        void downlinkPacket             ();
+        data_packet buildPacket         ();
+        bool hasPackets                 ();
 
-        void resetBuffer();
+        void resetBuffer                ();
         NetworkHealth                   _health;
         ArduinoRegisters                _registers;
         fdHandles                       _handles;

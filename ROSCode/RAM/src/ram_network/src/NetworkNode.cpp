@@ -340,16 +340,63 @@ void NetworkNode::handleGTP( gtp &time )
 
 void NetworkNode::downlinkPacket()
 {
-    buildPacket();
+    data_packet data = buildPacket();
+
+    if( data.sizeof_data_chunks != 0 )
+    {
+        data.setCheckSums();
+
+        auto *ptr = (uint8_t *)&data;
+        for( int x = 0; x < sizeof( data_packet ); x++ )
+        {
+            serialPutchar( _handles.serial, *ptr++ );
+        }
+    }
 }
 
-void NetworkNode::buildPacket()
+data_packet NetworkNode::buildPacket()
 {
     //check for image parts
     //check for arm packets
     //check for pathlog packets
     //check for bbox packets
-    //
+    //check for ambient packets
+
+    data_packet data;
+
+    if( hasPackets() )
+    {
+        if( !_bbox_packets.empty() )
+        {
+            size_t room_remaining = MEAT_SIZE - data.sizeof_data_chunks;
+            while( !_bbox_packets.empty() && room_remaining >= sizeof( bbox_packet ) )
+            {
+                bbox_packet present_packet = _bbox_packets.front();
+                _bbox_packets.pop();
+
+                // reckless, but should never overrun
+                auto *ptr = (uint8_t *)&present_packet;
+                for( int x = 0; x < sizeof( bbox_packet ); x++ )
+                    data.meat[data.sizeof_data_chunks++] = *ptr++;
+            }
+        }
+    }
+
+    return data;
+}
+
+bool NetworkNode::hasPackets()
+{
+    bool result = true;
+
+    if( _ambient_packets.empty() &&
+        _bbox_packets.empty() )
+    {
+        result = false;
+    }
+
+    return result;
+
 }
 
 void NetworkNode::resetBuffer()

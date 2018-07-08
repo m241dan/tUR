@@ -26,7 +26,7 @@ struct data_packet
     uint8_t i2cID;
     uint32_t time_sent_to_HASP;
     uint32_t time_sent_to_mngr;
-    uint8_t num_data_chunks;
+    uint8_t num_data_chunks = 0;
     uint16_t sizeof_data_chunks;
     uint8_t checksumz[CHECKSUMZ]; // all x01
     uint8_t meat[MEAT_SIZE];
