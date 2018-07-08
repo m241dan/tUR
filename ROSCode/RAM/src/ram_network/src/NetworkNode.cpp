@@ -324,7 +324,7 @@ void NetworkNode::downlinkPacket()
     data_packet data = buildPacket();
 
     ROS_INFO( "Num Chunks [%d]", data.num_data_chunks );
-    if( data.num_data_chunks!= 0 )
+    if( data.num_data_chunks != 0 )
     {
         data.time_sent_to_HASP = _registers.ard_time_sync;
         data.setCheckSums();
@@ -332,6 +332,7 @@ void NetworkNode::downlinkPacket()
         auto *ptr = (uint8_t *)&data;
         for( int x = 0; x < sizeof( data_packet ); x++ )
         {
+            ROS_INFO( "Writing char" );
             serialPutchar( _handles.serial, *ptr++ );
         }
     }
