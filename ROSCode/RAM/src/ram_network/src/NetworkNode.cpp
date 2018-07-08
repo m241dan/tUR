@@ -350,7 +350,7 @@ data_packet NetworkNode::buildPacket()
     {
         if( !_bbox_packets.empty() )
         {
-            size_t room_remaining = MEAT_SIZE - data.sizeof_data_chunks;
+            int room_remaining = MEAT_SIZE - data.sizeof_data_chunks;
             ROS_INFO( "Room Remaining[%d]", (int)room_remaining );
             ROS_INFO( "Num BB Packets[%d]", (int)_bbox_packets.size() );
             while( !_bbox_packets.empty() && room_remaining >= sizeof( bbox_packet ) )
