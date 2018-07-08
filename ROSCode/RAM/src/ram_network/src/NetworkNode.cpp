@@ -331,6 +331,7 @@ void NetworkNode::handleGTP( gtp &time )
     std::string delim( "." );
     std::string sync_time = data.substr(0, data.find(delim ));
 
+    ROS_INFO( "sync time is: %s", sync_time.c_str() );
     _registers.gps_time_sync = (uint32_t)std::stoul( sync_time );
     _registers.ada_input_register.new_sync = 1;
 
