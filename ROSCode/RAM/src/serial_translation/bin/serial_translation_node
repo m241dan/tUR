@@ -27,19 +27,11 @@ class SerialTranslationLayer:
 
     def incomingFromGround(self, msg):
         bytes = bytearray(len(msg.data))
-        print( len(msg.data) )
-        print( len(bytes) )
         for data in msg.data:
             bytes.append( data )
 
         self.serial_handle.flushOutput()
-        print( str( bytes ) )
         self.serial_handle.write(str(bytes))
-     #   print type( msg )
-     #   print type( msg.data )
-      #  for data in msg.data:
-      #      print( type(data) )
-            #self.serial_handle.write(data.to_bytes(1,byteorder='big'))
         return
 
     def incomingFromRam(self, event):

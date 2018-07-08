@@ -29,10 +29,15 @@ void GroundNode::timerCallback( const ros::TimerEvent &event )
 
 void GroundNode::commandCallback( const ram_network::HaspCommand::ConstPtr &msg )
 {
+    std_msgs::ByteMultiArray output;
     ground_command com;
     com.command[0] = msg->com_id;
     com.command[1] = msg->com_param;
 
-    //_serial_handle.write( (uint8_t *)&com, sizeof( ground_command ) );
-    ROS_INFO( "Writing... Commmand: ID[%d] Param[%d]", (int)com.command[0], (int)com.command[1] );
+    uint8_t *ptr = (uint8_t *)&com;
+    for( int x = 0; x < sizeof( ground_command ); x++ )
+        output.data.push_back( *ptr++ );
+
+    _serial_output.publish(output);
+
 }
