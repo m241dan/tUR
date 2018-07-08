@@ -26,8 +26,8 @@ struct data_packet
 {
     uint8_t header[2] = { 2, 1 }; // actuals are x01 and x21
     uint32_t time_sent_to_HASP;
-    uint8_t num_data_chunks = 0;
-    uint16_t sizeof_data_chunks;
+    uint8_t num_data_chunks = 0U;
+    uint16_t sizeof_data_chunks = 0U;
     uint8_t checksumz[CHECKSUMZ]; // all x01
     uint8_t meat[MEAT_SIZE];
     uint8_t terminator[2] = { 255, 255 }; //actuals are x03 and x0D

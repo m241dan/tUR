@@ -358,10 +358,10 @@ data_packet NetworkNode::buildPacket()
                 bbox_packet present_packet = _bbox_packets.front();
                 _bbox_packets.pop();
 
-                // reckless, but should never overrun
-             //   auto *ptr = (uint8_t *)&present_packet;
-             //   for( int x = 0; x < sizeof( bbox_packet ); x++ )
-             //       data.meat[data.sizeof_data_chunks++] = *ptr++;
+ //                reckless, but should never overrun
+                auto *ptr = (uint8_t *)&present_packet;
+                for( int x = 0; x < sizeof( bbox_packet ); x++ )
+                    data.meat[data.sizeof_data_chunks++] = *ptr++;
             }
         }
     }
