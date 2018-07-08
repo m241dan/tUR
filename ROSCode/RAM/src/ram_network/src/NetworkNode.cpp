@@ -112,14 +112,14 @@ void NetworkNode::handleSerial()
                         if( isCommand() )
                         {
                             ground_command com;
-                            std::memcpy( &com, &_buffer[_buffer_index-sizeof(gtp)], sizeof( ground_command ) );
+                            std::memcpy( &com, &_buffer[_buffer_index-sizeof(ground_command)], sizeof( ground_command ) );
                             handleCommand( com );
                             _health.serial_commands_received++;
                         }
                         else if( isGTP() )
                         {
                             gtp gps;
-                            std::memcpy( &gps, _buffer, sizeof( gtp ) );
+                            std::memcpy( &gps, &_buffer[_buffer_index-sizeof(gtp)], sizeof( gtp ) );
                             handleGTP( gps );
                             _health.serial_gtp_received++;
                         }
