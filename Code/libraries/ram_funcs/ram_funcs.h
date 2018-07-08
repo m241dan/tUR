@@ -20,12 +20,12 @@ const uint8_t I2CADDRESS_BBOX = 0x06;
 const uint8_t I2CADDRESS_ADA  = 0x04;
 const uint16_t MEAT_SIZE = 468;
 const uint8_t CHECKSUMZ = 28;
+const uint16_t PACKET_SIZE = 507;
+
 struct data_packet
 {
     uint8_t header[2] = { 2, 1 }; // actuals are x01 and x21
-    uint8_t i2cID;
     uint32_t time_sent_to_HASP;
-    uint32_t time_sent_to_mngr;
     uint8_t num_data_chunks = 0;
     uint16_t sizeof_data_chunks;
     uint8_t checksumz[CHECKSUMZ]; // all x01

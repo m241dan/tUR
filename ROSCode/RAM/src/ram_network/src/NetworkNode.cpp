@@ -344,6 +344,7 @@ void NetworkNode::downlinkPacket()
 
     if( data.sizeof_data_chunks != 0 )
     {
+        data.time_sent_to_HASP = _registers.ard_time_sync;
         data.setCheckSums();
 
         auto *ptr = (uint8_t *)&data;

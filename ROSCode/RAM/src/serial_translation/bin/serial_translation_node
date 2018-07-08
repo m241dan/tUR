@@ -5,6 +5,9 @@ import translation_layer.layer
 import rospy
 import serial
 from std_msgs.msg import ByteMultiArray
+
+PACKET_SIZE = 507
+
 class SerialTranslationLayer:
     def __init__(self):
         self.port = rospy.get_param('~port', '/dev/ttyUSB0')
@@ -26,15 +29,21 @@ class SerialTranslationLayer:
         self.serial_handle.isOpen()
 
     def incomingFromGround(self, msg):
-        bytes = bytearray(len(msg.data))
+        ground_bytes = bytearray(len(msg.data))
         for data in msg.data:
-            bytes.append( data )
+            ground_bytes.append( data )
 
         self.serial_handle.flushOutput()
-        self.serial_handle.write(str(bytes))
+        self.serial_handle.write(str(ground_bytes))
         return
 
     def incomingFromRam(self, event):
+        if self.serial_handle.in_waiting >= PACKET_SIZE:
+            ground_bytes = self.serial_handle.read( PACKET_SIZE )
+            ground_bytes = str(ground_bytes)
+            msg = ByteMultiArray()
+            msg.data = ground_bytes
+            self.pub.publish( msg )
         return
 
 def main():
