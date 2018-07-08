@@ -20,6 +20,7 @@
 #include <ram_commands.h>
 #include <ram_network/HaspCommand.h>
 #include <ram_network/NetworkHealth.h>
+#include <std_msgs/UInt8.h>
 
 const int MAX_BUF = 2048;
 
@@ -47,6 +48,7 @@ const int           serialBaud      = 4800;
 const int           serialLimit     = 100; // amount of times to attempt opening a serial connection before failing
 const double        refreshRate     = 0.2; // 5Hz
 const double        healthRate      = 1; // 1Hz
+const double        rpiComRate      = 0.5; // 2Hz
 
 struct gtp
 {

@@ -32,11 +32,14 @@ void NetworkNode::setupPublishers()
 {
     _clock_publisher            = _node_handle.advertise<rosgraph_msgs::Clock> ( "clock", 10 );
     _network_health_publisher   = _node_handle.advertise<ram_network::NetworkHealth>( "network_health", 10 );
+    _trial_publisher            = _node_handle.advertise<std_msgs::UInt8>( "trial_selector", 10 );
 }
 void NetworkNode::setupTimers()
 {
     _network_loop           = _node_handle.createTimer( ros::Duration( refreshRate ), boost::bind( &NetworkNode::networkLoop, this, _1 ) );
     _network_health_timer   = _node_handle.createTimer( ros::Duration( healthRate ), boost::bind( &NetworkNode::networkHealth, this, _1 ) );
+    _rpi_commanding         = _node_handle.createTimer( ros::Duration( rpiComRate ), boost::bind( &NetworkNode::rpiCommanding, this, _1 ) );
+
 }
 
 int NetworkNode::openSerialConnection()
@@ -114,14 +117,12 @@ void NetworkNode::handleSerial()
                             ground_command com;
                             std::memcpy( &com, &_buffer[_buffer_index-sizeof(ground_command)], sizeof( ground_command ) );
                             handleCommand( com );
-                            _health.serial_commands_received++;
                         }
                         else if( isGTP() )
                         {
                             gtp gps;
                             std::memcpy( &gps, &_buffer[_buffer_index-sizeof(gtp)], sizeof( gtp ) );
                             handleGTP( gps );
-                            _health.serial_gtp_received++;
                         }
                         else
                         {
@@ -287,11 +288,6 @@ void NetworkNode::handleDownlink()
         //downlinking
         downlinkPacket();
     }
-}
-
-void NetworkNode::parseSerial()
-{
-
 }
 
 void NetworkNode::handleCommand( ground_command &com )
@@ -461,4 +457,50 @@ void NetworkNode::simulatedGTPCallback( const std_msgs::UInt32::ConstPtr &msg )
 
     snprintf( (char *)time.data, sizeof( time.data ), "%d.649$GPGGA,202212.00,3024.7205,N,09110.7264,W,1,06,1.69,00061,M,-025,M,,*51,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,", msg->data );
     handleGTP( time );
+}
+
+void NetworkNode::rpiCommanding( const ros::TimerEvent &event )
+{
+    /*
+     * Always prioritize arm commands
+     */
+    if( !_arm_commands.empty() )
+    {
+        doArmCommand();
+    }
+
+    if( !_cam_commands.empty() )
+    {
+        doCamCommand();
+    }
+
+    if( !_netw_commands.empty() )
+    {
+        doNetworkCommand();
+    }
+}
+
+void NetworkNode::doArmCommand()
+{
+    ground_command com = _arm_commands.front();
+    _arm_commands.pop();
+
+    switch( com.command[0] )
+    {
+        case ARM_ADD_TRIAL[0]:
+            std_msgs::UInt8 trial;
+            trial.data = com.command[1];
+            _trial_publisher.publish(trial);
+            break;
+    }
+}
+
+void NetworkNode::doCamCommand()
+{
+
+}
+
+void NetworkNode::doNetworkCommand()
+{
+
 }

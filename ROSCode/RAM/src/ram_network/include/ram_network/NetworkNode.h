@@ -76,7 +76,13 @@ class NetworkNode
         void simulatedCommandCallback( const ram_network::HaspCommand::ConstPtr &msg );
         void simulatedGTPCallback( const std_msgs::UInt32::ConstPtr &msg );
 
+        ros::Timer                      _rpi_commanding;
+        void rpiCommanding( const ros::TimerEvent &event );
+        void doArmCommand();
+        void doCamCommand();
+        void doNetworkCommand();
 
+        ros::Publisher                  _trial_publisher;
 
 };
 
