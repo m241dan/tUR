@@ -372,8 +372,6 @@ bool NetworkNode::isCommand()
 {
     bool result = true;
     unsigned int packet_start = _buffer_index-sizeof(ground_command);
-    ROS_INFO( "PacketStart:   %d", packet_start );
-    ROS_INFO( "PacketStart+1: %d", packet_start+1 );
     if( _buffer[packet_start] != '\x01' ||
         _buffer[packet_start+1] != '\x02' )
     {
@@ -547,5 +545,22 @@ void NetworkNode::ambientSample( const ros::TimerEvent &event )
 
 void NetworkNode::bboxSample( const ros::TimerEvent &event )
 {
+    bbox_packet packet;
+    BBOX_output_register &register_ = _registers.bbox_output_register;
+
+    packet.time_recorded = register_.time_register;
+
+    packet.rocker_horiz = register_.rocker_horiz;
+    packet.rocker_verti = register_.rocker_verti;
+    packet.toggle_horiz = register_.toggle_horiz;
+    packet.toggle_verti = register_.toggle_verti;
+
+    packet.button_blu = register_.button_blu;
+   // TODO packet.flap = register_.flap;
+    packet.potentiometer_lever = register_.potentiometer_lever;
+    packet.potentiometer_knob = register_.potentiometer_knob;
+
+    _bbox_packets.push( packet );
+
 
 }

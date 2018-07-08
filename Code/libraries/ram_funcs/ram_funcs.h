@@ -18,18 +18,54 @@ const uint8_t DEADZONE_WIDTH = 1; //By how many units (range 0-100) does the pot
 // Arduino pin 5 (the clock, or SCL, pin) is YEL wire
 const uint8_t I2CADDRESS_BBOX = 0x06;
 const uint8_t I2CADDRESS_ADA  = 0x04;
-
+const uint16_t MEAT_SIZE = 468;
+const uint8_t CHECKSUMZ = 28;
 struct data_packet
 {
-    uint8_t header[2] = {'\x1', '\x21'};
+    uint8_t header[2] = { 2, 1 }; // actuals are x01 and x21
     uint8_t i2cID;
     uint32_t time_sent_to_HASP;
     uint32_t time_sent_to_mngr;
     uint8_t num_data_chunks;
-    uint8_t sizeof_data_chunks[2];
-    uint8_t checksumz[28];
-    uint8_t meat[468];
-    uint8_t terminator[2] = {'\x03', '\x0D'};
+    uint16_t sizeof_data_chunks;
+    uint8_t checksumz[CHECKSUMZ]; // all x01
+    uint8_t meat[MEAT_SIZE];
+    uint8_t terminator[2] = { 255, 255 }; //actuals are x03 and x0D
+
+    void setCheckSums()
+    {
+        header[0] = '\x01';
+        header[1] = '\x21';
+        terminator[0] = '\x03';
+        terminator[1] = '\x0D';
+        for( int x = 0; x < CHECKSUMZ; x++ )
+            checksumz[x] = '\x01';
+    }
+
+    bool verifyCheckSums()
+    {
+        bool result = true;
+
+        if( header[0] == '\x01' &&
+            header[1] == '\x21' &&
+            terminator[0] == '\x03' &&
+            terminator[1] == '\x0D' )
+        {
+            for( int x = 0; x < CHECKSUMZ; x++ )
+            {
+                if( checksumz[x] != '\x01' )
+                {
+                    result = false;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            result = false;
+        }
+        return result;
+    }
 };
 
 struct image_packet
