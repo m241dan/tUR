@@ -26,8 +26,6 @@ class NetworkNode
 
 
         void networkLoop                ( const ros::TimerEvent &event );
-        void handleSerial               ();
-        void parseSerial                ();
         void handleCommand              ( ground_command &com );
         void handleGTP                  ( gtp &time );
         void handleAda                  ();
@@ -65,16 +63,22 @@ class NetworkNode
          */
         ros::NodeHandle                 _node_handle;
         /* Main Operation */
-        ros::Timer                      _network_loop;
+        ros::Timer                      _i2c_loop;
+        void i2cLoopCallback            ( const ros::TimerEvent &event );
 
-        /* Sim Clock */
-        ros::Publisher                  _clock_publisher;
-        rosgraph_msgs::Clock            _clock;
+        ros::Timer                      _serial_loop;
+        void serialLoopCallback         ( const ros::TimerEvent &event );
 
         /* Network Health */
         ros::Timer                      _network_health_timer;
         ros::Publisher                  _network_health_publisher;
         void networkHealth              ( const ros::TimerEvent &event );
+
+        /* Sim Clock */
+        ros::Publisher                  _clock_publisher;
+        rosgraph_msgs::Clock            _clock;
+
+
 
         ros::Subscriber                 _simulated_command;
         ros::Subscriber                 _simulated_gtp;

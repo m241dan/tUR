@@ -46,10 +46,12 @@ struct fdHandles
 const char *const   serialAddress   = "/dev/ttyAMA0";
 const int           serialBaud      = 4800;
 const int           serialLimit     = 100; // amount of times to attempt opening a serial connection before failing
-const double        refreshRate     = 0.2; // 5Hz
-const double        healthRate      = 1; // 1Hz
-const double        rpiComRate      = 0.5; // 2Hz
-const double        registerRate     = 5.0; // .2 Hz
+
+const double        i2cLoop         = 1.0; // 1Hz
+const double        serialLoop      = 0.5; // 2Hz
+const double        healthRate      = 1.5; // .66Hz
+const double        rpiComRate      = 1.25; // .8Hz
+const double        registerRate     = 4.8; // .208 Hz
 
 struct gtp
 {

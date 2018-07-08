@@ -3,7 +3,7 @@
 //
 #include <ram_network/NetworkNode.h>
 
-NetworkNode::NetworkNode() : _downlink_when( (uint8_t)(1.00 / refreshRate) ), _downlink_counter(0)
+NetworkNode::NetworkNode() : _downlink_when( (uint8_t)(1.00 / serialLoop ) ), _downlink_counter(0)
 {
     setupSubscribers();
     startSerialAndI2C();
@@ -36,10 +36,11 @@ void NetworkNode::setupPublishers()
 }
 void NetworkNode::setupTimers()
 {
-    _network_loop           = _node_handle.createTimer( ros::Duration( refreshRate ), boost::bind( &NetworkNode::networkLoop, this, _1 ) );
+    _i2c_loop               = _node_handle.createTimer( ros::Duration( i2cLoop ), boost::bind( &NetworkNode::i2cLoopCallback, this, _1 ) );
+    _serial_loop            = _node_handle.createTimer( ros::Duration( serialLoop ), boost::bind( &NetworkNode::serialLoopCallback, this, _1 ) );
     _network_health_timer   = _node_handle.createTimer( ros::Duration( healthRate ), boost::bind( &NetworkNode::networkHealth, this, _1 ) );
     _rpi_commanding         = _node_handle.createTimer( ros::Duration( rpiComRate ), boost::bind( &NetworkNode::rpiCommanding, this, _1 ) );
-    _register_sample         = _node_handle.createTimer( ros::Duration( registerRate ), boost::bind( &NetworkNode::registerSample, this, _1 ) );
+    _register_sample        = _node_handle.createTimer( ros::Duration( registerRate ), boost::bind( &NetworkNode::registerSample, this, _1 ) );
 }
 
 int NetworkNode::openSerialConnection()
@@ -83,22 +84,16 @@ int NetworkNode::openBBoxI2C()
 
 void NetworkNode::networkLoop( const ros::TimerEvent &event )
 {
-    handleSerial();
-    handleAda();
-    handleBBox();
+
     if( _downlink_counter++ < _downlink_when )
     {
         handleDownlink();
         _downlink_counter = 0;
     }
     _health.system_time = _registers.ard_time_sync;
-    ROS_INFO( "Sync   Time: %d", _registers.gps_time_sync );
-    ROS_INFO( "System Time: %d", _registers.ard_time_sync );
-    ROS_INFO( "ADA    Time: %d", _registers.ada_output_register.time_register );
-    ROS_INFO( "BBOX   Time: %d", _registers.bbox_output_register.time_register );
 }
 
-void NetworkNode::handleSerial()
+void NetworkNode::serialLoopCallback( const ros::TimerEvent &event )
 {
     if( _handles.serial != -1 )
     {
@@ -454,6 +449,11 @@ bool NetworkNode::isGTP()
     return result;
 }
 
+void NetworkNode::i2cLoopCallback( const ros::TimerEvent &event )
+{
+    handleAda();
+    handleBBox();
+}
 
 void NetworkNode::networkHealth( const ros::TimerEvent &event )
 {
