@@ -101,7 +101,7 @@ void NetworkNode::handleSerial()
             ROS_INFO( "Available: %d", serialDataAvail( _handles.serial ) );
             while( serialDataAvail( _handles.serial ) )
             {
-                _buffer[_buffer_index] = (char)serialGetchar( _handles.serial );
+                _buffer[_buffer_index++] = (char)serialGetchar( _handles.serial );
                 ROS_INFO( "Index[%d]: %c", _buffer_index-1, _buffer[_buffer_index-1] );
 
                 if( _buffer_index > 3 )
@@ -136,7 +136,6 @@ void NetworkNode::handleSerial()
                         _health.serial_bad_reads++;
                     }
                 }
-                _buffer_index++;
             }
         }
     }
@@ -357,9 +356,9 @@ void NetworkNode::resetBuffer()
 bool NetworkNode::possiblePacket()
 {
     bool result = false;
-    if( _buffer[_buffer_index] == '\x0A' &&
-        _buffer[_buffer_index - 1] == '\x0D' &&
-        _buffer[_buffer_index - 2] == '\x03' )
+    if( _buffer[_buffer_index - 1] == '\x0A' &&
+        _buffer[_buffer_index - 2] == '\x0D' &&
+        _buffer[_buffer_index - 3] == '\x03' )
     {
         result = true;
     }

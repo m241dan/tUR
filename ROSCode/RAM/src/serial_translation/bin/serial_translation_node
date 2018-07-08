@@ -32,6 +32,7 @@ class SerialTranslationLayer:
         for data in msg.data:
             bytes.append( data )
 
+        self.serial_handle.flushOutput()
         print( str( bytes ) )
         self.serial_handle.write(str(bytes))
      #   print type( msg )
