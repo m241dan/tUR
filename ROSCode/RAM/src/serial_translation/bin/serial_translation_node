@@ -4,9 +4,11 @@ import sys
 import translation_layer.layer
 import rospy
 import serial
+import struct
+from binascii import hexlify
 from std_msgs.msg import ByteMultiArray
 
-PACKET_SIZE = 507
+PACKET_SIZE = 512
 
 class SerialTranslationLayer:
     def __init__(self):
@@ -40,13 +42,15 @@ class SerialTranslationLayer:
         return
 
     def incomingFromRam(self, event):
-        print "Receiving..." +str(self.serial_handle.inWaiting())
+        print "Receiving..." + str(self.serial_handle.inWaiting())
         if self.serial_handle.inWaiting() >= PACKET_SIZE:
             rospy.loginfo("Receiving from RAM...")
             ground_bytes = self.serial_handle.read( PACKET_SIZE )
-            ground_bytes = str(ground_bytes)
+            hex = hexlify(ground_bytes)
+
             msg = ByteMultiArray()
-            msg.data = ground_bytes
+            for value in hex:
+                msg.data.append(int(value, 16 ))
             self.pub.publish( msg )
         return
 

@@ -20,7 +20,7 @@ const uint8_t I2CADDRESS_BBOX = 0x06;
 const uint8_t I2CADDRESS_ADA  = 0x04;
 const uint16_t MEAT_SIZE = 468;
 const uint8_t CHECKSUMZ = 28;
-const uint16_t PACKET_SIZE = 507;
+const uint16_t PACKET_SIZE = 512;
 
 struct data_packet
 {
