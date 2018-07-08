@@ -21,6 +21,8 @@
 #include <ram_network/HaspCommand.h>
 #include <ram_network/NetworkHealth.h>
 
+const int MAX_BUF = 2048;
+
 struct ArduinoRegisters
 {
     uint32_t                &gps_time_sync;
