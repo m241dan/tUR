@@ -29,15 +29,18 @@ class SerialTranslationLayer:
         self.serial_handle.isOpen()
 
     def incomingFromGround(self, msg):
+        rospy.loginfo( "Sending to RAM.." )
         ground_bytes = bytearray(len(msg.data))
         for data in msg.data:
             ground_bytes.append( data )
+
 
         self.serial_handle.flushOutput()
         self.serial_handle.write(str(ground_bytes))
         return
 
     def incomingFromRam(self, event):
+        rospy.loginfo( "Receiving from RAM..." )
         if self.serial_handle.in_waiting >= PACKET_SIZE:
             ground_bytes = self.serial_handle.read( PACKET_SIZE )
             ground_bytes = str(ground_bytes)
