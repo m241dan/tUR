@@ -21,33 +21,33 @@ const uint8_t I2CADDRESS_ADA  = 0x04;
 
 struct data_packet
 {
-    uint8_t datapacket_header[2] = {'\x1', '\x21'};
-    uint8_t datapacket_i2cID;
-    uint32_t datapacket_time_sent_to_HASP;
-    uint32_t datapacket_time_sent_to_mngr;
-    uint8_t datapacket_num_data_chunks;
-    uint8_t datapacket_sizeof_data_chunks[2];
-    uint8_t datapacket_checksumz[28];
-    uint8_t datapacket_meat[468];
-    uint8_t datapacket_terminator[2] = {'\x03', '\x0D'};
+    uint8_t header[2] = {'\x1', '\x21'};
+    uint8_t i2cID;
+    uint32_t time_sent_to_HASP;
+    uint32_t time_sent_to_mngr;
+    uint8_t num_data_chunks;
+    uint8_t sizeof_data_chunks[2];
+    uint8_t checksumz[28];
+    uint8_t meat[468];
+    uint8_t terminator[2] = {'\x03', '\x0D'};
 };
 
 struct image_packet
 {
-    uint8_t imagepacket_header = '\x30';
-    uint8_t imagepacket_position;
-    uint16_t imagepacket_photo_number;
-    uint16_t imagepacket_sizeof_photo;
-    uint8_t imagepacket_meat[462];
+    uint8_t header = '\x30';
+    uint8_t position;
+    uint16_t photo_number;
+    uint16_t sizeof_photo;
+    uint8_t meat[462];
     image_packet() {}
     image_packet( uint8_t buf[] )
     {
-        imagepacket_header = buf[0];
-        imagepacket_position = buf[1];
-        imagepacket_photo_number = *((uint16_t *)&buf[2]);
-        imagepacket_sizeof_photo = *((uint16_t *)&buf[4]);
+        header = buf[0];
+        position = buf[1];
+        photo_number = *((uint16_t *)&buf[2]);
+        sizeof_photo = *((uint16_t *)&buf[4]);
         for( int x = 0; x < 462; x++ )
-            imagepacket_meat[x] = buf[x+6];
+            meat[x] = buf[x+6];
     }
 };
 
@@ -100,62 +100,62 @@ struct bbox_packet
 
 struct arm_packet
 {
-    uint8_t arm_header = '\x33';
-    uint32_t arm_time_recorded;
+    uint8_t header = '\x33';
+    uint32_t time_recorded;
 
-    int8_t arm_turntable_temp;
-    uint8_t arm_turntable_velo;
-    int16_t arm_turntable_goal;
-    int16_t arm_turntable_posi;
-    bool arm_turntable_onoff;
+    int8_t turntable_temp;
+    uint8_t turntable_velo;
+    int16_t turntable_goal;
+    int16_t turntable_posi;
+    bool turntable_onoff;
 
-    int8_t arm_shoulder_temp;
-    uint8_t arm_shoulder_velo;
-    int16_t arm_shoulder_goal;
-    int16_t arm_shoulder_posi;
-    bool arm_shoulder_onoff;
+    int8_t shoulder_temp;
+    uint8_t shoulder_velo;
+    int16_t shoulder_goal;
+    int16_t shoulder_posi;
+    bool shoulder_onoff;
 
-    int8_t arm_elbow_temp;
-    uint8_t arm_elbow_velo;
-    int16_t arm_elbow_goal;
-    int16_t arm_elbow_posi;
-    bool arm_elbow_onoff;
+    int8_t elbow_temp;
+    uint8_t elbow_velo;
+    int16_t elbow_goal;
+    int16_t elbow_posi;
+    bool elbow_onoff;
 
-    int8_t arm_wrist_temp;
-    uint8_t arm_wrist_velo;
-    int16_t arm_wrist_goal;
-    int16_t arm_wrist_posi;
-    bool arm_wrist_onoff;
+    int8_t wrist_temp;
+    uint8_t wrist_velo;
+    int16_t wrist_goal;
+    int16_t wrist_posi;
+    bool wrist_onoff;
 
-    int8_t arm_gripper_temp;
-    uint8_t arm_gripper_velo;
-    int16_t arm_gripper_goal;
-    int16_t arm_gripper_posi;
-    bool arm_gripper_onoff;
+    int8_t gripper_temp;
+    uint8_t gripper_velo;
+    int16_t gripper_goal;
+    int16_t gripper_posi;
+    bool gripper_onoff;
 
-    int16_t arm_armposition_in_mm_X;
-    int16_t arm_armposition_in_mm_Y;
-    int16_t arm_armposition_in_mm_Z;
-    int16_t arm_armorientation_in_rads;
+    int16_t armposition_in_mm_X;
+    int16_t armposition_in_mm_Y;
+    int16_t armposition_in_mm_Z;
+    int16_t armorientation_in_rads;
 };
 
 struct pathlog_packet
 {
-    uint8_t pathlog_header = '\x35';
-    double pathlog_target_pos_x;
-    double pathlog_target_pos_y;
-    double pathlog_target_pos_z;
-    double pathlog_target_pos_angle;
-    uint16_t pathlog_current_pos_joint1;
-    uint16_t pathlog_current_pos_joint2;
-    uint16_t pathlog_current_pos_joint3;
-    uint16_t pathlog_current_pos_joint4;
-    uint16_t pathlog_current_pos_joint5;
-    uint16_t pathlog_total_trial_count;
-    uint16_t pathlog_trial_ID;
-    uint32_t pathlog_pathstep_time_start;
-    uint32_t pathlog_pathstep_time_end;
-    uint16_t pathlog_gripper_position;
+    uint8_t header = '\x35';
+    double target_pos_x;
+    double target_pos_y;
+    double target_pos_z;
+    double target_pos_angle;
+    uint16_t current_pos_joint1;
+    uint16_t current_pos_joint2;
+    uint16_t current_pos_joint3;
+    uint16_t current_pos_joint4;
+    uint16_t current_pos_joint5;
+    uint16_t total_trial_count;
+    uint16_t trial_ID;
+    uint32_t pathstep_time_start;
+    uint32_t pathstep_time_end;
+    uint16_t gripper_position;
 };
 
 /*
