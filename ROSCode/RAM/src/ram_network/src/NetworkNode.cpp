@@ -82,16 +82,6 @@ int NetworkNode::openBBoxI2C()
     return _handles.bbox;
 }
 
-void NetworkNode::networkLoop( const ros::TimerEvent &event )
-{
-
-    if( _downlink_counter++ < _downlink_when )
-    {
-        handleDownlink();
-        _downlink_counter = 0;
-    }
-    _health.system_time = _registers.ard_time_sync;
-}
 
 void NetworkNode::serialLoopCallback( const ros::TimerEvent &event )
 {
@@ -137,6 +127,11 @@ void NetworkNode::serialLoopCallback( const ros::TimerEvent &event )
                     }
                 }
             }
+        }
+        if( _downlink_counter++ < _downlink_when )
+        {
+            downlinkPacket();
+            _downlink_counter = 0;
         }
     }
     else
@@ -278,15 +273,6 @@ void NetworkNode::handleBBox()
         _health.bbox_connection_fault = openBBoxI2C() == -1 ? (uint8_t)1 : (uint8_t)0;
     }
 
-}
-
-void NetworkNode::handleDownlink()
-{
-    if( _handles.serial != -1 )
-    {
-        //downlinking
-        downlinkPacket();
-    }
 }
 
 void NetworkNode::handleCommand( ground_command &com )
@@ -453,6 +439,7 @@ void NetworkNode::i2cLoopCallback( const ros::TimerEvent &event )
 {
     handleAda();
     handleBBox();
+    _health.system_time = _registers.ard_time_sync;
 }
 
 void NetworkNode::networkHealth( const ros::TimerEvent &event )
