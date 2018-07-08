@@ -5,6 +5,7 @@
 
 NetworkNode::NetworkNode()
 {
+    resetBuffer();
     setupSubscribers();
     startSerialAndI2C();
     setupServices();
@@ -96,12 +97,44 @@ void NetworkNode::handleSerial()
     {
         _health.serial_connection_fault = 0;
         // TODO below
-        // check for incoming
-        // parse incoming
-        // handle commands
-        // handle gps
-        // set ada input register new_sync true
-        // update register gps sync
+        if( serialDataAvail( _handles.serial ) )
+        {
+            while( serialDataAvail( _handles.serial ) )
+            {
+                _buffer[_buffer_index++] = (char)serialGetchar( _handles.serial );
+                if( _buffer_index > 3 )
+                {
+                    //remember its already been indexed by one, so have to look at least 1 back to start
+                    if( possiblePacket() )
+                    {
+                        if( isCommand() )
+                        {
+                            ground_command com;
+                            std::memcpy( &com, _buffer, sizeof( ground_command ) );
+                            handleCommand( com );
+                            _health.serial_commands_received++; }
+                        else if( isGTP() )
+                        {
+                            gtp gps;
+                            std::memcpy( &gps, _buffer, sizeof( gtp ) );
+                            handleGTP( gps );
+                            _health.serial_gtp_received++;
+                        }
+                        else
+                        {
+                            resetBuffer();
+                            _health.serial_bad_reads++;
+                        }
+                        resetBuffer();
+                    }
+                    else if( _buffer_index >= MAX_BUF )
+                    {
+                        resetBuffer();
+                        _health.serial_bad_reads++;
+                    }
+                }
+            }
+        }
     }
     else
     {
@@ -258,8 +291,9 @@ void NetworkNode::parseSerial()
 
 }
 
-void NetworkNode::handleCommand( ground_command com )
+void NetworkNode::handleCommand( ground_command &com )
 {
+    _health.serial_commands_received++;
     uint8_t com_id = com.command[0];
     uint8_t com_args = com.command[1];
 
@@ -280,7 +314,6 @@ void NetworkNode::handleCommand( ground_command com )
     else if( com_id >= 0x14 && com_id < 0x19 )
     {
         _ada_commands.push( com );
-        ROS_ERROR( "Added ADA command" );
     }
     else if( com_id >= 0x19 && com_id < 0x1E )
     {
@@ -288,13 +321,14 @@ void NetworkNode::handleCommand( ground_command com )
     }
 }
 
-void NetworkNode::handleGTP( gtp time )
+void NetworkNode::handleGTP( gtp &time )
 {
+    _health.serial_gtp_received++;
     std::string data( time.data );
-    std::string delim( "," );
+    std::string delim( "." );
     std::string sync_time = data.substr(0, data.find(delim ));
 
-    _registers.gps_time_sync = std::stoul( sync_time );
+    _registers.gps_time_sync = (uint32_t)std::stoul( sync_time );
     _registers.ada_input_register.new_sync = 1;
 
 }
@@ -303,6 +337,62 @@ void NetworkNode::downlinkPacket()
 {
 
 }
+
+void NetworkNode::buildPacket()
+{
+
+}
+
+void NetworkNode::resetBuffer()
+{
+    std::memset( &_buffer[0], 0, MAX_BUF );
+    _buffer_index = 0;
+}
+
+bool NetworkNode::possiblePacket()
+{
+    bool result = false;
+    if( _buffer[_buffer_index - 1] == '\x0A' &&
+        _buffer[_buffer_index - 2] == '\x0D' &&
+        _buffer[_buffer_index - 3] == '\x03' )
+    {
+        result = true;
+    }
+    return result;
+}
+
+bool NetworkNode::isCommand()
+{
+    bool result = true;
+    if( _buffer[0] != '\x01' ||
+        _buffer[1] != '\x02' )
+    {
+        result = false;
+    }
+
+    if( _buffer_index != sizeof( ground_command ) )
+    {
+        result = false;
+    }
+    return result;
+}
+
+bool NetworkNode::isGTP()
+{
+    bool result = true;
+    if( _buffer[0] != '\x01' ||
+        _buffer[1] != '\x30' )
+    {
+        result = false;
+    }
+
+    if( _buffer_index != sizeof( gtp ) )
+    {
+        result = false;
+    }
+    return result;
+}
+
 
 void NetworkNode::networkHealth( const ros::TimerEvent &event )
 {
@@ -350,7 +440,6 @@ void NetworkNode::simulatedCommandCallback( const ram_network::HaspCommand::Cons
     com.command[0] = msg->com_id;
     com.command[1] = msg->com_param;
     handleCommand( com );
-    _health.serial_commands_received++;
 
 }
 
@@ -358,7 +447,6 @@ void NetworkNode::simulatedGTPCallback( const std_msgs::UInt32::ConstPtr &msg )
 {
     gtp time;
 
-    snprintf( (char *)time.data, sizeof( time.data ), "%d", msg->data );
+    snprintf( (char *)time.data, sizeof( time.data ), "%d.649$GPGGA,202212.00,3024.7205,N,09110.7264,W,1,06,1.69,00061,M,-025,M,,*51,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,", msg->data );
     handleGTP( time );
-    _health.serial_gtp_received++;
 }

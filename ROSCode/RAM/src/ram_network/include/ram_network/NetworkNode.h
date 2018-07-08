@@ -28,8 +28,8 @@ class NetworkNode
         void networkLoop( const ros::TimerEvent &event );
         void handleSerial();
         void parseSerial();
-        void handleCommand( ground_command com );
-        void handleGTP( gtp time );
+        void handleCommand( ground_command &com );
+        void handleGTP( gtp &time );
         void handleAda();
         void handleBBox();
         void handleDownlink();
@@ -37,9 +37,17 @@ class NetworkNode
         void downlinkPacket();
         void buildPacket();
 
+        void resetBuffer();
         NetworkHealth                   _health;
         ArduinoRegisters                _registers;
         fdHandles                       _handles;
+        char                            _buffer[MAX_BUF];
+        int                             _buffer_index = 0;
+
+        bool                            possiblePacket();
+        bool                            isCommand();
+        bool                            isGTP();
+
 
         std::queue<ground_command>      _ada_commands;
         std::queue<ground_command>      _bbox_commands;
