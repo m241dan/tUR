@@ -40,7 +40,8 @@ class SerialTranslationLayer:
         return
 
     def incomingFromRam(self, event):
-        if self.serial_handle.in_waiting >= PACKET_SIZE:
+        print "Receiving..." +str(self.serial_handle.inWaiting())
+        if self.serial_handle.inWaiting() >= PACKET_SIZE:
             rospy.loginfo("Receiving from RAM...")
             ground_bytes = self.serial_handle.read( PACKET_SIZE )
             ground_bytes = str(ground_bytes)

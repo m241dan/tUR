@@ -323,7 +323,8 @@ void NetworkNode::downlinkPacket()
 {
     data_packet data = buildPacket();
 
-    if( data.sizeof_data_chunks != 0 )
+    ROS_INFO( "Num Chunks [%d]", data.num_data_chunks );
+    if( data.num_data_chunks!= 0 )
     {
         data.time_sent_to_HASP = _registers.ard_time_sync;
         data.setCheckSums();
@@ -362,6 +363,7 @@ data_packet NetworkNode::buildPacket()
                 auto *ptr = (uint8_t *)&present_packet;
                 for( int x = 0; x < sizeof( bbox_packet ); x++ )
                     data.meat[data.sizeof_data_chunks++] = *ptr++;
+                data.num_data_chunks++;
             }
         }
     }
