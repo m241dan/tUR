@@ -27,6 +27,7 @@ struct NetworkHealth_
     : system_time(0)
     , serial_commands_received(0)
     , serial_gtp_received(0)
+    , serial_bad_reads(0)
     , serial_connection_fault(0)
     , ada_commands_received(0)
     , ada_command_faults(0)
@@ -58,6 +59,7 @@ struct NetworkHealth_
     : system_time(0)
     , serial_commands_received(0)
     , serial_gtp_received(0)
+    , serial_bad_reads(0)
     , serial_connection_fault(0)
     , ada_commands_received(0)
     , ada_command_faults(0)
@@ -97,6 +99,9 @@ struct NetworkHealth_
 
    typedef uint32_t _serial_gtp_received_type;
   _serial_gtp_received_type serial_gtp_received;
+
+   typedef uint32_t _serial_bad_reads_type;
+  _serial_bad_reads_type serial_bad_reads;
 
    typedef uint8_t _serial_connection_fault_type;
   _serial_connection_fault_type serial_connection_fault;
@@ -254,12 +259,12 @@ struct MD5Sum< ::ram_network::NetworkHealth_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "ba41344c2607351b1d0eeef5206f2e51";
+    return "ac2c11ce338d0f158d26170ccf720443";
   }
 
   static const char* value(const ::ram_network::NetworkHealth_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0xba41344c2607351bULL;
-  static const uint64_t static_value2 = 0x1d0eeef5206f2e51ULL;
+  static const uint64_t static_value1 = 0xac2c11ce338d0f15ULL;
+  static const uint64_t static_value2 = 0x8d26170ccf720443ULL;
 };
 
 template<class ContainerAllocator>
@@ -281,6 +286,7 @@ struct Definition< ::ram_network::NetworkHealth_<ContainerAllocator> >
     return "uint32 system_time\n\
 uint32 serial_commands_received\n\
 uint32 serial_gtp_received\n\
+uint32 serial_bad_reads\n\
 uint8 serial_connection_fault\n\
 uint32 ada_commands_received\n\
 uint32 ada_command_faults \n\
@@ -328,6 +334,7 @@ namespace serialization
       stream.next(m.system_time);
       stream.next(m.serial_commands_received);
       stream.next(m.serial_gtp_received);
+      stream.next(m.serial_bad_reads);
       stream.next(m.serial_connection_fault);
       stream.next(m.ada_commands_received);
       stream.next(m.ada_command_faults);
@@ -378,6 +385,8 @@ struct Printer< ::ram_network::NetworkHealth_<ContainerAllocator> >
     Printer<uint32_t>::stream(s, indent + "  ", v.serial_commands_received);
     s << indent << "serial_gtp_received: ";
     Printer<uint32_t>::stream(s, indent + "  ", v.serial_gtp_received);
+    s << indent << "serial_bad_reads: ";
+    Printer<uint32_t>::stream(s, indent + "  ", v.serial_bad_reads);
     s << indent << "serial_connection_fault: ";
     Printer<uint8_t>::stream(s, indent + "  ", v.serial_connection_fault);
     s << indent << "ada_commands_received: ";

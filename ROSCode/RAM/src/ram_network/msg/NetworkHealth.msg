@@ -1,6 +1,7 @@
 uint32 system_time
 uint32 serial_commands_received
 uint32 serial_gtp_received
+uint32 serial_bad_reads
 uint8 serial_connection_fault
 uint32 ada_commands_received
 uint32 ada_command_faults 
