@@ -96,13 +96,12 @@ void NetworkNode::handleSerial()
     if( _handles.serial != -1 )
     {
         _health.serial_connection_fault = 0;
-        // TODO below
         if( serialDataAvail( _handles.serial ) )
         {
             ROS_INFO( "Available: %d", serialDataAvail( _handles.serial ) );
             while( serialDataAvail( _handles.serial ) )
             {
-                _buffer[_buffer_index++] = (char)serialGetchar( _handles.serial );
+                _buffer[_buffer_index] = (char)serialGetchar( _handles.serial );
                 ROS_INFO( "Index[%d]: %c", _buffer_index-1, _buffer[_buffer_index-1] );
 
                 if( _buffer_index > 3 )
@@ -113,9 +112,10 @@ void NetworkNode::handleSerial()
                         if( isCommand() )
                         {
                             ground_command com;
-                            std::memcpy( &com, _buffer, sizeof( ground_command ) );
+                            std::memcpy( &com, &_buffer[_buffer_index-sizeof(gtp)], sizeof( ground_command ) );
                             handleCommand( com );
-                            _health.serial_commands_received++; }
+                            _health.serial_commands_received++;
+                        }
                         else if( isGTP() )
                         {
                             gtp gps;
@@ -136,6 +136,7 @@ void NetworkNode::handleSerial()
                         _health.serial_bad_reads++;
                     }
                 }
+                _buffer_index++;
             }
         }
     }
@@ -356,9 +357,9 @@ void NetworkNode::resetBuffer()
 bool NetworkNode::possiblePacket()
 {
     bool result = false;
-    if( _buffer[_buffer_index - 1] == '\x0A' &&
-        _buffer[_buffer_index - 2] == '\x0D' &&
-        _buffer[_buffer_index - 3] == '\x03' )
+    if( _buffer[_buffer_index] == '\x0A' &&
+        _buffer[_buffer_index - 1] == '\x0D' &&
+        _buffer[_buffer_index - 2] == '\x03' )
     {
         result = true;
     }
@@ -384,13 +385,14 @@ bool NetworkNode::isCommand()
 bool NetworkNode::isGTP()
 {
     bool result = true;
-    if( _buffer[0] != '\x01' ||
-        _buffer[1] != '\x30' )
+    unsigned int packet_start = _buffer_index-sizeof(gtp);
+    if( _buffer[packet_start] != '\x01' ||
+        _buffer[packet_start+1] != '\x30' )
     {
         result = false;
     }
 
-    if( _buffer_index != sizeof( gtp ) )
+    if( _buffer_index < sizeof( gtp ) )
     {
         result = false;
     }
