@@ -13,26 +13,26 @@ class NetworkNode
     public:
         NetworkNode();
     protected:
-        void setupSubscribers(); // for simulating commanding
-        void setupServices(); // for commanding
-        void startSerialAndI2C();
-        void setupI2CConnections();
-        void setupPublishers();
-        void setupTimers();
+        void setupSubscribers           (); // for simulating commanding
+        void setupServices              (); // for commanding
+        void startSerialAndI2C          ();
+        void setupI2CConnections        ();
+        void setupPublishers            ();
+        void setupTimers                ();
 
-        int openSerialConnection();
-        int openAdaI2C();
-        int openBBoxI2C();
+        int openSerialConnection        ();
+        int openAdaI2C                  ();
+        int openBBoxI2C                 ();
 
 
-        void networkLoop( const ros::TimerEvent &event );
-        void handleSerial();
-        void parseSerial();
-        void handleCommand( ground_command &com );
-        void handleGTP( gtp &time );
-        void handleAda();
-        void handleBBox();
-        void handleDownlink();
+        void networkLoop                ( const ros::TimerEvent &event );
+        void handleSerial               ();
+        void parseSerial                ();
+        void handleCommand              ( ground_command &com );
+        void handleGTP                  ( gtp &time );
+        void handleAda                  ();
+        void handleBBox                 ();
+        void handleDownlink             ();
         uint8_t                         _downlink_counter;
         const uint8_t                   _downlink_when;
 
@@ -46,9 +46,9 @@ class NetworkNode
         char                            _buffer[MAX_BUF];
         int                             _buffer_index = 0;
 
-        bool                            possiblePacket();
-        bool                            isCommand();
-        bool                            isGTP();
+        bool possiblePacket             ();
+        bool isCommand                  ();
+        bool isGTP                      ();
 
 
         std::queue<ground_command>      _ada_commands;
@@ -73,24 +73,24 @@ class NetworkNode
         /* Network Health */
         ros::Timer                      _network_health_timer;
         ros::Publisher                  _network_health_publisher;
-        void networkHealth( const ros::TimerEvent &event );
+        void networkHealth              ( const ros::TimerEvent &event );
 
         ros::Subscriber                 _simulated_command;
         ros::Subscriber                 _simulated_gtp;
 
-        void simulatedCommandCallback( const ram_network::HaspCommand::ConstPtr &msg );
-        void simulatedGTPCallback( const std_msgs::UInt32::ConstPtr &msg );
+        void simulatedCommandCallback   ( const ram_network::HaspCommand::ConstPtr &msg );
+        void simulatedGTPCallback       ( const std_msgs::UInt32::ConstPtr &msg );
 
         ros::Timer                      _rpi_commanding;
-        void rpiCommanding( const ros::TimerEvent &event );
-        void doArmCommand();
-        void doCamCommand();
-        void doNetworkCommand();
+        void rpiCommanding              ( const ros::TimerEvent &event );
+        void doArmCommand               ();
+        void doCamCommand               ();
+        void doNetworkCommand           ();
 
         ros::Timer                      _ambient_sample;
-        void ambientSample( const ros::TimerEvent &event );
+        void ambientSample              ( const ros::TimerEvent &event );
         ros::Timer                      _bbox_sample;
-        void bboxSample( const ros::TimerEvent &event );
+        void bboxSample                 ( const ros::TimerEvent &event );
 
         ros::Publisher                  _trial_publisher;
 

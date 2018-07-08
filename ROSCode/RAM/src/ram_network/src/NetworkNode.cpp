@@ -515,7 +515,34 @@ void NetworkNode::ambientSample( const ros::TimerEvent &event )
     ambient_packet packet;
     ADA_output_register &register_ = _registers.ada_output_register;
 
-    packet.amb
+    packet.time_recorded = register_.time_register;
+
+    packet.bme01_temp = register_.bme02_temp;
+    packet.bme01_pres = register_.bme02_pres;
+    packet.bme01_humi = register_.bme02_humi;
+
+    packet.bme02_temp = register_.bme02_temp;
+    packet.bme02_pres = register_.bme02_pres;
+    packet.bme02_humi = register_.bme02_humi;
+
+    packet.dallas01_temp = register_.dallas01_temp;
+    packet.dallas02_temp = register_.dallas01_temp;
+    packet.dallas03_temp = register_.dallas01_temp;
+    packet.dallas04_temp = register_.dallas01_temp;
+    packet.dallas05_temp = register_.dallas01_temp;
+    packet.dallas06_temp = register_.dallas01_temp;
+    packet.dallas07_temp = register_.dallas01_temp;
+    packet.dallas08_temp = register_.dallas01_temp;
+    packet.dallas09_temp = register_.dallas01_temp;
+    packet.dallas10_temp = register_.dallas01_temp;
+    packet.dallas11_temp = register_.dallas01_temp;
+    packet.dallas12_temp = register_.dallas01_temp;
+    packet.dallas13_temp = register_.dallas01_temp;
+    packet.dallas14_temp = register_.dallas01_temp;
+    packet.dallas15_temp = register_.dallas01_temp;
+    packet.dallas16_temp = register_.dallas01_temp;
+
+    _ambient_packets.push( packet );
 }
 
 void NetworkNode::bboxSample( const ros::TimerEvent &event )
