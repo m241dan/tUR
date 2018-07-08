@@ -370,13 +370,16 @@ bool NetworkNode::possiblePacket()
 bool NetworkNode::isCommand()
 {
     bool result = true;
-    if( _buffer[0] != '\x01' ||
-        _buffer[1] != '\x02' )
+    unsigned int packet_start = _buffer_index-sizeof(gtp);
+    ROS_INFO( "PacketStart:   %d", packet_start );
+    ROS_INFO( "PacketStart+1: %d", packet_start+1 );
+    if( _buffer[packet_start] != '\x01' ||
+        _buffer[packet_start+1] != '\x02' )
     {
         result = false;
     }
 
-    if( _buffer_index != sizeof( ground_command ) )
+    if( _buffer_index < sizeof( ground_command ) )
     {
         result = false;
     }
@@ -387,8 +390,7 @@ bool NetworkNode::isGTP()
 {
     bool result = true;
     unsigned int packet_start = _buffer_index-sizeof(gtp);
-    ROS_INFO( "PacketStart:   %d", packet_start );
-    ROS_INFO( "PacketStart+1: %d", packet_start+1 );
+
     if( _buffer[packet_start] != '\x01' ||
         _buffer[packet_start+1] != '\x30' )
     {
