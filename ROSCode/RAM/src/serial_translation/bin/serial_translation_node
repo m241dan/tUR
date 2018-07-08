@@ -1,0 +1,52 @@
+#! /usr/bin/env python
+
+import sys
+import translation_layer.layer
+import rospy
+import serial
+from std_msgs.msg import ByteMultiArray
+class SerialTranslationLayer:
+    def __init__(self):
+        self.port = rospy.get_param('~port', '/dev/ttyUSB0')
+        self.baud = rospy.get_param('~baud', 4800)
+
+        self.pub = rospy.Publisher("serial_output", ByteMultiArray, queue_size=10)
+        self.sub = rospy.Subscriber("serial_input", ByteMultiArray, self.incomingFromGround)
+        self.check_serial_timer = rospy.Timer(rospy.Duration(0.1), self.incomingFromRam)
+
+        self.serial_handle = serial.Serial(
+            port='/dev/ttyUSB0',
+            baudrate=4800,
+            parity=serial.PARITY_NONE,
+            stopbits=serial.STOPBITS_ONE,
+            bytesize=serial.EIGHTBITS
+        )
+        self.serial_handle.close()
+        self.serial_handle.open()
+        self.serial_handle.isOpen()
+
+    def incomingFromGround(self, msg):
+        bytes = bytearray(len(msg.data))
+        for data in msg.data:
+            bytes.append( data )
+
+        self.serial_handle.write( bytes )
+        print( bytes )
+     #   print type( msg )
+     #   print type( msg.data )
+      #  for data in msg.data:
+      #      print( type(data) )
+            #self.serial_handle.write(data.to_bytes(1,byteorder='big'))
+        return
+
+    def incomingFromRam(self, event):
+        return
+
+def main():
+    rospy.init_node("serial_translation_node", sys.argv, anonymous=True)
+    layer = SerialTranslationLayer()
+    rospy.spin()
+
+
+if __name__ == '__main__':
+    main()
