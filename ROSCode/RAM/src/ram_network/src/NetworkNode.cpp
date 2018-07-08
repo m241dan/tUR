@@ -328,6 +328,7 @@ void NetworkNode::handleGTP( gtp &time )
 {
     _health.serial_gtp_received++;
     std::string data( time.data );
+    ROS_INFO( "time.data: %s", time.data );
     std::string delim( "." );
     std::string sync_time = data.substr(0, data.find(delim ));
 
