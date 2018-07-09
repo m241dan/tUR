@@ -128,11 +128,11 @@ void NetworkNode::serialLoopCallback( const ros::TimerEvent &event )
                 }
             }
         }
-        if( _downlink_counter++ < _downlink_when )
-        {
-            downlinkPacket();
-            _downlink_counter = 0;
-        }
+     //   if( _downlink_counter++ < _downlink_when )
+      //  {
+       //     downlinkPacket();
+       //     _downlink_counter = 0;
+       // }
     }
     else
     {
