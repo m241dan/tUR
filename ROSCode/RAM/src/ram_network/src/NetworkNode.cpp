@@ -309,7 +309,6 @@ void NetworkNode::handleGTP( gtp &time )
 {
     _health.serial_gtp_received++;
     std::string data( time.data );
-    ROS_INFO( "time.data: %s", time.data );
     std::string delim( "." );
     std::string sync_time = data.substr(0, data.find(delim ));
 
@@ -323,7 +322,6 @@ void NetworkNode::downlinkPacket()
 {
     data_packet data = buildPacket();
 
-    ROS_INFO( "Num Chunks [%d]", data.num_data_chunks );
     if( data.num_data_chunks != 0 )
     {
         data.time_sent_to_HASP = _registers.ard_time_sync;
@@ -332,7 +330,6 @@ void NetworkNode::downlinkPacket()
         auto *ptr = (uint8_t *)&data;
         for( int x = 0; x < sizeof( data_packet ); x++ )
         {
-            ROS_INFO( "Writing char" );
             serialPutchar( _handles.serial, *ptr++ );
         }
     }
