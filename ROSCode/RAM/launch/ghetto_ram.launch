@@ -1,0 +1,10 @@
+<launch>
+    <arg name="dynamixel_bus" default="/dev/ttyUSB0" />
+    <env name="LUA_PATH" value="$(env HOME)/tUR/ROSCode/RAM/src/arm_motion/scripts/?.lua" />
+    <env name="RAM_SCRIPTS" value="$(env HOME)/tUR/ROSCode/RAM/src/arm_motion/scripts/" />
+    <node name="ram_network_master" pkg="ram_network" type="ram_network_node" output="screen" />
+    <node name="arm_motion_driver" pkg="arm_motion" type="arm_motion_driver" output="screen" />
+    <node name="arm_motion_kinematics" pkg="arm_motion" type="arm_motion_kinematics" output="screen"/>
+    <node name="arm_motion_trial" pkg="arm_motion" type="arm_motion_trial" output="screen"/>
+    <node name="arm_motion_path" pkg="arm_motion" type="arm_motion_path" output="screen" />
+</launch>
