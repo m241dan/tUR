@@ -6,8 +6,6 @@
     <arg name="dev3" default="/dev/video2" />
     <arg name="dev4" default="/dev/video3" />
 
-
-
     <group if="$(env IS_RPI)">
         <node name="ram_network_master" pkg="ram_network" type="ram_network_node" output="screen" />
         <node name="obs_cam_one" pkg="usb_cam" type="usb_cam_node" >
@@ -40,7 +38,6 @@
                      <param name="video_location" value="$(env HOME)/RamVideos/MonFour/videos/" />
                      <param name="img_topic" value="/obs_cam_four/image_raw"/>
                      <param name="snap_location" value="$(env HOME)/RamVideos/MonFour/snap/" />
-                     <param name="throttle" value="30" />
                   </node>
 
                           <node name="obs_cam_two" pkg="usb_cam" type="usb_cam_node" >
@@ -57,7 +54,6 @@
                               <param name="video_location" value="$(env HOME)/RamVideos/MonTwo/videos/" />
                               <param name="img_topic" value="/obs_cam_two/image_raw"/>
                               <param name="snap_location" value="$(env HOME)/RamVideos/MonTwo/snap/" />
-                              <param name="throttle" value="30" />
 
                            </node>
 
@@ -76,7 +72,6 @@
                                        <param name="video_location" value="$(env HOME)/RamVideos/MonThree/videos/" />
                                        <param name="img_topic" value="/obs_cam_three/image_raw"/>
                                        <param name="snap_location" value="$(env HOME)/RamVideos/MonThree/snap/" />
-                                        <param name="throttle" value="30" />
                                     </node>
     </group>
 
@@ -95,7 +90,6 @@
             <param name="video_location" value="$(env HOME)/RamVideos/MonOne/videos/" />
             <param name="img_topic" value="/obs_cam_one/image_raw"/>
             <param name="snap_location" value="$(env HOME)/RamVideos/MonOne/snap/" />
-            <param name="throttle" value="30" />
          </node>
     </group>
 </launch>
