@@ -16,7 +16,7 @@ class CamMonitor
         ros::Subscriber         _image_sub;
         ros::Subscriber         _time_sub;
         ros::ServiceServer      _take_snap;
-        rosgraph_msgs::Clock    _clock;
+        int                      _clock;
 
         cv_bridge::CvImagePtr   _recent_img;
         std::string             _img_topic;

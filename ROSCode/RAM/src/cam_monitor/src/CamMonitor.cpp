@@ -17,8 +17,7 @@ CamMonitor::CamMonitor() : _node_handle("~"), _throttle_count(0)
 
 void CamMonitor::timeCallback( const rosgraph_msgs::Clock::ConstPtr &msg )
 {
-    ROS_ERROR( "RECEIVING CLOCK" );
-    _clock = *msg;
+    _clock = (int)msg->clock.sec;
 }
 
 void CamMonitor::imageCallback( const sensor_msgs::Image::ConstPtr &msg )
@@ -31,8 +30,8 @@ void CamMonitor::imageCallback( const sensor_msgs::Image::ConstPtr &msg )
             boost::filesystem::create_directories( _video_location );
 
         std::stringstream img_name;
-        img_name << _video_location << _clock.clock.toSec() << ".jpg";
 
+        img_name << _video_location << _clock << ".jpg";
         cv::imwrite( img_name.str(), _recent_img->image );
         _throttle_count = 0;
     }
