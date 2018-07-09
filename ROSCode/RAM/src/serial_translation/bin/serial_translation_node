@@ -6,6 +6,7 @@ import rospy
 import serial
 import struct
 from binascii import hexlify
+from std_msgs.msg import String
 from std_msgs.msg import ByteMultiArray
 
 PACKET_SIZE = 512
@@ -15,10 +16,10 @@ class SerialTranslationLayer:
         self.port = rospy.get_param('~port', '/dev/ttyUSB0')
         self.baud = rospy.get_param('~baud', 4800)
 
-        self.pub = rospy.Publisher("serial_output", ByteMultiArray, queue_size=10)
+        self.pub = rospy.Publisher("serial_output", String, queue_size=10)
         self.sub = rospy.Subscriber("serial_input", ByteMultiArray, self.incomingFromGround)
         self.check_serial_timer = rospy.Timer(rospy.Duration(0.1), self.incomingFromRam)
-
+        self.buffer = ""
         self.serial_handle = serial.Serial(
             port='/dev/ttyUSB0',
             baudrate=4800,
@@ -43,15 +44,17 @@ class SerialTranslationLayer:
 
     def incomingFromRam(self, event):
         print "Receiving..." + str(self.serial_handle.inWaiting())
-        if self.serial_handle.inWaiting() >= PACKET_SIZE:
+        if self.serial_handle.inWaiting() > 0:
             rospy.loginfo("Receiving from RAM...")
-            ground_bytes = self.serial_handle.read( PACKET_SIZE )
-            hex = hexlify(ground_bytes)
-
-            msg = ByteMultiArray()
-            for value in hex:
-                msg.data.append(int(value, 16 ))
+            msg = String()
+            while self.serial_handle.inWaiting() > 0:
+                ret = self.serial_handle.read(1)
+                if type(ret) is str:
+                    self.buffer +=  ret
+            msg.data = self.buffer
             self.pub.publish( msg )
+            self.buffer = ""
+
         return
 
 def main():

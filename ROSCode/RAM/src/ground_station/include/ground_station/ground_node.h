@@ -9,6 +9,9 @@
 #include <string>
 #include <ground_station/HaspCommand.h>
 #include <std_msgs/ByteMultiArray.h>
+#include <std_msgs/String.h>
+
+const int MAX_BUF = 2048;
 
 struct gtp
 {

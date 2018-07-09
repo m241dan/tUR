@@ -347,14 +347,12 @@ data_packet NetworkNode::buildPacket()
     //check for ambient packets
 
     data_packet data;
-
+    memset( &data, 0, sizeof( data_packet ) );
     if( hasPackets() )
     {
         if( !_bbox_packets.empty() )
         {
             uint16_t room_remaining = MEAT_SIZE - data.sizeof_data_chunks;
-            ROS_INFO( "Room Remaining[%d]", (int)room_remaining );
-            ROS_INFO( "Num BB Packets[%d]", (int)_bbox_packets.size() );
             while( !_bbox_packets.empty() && room_remaining >= sizeof( bbox_packet ) )
             {
                 bbox_packet present_packet = _bbox_packets.front();

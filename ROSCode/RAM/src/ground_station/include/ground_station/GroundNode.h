@@ -20,8 +20,12 @@ class GroundNode
         void timerCallback( const ros::TimerEvent &event );
 
         ros::Subscriber _command_subscriber;
-        ros::Publisher _serial_output;
+        ros::Subscriber _serial_output;
+        ros::Publisher _serial_input;
         void commandCallback( const ram_network::HaspCommand::ConstPtr &msg );
+        void outputCallback( const std_msgs::String::ConstPtr &msg );
+        uint8_t _buffer[MAX_BUF];
+        uint16_t _buffer_index = 0;
 };
 
 

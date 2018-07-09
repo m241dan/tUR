@@ -9,8 +9,9 @@ GroundNode::GroundNode() : _node_handle("~")
     _node_handle.param( "refreshrate", _gtp_rate, 60 );
     _gtp_timer = _node_handle.createTimer( ros::Duration(_gtp_rate),boost::bind( &GroundNode::timerCallback, this, _1 ) );
 
+    _serial_output = _node_handle.subscribe( "/serial_output", 10, &GroundNode::outputCallback, this );
     _command_subscriber = _node_handle.subscribe( "/command", 10, &GroundNode::commandCallback, this );
-    _serial_output = _node_handle.advertise<std_msgs::ByteMultiArray>( "/serial_input", 10 );
+    _serial_input = _node_handle.advertise<std_msgs::ByteMultiArray>( "/serial_input", 10 );
 }
 
 void GroundNode::timerCallback( const ros::TimerEvent &event )
@@ -24,7 +25,7 @@ void GroundNode::timerCallback( const ros::TimerEvent &event )
     for( int x = 0; x < sizeof( gtp ); x++ )
         output.data.push_back( *ptr++ );
 
-    _serial_output.publish(output);
+    _serial_input.publish(output);
 }
 
 void GroundNode::commandCallback( const ram_network::HaspCommand::ConstPtr &msg )
@@ -38,6 +39,23 @@ void GroundNode::commandCallback( const ram_network::HaspCommand::ConstPtr &msg 
     for( int x = 0; x < sizeof( ground_command ); x++ )
         output.data.push_back( *ptr++ );
 
-    _serial_output.publish(output);
+    _serial_input.publish(output);
 
+}
+
+void GroundNode::outputCallback( const std_msgs::String::ConstPtr &msg )
+{
+    std::string output = msg->data;
+
+    for( int x = 0; x < output.length(); x++ )
+    {
+        ROS_INFO( "X[%d] is %d", x, (int)output[x] );
+        _buffer[_buffer_index++] = (uint8_t) output[x];
+        if( _buffer[_buffer_index-1] == '\x0D' &&
+            _buffer[_buffer_index-2] == '\x03' &&
+            _buffer_index >= 512 )
+        {
+            ROS_INFO( "DATA PACKET FOUND!" );
+        }
+    }
 }
