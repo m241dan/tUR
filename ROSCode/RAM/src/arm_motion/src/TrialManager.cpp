@@ -60,7 +60,6 @@ void TrialManager::enqueueTrial( const std_msgs::UInt8ConstPtr &msg )
 void TrialManager::servoFK( const geometry_msgs::PoseConstPtr &msg )
 {
     _servo_based_fk = *msg;
-    std::cout << "Receiving FK" << std::endl;
 }
 
 void TrialManager::trialMonitor( const ros::TimerEvent &event )
