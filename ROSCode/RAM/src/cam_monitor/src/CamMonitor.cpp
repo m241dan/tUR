@@ -17,6 +17,7 @@ CamMonitor::CamMonitor() : _node_handle("~"), _throttle_count(0)
 
 void CamMonitor::timeCallback( const rosgraph_msgs::Clock::ConstPtr &msg )
 {
+    ROS_ERROR( "RECEIVING CLOCK" );
     _clock = *msg;
 }
 
