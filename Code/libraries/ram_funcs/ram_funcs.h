@@ -26,51 +26,41 @@ const uint16_t PACKET_SIZE = 512;
 struct image_packet
 {
     uint8_t header = '\x30';
-    uint8_t position;
-    uint16_t photo_number;
-    uint16_t sizeof_photo;
-    uint8_t meat[462];
-    image_packet() {}
-    image_packet( uint8_t buf[] )
-    {
-        header = buf[0];
-        position = buf[1];
-        photo_number = *((uint16_t *)&buf[2]);
-        sizeof_photo = *((uint16_t *)&buf[4]);
-        for( int x = 0; x < 462; x++ )
-            meat[x] = buf[x+6];
-    }
+    uint8_t position = 0;
+    uint16_t photo_number = 0;
+    uint16_t sizeof_photo = 0;
+    uint8_t meat[462] = { 0 };
 };
 
 struct ambient_packet
 {
     uint8_t header = '\x31';
-    uint32_t time_recorded;
+    uint32_t time_recorded = 0;
 
-    int16_t bme01_temp;
-    int16_t bme01_pres;
-    uint8_t bme01_humi;
+    int16_t bme01_temp = 0;
+    int16_t bme01_pres = 0;
+    uint8_t bme01_humi = 0;
 
-    int16_t bme02_temp;
-    int16_t bme02_pres;
-    uint8_t bme02_humi;
+    int16_t bme02_temp = 0;
+    int16_t bme02_pres = 0;
+    uint8_t bme02_humi = 0;
 
-    int16_t dallas01_temp;
-    int16_t dallas02_temp;
-    int16_t dallas03_temp;
-    int16_t dallas04_temp;
-    int16_t dallas05_temp;
-    int16_t dallas06_temp;
-    int16_t dallas07_temp;
-    int16_t dallas08_temp;
-    int16_t dallas09_temp;
-    int16_t dallas10_temp;
-    int16_t dallas11_temp;
-    int16_t dallas12_temp;
-    int16_t dallas13_temp;
-    int16_t dallas14_temp;
-    int16_t dallas15_temp;
-    int16_t dallas16_temp;
+    int16_t dallas01_temp = 0;
+    int16_t dallas02_temp = 0;
+    int16_t dallas03_temp = 0;
+    int16_t dallas04_temp = 0;
+    int16_t dallas05_temp = 0;
+    int16_t dallas06_temp = 0;
+    int16_t dallas07_temp = 0;
+    int16_t dallas08_temp = 0;
+    int16_t dallas09_temp = 0;
+    int16_t dallas10_temp = 0;
+    int16_t dallas11_temp = 0;
+    int16_t dallas12_temp = 0;
+    int16_t dallas13_temp = 0;
+    int16_t dallas14_temp = 0;
+    int16_t dallas15_temp = 0;
+    int16_t dallas16_temp = 0;
 };
 
 struct bbox_packet
@@ -92,61 +82,61 @@ struct bbox_packet
 struct arm_packet
 {
     uint8_t header = '\x33';
-    uint32_t time_recorded;
+    uint32_t time_recorded = 0;
 
-    int8_t turntable_temp;
-    uint8_t turntable_velo;
-    int16_t turntable_goal;
-    int16_t turntable_posi;
-    bool turntable_onoff;
+    int8_t turntable_temp = 0;
+    uint8_t turntable_velo = 0;
+    int16_t turntable_goal = 0;
+    int16_t turntable_posi = 0;
+    bool turntable_onoff = false;
 
-    int8_t shoulder_temp;
-    uint8_t shoulder_velo;
-    int16_t shoulder_goal;
-    int16_t shoulder_posi;
-    bool shoulder_onoff;
+    int8_t shoulder_temp = 0;
+    uint8_t shoulder_velo = 0;
+    int16_t shoulder_goal = 0;
+    int16_t shoulder_posi = 0;
+    bool shoulder_onoff = false;
 
-    int8_t elbow_temp;
-    uint8_t elbow_velo;
-    int16_t elbow_goal;
-    int16_t elbow_posi;
-    bool elbow_onoff;
+    int8_t elbow_temp = 0;
+    uint8_t elbow_velo = 0;
+    int16_t elbow_goal = 0;
+    int16_t elbow_posi = 0;
+    bool elbow_onoff = false;
 
-    int8_t wrist_temp;
-    uint8_t wrist_velo;
-    int16_t wrist_goal;
-    int16_t wrist_posi;
-    bool wrist_onoff;
+    int8_t wrist_temp = 0;
+    uint8_t wrist_velo = 0;
+    int16_t wrist_goal = 0;
+    int16_t wrist_posi = 0;
+    bool wrist_onoff = false;
 
-    int8_t gripper_temp;
-    uint8_t gripper_velo;
-    int16_t gripper_goal;
-    int16_t gripper_posi;
-    bool gripper_onoff;
+    int8_t gripper_temp = 0;
+    uint8_t gripper_velo = 0;
+    int16_t gripper_goal = 0;
+    int16_t gripper_posi = 0;
+    bool gripper_onoff = false;
 
-    int16_t armposition_in_mm_X;
-    int16_t armposition_in_mm_Y;
-    int16_t armposition_in_mm_Z;
-    int16_t armorientation_in_rads;
+    int16_t armposition_in_mm_X = 0;
+    int16_t armposition_in_mm_Y = 0;
+    int16_t armposition_in_mm_Z = 0;
+    int16_t armorientation_in_rads = 0;
 };
 
 struct pathlog_packet
 {
     uint8_t header = '\x35';
-    double target_pos_x;
-    double target_pos_y;
-    double target_pos_z;
-    double target_pos_angle;
-    uint16_t current_pos_joint1;
-    uint16_t current_pos_joint2;
-    uint16_t current_pos_joint3;
-    uint16_t current_pos_joint4;
-    uint16_t current_pos_joint5;
-    uint16_t total_trial_count;
-    uint16_t trial_ID;
-    uint32_t pathstep_time_start;
-    uint32_t pathstep_time_end;
-    uint16_t gripper_position;
+    double target_pos_x = 0.;
+    double target_pos_y = 0.;
+    double target_pos_z = 0.;
+    double target_pos_angle = 0.;
+    uint16_t current_pos_joint1 = 0;
+    uint16_t current_pos_joint2 = 0;
+    uint16_t current_pos_joint3 = 0;
+    uint16_t current_pos_joint4 = 0;
+    uint16_t current_pos_joint5 = 0;
+    uint16_t total_trial_count = 0;
+    uint16_t trial_ID = 0;
+    uint32_t pathstep_time_start = 0;
+    uint32_t pathstep_time_end = 0;
+    uint16_t gripper_position = 0;
 };
 
 /*

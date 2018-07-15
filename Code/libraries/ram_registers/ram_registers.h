@@ -34,11 +34,11 @@ struct NetworkHealth
     uint8_t bbox_connection_fault = 0;
     char bbox_eng_sys_msg[30] = { 0 };
 
-    uint8_t ada_commands;
-    uint8_t bbox_commands;
-    uint8_t cam_commands;
-    uint8_t arm_commands;
-    uint8_t netw_commands;
+    uint8_t ada_commands = 0;
+    uint8_t bbox_commands = 0;
+    uint8_t cam_commands = 0;
+    uint8_t arm_commands = 0;
+    uint8_t netw_commands = 0;
 
     char *serialize_csv()
     {
