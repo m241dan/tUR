@@ -109,8 +109,24 @@ void loop(void)
   temperature_13 = (thermbank_13.getTempC(thermometer_13) * 100);
   temperature_06 = (thermbank_13.getTempC(thermometer_06) * 100);
   
-  Serial.print("VREG 30-20: ");
-  Serial.print(temperature_04);
+  Serial.print("00: " + temperature_00 + "\t");
+  Serial.print("01: " + temperature_01 + "\t");
+  Serial.print("02: " + temperature_02 + "\t");
+  Serial.print("03: " + temperature_03 + "\t");
+  Serial.print("04: " + temperature_04 + "\t");
+  Serial.print("05: " + temperature_05 + "\t");
+  Serial.print("06: " + temperature_06 + "\t");
+  Serial.print("07: " + temperature_07 + "\t");
+  Serial.print("08: " + temperature_08 + "\t");
+  Serial.print("09: " + temperature_09 + "\t");
+  Serial.print("10: " + temperature_10 + "\t");
+  Serial.print("11: " + temperature_11 + "\t");
+  Serial.print("12: " + temperature_12 + "\t");
+  Serial.print("13: " + temperature_13 + "\t");
+  Serial.print("14: " + temperature_14 + "\t");
+  Serial.print("15: " + temperature_15 + "\t");
+  Serial.print("16: " + temperature_16 + "\t");
+  Serial.print("17: " + temperature_17 + "\t");
   Serial.print("\tVREG 20-12: ");
   Serial.print(temperature_08);
   Serial.print("\tVREG 12-05: ");
