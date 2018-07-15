@@ -211,7 +211,7 @@ struct data_packet
         uint16_t space_remaining = MEAT_SIZE - sizeof_data_chunks;
         bool success = false;
 
-        if( space_remaining < sizeof( bbox_packet ) )
+        if( space_remaining > sizeof( bbox_packet ) )
         {
             auto *ptr = (uint8_t *)&box;
             for( int x = 0; x < sizeof( bbox_packet ); x++ )

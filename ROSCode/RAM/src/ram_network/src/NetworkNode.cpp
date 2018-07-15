@@ -335,6 +335,7 @@ void NetworkNode::downlinkPacket()
     }
 */
     data_packet data;
+    memset( &data, 0, sizeof( data_packet ) );
     bbox_packet test;
     test.rocker_horiz = 1;
     test.toggle_horiz = 1;

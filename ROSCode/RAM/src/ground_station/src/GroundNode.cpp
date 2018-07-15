@@ -63,8 +63,23 @@ void GroundNode::outputCallback( const std_msgs::UInt8MultiArray::ConstPtr &msg 
 
     if( _buffer.size() == sizeof( data_packet ) )
     {
-        _buffer.clear();
+        data_packet data;
+        auto *ptr = (uint8_t *)&data;
+        for( auto val : _buffer )
+        {
+            *ptr++ = val;
+        }
+        if( data.verifyCheckSums() )
+        {
+            ROS_ERROR( "Check Sums Validated!" );
+        }
+        else
+        {
+            ROS_ERROR( "Bad Checksums!" );
+        }
         ROS_ERROR( "Clearing Buffer" );
+        _buffer.clear();
+
     }
     else if( _buffer.size() > sizeof( data_packet ) )
     {
