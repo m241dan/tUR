@@ -1,0 +1,11 @@
+uint32 time_recorded
+
+uint8 rocker_horiz
+uint8 rocker_verti
+uint8 toggle_horiz
+uint8 toggle_verti
+uint8 button_blu
+uint32 button_blu_press_recorded
+uint8 flap
+uint8 potentiometer_lever
+uint8 potentiometer_knob

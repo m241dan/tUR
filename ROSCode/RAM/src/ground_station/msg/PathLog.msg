@@ -1,0 +1,14 @@
+float32 target_pos_x
+float32 target_pos_y
+float32 target_pos_z
+float32 target_pos_angle
+uint16 current_pos_joint1
+uint16 current_pos_joint2
+uint16 current_pos_joint3
+uint16 current_pos_joint4
+uint16 current_pos_joint5
+uint16 total_trial_count
+uint16 trial_ID
+uint32 pathstep_time_start
+uint32 pathstep_time_end
+uint16 gripper_position
