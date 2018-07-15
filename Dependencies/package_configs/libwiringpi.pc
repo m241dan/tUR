@@ -1,0 +1,9 @@
+prefix=/usr/local
+includedir=${prefix}/include
+libdir=${prefix}/lib
+
+Name: Wiring Pi
+Description: Wiring Pi Dynamic Lib
+Version: 2.46
+Libs: -L${libdir} -lwiringPi -lpthread -lcrypt -lrt
+Cflags: -I${includedir}

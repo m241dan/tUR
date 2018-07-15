@@ -13,3 +13,6 @@
 [submodule "ROSCode/RAM/src/usb_cam"]
 	path = ROSCode/RAM/src/usb_cam
 	url = https://github.com/ros-drivers/usb_cam
+[submodule "Dependencies/WiringPi"]
+	path = Dependencies/WiringPi
+	url = https://github.com/WiringPi/WiringPi
