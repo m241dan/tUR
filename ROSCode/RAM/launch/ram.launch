@@ -56,7 +56,7 @@
    <group unless="$(env IS_RPI)">
      <node name="usb_cam_one" pkg="usb_cam" type="usb_cam_node" output="screen" >
         <param name="video_device" value="$(arg dev1)" />
-        <param name="image_width" value="680" />
+        <param name="image_width" value="640" />
         <param name="image_height" value="480" />
         <param name="pixel_format" value="yuyv" />
         <param name="camera_frame_id" value="usb_cam" />
@@ -71,9 +71,10 @@
       <remap from="image_rect" to="/usb_cam_one/image_raw" />
       <remap from="tag_detections_image" to="/apriltag_detections_one_img" />
       <remap from="tag_detections" to="/apriltag_detections_one" />
-      <param name="tag_family" type="str" value="16h5" />
+      <param name="tag_family" type="str" value="36h11" />
       <rosparam param="tag_descriptions">[
           {id:  0,  size: 0.0175},
+          {id:  1,  size: 0.0175},
           {id:  2,  size: 0.0175},
           {id:  3,  size: 0.0175},
           {id:  6,  size: 0.0175},
