@@ -6,6 +6,8 @@
 #define GROUNDNODE_H
 
 #include <ground_node.h>
+#include <fstream>
+#include <chrono>
 
 class GroundNode
 {
@@ -13,7 +15,7 @@ class GroundNode
         GroundNode();
 
     protected:
-
+        std::string _log;
         ros::NodeHandle _node_handle;
         ros::Timer      _gtp_timer;
         int _gtp_rate;

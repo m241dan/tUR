@@ -12,6 +12,12 @@ GroundNode::GroundNode() : _node_handle("~")
     _serial_output = _node_handle.subscribe( "/serial_output", 10, &GroundNode::outputCallback, this );
     _command_subscriber = _node_handle.subscribe( "/command", 10, &GroundNode::commandCallback, this );
     _serial_input = _node_handle.advertise<std_msgs::ByteMultiArray>( "/serial_input", 10 );
+
+    std::chrono::system_clock::time_point chrono_now = std::chrono::system_clock::now();
+    time_t now = std::chrono::system_clock::to_time_t( chrono_now );
+    std::stringstream ss;
+    ss << std::getenv( "HOME" ) << "/log_" << now  << ".txt";
+    _log = ss.str();
 }
 
 void GroundNode::timerCallback( const ros::TimerEvent &event )
@@ -45,11 +51,18 @@ void GroundNode::commandCallback( const ram_network::HaspCommand::ConstPtr &msg 
 
 void GroundNode::outputCallback( const std_msgs::ByteMultiArray::ConstPtr &msg )
 {
+    /* Grab Data and Write to File */
+    std::ofstream output_file;
+    output_file.open( _log, std::ofstream::app );
     for( auto val : msg->data )
     {
         _buffer[_buffer_index++] = (uint8_t) val;
+        output_file << (uint8_t)val;
     }
+    output_file.close();
 
+
+    /* Parse and Publish for Testing */
     if( _buffer_index >= 8 )
     {
         struct test {

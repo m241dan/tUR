@@ -334,15 +334,14 @@ void NetworkNode::downlinkPacket()
         }
     }
 */
-    struct test {
-        uint32_t one = 328;
-        unsigned char two = 60;
-    };
+    data_packet data;
+    bbox_packet test;
+    test.rocker_horiz = 1;
+    test.toggle_horiz = 1;
+    data.addPacket( test );
 
-    test try_me;
-
-    auto *ptr = (uint8_t *)&try_me;
-    for( int x = 0; x < sizeof( try_me ); x++ )
+    auto *ptr = (uint8_t *)&data;
+    for( int x = 0; x < sizeof( data ); x++ )
         serialPutchar( _handles.serial, *ptr++ );
 }
 
@@ -358,19 +357,15 @@ data_packet NetworkNode::buildPacket()
     memset( &data, 0, sizeof( data_packet ) );
     if( hasPackets() )
     {
-        if( !_bbox_packets.empty() )
+        while( !_bbox_packets.empty() )
         {
-            uint16_t room_remaining = MEAT_SIZE - data.sizeof_data_chunks;
-            while( !_bbox_packets.empty() && room_remaining >= sizeof( bbox_packet ) )
+            if( data.addPacket( _bbox_packets.front() ) )
             {
-                bbox_packet present_packet = _bbox_packets.front();
                 _bbox_packets.pop();
-
- //                reckless, but should never overrun
-                auto *ptr = (uint8_t *)&present_packet;
-                for( int x = 0; x < sizeof( bbox_packet ); x++ )
-                    data.meat[data.sizeof_data_chunks++] = *ptr++;
-                data.num_data_chunks++;
+            }
+            else
+            {
+                break;
             }
         }
     }

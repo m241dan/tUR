@@ -22,51 +22,6 @@ const uint16_t MEAT_SIZE = 468;
 const uint8_t CHECKSUMZ = 28;
 const uint16_t PACKET_SIZE = 512;
 
-struct data_packet
-{
-    uint8_t header[2] = { 2, 1 }; // actuals are x01 and x21
-    uint32_t time_sent_to_HASP;
-    uint8_t num_data_chunks = 0U;
-    uint16_t sizeof_data_chunks = 0U;
-    uint8_t checksumz[CHECKSUMZ]; // all x01
-    uint8_t meat[MEAT_SIZE];
-    uint8_t terminator[2] = { 255, 255 }; //actuals are x03 and x0D
-
-    void setCheckSums()
-    {
-        header[0] = '\x01';
-        header[1] = '\x21';
-        terminator[0] = '\x03';
-        terminator[1] = '\x0D';
-        for( int x = 0; x < CHECKSUMZ; x++ )
-            checksumz[x] = '\x01';
-    }
-
-    bool verifyCheckSums()
-    {
-        bool result = true;
-
-        if( header[0] == '\x01' &&
-            header[1] == '\x21' &&
-            terminator[0] == '\x03' &&
-            terminator[1] == '\x0D' )
-        {
-            for( int x = 0; x < CHECKSUMZ; x++ )
-            {
-                if( checksumz[x] != '\x01' )
-                {
-                    result = false;
-                    break;
-                }
-            }
-        }
-        else
-        {
-            result = false;
-        }
-        return result;
-    }
-};
 
 struct image_packet
 {
@@ -206,4 +161,65 @@ void resetBuffer( uint8_t (&buffer)[MAX_BUF], unsigned int &index );
 
 void sendCommand( HardwareSerial &serial, uint8_t command );
 */
+
+struct data_packet
+{
+    uint8_t header[2] = { 2, 1 }; // actuals are x01 and x21
+    uint32_t time_sent_to_HASP;
+    uint8_t num_data_chunks = 0U;
+    uint16_t sizeof_data_chunks = 0U;
+    uint8_t checksumz[CHECKSUMZ]; // all x01
+    uint8_t meat[MEAT_SIZE];
+    uint8_t terminator[2] = { 255, 255 }; //actuals are x03 and x0D
+
+    void setCheckSums()
+    {
+        header[0] = '\x01';
+        header[1] = '\x21';
+        terminator[0] = '\x03';
+        terminator[1] = '\x0D';
+        for( int x = 0; x < CHECKSUMZ; x++ )
+            checksumz[x] = '\x01';
+    }
+
+    bool verifyCheckSums()
+    {
+        bool result = true;
+
+        if( header[0] == '\x01' &&
+            header[1] == '\x21' &&
+            terminator[0] == '\x03' &&
+            terminator[1] == '\x0D' )
+        {
+            for( int x = 0; x < CHECKSUMZ; x++ )
+            {
+                if( checksumz[x] != '\x01' )
+                {
+                    result = false;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            result = false;
+        }
+        return result;
+    }
+    bool addPacket( bbox_packet box )
+    {
+        uint16_t space_remaining = MEAT_SIZE - sizeof_data_chunks;
+        bool success = false;
+
+        if( space_remaining < sizeof( bbox_packet ) )
+        {
+            auto *ptr = (uint8_t *)&box;
+            for( int x = 0; x < sizeof( bbox_packet ); x++ )
+                meat[sizeof_data_chunks++] = *ptr++;
+            num_data_chunks++;
+        };
+
+        return success;
+    }
+};
 #endif
