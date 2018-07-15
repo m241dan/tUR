@@ -339,7 +339,7 @@ void NetworkNode::downlinkPacket()
     test.rocker_horiz = 1;
     test.toggle_horiz = 1;
     data.addPacket( test );
-
+    data.setCheckSums();
     auto *ptr = (uint8_t *)&data;
     for( int x = 0; x < sizeof( data ); x++ )
         serialPutchar( _handles.serial, *ptr++ );

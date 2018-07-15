@@ -25,7 +25,7 @@ class GroundNode
         ros::Subscriber _serial_output;
         ros::Publisher _serial_input;
         void commandCallback( const ram_network::HaspCommand::ConstPtr &msg );
-        void outputCallback( const std_msgs::ByteMultiArray::ConstPtr &msg );
+        void outputCallback( const std_msgs::UInt8MultiArray::ConstPtr &msg );
         std::vector<uint8_t> _buffer;
 };
 

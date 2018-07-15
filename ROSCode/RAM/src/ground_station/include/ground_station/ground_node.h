@@ -8,7 +8,7 @@
 #include <ros/ros.h>
 #include <string>
 #include <ground_station/HaspCommand.h>
-#include <std_msgs/ByteMultiArray.h>
+#include <std_msgs/UInt8MultiArray.h>
 #include <std_msgs/String.h>
 #include <ram_funcs.h>
 

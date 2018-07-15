@@ -11,7 +11,7 @@ GroundNode::GroundNode() : _node_handle("~")
 
     _serial_output = _node_handle.subscribe( "/serial_output", 10, &GroundNode::outputCallback, this );
     _command_subscriber = _node_handle.subscribe( "/command", 10, &GroundNode::commandCallback, this );
-    _serial_input = _node_handle.advertise<std_msgs::ByteMultiArray>( "/serial_input", 10 );
+    _serial_input = _node_handle.advertise<std_msgs::UInt8MultiArray>( "/serial_input", 10 );
 
     std::chrono::system_clock::time_point chrono_now = std::chrono::system_clock::now();
     time_t now = std::chrono::system_clock::to_time_t( chrono_now );
@@ -22,7 +22,7 @@ GroundNode::GroundNode() : _node_handle("~")
 
 void GroundNode::timerCallback( const ros::TimerEvent &event )
 {
-    std_msgs::ByteMultiArray output;
+    std_msgs::UInt8MultiArray output;
     gtp spoof;
 
     snprintf( spoof.data, sizeof( spoof.data ), "%f,$GPGGA,202212.00,3024.7205,N,09110.7264,W,1,06,1.69,00061,M,-025,M,,*51,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,", ros::Time::now().toSec() );
@@ -36,7 +36,7 @@ void GroundNode::timerCallback( const ros::TimerEvent &event )
 
 void GroundNode::commandCallback( const ram_network::HaspCommand::ConstPtr &msg )
 {
-    std_msgs::ByteMultiArray output;
+    std_msgs::UInt8MultiArray output;
     ground_command com;
     com.command[0] = msg->com_id;
     com.command[1] = msg->com_param;
@@ -49,15 +49,15 @@ void GroundNode::commandCallback( const ram_network::HaspCommand::ConstPtr &msg 
 
 }
 
-void GroundNode::outputCallback( const std_msgs::ByteMultiArray::ConstPtr &msg )
+void GroundNode::outputCallback( const std_msgs::UInt8MultiArray::ConstPtr &msg )
 {
     /* Grab Data and Write to File */
     std::ofstream output_file;
     output_file.open( _log, std::ofstream::app );
     for( auto val : msg->data )
     {
-        _buffer.push_back( (uint8_t) val );
-        output_file << (uint8_t)val;
+        _buffer.push_back( val );
+        output_file <<  val;
     }
     output_file.close();
 
