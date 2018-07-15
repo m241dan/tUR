@@ -1,0 +1,4 @@
+<launch>
+        <node name="ram_network_master" pkg="ram_network" type="ram_network_node" output="screen" />
+</launch>
+
