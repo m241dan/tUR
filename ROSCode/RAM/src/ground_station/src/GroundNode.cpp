@@ -13,6 +13,11 @@ GroundNode::GroundNode() : _node_handle("~")
     _command_subscriber = _node_handle.subscribe( "/command", 10, &GroundNode::commandCallback, this );
     _serial_input = _node_handle.advertise<std_msgs::UInt8MultiArray>( "/serial_input", 10 );
 
+    _ambient = _node_handle.advertise<ground_station::Ambient> ("/ambient", 10 );
+    _bbox = _node_handle.advertise<ground_station::BBox> ("/bbox", 10 );
+    _arm_status = _node_handle.advertise<ground_station::ArmStatus> ("/arm_status", 10 );
+    _arm_path = _node_handle.advertise<ground_station::PathLog> ( "/arm_path", 10 );
+
     std::chrono::system_clock::time_point chrono_now = std::chrono::system_clock::now();
     time_t now = std::chrono::system_clock::to_time_t( chrono_now );
     std::stringstream ss;
@@ -72,6 +77,65 @@ void GroundNode::outputCallback( const std_msgs::UInt8MultiArray::ConstPtr &msg 
         if( data.verifyCheckSums() )
         {
             ROS_ERROR( "Check Sums Validated!" );
+            uint16_t offset = 0;
+            for( int x = 0; x < data.num_data_chunks; x++ )
+            {
+                switch( data.meat[offset] )
+                {
+                    case '\x31':
+                    {
+                        //ambient
+                        ambient_packet packet;
+                        auto *packet_ptr = (uint8_t *)&packet;
+
+                        for( int j = 0; j < sizeof( ambient_packet ); j++ )
+                        {
+                            *packet_ptr++ = data.meat[offset++];
+                        }
+                        publishAmbient( packet );
+                        break;
+                    }
+                    case '\x32':
+                    {
+                        //bbox
+                        bbox_packet packet;
+                        auto *packet_ptr = (uint8_t *) &packet;
+
+                        for( int j = 0; j < sizeof( bbox_packet ); j++ )
+                        {
+                            *packet_ptr++ = data.meat[offset++];
+                        }
+                        publishBBox( packet );
+                        break;
+                    }
+                    case '\x33':
+                    {
+                        //arm_packet
+                        arm_packet packet;
+                        auto *packet_ptr = (uint8_t *) &packet;
+
+                        for( int j = 0; j < sizeof( arm_packet ); j++ )
+                        {
+                            *packet_ptr++ = data.meat[offset++];
+                        }
+                        publishArmStatus( packet );
+                        break;
+                    }
+                    case '\x35':
+                    {
+                        //pathlog
+                        pathlog_packet packet;
+                        auto *packet_ptr = (uint8_t *) &packet;
+
+                        for( int j = 0; j < sizeof( pathlog_packet ); j++ )
+                        {
+                            *packet_ptr++ = data.meat[offset++];
+                        }
+                        publishPathLog( packet );
+                        break;
+                    }
+                }
+            }
         }
         else
         {
@@ -87,4 +151,67 @@ void GroundNode::outputCallback( const std_msgs::UInt8MultiArray::ConstPtr &msg 
         ROS_ERROR( "There's been buffer overflow!!!" );
     }
 
+}
+
+void GroundNode::publishAmbient( ambient_packet &packet )
+{
+    ground_station::Ambient msg;
+
+    msg.time_recorded = packet.time_recorded;
+
+    msg.bme01_temp = packet.bme01_temp;
+    msg.bme01_pres = packet.bme01_pres;
+    msg.bme01_humi = packet.bme01_humi;
+
+    msg.bme02_temp = packet.bme02_temp;
+    msg.bme02_pres = packet.bme02_pres;
+    msg.bme02_humi = packet.bme02_humi;
+
+    msg.dallas01_temp = packet.dallas01_temp;
+    msg.dallas02_temp = packet.dallas01_temp;
+    msg.dallas03_temp = packet.dallas01_temp;
+    msg.dallas04_temp = packet.dallas01_temp;
+    msg.dallas05_temp = packet.dallas01_temp;
+    msg.dallas06_temp = packet.dallas01_temp;
+    msg.dallas07_temp = packet.dallas01_temp;
+    msg.dallas08_temp = packet.dallas01_temp;
+    msg.dallas09_temp = packet.dallas01_temp;
+    msg.dallas10_temp = packet.dallas01_temp;
+    msg.dallas11_temp = packet.dallas01_temp;
+    msg.dallas12_temp = packet.dallas01_temp;
+    msg.dallas13_temp = packet.dallas01_temp;
+    msg.dallas14_temp = packet.dallas01_temp;
+    msg.dallas15_temp = packet.dallas01_temp;
+    msg.dallas16_temp = packet.dallas01_temp;
+
+    _ambient.publish(msg);
+}
+
+void GroundNode::publishBBox( bbox_packet &packet )
+{
+    ground_station::BBox msg;
+
+    msg.time_recorded = packet.time_recorded;
+
+    msg.rocker_horiz = packet.rocker_horiz;
+    msg.rocker_verti = packet.rocker_verti;
+    msg.toggle_horiz = packet.toggle_horiz;
+    msg.toggle_verti = packet.toggle_verti;
+
+    msg.button_blu = packet.button_blu;
+    msg.potentiometer_lever = packet.potentiometer_lever;
+    msg.potentiometer_knob = packet.potentiometer_knob;
+
+    _bbox.publish(msg);
+}
+
+void GroundNode::publishArmStatus( arm_packet &packet )
+{
+    ground_station::ArmStatus msg;
+
+}
+
+void GroundNode::publishPathLog( pathlog_packet &packet )
+{
+    ground_station::PathLog msg;
 }

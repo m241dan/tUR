@@ -8,6 +8,10 @@
 #include <ground_node.h>
 #include <fstream>
 #include <chrono>
+#include <ground_station/Ambient.h>
+#include <ground_station/BBox.h>
+#include <ground_station/PathLog.h>
+#include <ground_station/ArmStatus.h>
 
 class GroundNode
 {
@@ -27,6 +31,16 @@ class GroundNode
         void commandCallback( const ram_network::HaspCommand::ConstPtr &msg );
         void outputCallback( const std_msgs::UInt8MultiArray::ConstPtr &msg );
         std::vector<uint8_t> _buffer;
+
+        ros::Publisher _ambient;
+        ros::Publisher _bbox;
+        ros::Publisher _arm_status;
+        ros::Publisher _arm_path;
+
+        void publishAmbient( ambient_packet &packet );
+        void publishBBox( bbox_packet &packet );
+        void publishArmStatus( arm_packet &packet );
+        void publishPathLog( pathlog_packet &packet );
 };
 
 

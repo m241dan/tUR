@@ -48,8 +48,12 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## Generate messages in the 'msg' folder
 add_message_files(
-  FILES
-  HaspCommand.msg
+        FILES
+        Ambient.msg
+        ArmStatus.msg
+        BBox.msg
+        HaspCommand.msg
+        PathLog.msg
 )
 
 ## Generate services in the 'srv' folder
