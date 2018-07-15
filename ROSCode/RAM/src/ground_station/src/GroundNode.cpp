@@ -56,33 +56,14 @@ void GroundNode::outputCallback( const std_msgs::ByteMultiArray::ConstPtr &msg )
     output_file.open( _log, std::ofstream::app );
     for( auto val : msg->data )
     {
-        _buffer[_buffer_index++] = (uint8_t) val;
+        _buffer.push_back( (uint8_t) val );
         output_file << (uint8_t)val;
     }
     output_file.close();
 
-
-    /* Parse and Publish for Testing */
-    if( _buffer_index >= 8 )
+    if( _buffer.size() == sizeof( data_packet ) )
     {
-        struct test {
-            uint32_t one;
-            uint8_t two;
-        };
-
-        test my_test;
-        auto *ptr = (uint8_t *)&my_test;
-
-        for( int x = 0; x < sizeof( test ); x++ )
-        {
-            *ptr++ = _buffer[x];
-        }
-        if( my_test.one == 328 && my_test.two == 60 )
-        {
-            ROS_ERROR( "!!!TEST PASSED!!!" );
-            _buffer_index = 0;
-            memset( _buffer, 0, sizeof( MAX_BUF ) );
-        }
+        _buffer.clear();
+        ROS_ERROR( "Clearing Buffer" );
     }
-
 }

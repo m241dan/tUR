@@ -10,6 +10,7 @@
 #include <ground_station/HaspCommand.h>
 #include <std_msgs/ByteMultiArray.h>
 #include <std_msgs/String.h>
+#include <ram_funcs.h>
 
 const int MAX_BUF = 2048;
 
