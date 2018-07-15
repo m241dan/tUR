@@ -3,7 +3,7 @@
 //
 #include <ram_network/NetworkNode.h>
 
-NetworkNode::NetworkNode() : _downlink_when( (uint8_t)(1.00 / serialLoop ) ), _downlink_counter(0)
+NetworkNode::NetworkNode() : _downlink_when( (uint8_t)(1.00 / serialLoop ) ), _downlink_counter(1)
 {
     setupSubscribers();
     startSerialAndI2C();
@@ -128,11 +128,11 @@ void NetworkNode::serialLoopCallback( const ros::TimerEvent &event )
                 }
             }
         }
-     //   if( _downlink_counter++ < _downlink_when )
-      //  {
-       //     downlinkPacket();
-       //     _downlink_counter = 0;
-       // }
+        if( _downlink_when <= _downlink_counter++ )
+        {
+            downlinkPacket();
+            _downlink_counter = 1;
+        }
     }
     else
     {
@@ -320,8 +320,8 @@ void NetworkNode::handleGTP( gtp &time )
 
 void NetworkNode::downlinkPacket()
 {
+/*
     data_packet data = buildPacket();
-
     if( data.num_data_chunks != 0 )
     {
         data.time_sent_to_HASP = _registers.ard_time_sync;
@@ -333,6 +333,17 @@ void NetworkNode::downlinkPacket()
             serialPutchar( _handles.serial, *ptr++ );
         }
     }
+*/
+    struct test {
+        uint32_t one = 328;
+        unsigned char two = 60;
+    };
+
+    test try_me;
+
+    auto *ptr = (uint8_t *)&try_me;
+    for( int x = 0; x < sizeof( try_me ); x++ )
+        serialPutchar( _handles.serial, *ptr++ );
 }
 
 data_packet NetworkNode::buildPacket()
