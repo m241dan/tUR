@@ -5,8 +5,6 @@ import translation_layer.layer
 import rospy
 import serial
 import struct
-from binascii import hexlify
-from std_msgs.msg import String
 from std_msgs.msg import ByteMultiArray
 
 PACKET_SIZE = 512
@@ -16,9 +14,6 @@ class SerialTranslationLayer:
         self.port = rospy.get_param('~port', '/dev/ttyUSB0')
         self.baud = rospy.get_param('~baud', 4800)
 
-        self.pub = rospy.Publisher("serial_output", String, queue_size=10)
-        self.sub = rospy.Subscriber("serial_input", ByteMultiArray, self.incomingFromGround)
-        self.check_serial_timer = rospy.Timer(rospy.Duration(0.1), self.incomingFromRam)
         self.buffer = ""
         self.serial_handle = serial.Serial(
             port='/dev/ttyUSB0',
@@ -30,29 +25,32 @@ class SerialTranslationLayer:
         self.serial_handle.close()
         self.serial_handle.open()
         self.serial_handle.isOpen()
+        self.check_serial_timer = rospy.Timer(rospy.Duration(0.1), self.incomingFromRam)
+        self.pub = rospy.Publisher("serial_output", ByteMultiArray, queue_size=10)
+        self.sub = rospy.Subscriber("serial_input", ByteMultiArray, self.incomingFromGround)
+
 
     def incomingFromGround(self, msg):
-        rospy.loginfo( "Sending to RAM.." )
-        ground_bytes = bytearray(len(msg.data))
+        output = ""
         for data in msg.data:
-            ground_bytes.append( data )
-
+            output += struct.pack( 'B', data )
 
         self.serial_handle.flushOutput()
-        self.serial_handle.write(str(ground_bytes))
+        rospy.loginfo( "Sending to RAM... %d bytes", self.serial_handle.write((output)) )
         return
 
     def incomingFromRam(self, event):
-        if self.serial_handle.inWaiting() > 0:
-            rospy.loginfo("Receiving from RAM...")
-            msg = String()
-            while self.serial_handle.inWaiting() > 0:
-                ret = self.serial_handle.read(1)
-                if type(ret) is str:
-                    self.buffer +=  ret
-            msg.data = self.buffer
+        available = self.serial_handle.inWaiting()
+
+        if available > 0:
+            rospy.loginfo("Receiving from RAM... %d bytes", available )
+            msg = ByteMultiArray()
+            ret = self.serial_handle.read(available)
+            for char in ret:
+                msg.data.append(struct.unpack( 'B', char )[0])
+            print str(msg.data)
+
             self.pub.publish( msg )
-            self.buffer = ""
 
         return
 

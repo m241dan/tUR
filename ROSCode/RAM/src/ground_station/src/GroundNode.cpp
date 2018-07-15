@@ -35,7 +35,7 @@ void GroundNode::commandCallback( const ram_network::HaspCommand::ConstPtr &msg 
     com.command[0] = msg->com_id;
     com.command[1] = msg->com_param;
 
-    uint8_t *ptr = (uint8_t *)&com;
+    auto *ptr = (uint8_t *)&com;
     for( int x = 0; x < sizeof( ground_command ); x++ )
         output.data.push_back( *ptr++ );
 
@@ -43,19 +43,33 @@ void GroundNode::commandCallback( const ram_network::HaspCommand::ConstPtr &msg 
 
 }
 
-void GroundNode::outputCallback( const std_msgs::String::ConstPtr &msg )
+void GroundNode::outputCallback( const std_msgs::ByteMultiArray::ConstPtr &msg )
 {
-    std::string output = msg->data;
-
-    for( int x = 0; x < output.length(); x++ )
+    for( auto val : msg->data )
     {
-        ROS_INFO( "X[%d] is %d", x, (int)output[x] );
-        _buffer[_buffer_index++] = (uint8_t) output[x];
-        if( _buffer[_buffer_index-1] == '\x0D' &&
-            _buffer[_buffer_index-2] == '\x03' &&
-            _buffer_index >= 512 )
+        _buffer[_buffer_index++] = (uint8_t) val;
+    }
+
+    if( _buffer_index >= 8 )
+    {
+        struct test {
+            uint32_t one;
+            uint8_t two;
+        };
+
+        test my_test;
+        auto *ptr = (uint8_t *)&my_test;
+
+        for( int x = 0; x < sizeof( test ); x++ )
         {
-            ROS_INFO( "DATA PACKET FOUND!" );
+            *ptr++ = _buffer[x];
+        }
+        if( my_test.one == 328 && my_test.two == 60 )
+        {
+            ROS_ERROR( "!!!TEST PASSED!!!" );
+            _buffer_index = 0;
+            memset( _buffer, 0, sizeof( MAX_BUF ) );
         }
     }
+
 }
