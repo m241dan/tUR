@@ -76,7 +76,7 @@ struct ambient_packet
 struct bbox_packet
 {
     uint8_t header = '\x32';
-    uint32_t time_recorded;
+    uint32_t time_recorded = 0;
 
     uint8_t rocker_horiz = 0;
     uint8_t rocker_verti = 0;
