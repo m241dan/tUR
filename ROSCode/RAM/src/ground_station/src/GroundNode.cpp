@@ -66,4 +66,10 @@ void GroundNode::outputCallback( const std_msgs::UInt8MultiArray::ConstPtr &msg 
         _buffer.clear();
         ROS_ERROR( "Clearing Buffer" );
     }
+    else if( _buffer.size() > sizeof( data_packet ) )
+    {
+        _buffer.clear();
+        ROS_ERROR( "There's been buffer overflow!!!" );
+    }
+
 }

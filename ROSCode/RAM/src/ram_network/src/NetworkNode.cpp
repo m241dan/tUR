@@ -3,7 +3,7 @@
 //
 #include <ram_network/NetworkNode.h>
 
-NetworkNode::NetworkNode() : _downlink_when( (uint8_t)(1.00 / serialLoop ) ), _downlink_counter(1)
+NetworkNode::NetworkNode() : _downlink_when( (uint8_t)(2.00 / serialLoop ) ), _downlink_counter(1)
 {
     setupSubscribers();
     startSerialAndI2C();
