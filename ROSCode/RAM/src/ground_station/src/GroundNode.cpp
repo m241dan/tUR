@@ -85,52 +85,28 @@ void GroundNode::outputCallback( const std_msgs::UInt8MultiArray::ConstPtr &msg 
                     case '\x31':
                     {
                         //ambient
-                        ambient_packet packet;
-                        auto *packet_ptr = (uint8_t *)&packet;
-
-                        for( int j = 0; j < sizeof( ambient_packet ); j++ )
-                        {
-                            *packet_ptr++ = data.meat[offset++];
-                        }
+                        ambient_packet packet = extractPacket<ambient_packet>( data, offset );
                         publishAmbient( packet );
                         break;
                     }
                     case '\x32':
                     {
                         //bbox
-                        bbox_packet packet;
-                        auto *packet_ptr = (uint8_t *) &packet;
-
-                        for( int j = 0; j < sizeof( bbox_packet ); j++ )
-                        {
-                            *packet_ptr++ = data.meat[offset++];
-                        }
+                        bbox_packet packet = extractPacket<bbox_packet>( data, offset );
                         publishBBox( packet );
                         break;
                     }
                     case '\x33':
                     {
                         //arm_packet
-                        arm_packet packet;
-                        auto *packet_ptr = (uint8_t *) &packet;
-
-                        for( int j = 0; j < sizeof( arm_packet ); j++ )
-                        {
-                            *packet_ptr++ = data.meat[offset++];
-                        }
+                        arm_packet packet = extractPacket<arm_packet>( data, offset );
                         publishArmStatus( packet );
                         break;
                     }
                     case '\x35':
                     {
                         //pathlog
-                        pathlog_packet packet;
-                        auto *packet_ptr = (uint8_t *) &packet;
-
-                        for( int j = 0; j < sizeof( pathlog_packet ); j++ )
-                        {
-                            *packet_ptr++ = data.meat[offset++];
-                        }
+                        pathlog_packet packet = extractPacket<pathlog_packet>( data, offset );
                         publishPathLog( packet );
                         break;
                     }
@@ -151,6 +127,15 @@ void GroundNode::outputCallback( const std_msgs::UInt8MultiArray::ConstPtr &msg 
         ROS_ERROR( "There's been buffer overflow!!!" );
     }
 
+}
+
+template<typename packet_type>
+packet_type GroundNode::extractPacket( data_packet &data, uint16_t &offset )
+{
+    packet_type packet;
+    memcpy( &packet, &data.meat[offset], sizeof( packet_type ) );
+    offset += sizeof( packet_type );
+    return packet;
 }
 
 void GroundNode::publishAmbient( ambient_packet &packet )

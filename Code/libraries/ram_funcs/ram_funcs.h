@@ -252,42 +252,5 @@ struct data_packet
 
         return success;
     }
-    /*
-    bool addPacket( bbox_packet box )
-    {
-        uint16_t space_remaining = MEAT_SIZE - sizeof_data_chunks;
-        bool success = true;
-
-        if( space_remaining > sizeof( bbox_packet ) )
-        {
-            std::memcpy( &meat[sizeof_data_chunks], &box, sizeof( bbox_packet ) );
-            num_data_chunks += sizeof( bbox_packet );
-        }
-        else
-        {
-            success = false;
-        }
-
-        return success;
-    }
-
-    bool addPacket( ambient_packet ambient )
-    {
-        uint16_t space_remaining = MEAT_SIZE - sizeof_data_chunks;
-        bool success = true;
-
-        if( space_remaining > sizeof( ambient_packet ) )
-        {
-            std::memcpy( &meat[sizeof_data_chunks], &ambient, sizeof( ambient_packet ) );
-            num_data_chunks += sizeof( ambient_packet );
-        }
-        else
-        {
-            success = false;
-        }
-
-        return success;
-    }
-     */
 };
 #endif

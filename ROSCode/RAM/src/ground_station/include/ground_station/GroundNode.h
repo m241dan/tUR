@@ -30,6 +30,8 @@ class GroundNode
         ros::Publisher _serial_input;
         void commandCallback( const ram_network::HaspCommand::ConstPtr &msg );
         void outputCallback( const std_msgs::UInt8MultiArray::ConstPtr &msg );
+        template<typename packet_type>
+        packet_type extractPacket( data_packet &data, uint16_t &offset );
         std::vector<uint8_t> _buffer;
 
         ros::Publisher _ambient;
