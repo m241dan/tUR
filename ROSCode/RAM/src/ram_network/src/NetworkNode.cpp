@@ -320,7 +320,6 @@ void NetworkNode::handleGTP( gtp &time )
 
 void NetworkNode::downlinkPacket()
 {
-/*
     data_packet data = buildPacket();
     if( data.num_data_chunks != 0 )
     {
@@ -333,7 +332,9 @@ void NetworkNode::downlinkPacket()
             serialPutchar( _handles.serial, *ptr++ );
         }
     }
-*/
+    /*
+     * testing rig below
+
     data_packet data;
     memset( &data, 0, sizeof( data_packet ) );
 
@@ -353,6 +354,7 @@ void NetworkNode::downlinkPacket()
     auto *ptr = (uint8_t *)&data;
     for( int x = 0; x < sizeof( data ); x++ )
         serialPutchar( _handles.serial, *ptr++ );
+    */
 }
 
 data_packet NetworkNode::buildPacket()
@@ -367,6 +369,17 @@ data_packet NetworkNode::buildPacket()
     memset( &data, 0, sizeof( data_packet ) );
     if( hasPackets() )
     {
+        while( !_ambient_packets.empty() )
+        {
+            if( data.addPacket( _ambient_packets.front() ) )
+            {
+                _ambient_packets.pop();
+            }
+            else
+            {
+                break;
+            }
+        }
         while( !_bbox_packets.empty() )
         {
             if( data.addPacket( _bbox_packets.front() ) )
@@ -377,6 +390,17 @@ data_packet NetworkNode::buildPacket()
             {
                 break;
             }
+        }
+        while( !_network_packets.empty() )
+        {
+            if( data.addPacket( _network_packets.front() ) )
+            {
+                _network_packets.pop();
+            }
+            {
+                break;
+            }
+
         }
     }
 
@@ -534,6 +558,8 @@ void NetworkNode::networkHealth( const ros::TimerEvent &event )
     packet.cam_commands                = (uint8_t)_cam_commands.size();
     packet.arm_commands                = (uint8_t)_arm_commands.size();
     packet.netw_commands               = (uint8_t)_netw_commands.size();
+
+    _network_packets.push( packet );
 }
 
 void NetworkNode::simulatedCommandCallback( const ram_network::HaspCommand::ConstPtr &msg )

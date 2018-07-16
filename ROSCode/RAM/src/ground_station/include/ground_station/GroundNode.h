@@ -12,6 +12,7 @@
 #include <ground_station/BBox.h>
 #include <ground_station/PathLog.h>
 #include <ground_station/ArmStatus.h>
+#include <ground_station/NetworkHealth.h>
 
 class GroundNode
 {
@@ -38,11 +39,13 @@ class GroundNode
         ros::Publisher _bbox;
         ros::Publisher _arm_status;
         ros::Publisher _arm_path;
+        ros::Publisher _network_status;
 
         void publishAmbient( ambient_packet &packet );
         void publishBBox( bbox_packet &packet );
         void publishArmStatus( arm_packet &packet );
         void publishPathLog( pathlog_packet &packet );
+        void publishNetworkStatus( network_packet &packet );
 };
 
 

@@ -53,6 +53,7 @@ add_message_files(
         ArmStatus.msg
         BBox.msg
         HaspCommand.msg
+        NetworkHealth.msg
         PathLog.msg
 )
 

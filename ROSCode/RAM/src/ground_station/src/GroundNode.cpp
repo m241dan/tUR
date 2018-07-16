@@ -17,7 +17,7 @@ GroundNode::GroundNode() : _node_handle("~")
     _bbox = _node_handle.advertise<ground_station::BBox> ("/bbox", 10 );
     _arm_status = _node_handle.advertise<ground_station::ArmStatus> ("/arm_status", 10 );
     _arm_path = _node_handle.advertise<ground_station::PathLog> ( "/arm_path", 10 );
-
+    _network_status = _node_handle.advertise<ground_station::NetworkHealth> ( "/network_status", 10 );
     std::chrono::system_clock::time_point chrono_now = std::chrono::system_clock::now();
     time_t now = std::chrono::system_clock::to_time_t( chrono_now );
     std::stringstream ss;
@@ -110,6 +110,13 @@ void GroundNode::outputCallback( const std_msgs::UInt8MultiArray::ConstPtr &msg 
                         publishPathLog( packet );
                         break;
                     }
+                    case '\x36':
+                    {
+                        //network status
+                        network_packet packet = extractPacket<network_packet>( data, offset );
+                        publishNetworkStatus( packet );
+                        break;
+                    }
                 }
             }
         }
@@ -199,4 +206,45 @@ void GroundNode::publishArmStatus( arm_packet &packet )
 void GroundNode::publishPathLog( pathlog_packet &packet )
 {
     ground_station::PathLog msg;
+}
+
+void GroundNode::publishNetworkStatus( network_packet &packet )
+{
+    ground_station::NetworkHealth msg;
+
+    msg.system_time                 = packet.time_recorded;
+    msg.serial_commands_received    = packet.serial_commands_received;
+    msg.serial_gtp_received         = packet.serial_gtp_received;
+    msg.serial_bad_reads            = packet.serial_bad_reads;
+    msg.serial_connection_fault     = packet.serial_connection_fault;
+
+    msg.ada_commands_received       = packet.ada_commands_received;
+    msg.ada_command_faults          = packet.ada_command_faults;
+    msg.ada_writes_received         = packet.ada_writes_received;
+    msg.ada_write_faults            = packet.ada_write_faults;
+    msg.ada_reads_received          = packet.ada_reads_received;
+    msg.ada_read_faults             = packet.ada_read_faults;
+    msg.ada_sd_fault                = packet.ada_sd_fault;
+    msg.ada_connection_fault        = packet.ada_connection_fault;
+    msg.ada_bme01_fault             = packet.ada_bme01_fault;
+    msg.ada_bme02_fault             = packet.ada_bme02_fault;
+    msg.ada_eng_msg                 = std::string( packet.ada_eng_sys_msg );
+
+    msg.bbox_commands_received      = packet.bbox_commands_received;
+    msg.bbox_command_faults         = packet.bbox_command_faults;
+    msg.bbox_writes_received        = packet.bbox_writes_received;
+    msg.bbox_write_faults           = packet.bbox_write_faults;
+    msg.bbox_reads_received         = packet.bbox_reads_received;
+    msg.bbox_read_faults            = packet.bbox_read_faults;
+    msg.bbox_sd_fault               = packet.bbox_sd_fault;
+    msg.bbox_connection_fault       = packet.bbox_connection_fault;
+    msg.bbox_eng_msg                = std::string( packet.bbox_eng_sys_msg );
+
+    msg.ada_commands                = packet.ada_commands;
+    msg.bbox_commands               = packet.bbox_commands;
+    msg.cam_commands                = packet.cam_commands;
+    msg.arm_commands                = packet.arm_commands;
+    msg.netw_commands               = packet.netw_commands;
+
+    _network_status.publish(msg);
 }
