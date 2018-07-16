@@ -243,7 +243,8 @@ struct data_packet
         if( space_remaining >= sizeof( packet_type ) )
         {
             memcpy( &meat[sizeof_data_chunks], &packet, sizeof( packet_type ) );
-            num_data_chunks += sizeof( packet_type );
+            sizeof_data_chunks += sizeof( packet_type );
+            num_data_chunks++;
         }
         else
         {
