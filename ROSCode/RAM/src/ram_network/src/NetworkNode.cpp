@@ -345,6 +345,8 @@ void NetworkNode::downlinkPacket()
     ambient_packet amb;
     amb.bme01_temp = 100;
     amb.dallas01_temp = 1;
+    amb.dallas02_temp = 2;
+    amb.dallas03_temp = 3;
     data.addPacket<ambient_packet>( amb );
 
     data.setCheckSums();
