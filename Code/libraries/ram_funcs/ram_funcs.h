@@ -139,6 +139,44 @@ struct pathlog_packet
     uint16_t gripper_position = 0;
 };
 
+struct network_packet
+{
+    uint8_t header = '\x36';
+    uint32_t time_recorded = 0;
+    uint32_t serial_commands_received = 0;
+    uint32_t serial_gtp_received = 0;
+    uint32_t serial_bad_reads = 0;
+    uint8_t serial_connection_fault = 0;
+
+    uint32_t ada_commands_received = 0;
+    uint32_t ada_command_faults = 0;
+    uint64_t ada_writes_received = 0;
+    uint32_t ada_write_faults = 0;
+    uint64_t ada_reads_received = 0;
+    uint32_t ada_read_faults = 0;
+    uint8_t ada_sd_fault = 0;
+    uint8_t ada_connection_fault = 0;
+    uint8_t ada_bme01_fault = 0;
+    uint8_t ada_bme02_fault = 0;
+    char ada_eng_sys_msg[30] = { 0 };
+
+    uint32_t bbox_commands_received = 0;
+    uint32_t bbox_command_faults = 0;
+    uint64_t bbox_writes_received = 0;
+    uint32_t bbox_write_faults = 0;
+    uint64_t bbox_reads_received = 0;
+    uint32_t bbox_read_faults = 0;
+    uint8_t bbox_sd_fault = 0;
+    uint8_t bbox_connection_fault = 0;
+    char bbox_eng_sys_msg[30] = { 0 };
+
+    uint8_t ada_commands = 0;
+    uint8_t bbox_commands = 0;
+    uint8_t cam_commands = 0;
+    uint8_t arm_commands = 0;
+    uint8_t netw_commands = 0;
+};
+
 /*
 void sendData( HardwareSerial &serial, uint8_t *data, int length );
 void assignEntry( char *dst, const char *src, int length, bool from_uplink = false );
@@ -196,20 +234,60 @@ struct data_packet
         }
         return result;
     }
-    bool addPacket( bbox_packet box )
+    template<typename packet_type>
+    bool addPacket( packet_type packet )
     {
         uint16_t space_remaining = MEAT_SIZE - sizeof_data_chunks;
-        bool success = false;
+        bool success = true;
 
-        if( space_remaining > sizeof( bbox_packet ) )
+        if( space_remaining >= sizeof( packet_type ) )
         {
-            auto *ptr = (uint8_t *)&box;
-            for( int x = 0; x < sizeof( bbox_packet ); x++ )
-                meat[sizeof_data_chunks++] = *ptr++;
-            num_data_chunks++;
-        };
+            memcpy( &meat[sizeof_data_chunks], &packet, sizeof( packet_type ) );
+            num_data_chunks += sizeof( packet_type );
+        }
+        else
+        {
+            success = false;
+        }
 
         return success;
     }
+    /*
+    bool addPacket( bbox_packet box )
+    {
+        uint16_t space_remaining = MEAT_SIZE - sizeof_data_chunks;
+        bool success = true;
+
+        if( space_remaining > sizeof( bbox_packet ) )
+        {
+            std::memcpy( &meat[sizeof_data_chunks], &box, sizeof( bbox_packet ) );
+            num_data_chunks += sizeof( bbox_packet );
+        }
+        else
+        {
+            success = false;
+        }
+
+        return success;
+    }
+
+    bool addPacket( ambient_packet ambient )
+    {
+        uint16_t space_remaining = MEAT_SIZE - sizeof_data_chunks;
+        bool success = true;
+
+        if( space_remaining > sizeof( ambient_packet ) )
+        {
+            std::memcpy( &meat[sizeof_data_chunks], &ambient, sizeof( ambient_packet ) );
+            num_data_chunks += sizeof( ambient_packet );
+        }
+        else
+        {
+            success = false;
+        }
+
+        return success;
+    }
+     */
 };
 #endif

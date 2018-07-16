@@ -58,6 +58,7 @@ class NetworkNode
 
         std::queue<ambient_packet>      _ambient_packets;
         std::queue<bbox_packet>         _bbox_packets;
+        std::queue<network_packet>      _network_packets;
         /*
          * ROS Stuff
          */

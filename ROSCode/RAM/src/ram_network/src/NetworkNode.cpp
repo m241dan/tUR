@@ -339,7 +339,7 @@ void NetworkNode::downlinkPacket()
     bbox_packet test;
     test.rocker_horiz = 1;
     test.toggle_horiz = 1;
-    data.addPacket( test );
+    data.addPacket<bbox_packet>( test );
     data.setCheckSums();
     auto *ptr = (uint8_t *)&data;
     for( int x = 0; x < sizeof( data ); x++ )
@@ -451,6 +451,7 @@ void NetworkNode::i2cLoopCallback( const ros::TimerEvent &event )
 
 void NetworkNode::networkHealth( const ros::TimerEvent &event )
 {
+    /*
     ram_network::NetworkHealth msg;
 
     msg.system_time                 = _health.system_time;
@@ -488,6 +489,42 @@ void NetworkNode::networkHealth( const ros::TimerEvent &event )
     msg.netw_commands               = (uint8_t)_netw_commands.size();
 
     _network_health_publisher.publish(msg);
+     */
+    network_packet packet;
+
+    packet.time_recorded               = _health.system_time;
+    packet.serial_commands_received    = _health.serial_commands_received;
+    packet.serial_gtp_received         = _health.serial_gtp_received;
+    packet.serial_bad_reads            = _health.serial_bad_reads;
+    packet.serial_connection_fault     = _health.serial_connection_fault;
+
+    packet.ada_commands_received       = _health.ada_commands_received;
+    packet.ada_command_faults          = _health.ada_command_faults;
+    packet.ada_writes_received         = _health.ada_writes_received;
+    packet.ada_write_faults            = _health.ada_write_faults;
+    packet.ada_reads_received          = _health.ada_reads_received;
+    packet.ada_read_faults             = _health.ada_read_faults;
+    packet.ada_sd_fault                = _health.ada_sd_fault;
+    packet.ada_connection_fault        = _health.ada_connection_fault;
+    packet.ada_bme01_fault             = _health.ada_bme01_fault;
+    packet.ada_bme02_fault             = _health.ada_bme02_fault;
+    memcpy( packet.ada_eng_sys_msg, _health.ada_eng_sys_msg, sizeof( packet.ada_eng_sys_msg ) );
+
+    packet.bbox_commands_received      = _health.bbox_commands_received;
+    packet.bbox_command_faults         = _health.bbox_command_faults;
+    packet.bbox_writes_received        = _health.bbox_writes_received;
+    packet.bbox_write_faults           = _health.bbox_write_faults;
+    packet.bbox_reads_received         = _health.bbox_reads_received;
+    packet.bbox_read_faults            = _health.bbox_read_faults;
+    packet.bbox_sd_fault               = _health.bbox_sd_fault;
+    packet.bbox_connection_fault       = _health.bbox_connection_fault;
+    memcpy( packet.bbox_eng_sys_msg, _health.bbox_eng_sys_msg, sizeof( packet.bbox_eng_sys_msg ) );
+
+    packet.ada_commands                = (uint8_t)_ada_commands.size();
+    packet.bbox_commands               = (uint8_t)_bbox_commands.size();
+    packet.cam_commands                = (uint8_t)_cam_commands.size();
+    packet.arm_commands                = (uint8_t)_arm_commands.size();
+    packet.netw_commands               = (uint8_t)_netw_commands.size();
 }
 
 void NetworkNode::simulatedCommandCallback( const ram_network::HaspCommand::ConstPtr &msg )
