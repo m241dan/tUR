@@ -82,6 +82,12 @@ void GroundNode::outputCallback( const std_msgs::UInt8MultiArray::ConstPtr &msg 
             {
                 switch( data.meat[offset] )
                 {
+                    case '\x30':
+                    {
+                        image_packet packet = extractPacket<image_packet>( data, offset );
+                        ROS_INFO( "Image Packet!" );
+                        break;
+                    }
                     case '\x31':
                     {
                         //ambient

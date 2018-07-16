@@ -2,14 +2,16 @@
 // Created by korisd on 7/5/18.
 //
 #include <ram_network/NetworkNode.h>
+#include <bits/ios_base.h>
 
-NetworkNode::NetworkNode() : _downlink_when( (uint8_t)(2.00 / serialLoop ) ), _downlink_counter(1)
+NetworkNode::NetworkNode() : _downlink_when( (uint8_t)(2.00 / serialLoop ) ), _downlink_counter(1), _img_counter(0)
 {
     setupSubscribers();
     startSerialAndI2C();
     setupServices();
     setupPublishers();
     setupTimers();
+    packetizeImage( "/home/ubuntu/test.png" );
 }
 
 void NetworkNode::setupSubscribers()
@@ -369,6 +371,18 @@ data_packet NetworkNode::buildPacket()
     memset( &data, 0, sizeof( data_packet ) );
     if( hasPackets() )
     {
+        while( !_image_packets.empty() )
+        {
+            if( data.addPacket( _image_packets.front() ) )
+            {
+                _image_packets.pop();
+            }
+            else
+            {
+                break;
+            }
+        }
+
         while( !_ambient_packets.empty() )
         {
             if( data.addPacket( _ambient_packets.front() ) )
@@ -484,45 +498,6 @@ void NetworkNode::i2cLoopCallback( const ros::TimerEvent &event )
 
 void NetworkNode::networkHealth( const ros::TimerEvent &event )
 {
-    /*
-    ram_network::NetworkHealth msg;
-
-    msg.system_time                 = _health.system_time;
-    msg.serial_commands_received    = _health.serial_commands_received;
-    msg.serial_gtp_received         = _health.serial_gtp_received;
-    msg.serial_bad_reads            = _health.serial_bad_reads;
-    msg.serial_connection_fault     = _health.serial_connection_fault;
-
-    msg.ada_commands_received       = _health.ada_commands_received;
-    msg.ada_command_faults          = _health.ada_command_faults;
-    msg.ada_writes_received         = _health.ada_writes_received;
-    msg.ada_write_faults            = _health.ada_write_faults;
-    msg.ada_reads_received          = _health.ada_reads_received;
-    msg.ada_read_faults             = _health.ada_read_faults;
-    msg.ada_sd_fault                = _health.ada_sd_fault;
-    msg.ada_connection_fault        = _health.ada_connection_fault;
-    msg.ada_bme01_fault             = _health.ada_bme01_fault;
-    msg.ada_bme02_fault             = _health.ada_bme02_fault;
-    msg.ada_eng_msg                 = std::string( _health.ada_eng_sys_msg );
-
-    msg.bbox_commands_received      = _health.bbox_commands_received;
-    msg.bbox_command_faults         = _health.bbox_command_faults;
-    msg.bbox_writes_received        = _health.bbox_writes_received;
-    msg.bbox_write_faults           = _health.bbox_write_faults;
-    msg.bbox_reads_received         = _health.bbox_reads_received;
-    msg.bbox_read_faults            = _health.bbox_read_faults;
-    msg.bbox_sd_fault               = _health.bbox_sd_fault;
-    msg.bbox_connection_fault       = _health.bbox_connection_fault;
-    msg.bbox_eng_msg                = std::string( _health.bbox_eng_sys_msg );
-
-    msg.ada_commands                = (uint8_t)_ada_commands.size();
-    msg.bbox_commands               = (uint8_t)_bbox_commands.size();
-    msg.cam_commands                = (uint8_t)_cam_commands.size();
-    msg.arm_commands                = (uint8_t)_arm_commands.size();
-    msg.netw_commands               = (uint8_t)_netw_commands.size();
-
-    _network_health_publisher.publish(msg);
-     */
     network_packet packet;
 
     packet.time_recorded               = _health.system_time;
@@ -685,6 +660,28 @@ void NetworkNode::bboxSample()
     packet.potentiometer_knob = register_.potentiometer_knob;
 
     _bbox_packets.push( packet );
+}
 
+void NetworkNode::packetizeImage( std::string loc )
+{
+    std::ifstream img_file ( loc, std::ifstream::binary );
 
+    if( img_file )
+    {
+        img_file.seekg( 0, img_file.end );
+        long img_size = img_file.tellg();
+        img_file.seekg( 0, img_file.beg );
+
+        image_packet packet;
+        packet.photo_number = ++_img_counter;
+        while( img_size > 0 )
+        {
+            std::streamsize read_size = img_size > IMG_PACKET_SIZE ? IMG_PACKET_SIZE : img_size;
+            packet.sizeof_photo = (uint16_t)read_size;
+            img_file.read( (char *)&packet.meat[0], read_size );
+            _image_packets.push( packet );
+            packet.position++;
+            img_size -= read_size;
+        }
+    }
 }

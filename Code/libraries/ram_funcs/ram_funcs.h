@@ -21,6 +21,7 @@ const uint8_t I2CADDRESS_ADA  = 0x04;
 const uint16_t MEAT_SIZE = 468;
 const uint8_t CHECKSUMZ = 28;
 const uint16_t PACKET_SIZE = 512;
+const uint16_t IMG_PACKET_SIZE = 462;
 
 
 struct image_packet
@@ -29,7 +30,7 @@ struct image_packet
     uint8_t position = 0;
     uint16_t photo_number = 0;
     uint16_t sizeof_photo = 0;
-    uint8_t meat[462] = { 0 };
+    uint8_t meat[IMG_PACKET_SIZE] = { 0 };
 };
 
 struct ambient_packet

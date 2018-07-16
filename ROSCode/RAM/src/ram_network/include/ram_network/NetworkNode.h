@@ -7,6 +7,7 @@
 
 #include <ram_network/ram_network.h>
 #include <queue>
+#include <fstream>
 
 class NetworkNode
 {
@@ -59,6 +60,7 @@ class NetworkNode
         std::queue<ambient_packet>      _ambient_packets;
         std::queue<bbox_packet>         _bbox_packets;
         std::queue<network_packet>      _network_packets;
+        std::queue<image_packet>        _image_packets;
         /*
          * ROS Stuff
          */
@@ -99,6 +101,9 @@ class NetworkNode
         void bboxSample                 ();
 
         ros::Publisher                  _trial_publisher;
+
+        void packetizeImage             ( std::string loc );
+        uint16_t                        _img_counter;
 
 };
 
