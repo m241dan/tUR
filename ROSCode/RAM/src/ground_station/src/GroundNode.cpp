@@ -153,21 +153,21 @@ void GroundNode::publishAmbient( ambient_packet &packet )
     msg.bme02_humi = packet.bme02_humi;
 
     msg.dallas01_temp = packet.dallas01_temp;
-    msg.dallas02_temp = packet.dallas01_temp;
-    msg.dallas03_temp = packet.dallas01_temp;
-    msg.dallas04_temp = packet.dallas01_temp;
-    msg.dallas05_temp = packet.dallas01_temp;
-    msg.dallas06_temp = packet.dallas01_temp;
-    msg.dallas07_temp = packet.dallas01_temp;
-    msg.dallas08_temp = packet.dallas01_temp;
-    msg.dallas09_temp = packet.dallas01_temp;
-    msg.dallas10_temp = packet.dallas01_temp;
-    msg.dallas11_temp = packet.dallas01_temp;
-    msg.dallas12_temp = packet.dallas01_temp;
-    msg.dallas13_temp = packet.dallas01_temp;
-    msg.dallas14_temp = packet.dallas01_temp;
-    msg.dallas15_temp = packet.dallas01_temp;
-    msg.dallas16_temp = packet.dallas01_temp;
+    msg.dallas02_temp = packet.dallas02_temp;
+    msg.dallas03_temp = packet.dallas03_temp;
+    msg.dallas04_temp = packet.dallas04_temp;
+    msg.dallas05_temp = packet.dallas05_temp;
+    msg.dallas06_temp = packet.dallas06_temp;
+    msg.dallas07_temp = packet.dallas07_temp;
+    msg.dallas08_temp = packet.dallas08_temp;
+    msg.dallas09_temp = packet.dallas09_temp;
+    msg.dallas10_temp = packet.dallas10_temp;
+    msg.dallas11_temp = packet.dallas11_temp;
+    msg.dallas12_temp = packet.dallas12_temp;
+    msg.dallas13_temp = packet.dallas13_temp;
+    msg.dallas14_temp = packet.dallas14_temp;
+    msg.dallas15_temp = packet.dallas15_temp;
+    msg.dallas16_temp = packet.dallas16_temp;
 
     _ambient.publish(msg);
 }

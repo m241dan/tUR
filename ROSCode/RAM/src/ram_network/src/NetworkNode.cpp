@@ -622,21 +622,21 @@ void NetworkNode::ambientSample()
     packet.bme02_humi = register_.bme02_humi;
 
     packet.dallas01_temp = register_.dallas01_temp;
-    packet.dallas02_temp = register_.dallas01_temp;
-    packet.dallas03_temp = register_.dallas01_temp;
-    packet.dallas04_temp = register_.dallas01_temp;
-    packet.dallas05_temp = register_.dallas01_temp;
-    packet.dallas06_temp = register_.dallas01_temp;
-    packet.dallas07_temp = register_.dallas01_temp;
-    packet.dallas08_temp = register_.dallas01_temp;
-    packet.dallas09_temp = register_.dallas01_temp;
-    packet.dallas10_temp = register_.dallas01_temp;
-    packet.dallas11_temp = register_.dallas01_temp;
-    packet.dallas12_temp = register_.dallas01_temp;
-    packet.dallas13_temp = register_.dallas01_temp;
-    packet.dallas14_temp = register_.dallas01_temp;
-    packet.dallas15_temp = register_.dallas01_temp;
-    packet.dallas16_temp = register_.dallas01_temp;
+    packet.dallas02_temp = register_.dallas02_temp;
+    packet.dallas03_temp = register_.dallas03_temp;
+    packet.dallas04_temp = register_.dallas04_temp;
+    packet.dallas05_temp = register_.dallas05_temp;
+    packet.dallas06_temp = register_.dallas06_temp;
+    packet.dallas07_temp = register_.dallas07_temp;
+    packet.dallas08_temp = register_.dallas08_temp;
+    packet.dallas09_temp = register_.dallas09_temp;
+    packet.dallas10_temp = register_.dallas10_temp;
+    packet.dallas11_temp = register_.dallas11_temp;
+    packet.dallas12_temp = register_.dallas12_temp;
+    packet.dallas13_temp = register_.dallas13_temp;
+    packet.dallas14_temp = register_.dallas14_temp;
+    packet.dallas15_temp = register_.dallas15_temp;
+    packet.dallas16_temp = register_.dallas16_temp;
 
     _ambient_packets.push( packet );
 }
