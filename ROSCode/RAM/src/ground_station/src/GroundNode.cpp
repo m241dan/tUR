@@ -85,7 +85,15 @@ void GroundNode::outputCallback( const std_msgs::UInt8MultiArray::ConstPtr &msg 
                     case '\x30':
                     {
                         image_packet packet = extractPacket<image_packet>( data, offset );
-                        ROS_INFO( "Image Packet!" );
+                        std::ofstream img_file( "/home/korisd/test.png", std::ofstream::binary | std::ofstream::app );
+                        if( img_file )
+                        {
+                            img_file.write( (char *)&packet.meat, packet.sizeof_photo );
+                        }
+                        else
+                        {
+                            ROS_ERROR( "%s: failed to open img", __FUNCTION__ );
+                        }
                         break;
                     }
                     case '\x31':

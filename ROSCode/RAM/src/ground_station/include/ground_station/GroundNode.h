@@ -13,6 +13,7 @@
 #include <ground_station/PathLog.h>
 #include <ground_station/ArmStatus.h>
 #include <ground_station/NetworkHealth.h>
+#include <fstream>
 
 class GroundNode
 {
