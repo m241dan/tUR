@@ -336,10 +336,17 @@ void NetworkNode::downlinkPacket()
 */
     data_packet data;
     memset( &data, 0, sizeof( data_packet ) );
+
     bbox_packet test;
     test.rocker_horiz = 1;
     test.toggle_horiz = 1;
     data.addPacket<bbox_packet>( test );
+
+    ambient_packet amb;
+    amb.bme01_temp = 100;
+    amb.dallas01_temp = 1;
+    data.addPacket<ambient_packet>( amb );
+
     data.setCheckSums();
     auto *ptr = (uint8_t *)&data;
     for( int x = 0; x < sizeof( data ); x++ )
