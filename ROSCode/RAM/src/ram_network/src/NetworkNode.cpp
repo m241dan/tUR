@@ -684,4 +684,9 @@ void NetworkNode::packetizeImage( std::string loc )
             img_size -= read_size;
         }
     }
+    else
+    {
+        ROS_ERROR( "%s: failed to open image", __FUNCTION__ );
+    }
+
 }
