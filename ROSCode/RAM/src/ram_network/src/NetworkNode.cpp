@@ -11,7 +11,6 @@ NetworkNode::NetworkNode() : _downlink_when( (uint8_t)(2.00 / serialLoop ) ), _d
     setupServices();
     setupPublishers();
     setupTimers();
-    packetizeImage( "/home/ubuntu/test.png" );
 }
 
 void NetworkNode::setupSubscribers()
