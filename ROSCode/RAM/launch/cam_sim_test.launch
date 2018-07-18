@@ -2,4 +2,10 @@
     <node name="cam_sim_test" pkg="usb_cam_sim" type="usb_cam_sim_node" output="screen" >
         <param name="img_location" value="/home/korisd/test.png" />
     </node>
+   <node name="cam_sim_mon" pkg="cam_monitor" type="cam_monitor_node">
+      <param name="video_location" value="$(env HOME)/Videos/Sim/videos/" />
+      <param name="img_topic" value="/cam_sim_test/image_raw" />
+      <param name="snap_location" value="$(env HOME)/Videos/Sim/snap/" />
+   </node>
+
 </launch>
