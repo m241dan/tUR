@@ -1,0 +1,23 @@
+<launch>
+    <arg name="lapcam_config" default="file://$(env HOME)/tUR/ROSCode/RAM/camera_info/laptop.yaml" unless="$(env IS_RPI)" />
+    <arg name="dev1" default="/dev/video0" />
+
+   <!-- CAMERA SECTION -->
+   <!-- FOR OPERATION ON FULLY EQUIPPED RPI -->
+
+   <node name="usb_cam_one" pkg="usb_cam" type="usb_cam_node" output="screen" >
+      <param name="video_device" value="$(arg dev1)" />
+      <param name="image_width" value="640" />
+      <param name="image_height" value="480" />
+      <param name="pixel_format" value="yuyv" />
+      <param name="camera_frame_id" value="usb_cam" />
+      <param name="io_method" value="mmap"/>
+      <param name="camera_info_url" value="$(arg lapcam_config)" />
+   </node>
+
+   <node name="laptop_mon" pkg="cam_monitor" type="cam_monitor_node">
+      <param name="video_location" value="$(env HOME)/RamVideos/MonOne/videos/" />
+      <param name="img_topic" value="/usb_cam_one/image_raw" />
+      <param name="snap_location" value="$(env HOME)/RamVideos/MonOne/snap/" />
+   </node>
+</launch>
