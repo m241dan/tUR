@@ -43,6 +43,6 @@ bool CamMonitor::serviceCallback( cam_monitor::SnapRequest &request, cam_monitor
         boost::filesystem::create_directories( _snap_location );
 
     cv::imwrite( ( _snap_location + "snap.jpg" ), _recent_img->image );
-    response.done = true;
+    response.location = _snap_location + "snap.jpg";
     return true;
 }

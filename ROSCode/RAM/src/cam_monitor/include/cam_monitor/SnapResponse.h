@@ -24,17 +24,17 @@ struct SnapResponse_
   typedef SnapResponse_<ContainerAllocator> Type;
 
   SnapResponse_()
-    : done(false)  {
+    : location()  {
     }
   SnapResponse_(const ContainerAllocator& _alloc)
-    : done(false)  {
+    : location(_alloc)  {
   (void)_alloc;
     }
 
 
 
-   typedef uint8_t _done_type;
-  _done_type done;
+   typedef std::basic_string<char, std::char_traits<char>, typename ContainerAllocator::template rebind<char>::other >  _location_type;
+  _location_type location;
 
 
 
@@ -70,7 +70,7 @@ namespace message_traits
 
 
 
-// BOOLTRAITS {'IsFixedSize': True, 'IsMessage': True, 'HasHeader': False}
+// BOOLTRAITS {'IsFixedSize': False, 'IsMessage': True, 'HasHeader': False}
 // {}
 
 // !!!!!!!!!!! ['__class__', '__delattr__', '__dict__', '__doc__', '__eq__', '__format__', '__getattribute__', '__hash__', '__init__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_parsed_fields', 'constants', 'fields', 'full_name', 'has_header', 'header_present', 'names', 'package', 'parsed_fields', 'short_name', 'text', 'types']
@@ -80,12 +80,12 @@ namespace message_traits
 
 template <class ContainerAllocator>
 struct IsFixedSize< ::cam_monitor::SnapResponse_<ContainerAllocator> >
-  : TrueType
+  : FalseType
   { };
 
 template <class ContainerAllocator>
 struct IsFixedSize< ::cam_monitor::SnapResponse_<ContainerAllocator> const>
-  : TrueType
+  : FalseType
   { };
 
 template <class ContainerAllocator>
@@ -114,12 +114,12 @@ struct MD5Sum< ::cam_monitor::SnapResponse_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "89bb254424e4cffedbf494e7b0ddbfea";
+    return "03da474bc61cfeb81a8854b4ca05bafa";
   }
 
   static const char* value(const ::cam_monitor::SnapResponse_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x89bb254424e4cffeULL;
-  static const uint64_t static_value2 = 0xdbf494e7b0ddbfeaULL;
+  static const uint64_t static_value1 = 0x03da474bc61cfeb8ULL;
+  static const uint64_t static_value2 = 0x1a8854b4ca05bafaULL;
 };
 
 template<class ContainerAllocator>
@@ -138,7 +138,7 @@ struct Definition< ::cam_monitor::SnapResponse_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "bool done\n\
+    return "string location\n\
 ";
   }
 
@@ -157,7 +157,7 @@ namespace serialization
   {
     template<typename Stream, typename T> inline static void allInOne(Stream& stream, T m)
     {
-      stream.next(m.done);
+      stream.next(m.location);
     }
 
     ROS_DECLARE_ALLINONE_SERIALIZER
@@ -176,8 +176,8 @@ struct Printer< ::cam_monitor::SnapResponse_<ContainerAllocator> >
 {
   template<typename Stream> static void stream(Stream& s, const std::string& indent, const ::cam_monitor::SnapResponse_<ContainerAllocator>& v)
   {
-    s << indent << "done: ";
-    Printer<uint8_t>::stream(s, indent + "  ", v.done);
+    s << indent << "location: ";
+    Printer<std::basic_string<char, std::char_traits<char>, typename ContainerAllocator::template rebind<char>::other > >::stream(s, indent + "  ", v.location);
   }
 };
 

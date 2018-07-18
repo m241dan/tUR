@@ -40,7 +40,7 @@ template<>
 struct MD5Sum< ::cam_monitor::Snap > {
   static const char* value()
   {
-    return "89bb254424e4cffedbf494e7b0ddbfea";
+    return "03da474bc61cfeb81a8854b4ca05bafa";
   }
 
   static const char* value(const ::cam_monitor::Snap&) { return value(); }
