@@ -1,0 +1,1 @@
+../../../cam_monitor/include/cam_monitor/SnapResponse.h

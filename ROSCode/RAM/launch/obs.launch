@@ -6,79 +6,96 @@
     <arg name="dev3" default="/dev/video2" />
     <arg name="dev4" default="/dev/video3" />
 
+    <arg name="mon_one" default="cam_one_mon" />
+    <arg name="mon_two" default="cam_two_mon" />
+    <arg name="mon_three" default="cam_three_mon" />
+    <arg name="mon_four" default="cam_four_mon" />
+    <arg name="mon_five" default="cam_five_mon" />
+    <arg name="mon_six" default="cam_six_mon" />
+    <arg name="mon_seven" default="cam_seven_mon"/>
+
     <group if="$(env IS_RPI)">
-        <node name="ram_network_master" pkg="ram_network" type="ram_network_node" output="screen" />
-        <node name="obs_cam_one" pkg="usb_cam" type="usb_cam_node" >
-             <param name="video_device" value="$(arg dev1)" />
-             <param name="image_width" value="720" />
-             <param name="image_height" value="480" />
-             <param name="pixel_format" value="yuyv" />
-             <param name="camera_frame_id" value="usb_cam" />
-             <param name="io_method" value="mmap"/>
-             <param name="camera_info_url" value="$(arg peeper_config)" />
-             <param name="framerate" value="1" />
-         </node>
+        <node name="ram_network_master" pkg="ram_network" type="ram_network_node" output="screen" >
+            <param name="mon_one" value="$(arg mon_one)" />
+            <param name="mon_two" value="$(arg mon_two)" />
+            <param name="mon_three" value="$(arg mon_three)" />
+            <param name="mon_four" value="$(arg mon_four)" />
+            <param name="mon_five" value="$(arg mon_five)" />
+            <param name="mon_six" value="$(arg mon_six)" />
+            <param name="mon_seven" value="$(arg mon_seven)" />
 
-         <node name="cam_one_mon" pkg="cam_monitor" type="cam_monitor_node">
-            <param name="video_location" value="$(env HOME)/RamVideos/MonOne/videos/" />
+        </node>
+        <node name="obs_cam_one" pkg="usb_cam" type="usb_cam_node">
+            <param name="video_device" value="$(arg dev1)"/>
+            <param name="image_width" value="720"/>
+            <param name="image_height" value="480"/>
+            <param name="pixel_format" value="yuyv"/>
+            <param name="camera_frame_id" value="usb_cam"/>
+            <param name="io_method" value="mmap"/>
+            <param name="camera_info_url" value="$(arg peeper_config)"/>
+            <param name="framerate" value="1"/>
+        </node>
+
+        <node name="cam_one_mon" pkg="cam_monitor" type="cam_monitor_node">
+            <param name="video_location" value="$(env HOME)/RamVideos/MonOne/videos/"/>
             <param name="img_topic" value="/obs_cam_one/image_raw"/>
-            <param name="snap_location" value="$(env HOME)/RamVideos/MonOne/snap/" />
-         </node>
+            <param name="snap_location" value="$(env HOME)/RamVideos/MonOne/snap/"/>
+        </node>
 
-                 <node name="obs_cam_four" pkg="usb_cam" type="usb_cam_node" >
-                      <param name="video_device" value="$(arg dev1)" />
-                      <param name="image_width" value="720" />
-                      <param name="image_height" value="480" />
-                      <param name="pixel_format" value="yuyv" />
-                      <param name="camera_frame_id" value="usb_cam" />
-                      <param name="io_method" value="mmap"/>
-                      <param name="camera_info_url" value="$(arg peeper_config)" />
-                      <param name="framerate" value="1" />
+        <node name="obs_cam_four" pkg="usb_cam" type="usb_cam_node">
+            <param name="video_device" value="$(arg dev1)"/>
+            <param name="image_width" value="720"/>
+            <param name="image_height" value="480"/>
+            <param name="pixel_format" value="yuyv"/>
+            <param name="camera_frame_id" value="usb_cam"/>
+            <param name="io_method" value="mmap"/>
+            <param name="camera_info_url" value="$(arg peeper_config)"/>
+            <param name="framerate" value="1"/>
 
-                  </node>
+        </node>
 
-                  <node name="cam_four_mon" pkg="cam_monitor" type="cam_monitor_node">
-                     <param name="video_location" value="$(env HOME)/RamVideos/MonFour/videos/" />
-                     <param name="img_topic" value="/obs_cam_four/image_raw"/>
-                     <param name="snap_location" value="$(env HOME)/RamVideos/MonFour/snap/" />
-                  </node>
+        <node name="cam_four_mon" pkg="cam_monitor" type="cam_monitor_node">
+            <param name="video_location" value="$(env HOME)/RamVideos/MonFour/videos/"/>
+            <param name="img_topic" value="/obs_cam_four/image_raw"/>
+            <param name="snap_location" value="$(env HOME)/RamVideos/MonFour/snap/"/>
+        </node>
 
-                          <node name="obs_cam_two" pkg="usb_cam" type="usb_cam_node" >
-                               <param name="video_device" value="$(arg dev1)" />
-                               <param name="image_width" value="720" />
-                               <param name="image_height" value="480" />
-                               <param name="pixel_format" value="yuyv" />
-                               <param name="camera_frame_id" value="usb_cam" />
-                               <param name="io_method" value="mmap"/>
-                               <param name="camera_info_url" value="$(arg peeper_config)" />
-                               <param name="framerate" value="1" />
-                           </node>
+        <node name="obs_cam_two" pkg="usb_cam" type="usb_cam_node">
+            <param name="video_device" value="$(arg dev1)"/>
+            <param name="image_width" value="720"/>
+            <param name="image_height" value="480"/>
+            <param name="pixel_format" value="yuyv"/>
+            <param name="camera_frame_id" value="usb_cam"/>
+            <param name="io_method" value="mmap"/>
+            <param name="camera_info_url" value="$(arg peeper_config)"/>
+            <param name="framerate" value="1"/>
+        </node>
 
-                           <node name="cam_two_mon" pkg="cam_monitor" type="cam_monitor_node">
-                              <param name="video_location" value="$(env HOME)/RamVideos/MonTwo/videos/" />
-                              <param name="img_topic" value="/obs_cam_two/image_raw"/>
-                              <param name="snap_location" value="$(env HOME)/RamVideos/MonTwo/snap/" />
+        <node name="cam_two_mon" pkg="cam_monitor" type="cam_monitor_node">
+            <param name="video_location" value="$(env HOME)/RamVideos/MonTwo/videos/"/>
+            <param name="img_topic" value="/obs_cam_two/image_raw"/>
+            <param name="snap_location" value="$(env HOME)/RamVideos/MonTwo/snap/"/>
 
-                           </node>
+        </node>
 
 
-                                   <node name="obs_cam_three" pkg="usb_cam" type="usb_cam_node" >
-                                        <param name="video_device" value="$(arg dev1)" />
-                                        <param name="image_width" value="720" />
-                                        <param name="image_height" value="480" />
-                                        <param name="pixel_format" value="yuyv" />
-                                        <param name="camera_frame_id" value="usb_cam" />
-                                        <param name="io_method" value="mmap"/>
-                                        <param name="camera_info_url" value="$(arg peeper_config)" />
-                                        <param name="framerate" value="1" />
+        <node name="obs_cam_three" pkg="usb_cam" type="usb_cam_node">
+            <param name="video_device" value="$(arg dev1)"/>
+            <param name="image_width" value="720"/>
+            <param name="image_height" value="480"/>
+            <param name="pixel_format" value="yuyv"/>
+            <param name="camera_frame_id" value="usb_cam"/>
+            <param name="io_method" value="mmap"/>
+            <param name="camera_info_url" value="$(arg peeper_config)"/>
+            <param name="framerate" value="1"/>
 
-                                    </node>
+        </node>
 
-                                    <node name="cam_three_mon" pkg="cam_monitor" type="cam_monitor_node">
-                                       <param name="video_location" value="$(env HOME)/RamVideos/MonThree/videos/" />
-                                       <param name="img_topic" value="/obs_cam_three/image_raw"/>
-                                       <param name="snap_location" value="$(env HOME)/RamVideos/MonThree/snap/" />
-                                    </node>
+        <node name="cam_three_mon" pkg="cam_monitor" type="cam_monitor_node">
+            <param name="video_location" value="$(env HOME)/RamVideos/MonThree/videos/"/>
+            <param name="img_topic" value="/obs_cam_three/image_raw"/>
+            <param name="snap_location" value="$(env HOME)/RamVideos/MonThree/snap/"/>
+        </node>
     </group>
 
     <group unless="$(env IS_RPI)">

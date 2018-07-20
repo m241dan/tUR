@@ -8,6 +8,7 @@ NetworkNode::NetworkNode() : _downlink_when( (uint8_t)(2.00 / serialLoop ) ), _d
 {
     setupSubscribers();
     startSerialAndI2C();
+    setupComStrings();
     setupServices();
     setupPublishers();
     setupTimers();
@@ -20,6 +21,13 @@ void NetworkNode::setupSubscribers()
 }
 void NetworkNode::setupServices()
 {
+    _snap_one = _node_handle.serviceClient<cam_monitor::Snap>( _cam_mons[0] + "/takeSnap" );
+    _snap_two = _node_handle.serviceClient<cam_monitor::Snap>( _cam_mons[1] + "/takeSnap" );
+    _snap_three = _node_handle.serviceClient<cam_monitor::Snap>( _cam_mons[2] + "/takeSnap" );
+    _snap_four = _node_handle.serviceClient<cam_monitor::Snap>( _cam_mons[3] + "/takeSnap" );
+    _snap_five = _node_handle.serviceClient<cam_monitor::Snap>( _cam_mons[4] + "/takeSnap" );
+    _snap_six = _node_handle.serviceClient<cam_monitor::Snap>( _cam_mons[5] + "/takeSnap" );
+    _snap_seven = _node_handle.serviceClient<cam_monitor::Snap>( _cam_mons[6] + "/takeSnap" );
 
 }
 void NetworkNode::startSerialAndI2C()
@@ -44,6 +52,24 @@ void NetworkNode::setupTimers()
     _register_sample        = _node_handle.createTimer( ros::Duration( registerRate ), boost::bind( &NetworkNode::registerSample, this, _1 ) );
 }
 
+void NetworkNode::setupComStrings()
+{
+    std::string mon_name;
+    _node_handle.param( "mon_one", mon_name, std::string( "default" ) );
+    _cam_mons.push_back( mon_name );
+    _node_handle.param( "mon_two", mon_name, std::string( "default" ) );
+    _cam_mons.push_back( mon_name );
+    _node_handle.param( "mon_three", mon_name, std::string( "default" ) );
+    _cam_mons.push_back( mon_name );
+    _node_handle.param( "mon_four", mon_name, std::string( "default" ) );
+    _cam_mons.push_back( mon_name );
+    _node_handle.param( "mon_five", mon_name, std::string( "default" ) );
+    _cam_mons.push_back( mon_name );
+    _node_handle.param( "mon_six", mon_name, std::string( "default" ) );
+    _cam_mons.push_back( mon_name );
+    _node_handle.param( "mon_seven", mon_name, std::string( "default" ) );
+    _cam_mons.push_back( mon_name );
+}
 int NetworkNode::openSerialConnection()
 {
     if( std::getenv( "IS_RPI" ) == std::string( "true" ) ) // allow me to do more testing on laptop, remove for flight?
@@ -562,13 +588,11 @@ void NetworkNode::rpiCommanding( const ros::TimerEvent &event )
     {
         doArmCommand();
     }
-
-    if( !_cam_commands.empty() )
+    else if( !_cam_commands.empty() )
     {
         doCamCommand();
     }
-
-    if( !_netw_commands.empty() )
+    else if( !_netw_commands.empty() )
     {
         doNetworkCommand();
     }
@@ -591,7 +615,59 @@ void NetworkNode::doArmCommand()
 
 void NetworkNode::doCamCommand()
 {
+    ground_command com = _cam_commands.front();
+    _cam_commands.pop();
+    cam_monitor::Snap snap;
 
+    switch( com.command[0] )
+    {
+        case CAMERA_CAM_1_PIC[0]:
+            if( com.command[1] == CAMERA_CAM_1_PIC[1] )
+            {
+               _snap_one.call(snap);
+                packetizeImage( snap.response.location );
+            }
+            break;
+        case CAMERA_CAM_2_PIC[0]:
+            if( com.command[1] == CAMERA_CAM_2_PIC[1] )
+            {
+                _snap_two.call(snap);
+                packetizeImage( snap.response.location );
+            }
+            break;
+        case CAMERA_CAM_3_PIC[0]:
+            if( com.command[1] == CAMERA_CAM_3_PIC[1] )
+            {
+                _snap_three.call(snap);
+                packetizeImage( snap.response.location );
+            }
+            break;
+        case CAMERA_CAM_4_PIC[0]:
+            if( com.command[1] == CAMERA_CAM_4_PIC[1] )
+            {
+                _snap_four.call(snap);
+                packetizeImage( snap.response.location );
+            }
+            break;
+        case CAMERA_CAM_ALL_PIC[0]:
+            if( com.command[2] == CAMERA_CAM_ALL_PIC[1] )
+            {
+                uint8_t sub = CAMERA_CAM_1_PIC[0];
+                uint8_t param = CAMERA_CAM_1_PIC[1];
+
+                for( int x = 0; x < 4; x++ )
+                {
+                    com.command[0] = sub++;
+                    com.command[1] = param++;
+                    _cam_commands.push( com );
+                }
+            }
+            break;
+        case CAMERA_RESET[0]:
+            break;
+        case CAMERA_VIDEO_TOGGLE[0]:
+            break;
+    }
 }
 
 void NetworkNode::doNetworkCommand()

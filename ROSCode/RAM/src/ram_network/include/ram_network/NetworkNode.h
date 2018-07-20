@@ -8,6 +8,7 @@
 #include <ram_network/ram_network.h>
 #include <queue>
 #include <fstream>
+#include <ram_network/Snap.h>
 
 class NetworkNode
 {
@@ -20,6 +21,7 @@ class NetworkNode
         void setupI2CConnections        ();
         void setupPublishers            ();
         void setupTimers                ();
+        void setupComStrings            ();
 
         int openSerialConnection        ();
         int openAdaI2C                  ();
@@ -104,6 +106,15 @@ class NetworkNode
 
         void packetizeImage             ( std::string loc );
         uint16_t                        _img_counter;
+
+        std::vector<std::string>        _cam_mons;
+        ros::ServiceClient              _snap_one;
+        ros::ServiceClient              _snap_two;
+        ros::ServiceClient              _snap_three;
+        ros::ServiceClient              _snap_four;
+        ros::ServiceClient              _snap_five;
+        ros::ServiceClient              _snap_six;
+        ros::ServiceClient              _snap_seven;
 
 };
 
