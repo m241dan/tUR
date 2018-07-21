@@ -57,11 +57,10 @@ pkg_check_modules( wiringPi libwiringpi REQUIRED )
  )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+ add_service_files(
+   FILES
+   Snap.srv
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
