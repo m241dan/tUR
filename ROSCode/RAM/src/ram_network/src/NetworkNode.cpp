@@ -564,7 +564,8 @@ void NetworkNode::networkHealth( const ros::TimerEvent &event )
     packet.arm_commands                = (uint8_t)_arm_commands.size();
     packet.netw_commands               = (uint8_t)_netw_commands.size();
 
-    _network_packets.pop();
+    if( !_network_packets.empty() )
+        _network_packets.pop();
     _network_packets.push( packet );
 }
 
