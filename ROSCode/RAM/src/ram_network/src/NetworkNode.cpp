@@ -40,7 +40,6 @@ void NetworkNode::startSerialAndI2C()
 void NetworkNode::setupPublishers()
 {
     _clock_publisher            = _node_handle.advertise<rosgraph_msgs::Clock> ( "clock", 10 );
-    _network_health_publisher   = _node_handle.advertise<ram_network::NetworkHealth>( "network_health", 10 );
     _trial_publisher            = _node_handle.advertise<std_msgs::UInt8>( "trial/selector", 10 );
 }
 void NetworkNode::setupTimers()
@@ -439,6 +438,7 @@ data_packet NetworkNode::buildPacket()
             {
                 _network_packets.pop();
             }
+            else
             {
                 break;
             }
