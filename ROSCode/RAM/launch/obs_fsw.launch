@@ -37,4 +37,72 @@
         <param name="cam_node_six" value="$(arg cam_node_six)" />
 
     </node>
+
+    <node name="$(arg cam_node_one)" pkg="usb_cam" type="usb_cam_node" >
+        <param name="video_device" value="$(arg dev1)"/>
+        <param name="image_width" value="720"/>
+        <param name="image_height" value="480"/>
+        <param name="pixel_format" value="yuyv"/>
+        <param name="camera_frame_id" value="usb_cam"/>
+        <param name="io_method" value="mmap"/>
+        <param name="camera_info_url" value="$(arg peeper_config)"/>
+        <param name="framerate" value="1"/>
+    </node>
+
+    <node name="$(arg cam_node_two)" pkg="usb_cam" type="usb_cam_node" >
+        <param name="video_device" value="$(arg dev2)"/>
+        <param name="image_width" value="720"/>
+        <param name="image_height" value="480"/>
+        <param name="pixel_format" value="yuyv"/>
+        <param name="camera_frame_id" value="usb_cam"/>
+        <param name="io_method" value="mmap"/>
+        <param name="camera_info_url" value="$(arg peeper_config)"/>
+        <param name="framerate" value="1"/>
+    </node>
+
+    <node name="$(arg cam_node_three)" pkg="usb_cam" type="usb_cam_node" >
+        <param name="video_device" value="$(arg dev3)"/>
+        <param name="image_width" value="720"/>
+        <param name="image_height" value="480"/>
+        <param name="pixel_format" value="yuyv"/>
+        <param name="camera_frame_id" value="usb_cam"/>
+        <param name="io_method" value="mmap"/>
+        <param name="camera_info_url" value="$(arg peeper_config)"/>
+        <param name="framerate" value="1"/>
+    </node>
+
+    <node name="$(arg cam_node_one)" pkg="usb_cam" type="usb_cam_node" >
+        <param name="video_device" value="$(arg dev4)"/>
+        <param name="image_width" value="720"/>
+        <param name="image_height" value="480"/>
+        <param name="pixel_format" value="yuyv"/>
+        <param name="camera_frame_id" value="usb_cam"/>
+        <param name="io_method" value="mmap"/>
+        <param name="camera_info_url" value="$(arg peeper_config)"/>
+        <param name="framerate" value="1"/>
+    </node>
+
+    <node name="$(arg mon_one)" pkg="cam_monitor" type="cam_monitor_node">
+        <param name="img_topic" value="/$(arg cam_node_one)/image_raw"/>
+        <param name="video_location" value="$(env HOME)/RamVideos/$(arg mon_one)/videos/"/>
+        <param name="snap_location" value="$(env HOME)/RamVideos/$(arg mon_one)/snap/"/>
+    </node>
+
+    <node name="$(arg mon_two)" pkg="cam_monitor" type="cam_monitor_node">
+        <param name="img_topic" value="/$(arg cam_node_two/image_raw"/>
+        <param name="video_location" value="$(env HOME)/RamVideos/$(arg mon_two)/videos/"/>
+        <param name="snap_location" value="$(env HOME)/RamVideos/$(arg mon_two)/snap/"/>
+    </node>
+
+    <node name="$(arg mon_three)" pkg="cam_monitor" type="cam_monitor_node">
+        <param name="img_topic" value="/$(arg cam_node_three)/image_raw"/>
+        <param name="video_location" value="$(env HOME)/RamVideos/$(arg mon_three)/videos/"/>
+        <param name="snap_location" value="$(env HOME)/RamVideos/$(arg mon_three)/snap/"/>
+    </node>
+
+    <node name="$(arg mon_four)" pkg="cam_monitor" type="cam_monitor_node">
+        <param name="img_topic" value="/$(arg cam_node_four)/image_raw"/>
+        <param name="video_location" value="$(env HOME)/RamVideos/$(arg mon_four)/videos/"/>
+        <param name="snap_location" value="$(env HOME)/RamVideos/$(arg mon_four)/snap/"/>
+    </node>
 </launch>

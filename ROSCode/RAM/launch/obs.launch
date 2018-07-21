@@ -43,7 +43,7 @@
         </node>
 
         <node name="obs_cam_four" pkg="usb_cam" type="usb_cam_node">
-            <param name="video_device" value="$(arg dev1)"/>
+            <param name="video_device" value="$(arg dev4)"/>
             <param name="image_width" value="720"/>
             <param name="image_height" value="480"/>
             <param name="pixel_format" value="yuyv"/>
@@ -61,7 +61,7 @@
         </node>
 
         <node name="obs_cam_two" pkg="usb_cam" type="usb_cam_node">
-            <param name="video_device" value="$(arg dev1)"/>
+            <param name="video_device" value="$(arg dev2)"/>
             <param name="image_width" value="720"/>
             <param name="image_height" value="480"/>
             <param name="pixel_format" value="yuyv"/>
@@ -80,7 +80,7 @@
 
 
         <node name="obs_cam_three" pkg="usb_cam" type="usb_cam_node">
-            <param name="video_device" value="$(arg dev1)"/>
+            <param name="video_device" value="$(arg dev3)"/>
             <param name="image_width" value="720"/>
             <param name="image_height" value="480"/>
             <param name="pixel_format" value="yuyv"/>
