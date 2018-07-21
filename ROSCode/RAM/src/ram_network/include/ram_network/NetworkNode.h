@@ -10,6 +10,8 @@
 #include <fstream>
 #include <ram_network/Snap.h>
 #include <std_srvs/Empty.h>
+#include <ram_network/ManualWaypoint.h>
+#include <ram_network/ServoChange.h>
 
 class NetworkNode
 {
@@ -131,6 +133,15 @@ class NetworkNode
         ros::ServiceClient              _stop_vid_four;
         ros::ServiceClient              _stop_vid_five;
         ros::ServiceClient              _stop_vid_six;
+
+        void setupManualWaypoint        ();
+        ros::Publisher                  _manual_waypoint_publisher;
+        ram_network::ManualWaypoint     _manual_waypoint;
+
+        ros::Publisher                  _servo_increment_publisher;
+        ros::Publisher                  _servo_decrement_publisher;
+        ros::Publisher                  _arm_mode_publisher;
+        ros::Publisher                  _trial_queue_reset_publisher;
 
 };
 

@@ -55,6 +55,7 @@ pkg_check_modules(lua liblua REQUIRED)
 add_message_files(
    FILES
    MotionMsg.msg
+   ManualWaypoint.msg
 )
 
 # Generate services in the 'srv' folder

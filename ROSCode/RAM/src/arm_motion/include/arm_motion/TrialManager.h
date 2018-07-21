@@ -43,6 +43,7 @@ class TrialManager
         ros::NodeHandle _node_handle;
         ros::Subscriber trial_selector;
         ros::Subscriber servo_based_fk_subscriber;
+        ros::Subscriber manual_waypoint;
 
         ros::Timer _trial_monitor;
 

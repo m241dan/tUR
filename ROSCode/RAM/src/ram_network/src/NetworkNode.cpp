@@ -12,6 +12,7 @@ NetworkNode::NetworkNode() : _downlink_when( (uint8_t)(2.00 / serialLoop ) ), _d
     setupServices();
     setupPublishers();
     setupTimers();
+    setupManualWaypoint();
 }
 
 void NetworkNode::setupSubscribers()
@@ -55,6 +56,10 @@ void NetworkNode::setupPublishers()
 {
     _clock_publisher            = _node_handle.advertise<rosgraph_msgs::Clock> ( "clock", 10 );
     _trial_publisher            = _node_handle.advertise<std_msgs::UInt8>( "trial/selector", 10 );
+    _manual_waypoint_publisher  = _node_handle.advertise<ram_network::ManualWaypoint>( "trial/manual_waypoint", 10 );
+    _servo_increment_publisher  = _node_handle.advertise<ram_network::ServoChange>( "trial/servo_increment", 10 );
+    _servo_decrement_publisher  = _node_handle.advertise<ram_network::ServoChange>( "trial/servo_decrement", 10 );
+    _arm_mode_publisher         = _node_handle.advertise<std_msgs::UInt8>( "trial/arm_mode", 10 );
 }
 void NetworkNode::setupTimers()
 {
@@ -226,20 +231,10 @@ void NetworkNode::handleAda()
         // write either new write or the same thing if there was a fault on the previous
         _registers.ada_input_register.setCheckSums();
         write( _handles.ada, (uint8_t *)&_registers.ada_input_register, sizeof( ADA_input_register ) );
-        // TODO bad write checking?
         // read
 
         ADA_output_register new_read;
         read( _handles.ada, (uint8_t *)&new_read, sizeof( ADA_output_register ) );
-        // TODO verify read?
-
-        // check sums ( if bad, toss the whole read )
-        //            ( if good, check for faults + update register )
-        // check write fault (if write fault but checksum good, read data)
-        // if not write fault, set new sync to 0
-        // command faults will be handled by global reporting, TODO how do we clear?
-        // update register
-
 
         if( new_read.verifyCheckSums() )
         {
@@ -636,11 +631,142 @@ void NetworkNode::doArmCommand()
 
     switch( com.command[0] )
     {
+        case ARM_MAN_X[0]:
+            _manual_waypoint.x = (double)((int8_t)com.command[1]) / 10.0;
+            break;
+        case ARM_MAN_Y[0]:
+            _manual_waypoint.y = (double)((int8_t)com.command[1]) / 10.0;
+            break;
+        case ARM_MAN_Z[0]:
+            _manual_waypoint.z = (double)((int8_t)com.command[1]) / 10.0;
+            break;
+        case ARM_MAN_E[0]:
+            _manual_waypoint.eeo = (double)((int8_t)com.command[1]) / 10.0;
+            break;
+        case ARM_EXEC_MAN[0]:
+            _manual_waypoint_publisher.publish( _manual_waypoint );
+            break;
+        case ARM_MODE[0]:
+        {
+            std_msgs::UInt8 mode;
+            mode.data = com.command[1];
+            _arm_mode_publisher.publish( mode );
+            break;
+        }
         case ARM_ADD_TRIAL[0]:
+        {
             std_msgs::UInt8 trial;
             trial.data = com.command[1];
-            _trial_publisher.publish(trial);
+            _trial_publisher.publish( trial );
             break;
+        }
+        case ARM_RESET_TRIAL[0]:
+        {
+            if( com.command[1] == ARM_RESET_TRIAL[1] )
+            {
+                std_msgs::UInt8 reset;
+                reset.data = 1;
+                _trial_queue_reset_publisher.publish( reset );
+            }
+            break;
+        }
+        case ARM_ROT_INC[0]:
+        {
+            ram_network::ServoChange change;
+            change.servo_id = 0;
+            change.servo_change = com.command[1];
+            _servo_increment_publisher.publish( change );
+        }
+            break;
+        case ARM_ROT_DEC[0]:
+        {
+            ram_network::ServoChange change;
+            change.servo_id = 0;
+            change.servo_change = com.command[1];
+            _servo_decrement_publisher.publish( change );
+        }
+            break;
+        case ARM_SHO_INC[0]:
+        {
+            ram_network::ServoChange change;
+            change.servo_id = 1;
+            change.servo_change = com.command[1];
+            _servo_increment_publisher.publish( change );
+        }
+            break;
+        case ARM_SHO_DEC[0]:
+        {
+            ram_network::ServoChange change;
+            change.servo_id = 0;
+            change.servo_change = com.command[1];
+            _servo_decrement_publisher.publish( change );
+        }
+            break;
+        case ARM_ELB_INC[0]:
+        {
+            ram_network::ServoChange change;
+            change.servo_id = 2;
+            change.servo_change = com.command[1];
+            _servo_increment_publisher.publish( change );
+        }
+            break;
+        case ARM_ELB_DEC[0]:
+        {
+            ram_network::ServoChange change;
+            change.servo_id = 0;
+            change.servo_change = com.command[1];
+            _servo_decrement_publisher.publish( change );
+        }
+            break;
+        case ARM_WRI_INC[0]:
+        {
+            ram_network::ServoChange change;
+            change.servo_id = 3;
+            change.servo_change = com.command[1];
+            _servo_increment_publisher.publish( change );
+        }
+            break;
+        case ARM_WRI_DEC[0]:
+        {
+            ram_network::ServoChange change;
+            change.servo_id = 0;
+            change.servo_change = com.command[1];
+            _servo_decrement_publisher.publish( change );
+        }
+            break;
+        case ARM_WRR_INC[0]:
+        {
+            ram_network::ServoChange change;
+            change.servo_id = 4;
+            change.servo_change = com.command[1];
+            _servo_increment_publisher.publish( change );
+        }
+            break;
+        case ARM_WRR_DEC[0]:
+        {
+            ram_network::ServoChange change;
+            change.servo_id = 0;
+            change.servo_change = com.command[1];
+            _servo_decrement_publisher.publish( change );
+        }
+            break;
+        case ARM_GRP_INC[0]:
+        {
+            ram_network::ServoChange change;
+            change.servo_id = 5;
+            change.servo_change = com.command[1];
+            _servo_increment_publisher.publish( change );
+        }
+            break;
+        case ARM_GRP_DEC[0]:
+        {
+            ram_network::ServoChange change;
+            change.servo_id = 0;
+            change.servo_change = com.command[1];
+            _servo_decrement_publisher.publish( change );
+        }
+            break;
+
     }
 }
 
@@ -811,4 +937,16 @@ void NetworkNode::packetizeImage( std::string loc )
         ROS_ERROR( "%s: failed to open image", __FUNCTION__ );
     }
 
+}
+
+void NetworkNode::setupManualWaypoint()
+{
+    _manual_waypoint.x = 15.0;
+    _manual_waypoint.y = 0.;
+    _manual_waypoint.z = 15.0;
+    _manual_waypoint.eeo = 0.0;
+    _manual_waypoint.tolerance = 10;
+    _manual_waypoint.gripper_rot = 0.0;
+    _manual_waypoint.gripper_lin = 0.0;
+    _manual_waypoint.velocity = 5;
 }

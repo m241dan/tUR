@@ -54,6 +54,8 @@ pkg_check_modules( wiringPi libwiringpi REQUIRED )
    FILES
    HaspCommand.msg
    NetworkHealth.msg
+         ManualWaypoint.msg
+         ServoChange.msg
 #   Message2.msg
  )
 
