@@ -8,7 +8,8 @@ constexpr uint8_t RESET_BYTE = '\x31';
 constexpr uint8_t NETWORK_RESET[2]          = { '\x01', '\x31' };
 constexpr uint8_t NETWORK_SYSTEM[2]         = { '\x02', '\x32' };
 
-constexpr uint8_t CAMERA_VIDEO_TOGGLE[2]    = { '\x0A', '\x01' };
+constexpr uint8_t CAMERA_VIDEO_OFF[2]       = { '\x0A', '\x01' };
+constexpr uint8_t CAMERA_VIDEO_ON[2]        = { '\x0A', '\x05' };
 constexpr uint8_t CAMERA_CAM_1_PIC[2]       = { '\x0B', '\x02' };
 constexpr uint8_t CAMERA_CAM_2_PIC[2]       = { '\x0C', '\x03' };
 constexpr uint8_t CAMERA_CAM_3_PIC[2]       = { '\x0D', '\x04' };

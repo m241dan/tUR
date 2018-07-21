@@ -1,11 +1,11 @@
 <launch>
-    <arg name="mon_one" default="/cam_one_mon" />
-    <arg name="mon_two" default="/cam_two_mon" />
-    <arg name="mon_three" default="/cam_three_mon" />
-    <arg name="mon_four" default="/cam_four_mon" />
-    <arg name="mon_five" default="/cam_five_mon" />
-    <arg name="mon_six" default="/cam_six_mon" />
-    <arg name="mon_seven" default="/cam_seven_mon"/>
+    <arg name="mon_one" default="cam_one_mon" />
+    <arg name="mon_two" default="cam_two_mon" />
+    <arg name="mon_three" default="cam_three_mon" />
+    <arg name="mon_four" default="cam_four_mon" />
+    <arg name="mon_five" default="cam_five_mon" />
+    <arg name="mon_six" default="cam_six_mon" />
+    <arg name="mon_seven" default="cam_seven_mon"/>
 
     <node name="ram_network_master" pkg="ram_network" type="ram_network_node" output="screen">
         <param name="mon_one" value="$(arg mon_one)" />

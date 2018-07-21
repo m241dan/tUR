@@ -1,0 +1,40 @@
+<launch>
+    <arg name="peeper_config" default="file://$(env HOME)/tUR/ROSCode/RAM/camera_info/peeper.yaml"/>
+    <arg name="dev1" default="/dev/video0" />
+    <arg name="dev2" default="/dev/video1" />
+    <arg name="dev3" default="/dev/video2" />
+    <arg name="dev4" default="/dev/video3" />
+
+    <arg name="mon_one" default="cam_one_mon" />
+    <arg name="mon_two" default="cam_two_mon" />
+    <arg name="mon_three" default="cam_three_mon" />
+    <arg name="mon_four" default="cam_four_mon" />
+    <arg name="mon_five" default="cam_five_mon" />
+    <arg name="mon_six" default="cam_six_mon" />
+    <arg name="mon_seven" default="cam_seven_mon"/>
+
+    <arg name="cam_node_one" default="usb_cam_one" />
+    <arg name="cam_node_two" default="usb_cam_two" />
+    <arg name="cam_node_three" default="usb_cam_three" />
+    <arg name="cam_node_four" default="usb_cam_four" />
+    <arg name="cam_node_five" default="usb_cam_five" />
+    <arg name="cam_node_six" default="usb_cam_six" />
+
+    <node name="ram_network_master" pkg="ram_network" type="ram_network_node" >
+        <param name="mon_one" value="$(arg mon_one)" />
+        <param name="mon_two" value="$(arg mon_two)" />
+        <param name="mon_three" value="$(arg mon_three)" />
+        <param name="mon_four" value="$(arg mon_four)" />
+        <param name="mon_five" value="$(arg mon_five)" />
+        <param name="mon_six" value="$(arg mon_six)" />
+        <param name="mon_seven" value="$(arg mon_seven)" />
+
+        <param name="cam_node_one" value="$(arg cam_node_one)" />
+        <param name="cam_node_two" value="$(arg cam_node_two)" />
+        <param name="cam_node_three" value="$(arg cam_node_three)" />
+        <param name="cam_node_four" value="$(arg cam_node_four)" />
+        <param name="cam_node_five" value="$(arg cam_node_five)" />
+        <param name="cam_node_six" value="$(arg cam_node_six)" />
+
+    </node>
+</launch>

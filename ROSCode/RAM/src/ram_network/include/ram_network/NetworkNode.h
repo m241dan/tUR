@@ -9,6 +9,7 @@
 #include <queue>
 #include <fstream>
 #include <ram_network/Snap.h>
+#include <std_srvs/Empty.h>
 
 class NetworkNode
 {
@@ -115,6 +116,21 @@ class NetworkNode
         ros::ServiceClient              _snap_five;
         ros::ServiceClient              _snap_six;
         ros::ServiceClient              _snap_seven;
+
+        std::vector<std::string>        _vid_srvs;
+        ros::ServiceClient              _start_vid_one;
+        ros::ServiceClient              _start_vid_two;
+        ros::ServiceClient              _start_vid_three;
+        ros::ServiceClient              _start_vid_four;
+        ros::ServiceClient              _start_vid_five;
+        ros::ServiceClient              _start_vid_six;
+
+        ros::ServiceClient              _stop_vid_one;
+        ros::ServiceClient              _stop_vid_two;
+        ros::ServiceClient              _stop_vid_three;
+        ros::ServiceClient              _stop_vid_four;
+        ros::ServiceClient              _stop_vid_five;
+        ros::ServiceClient              _stop_vid_six;
 
 };
 
