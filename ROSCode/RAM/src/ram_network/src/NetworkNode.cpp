@@ -697,7 +697,7 @@ void NetworkNode::doArmCommand()
         case ARM_SHO_DEC[0]:
         {
             ram_network::ServoChange change;
-            change.servo_id = 0;
+            change.servo_id = 1;
             change.servo_change = com.command[1];
             _servo_decrement_publisher.publish( change );
         }
@@ -713,7 +713,7 @@ void NetworkNode::doArmCommand()
         case ARM_ELB_DEC[0]:
         {
             ram_network::ServoChange change;
-            change.servo_id = 0;
+            change.servo_id = 2;
             change.servo_change = com.command[1];
             _servo_decrement_publisher.publish( change );
         }
@@ -729,7 +729,7 @@ void NetworkNode::doArmCommand()
         case ARM_WRI_DEC[0]:
         {
             ram_network::ServoChange change;
-            change.servo_id = 0;
+            change.servo_id = 3;
             change.servo_change = com.command[1];
             _servo_decrement_publisher.publish( change );
         }
@@ -745,7 +745,7 @@ void NetworkNode::doArmCommand()
         case ARM_WRR_DEC[0]:
         {
             ram_network::ServoChange change;
-            change.servo_id = 0;
+            change.servo_id = 4;
             change.servo_change = com.command[1];
             _servo_decrement_publisher.publish( change );
         }
@@ -761,7 +761,7 @@ void NetworkNode::doArmCommand()
         case ARM_GRP_DEC[0]:
         {
             ram_network::ServoChange change;
-            change.servo_id = 0;
+            change.servo_id = 5;
             change.servo_change = com.command[1];
             _servo_decrement_publisher.publish( change );
         }
