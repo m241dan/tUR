@@ -335,6 +335,7 @@ void NetworkNode::handleCommand( ground_command &com )
 void NetworkNode::handleGTP( gtp &time )
 {
     _health.serial_gtp_received += (uint32_t)1;
+    ROS_INFO( "health serial gtp received is %d", _health.serial_gtp_received );
     std::string data( time.data );
     std::string delim( "." );
     std::string sync_time = data.substr(0, data.find(delim ));
@@ -343,7 +344,7 @@ void NetworkNode::handleGTP( gtp &time )
     _registers.ada_input_register.sync_to = (uint32_t)std::stoul( sync_time );
     _registers.ada_input_register.new_sync = 1;
     ROS_INFO( "new_sync is %d", _registers.ada_input_register.new_sync );
-    ROS_INFO( "sync_to is %du", _registers.ada_input_register.sync_to );
+    ROS_INFO( "sync_to is %d", _registers.ada_input_register.sync_to );
 
 }
 
