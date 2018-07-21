@@ -524,6 +524,7 @@ void NetworkNode::i2cLoopCallback( const ros::TimerEvent &event )
     ROS_INFO( "ard_time_sync is %d", _registers.ard_time_sync );
     ROS_INFO( "output_registers time is %d", _registers.ada_output_register.time_register );
     _health.system_time = _registers.ard_time_sync;
+    ROS_INFO( "system time is %d", _health.system_time );
 }
 
 void NetworkNode::networkHealth( const ros::TimerEvent &event )
