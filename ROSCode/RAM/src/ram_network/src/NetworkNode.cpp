@@ -655,7 +655,7 @@ void NetworkNode::doCamCommand()
             }
             break;
         case CAMERA_CAM_ALL_PIC[0]:
-            if( com.command[2] == CAMERA_CAM_ALL_PIC[1] )
+            if( com.command[1] == CAMERA_CAM_ALL_PIC[1] )
             {
                 uint8_t sub = CAMERA_CAM_1_PIC[0];
                 uint8_t param = CAMERA_CAM_1_PIC[1];
