@@ -21,13 +21,13 @@ void NetworkNode::setupSubscribers()
 }
 void NetworkNode::setupServices()
 {
-    _snap_one = _node_handle.serviceClient<cam_monitor::Snap>( _cam_mons[0] + "/takeSnap" );
-    _snap_two = _node_handle.serviceClient<cam_monitor::Snap>( _cam_mons[1] + "/takeSnap" );
-    _snap_three = _node_handle.serviceClient<cam_monitor::Snap>( _cam_mons[2] + "/takeSnap" );
-    _snap_four = _node_handle.serviceClient<cam_monitor::Snap>( _cam_mons[3] + "/takeSnap" );
-    _snap_five = _node_handle.serviceClient<cam_monitor::Snap>( _cam_mons[4] + "/takeSnap" );
-    _snap_six = _node_handle.serviceClient<cam_monitor::Snap>( _cam_mons[5] + "/takeSnap" );
-    _snap_seven = _node_handle.serviceClient<cam_monitor::Snap>( _cam_mons[6] + "/takeSnap" );
+    _snap_one = _node_handle.serviceClient<ram_network::Snap>( _cam_mons[0] + "/takeSnap" );
+    _snap_two = _node_handle.serviceClient<ram_network::Snap>( _cam_mons[1] + "/takeSnap" );
+    _snap_three = _node_handle.serviceClient<ram_network::Snap>( _cam_mons[2] + "/takeSnap" );
+    _snap_four = _node_handle.serviceClient<ram_network::Snap>( _cam_mons[3] + "/takeSnap" );
+    _snap_five = _node_handle.serviceClient<ram_network::Snap>( _cam_mons[4] + "/takeSnap" );
+    _snap_six = _node_handle.serviceClient<ram_network::Snap>( _cam_mons[5] + "/takeSnap" );
+    _snap_seven = _node_handle.serviceClient<ram_network::Snap>( _cam_mons[6] + "/takeSnap" );
 
 }
 void NetworkNode::startSerialAndI2C()
@@ -617,7 +617,7 @@ void NetworkNode::doCamCommand()
 {
     ground_command com = _cam_commands.front();
     _cam_commands.pop();
-    cam_monitor::Snap snap;
+    ram_network::Snap snap;
 
     switch( com.command[0] )
     {

@@ -39,7 +39,7 @@ void GroundNode::timerCallback( const ros::TimerEvent &event )
     _serial_input.publish(output);
 }
 
-void GroundNode::commandCallback( const ram_network::HaspCommand::ConstPtr &msg )
+void GroundNode::commandCallback( const ground_station::HaspCommand::ConstPtr &msg )
 {
     std_msgs::UInt8MultiArray output;
     ground_command com;

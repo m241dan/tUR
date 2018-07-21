@@ -1,1 +1,0 @@
-../../../cam_monitor/include/cam_monitor/Snap.h
