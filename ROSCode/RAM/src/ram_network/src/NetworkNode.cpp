@@ -334,7 +334,6 @@ void NetworkNode::handleCommand( ground_command &com )
 void NetworkNode::handleGTP( gtp &time )
 {
     _health.serial_gtp_received += (uint32_t)1;
-    ROS_INFO( "health serial gtp received is %d", _health.serial_gtp_received );
     std::string data( time.data );
     std::string delim( "." );
     std::string sync_time = data.substr(0, data.find(delim ));
@@ -342,8 +341,6 @@ void NetworkNode::handleGTP( gtp &time )
     ROS_INFO( "sync time is: %s", sync_time.c_str() );
     _registers.ada_input_register.sync_to = (uint32_t)std::stoul( sync_time );
     _registers.ada_input_register.new_sync = 1;
-    ROS_INFO( "new_sync is %d", _registers.ada_input_register.new_sync );
-    ROS_INFO( "sync_to is %d", _registers.ada_input_register.sync_to );
 
 }
 
@@ -454,7 +451,9 @@ bool NetworkNode::hasPackets()
     bool result = true;
 
     if( _ambient_packets.empty() &&
-        _bbox_packets.empty() )
+        _bbox_packets.empty() &&
+        _network_packets.empty() &&
+        _image_packets.empty())
     {
         result = false;
     }
@@ -565,6 +564,7 @@ void NetworkNode::networkHealth( const ros::TimerEvent &event )
     packet.arm_commands                = (uint8_t)_arm_commands.size();
     packet.netw_commands               = (uint8_t)_netw_commands.size();
 
+    _network_packets.pop();
     _network_packets.push( packet );
 }
 
