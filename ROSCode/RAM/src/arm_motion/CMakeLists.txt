@@ -56,6 +56,7 @@ add_message_files(
    FILES
    MotionMsg.msg
    ManualWaypoint.msg
+   ServoChange.msg
 )
 
 # Generate services in the 'srv' folder
@@ -119,6 +120,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
   include
+  include/arm_motion
   ../../devel/include #This is a nasty hack for custom messages
   ${catkin_INCLUDE_DIRS}
   ${lua_INCLUDE_DIR}

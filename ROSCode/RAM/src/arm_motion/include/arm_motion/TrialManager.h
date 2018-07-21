@@ -9,6 +9,8 @@
 #include "arm_motion/ArmTrial.h"
 #include <vector>
 #include <memory>
+#include <arm_motion/ManualWaypoint.h>
+#include <arm_motion/ServoChange.h>
 
 extern "C" {
 #include "lua.h"
@@ -35,6 +37,13 @@ class TrialManager
         bool nextTrial();
         void pauseMonitor();
         void resumeMonitor();
+
+        void manualWaypoint( const arm_motion::ManualWaypointConstPtr &msg );
+        void servoIncrement( const arm_motion::ServoChangeConstPtr &msg );
+        void servoDecrement( const arm_motion::ServoChangeConstPtr &msg );
+        void resetTrialQueue( const std_msgs::UInt8ConstPtr &msg );
+        void modeChange( const std_msgs::UInt8ConstPtr &msg );
+
         /*
          * Variables
          */
@@ -46,6 +55,8 @@ class TrialManager
         ros::Subscriber _manual_waypoint;
         ros::Subscriber _increment_servo;
         ros::Subscriber _decrement_servo;
+        ros::Subscriber _reset_trial_queue;
+        ros::Subscriber _mode_change;
 
         ros::Timer _trial_monitor;
 

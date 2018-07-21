@@ -7,8 +7,7 @@
 MotionActor::MotionActor( std::string name, DynamixelController &controller ) :
         action_server( node_handle, name, false ),
         action_name(name),
-        _controller(controller),
-        joint_goals(4)
+        _controller(controller)
 {
     action_server.registerGoalCallback( boost::bind( &MotionActor::goalCallBack, this ) );
     action_server.registerPreemptCallback( boost::bind( &MotionActor::preemptCallBack, this ) );

@@ -16,6 +16,12 @@ void TrialManager::setupSubscribers()
 {
     trial_selector = _node_handle.subscribe( "ram_network_master/trial/selector", 10, &TrialManager::enqueueTrial, this );
     servo_based_fk_subscriber = _node_handle.subscribe( "kinematics/servo_based_fk", 10, &TrialManager::servoFK, this );
+    _manual_waypoint = _node_handle.subscribe( "ram_network_master/trial/manual_waypoint", 10, &TrialManager::manualWaypoint, this );
+    _increment_servo = _node_handle.subscribe( "ram_network_master/trial/servo_increment", 10, &TrialManager::servoIncrement, this );
+    _decrement_servo = _node_handle.subscribe( "ram_network_master/trial/servo_decrement", 10, &TrialManager::servoDecrement, this );
+    _reset_trial_queue = _node_handle.subscribe( "ram_network_master/trial/queue_reset", 10, &TrialManager::resetTrialQueue, this );
+    _mode_change = _node_handle.subscribe( "ram_network_master/trial/arm_mode", 10, &TrialManager::modeChange, this );
+
 }
 
 void TrialManager::setupPublishers()
@@ -103,4 +109,29 @@ void TrialManager::pauseMonitor()
 void TrialManager::resumeMonitor()
 {
     _trial_monitor.start();
+}
+
+void TrialManager::manualWaypoint( const arm_motion::ManualWaypointConstPtr &msg )
+{
+
+}
+
+void TrialManager::servoIncrement( const arm_motion::ServoChangeConstPtr &msg )
+{
+
+}
+
+void TrialManager::servoDecrement( const arm_motion::ServoChangeConstPtr &msg )
+{
+
+}
+
+void TrialManager::resetTrialQueue( const std_msgs::UInt8ConstPtr &msg )
+{
+
+}
+
+void TrialManager::modeChange( const std_msgs::UInt8ConstPtr &msg )
+{
+
 }
