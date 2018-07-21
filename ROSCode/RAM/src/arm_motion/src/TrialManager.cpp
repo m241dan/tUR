@@ -14,7 +14,7 @@ TrialManager::TrialManager( std::string name )
 
 void TrialManager::setupSubscribers()
 {
-    trial_selector = _node_handle.subscribe( "trial/selector", 10, &TrialManager::enqueueTrial, this );
+    trial_selector = _node_handle.subscribe( "ram_network_master/trial/selector", 10, &TrialManager::enqueueTrial, this );
     servo_based_fk_subscriber = _node_handle.subscribe( "kinematics/servo_based_fk", 10, &TrialManager::servoFK, this );
 }
 
