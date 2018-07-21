@@ -334,7 +334,7 @@ void NetworkNode::handleCommand( ground_command &com )
 
 void NetworkNode::handleGTP( gtp &time )
 {
-    _health.serial_gtp_received++;
+    _health.serial_gtp_received += (uint32_t)1;
     std::string data( time.data );
     std::string delim( "." );
     std::string sync_time = data.substr(0, data.find(delim ));
