@@ -1,6 +1,6 @@
 <launch>
     <node name="serial_translation_layer" pkg="serial_translation" type="serial_translation_node" output="screen"/>
     <node name="ground_station_node" pkg="ground_station" type="ground_station_node" output="screen">
-        <param name="refreshrate" value="60" />
+        <param name="refreshrate" value="360" />
     </node>
 </launch>

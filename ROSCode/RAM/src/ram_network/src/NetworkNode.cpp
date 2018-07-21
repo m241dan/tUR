@@ -662,6 +662,7 @@ void NetworkNode::doCamCommand()
 
                 for( int x = 0; x < 4; x++ )
                 {
+                    ROS_INFO( "Pushing cam com" );
                     com.command[0] = sub++;
                     com.command[1] = param++;
                     _cam_commands.push( com );
