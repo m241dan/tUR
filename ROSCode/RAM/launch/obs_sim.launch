@@ -18,19 +18,19 @@
     </node>
 
     <node name="obs_cam_one" pkg="usb_cam_sim" type="usb_cam_sim_node" output="screen" >
-        <param name="img_location" value="/home/ubuntu/tUR/ROSCODE/RAM/sim_imgs/cam_one.png" />
+        <param name="img_location" value="/home/ubuntu/tUR/ROSCode/RAM/sim_imgs/cam_one.png" />
     </node>
 
     <node name="obs_cam_two" pkg="usb_cam_sim" type="usb_cam_sim_node" output="screen" >
-        <param name="img_location" value="/home/ubuntu/tUR/ROSCODE/RAM/sim_imgs/cam_two.png" />
+        <param name="img_location" value="/home/ubuntu/tUR/ROSCode/RAM/sim_imgs/cam_two.png" />
     </node>
 
     <node name="obs_cam_three" pkg="usb_cam_sim" type="usb_cam_sim_node" output="screen" >
-        <param name="img_location" value="/home/ubuntu/tUR/ROSCODE/RAM/sim_imgs/cam_three.png" />
+        <param name="img_location" value="/home/ubuntu/tUR/ROSCode/RAM/sim_imgs/cam_three.png" />
     </node>
 
     <node name="obs_cam_four" pkg="usb_cam_sim" type="usb_cam_sim_node" output="screen" >
-        <param name="img_location" value="/home/ubuntu/tUR/ROSCODE/RAM/sim_imgs/cam_four.png" />
+        <param name="img_location" value="/home/ubuntu/tUR/ROSCode/RAM/sim_imgs/cam_four.png" />
     </node>
 
     <node name="cam_one_mon" pkg="cam_monitor" type="cam_monitor_node">
@@ -41,19 +41,19 @@
 
     <node name="cam_two_mon" pkg="cam_monitor" type="cam_monitor_node">
         <param name="video_location" value="$(env HOME)/RamVideos/MonTwo/videos/"/>
-        <param name="img_topic" value="/obs_cam_one/image_raw"/>
+        <param name="img_topic" value="/obs_cam_two/image_raw"/>
         <param name="snap_location" value="$(env HOME)/RamVideos/MonTwo/snap/"/>
     </node>
 
     <node name="cam_three_mon" pkg="cam_monitor" type="cam_monitor_node">
         <param name="video_location" value="$(env HOME)/RamVideos/MonThree/videos/"/>
-        <param name="img_topic" value="/obs_cam_one/image_raw"/>
+        <param name="img_topic" value="/obs_cam_three/image_raw"/>
         <param name="snap_location" value="$(env HOME)/RamVideos/MonThree/snap/"/>
     </node>
 
     <node name="cam_four_mon" pkg="cam_monitor" type="cam_monitor_node">
         <param name="video_location" value="$(env HOME)/RamVideos/MonFour/videos/"/>
-        <param name="img_topic" value="/obs_cam_one/image_raw"/>
+        <param name="img_topic" value="/obs_cam_four/image_raw"/>
         <param name="snap_location" value="$(env HOME)/RamVideos/MonFour/snap/"/>
     </node>
 </launch>
