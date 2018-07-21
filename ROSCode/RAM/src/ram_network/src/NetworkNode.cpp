@@ -342,6 +342,8 @@ void NetworkNode::handleGTP( gtp &time )
     ROS_INFO( "sync time is: %s", sync_time.c_str() );
     _registers.ada_input_register.sync_to = (uint32_t)std::stoul( sync_time );
     _registers.ada_input_register.new_sync = 1;
+    ROS_INFO( "new_sync is %d", _registers.ada_input_register.new_sync );
+    ROS_INFO( "sync_to is %du", _registers.ada_input_register.sync_to );
 
 }
 
