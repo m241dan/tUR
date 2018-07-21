@@ -629,7 +629,6 @@ void NetworkNode::doCamCommand()
             if( com.command[1] == CAMERA_CAM_1_PIC[1] )
             {
                _snap_one.call(snap);
-               ROS_INFO( "snap location: %s", snap.response.location.c_str());
                 packetizeImage( snap.response.location );
             }
             break;
@@ -662,7 +661,6 @@ void NetworkNode::doCamCommand()
 
                 for( int x = 0; x < 4; x++ )
                 {
-                    ROS_INFO( "Pushing cam com" );
                     com.command[0] = sub++;
                     com.command[1] = param++;
                     _cam_commands.push( com );

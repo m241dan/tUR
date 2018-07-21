@@ -85,7 +85,9 @@ void GroundNode::outputCallback( const std_msgs::UInt8MultiArray::ConstPtr &msg 
                     case '\x30':
                     {
                         image_packet packet = extractPacket<image_packet>( data, offset );
-                        std::ofstream img_file( "/home/korisd/test.png", std::ofstream::binary | std::ofstream::app );
+                        std::stringstream ss;
+                        ss << "/home/korisd/test" << packet.photo_number << ".png";
+                        std::ofstream img_file( ss.str(), std::ofstream::binary | std::ofstream::app );
                         if( img_file )
                         {
                             img_file.write( (char *)&packet.meat, packet.sizeof_photo );
