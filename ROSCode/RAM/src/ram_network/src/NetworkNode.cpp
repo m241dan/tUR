@@ -629,6 +629,7 @@ void NetworkNode::doCamCommand()
             if( com.command[1] == CAMERA_CAM_1_PIC[1] )
             {
                _snap_one.call(snap);
+               ROS_INFO( "snap location: %s", snap.response.location.c_str());
                 packetizeImage( snap.response.location );
             }
             break;
