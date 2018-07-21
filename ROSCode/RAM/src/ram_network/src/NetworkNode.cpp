@@ -4,7 +4,7 @@
 #include <ram_network/NetworkNode.h>
 #include <bits/ios_base.h>
 
-NetworkNode::NetworkNode() : _downlink_when( (uint8_t)(2.00 / serialLoop ) ), _downlink_counter(1), _img_counter(0)
+NetworkNode::NetworkNode() : _downlink_when( (uint8_t)(2.00 / serialLoop ) ), _downlink_counter(1), _img_counter(0), _node_handle("~")
 {
     setupSubscribers();
     startSerialAndI2C();
