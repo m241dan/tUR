@@ -13,12 +13,14 @@ NetworkNode::NetworkNode() : _downlink_when( (uint8_t)(2.00 / serialLoop ) ), _d
     setupPublishers();
     setupTimers();
     setupManualWaypoint();
+    _arm_info = std::vector<dynamixel_workbench_msgs::XH>( 6, dynamixel_workbench_msgs::XH() );
 }
 
 void NetworkNode::setupSubscribers()
 {
-    _simulated_command  = _node_handle.subscribe( "hasp_command", 10, &NetworkNode::simulatedCommandCallback, this );
-    _simulated_gtp      = _node_handle.subscribe( "hasp_gtp", 10, &NetworkNode::simulatedGTPCallback, this );
+    _trial_data_sub = _node_handle.subscribe( "kinematics/trial_data", 10, &NetworkNode::trialDataCallback, this );
+    _arm_info_sub = _node_handle.subscribe( "kinematics/servo_info", 10, &NetworkNode::armInfoCallback, this );
+    _motion_data_sub = _node_handle.subscribe( "kinematics/motion_data", 10, &NetworkNode::motionDataCallback, this );
 }
 void NetworkNode::setupServices()
 {
@@ -423,6 +425,42 @@ data_packet NetworkNode::buildPacket()
             if( data.addPacket( _image_packets.front() ) )
             {
                 _image_packets.pop();
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        while( !_arm_packets.empty() )
+        {
+            if( data.addPacket( _arm_packets.front() ) )
+            {
+                _arm_packets.pop();
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        while( !_motion_packets.empty() )
+        {
+            if( data.addPacket( _motion_packets.front() ) )
+            {
+                _motion_packets.pop();
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        while( !_trial_packets.empty() )
+        {
+            if( data.addPacket( _trial_packets.front() ) )
+            {
+                _trial_packets.pop();
             }
             else
             {
@@ -854,6 +892,7 @@ void NetworkNode::registerSample( const ros::TimerEvent &event )
 {
     ambientSample();
     bboxSample();
+    armSample();
 }
 
 void NetworkNode::ambientSample()
@@ -950,4 +989,99 @@ void NetworkNode::setupManualWaypoint()
     _manual_waypoint.gripper_rot = 0.0;
     _manual_waypoint.gripper_lin = 0.0;
     _manual_waypoint.velocity = 5;
+}
+
+void NetworkNode::armInfoCallback( const arm_motion::ArmInfoConstPtr &msg )
+{
+    _arm_info = msg->servos;
+}
+
+void NetworkNode::trialDataCallback( const arm_motion::TrialDataConstPtr &msg )
+{
+    trial_packet packet;
+
+    std::snprintf( packet.trial_name, 20, "%s", msg->trial_name.c_str() );
+    packet.trial_time_start = msg->start_time;
+    packet.trial_time_end = msg->stop_time;
+
+    _trial_packets.push( packet );
+}
+
+void NetworkNode::motionDataCallback( const arm_motion::MotionDataConstPtr &msg )
+{
+    motion_packet packet;
+
+    packet.start_time = msg->start_time;
+    packet.stop_time = msg->stop_time;
+    packet.joint_one_start = msg->servo_one_start_pos;
+    packet.joint_two_start = msg->servo_two_start_pos;
+    packet.joint_three_start = msg->servo_three_start_pos;
+    packet.joint_four_start = msg->servo_four_start_pos;
+    packet.joint_five_start = msg->servo_five_start_pos;
+    packet.joint_six_start = msg->servo_six_start_pos;
+
+    packet.joint_one_stop = msg->servo_one_stop_pos;
+    packet.joint_two_stop = msg->servo_two_stop_pos;
+    packet.joint_three_stop = msg->servo_three_stop_pos;
+    packet.joint_four_stop = msg->servo_four_stop_pos;
+    packet.joint_five_stop = msg->servo_five_stop_pos;
+    packet.joint_six_stop = msg->servo_six_stop_pos;
+
+    packet.start_x = msg->start_x;
+    packet.start_y = msg->start_y;
+    packet.start_z = msg->start_z;
+    packet.start_e = msg->start_e;
+
+    packet.stop_x = msg->stop_x;
+    packet.stop_y = msg->stop_y;
+    packet.stop_z = msg->stop_z;
+    packet.stop_e = msg->stop_e;
+
+    _motion_packets.push( packet );
+
+}
+
+void NetworkNode::armSample()
+{
+    arm_packet packet;
+    packet.time_recorded = _health.system_time;
+
+    packet.turntable_temp = _arm_info[0].Present_Temperature;
+    packet.turntable_velo = (uint8_t)_arm_info[0].Present_Velocity;
+    packet.turntable_goal = (uint16_t)_arm_info[0].Goal_Position;
+    packet.turntable_posi = (uint16_t)_arm_info[0].Present_Position;
+    packet.turntable_onoff = (bool)_arm_info[0].Torque_Enable;
+
+    packet.shoulder_temp = _arm_info[1].Present_Temperature;
+    packet.shoulder_velo = (uint8_t)_arm_info[1].Present_Velocity;
+    packet.shoulder_goal = (uint16_t)_arm_info[1].Goal_Position;
+    packet.shoulder_posi = (uint16_t)_arm_info[1].Present_Position;
+    packet.shoulder_onoff = (bool)_arm_info[1].Torque_Enable;
+
+    packet.elbow_temp = _arm_info[2].Present_Temperature;
+    packet.elbow_velo = (uint8_t)_arm_info[2].Present_Velocity;
+    packet.elbow_goal = (uint16_t)_arm_info[2].Goal_Position;
+    packet.elbow_posi = (uint16_t)_arm_info[2].Present_Position;
+    packet.elbow_onoff = (bool)_arm_info[2].Torque_Enable;
+
+    packet.wrist_temp = _arm_info[3].Present_Temperature;
+    packet.wrist_velo = (uint8_t)_arm_info[3].Present_Velocity;
+    packet.wrist_goal = (uint16_t)_arm_info[3].Goal_Position;
+    packet.wrist_posi = (uint16_t)_arm_info[3].Present_Position;
+    packet.wrist_onoff = (bool)_arm_info[3].Torque_Enable;
+
+    packet.wrot_temp = _arm_info[4].Present_Temperature;
+    packet.wrot_velo = (uint8_t)_arm_info[4].Present_Velocity;
+    packet.wrot_goal = (uint16_t)_arm_info[4].Goal_Position;
+    packet.wrot_posi = (uint16_t)_arm_info[4].Present_Position;
+    packet.wrot_onoff = (bool)_arm_info[4].Torque_Enable;
+
+    packet.gripper_temp = _arm_info[5].Present_Temperature;
+    packet.gripper_velo = (uint8_t)_arm_info[5].Present_Velocity;
+    packet.gripper_goal = (uint16_t)_arm_info[5].Goal_Position;
+    packet.gripper_posi = (uint16_t)_arm_info[5].Present_Position;
+    packet.gripper_onoff = (bool)_arm_info[5].Torque_Enable;
+
+    _arm_packets.push( packet );
+
 }

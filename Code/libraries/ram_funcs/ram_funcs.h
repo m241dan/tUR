@@ -120,11 +120,6 @@ struct arm_packet
     int16_t gripper_goal = 0;
     int16_t gripper_posi = 0;
     bool gripper_onoff = false;
-
-    int16_t armposition_in_mm_X = 0;
-    int16_t armposition_in_mm_Y = 0;
-    int16_t armposition_in_mm_Z = 0;
-    int16_t armorientation_in_rads = 0;
 };
 
 struct trial_packet
@@ -138,6 +133,16 @@ struct trial_packet
 struct motion_packet
 {
     uint8_t header = '\x37';
+    double start_x = 0.;
+    double start_y = 0.;
+    double start_z = 0.;
+    double start_e = 0.;
+
+    double stop_x = 0.;
+    double stop_y = 0.;
+    double stop_z = 0.;
+    double stop_e = 0.;
+
     uint32_t start_time = 0;
     uint32_t stop_time = 0;
     uint16_t joint_one_start = 0;

@@ -32,6 +32,9 @@ void MotionActor::goalCallBack()
     goal_max = (uint8_t)joint_goals.size();
     performMotionStep(); //the first, as soon as it receives the goal
     action_timer.start();
+
+    std_srvs::Empty empty;
+    _start_motion.call(empty);
 }
 
 void MotionActor::preemptCallBack()
@@ -66,6 +69,8 @@ void MotionActor::motionMonitor( const ros::TimerEvent &event )
                 /* motion is completed */
                 result.success = 1;
                 action_server.setSucceeded( result );
+                std_srvs::Empty empty;
+                _stop_motion.call( empty );
             }
         }
     }
@@ -134,6 +139,8 @@ void MotionActor::servoGoalCallback()
     goal_max = 1;
     performServoStep(); //the first, as soon as it receives the goal
     servo_timer.start();
+    std_srvs::Empty empty;
+    _start_motion.call(empty);
 }
 
 void MotionActor::servoPreemptCallback()
@@ -152,6 +159,8 @@ void MotionActor::servoMonitor( const ros::TimerEvent &event )
             arm_motion::ServoMotionResult res;
             res.success = 1;
             servo_server.setSucceeded( res );
+            std_srvs::Empty empty;
+            _stop_motion.call( empty );
         }
     }
     else

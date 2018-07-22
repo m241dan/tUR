@@ -12,6 +12,10 @@
 #include <std_srvs/Empty.h>
 #include <ram_network/ManualWaypoint.h>
 #include <ram_network/ServoChange.h>
+#include <arm_motion/ArmInfo.h>
+#include <arm_motion/MotionData.h>
+#include <arm_motion/TrialData.h>
+#include <dynamixel_workbench_msgs/XH.h>
 
 class NetworkNode
 {
@@ -66,6 +70,9 @@ class NetworkNode
         std::queue<bbox_packet>         _bbox_packets;
         std::queue<network_packet>      _network_packets;
         std::queue<image_packet>        _image_packets;
+        std::queue<arm_packet>          _arm_packets;
+        std::queue<trial_packet>        _trial_packets;
+        std::queue<motion_packet>       _motion_packets;
         /*
          * ROS Stuff
          */
@@ -142,6 +149,16 @@ class NetworkNode
         ros::Publisher                  _servo_decrement_publisher;
         ros::Publisher                  _arm_mode_publisher;
         ros::Publisher                  _trial_queue_reset_publisher;
+
+        ros::Subscriber                 _trial_data_sub;
+        ros::Subscriber                 _motion_data_sub;
+        ros::Subscriber                 _arm_info_sub;
+        std::vector<dynamixel_workbench_msgs::XH> _arm_info;
+
+        void armInfoCallback            ( const arm_motion::ArmInfoConstPtr &msg );
+        void trialDataCallback          ( const arm_motion::TrialDataConstPtr &msg );
+        void motionDataCallback         ( const arm_motion::MotionDataConstPtr &msg );
+        void armSample                  ();
 
 };
 
