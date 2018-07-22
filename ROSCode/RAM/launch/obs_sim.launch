@@ -56,4 +56,23 @@
         <param name="img_topic" value="/obs_cam_four/image_raw"/>
         <param name="snap_location" value="$(env HOME)/RamVideos/MonFour/snap/"/>
     </node>
+
+    <node name="cam_five_mon" pkg="cam_monitor" type="cam_monitor_node">
+        <param name="video_location" value="$(env HOME)/RamVideos/MonFive/videos/"/>
+        <param name="img_topic" value="/obs_cam_five/image_raw"/>
+        <param name="snap_location" value="$(env HOME)/RamVideos/MonFive/snap/"/>
+    </node>
+
+    <node name="cam_six_mon" pkg="cam_monitor" type="cam_monitor_node">
+        <param name="video_location" value="$(env HOME)/RamVideos/MonSix/videos/"/>
+        <param name="img_topic" value="/obs_cam_six/image_raw"/>
+        <param name="snap_location" value="$(env HOME)/RamVideos/MonSix/snap/"/>
+    </node>
+
+    <node name="cam_seven_mon" pkg="cam_monitor" type="cam_monitor_node">
+        <param name="video_location" value="$(env HOME)/RamVideos/MonSeven/videos/"/>
+        <param name="img_topic" value="/obs_cam_seven/image_raw"/>
+        <param name="snap_location" value="$(env HOME)/RamVideos/MonSeven/snap/"/>
+    </node>
+
 </launch>
