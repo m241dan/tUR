@@ -313,7 +313,7 @@ void GroundNode::publishMotionData( motion_packet &packet )
     msg.stop_z = packet.stop_z;
     msg.stop_e = packet.stop_e;
 
-
+    _arm_motion.publish( msg );
 }
 void GroundNode::publishNetworkStatus( network_packet &packet )
 {
