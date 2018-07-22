@@ -8,17 +8,29 @@ ArmKinematics::ArmKinematics( std::string test )
 {
     setupSubscribers();
     setupPublishers();
+    _servos = std::vector<dynamixel_workbench_msgs::XH>( 6, dynamixel_workbench_msgs::XH() );
+
+    _start_motion = _node_handle.advertiseService( "start_motion", &ArmKinematics::startMotion, this );
+    _stop_motion = _node_handle.advertiseService( "stop_motion", &ArmKinematics::stopMotion, this );
+    _start_trial = _node_handle.advertiseService( "start_trial", &ArmKinematics::startTrial, this );
+    _stop_trial = _node_handle.advertiseService( "stop_trial", &ArmKinematics::stopTrial, this );
+
 }
 
 void ArmKinematics::setupSubscribers()
 {
+    _servo_info_sub = _node_handle.subscribe( "kinematics/servo_info", 10, &ArmKinematics::updateServos, this );
     _joints_sub = _node_handle.subscribe( "kinematics/joints_in_radians", 10, &ArmKinematics::servoInfoHandler, this );
     _camera_one_tags = _node_handle.subscribe( "apriltag_detections_one", 10, &ArmKinematics::camOneTagHandler, this );
+    _clock_sub = _node_handle.subscribe( "clock", 10, &ArmKinematics::clockCallback, this );
+
 }
 
 void ArmKinematics::setupPublishers()
 {
     _servo_fk_publisher = _node_handle.advertise<geometry_msgs::Pose> ( "kinematics/servo_based_fk", 10 );
+    _motion_data_publisher = _node_handle.advertise<arm_motion::MotionData> ( "kinematics/motion_data", 10 );
+    _trial_data_publisher = _node_handle.advertise<arm_motion::TrialData> ( "kinematics/trial_data", 10 );
 }
 
 void ArmKinematics::servoInfoHandler( const sensor_msgs::JointState::ConstPtr &joints )
@@ -172,4 +184,63 @@ Matrix4 ArmKinematics::HomogenousDHMatrix( double theta, double alpha, double r,
                     0,              0,                              0,                      1;
 
     return h_dh_matrix;
+}
+
+void ArmKinematics::updateServos( const arm_motion::ArmInfoConstPtr &msg )
+{
+    _servos = msg->servos;
+}
+
+void ArmKinematics::clockCallback( const rosgraph_msgs::ClockConstPtr &msg )
+{
+    _clock = msg->clock.sec;
+}
+
+bool ArmKinematics::startMotion( std_srvs::Empty::Request &req, std_srvs::Empty::Response &res )
+{
+    _present_motion.start_time = (uint32_t)_clock;
+    _present_motion.servo_one_start_pos = (uint16_t)_servos[0].Present_Position;
+    _present_motion.servo_two_start_pos = (uint16_t)_servos[1].Present_Position;
+    _present_motion.servo_three_start_pos = (uint16_t)_servos[2].Present_Position;
+    _present_motion.servo_four_start_pos = (uint16_t)_servos[3].Present_Position;
+    _present_motion.servo_five_start_pos = (uint16_t)_servos[4].Present_Position;
+    _present_motion.servo_six_start_pos = (uint16_t)_servos[5].Present_Position;
+    _present_motion.start_x = _servo_based_fk.position.x;
+    _present_motion.start_y = _servo_based_fk.position.y;
+    _present_motion.start_z = _servo_based_fk.position.z;
+    _present_motion.start_e = _servo_based_fk.orientation.w;
+    return true;
+}
+
+bool ArmKinematics::stopMotion( std_srvs::Empty::Request &req, std_srvs::Empty::Response &res )
+{
+    _present_motion.stop_time = (uint32_t)_clock;
+    _present_motion.servo_one_stop_pos = (uint16_t)_servos[0].Present_Position;
+    _present_motion.servo_two_stop_pos = (uint16_t)_servos[1].Present_Position;
+    _present_motion.servo_three_stop_pos = (uint16_t)_servos[2].Present_Position;
+    _present_motion.servo_four_stop_pos = (uint16_t)_servos[3].Present_Position;
+    _present_motion.servo_five_stop_pos = (uint16_t)_servos[4].Present_Position;
+    _present_motion.servo_six_stop_pos = (uint16_t)_servos[5].Present_Position;
+    _present_motion.stop_x = _servo_based_fk.position.x;
+    _present_motion.stop_y = _servo_based_fk.position.y;
+    _present_motion.stop_z = _servo_based_fk.position.z;
+    _present_motion.stop_e = _servo_based_fk.orientation.w;
+
+    _motion_data_publisher.publish( _present_motion );
+
+    return true;
+}
+
+bool ArmKinematics::startTrial( arm_motion::StartTrial::Request &req, arm_motion::StartTrial::Response &res )
+{
+    _present_trial.trial_name = req.trial_name;
+    _present_trial.start_time = (uint32_t)_clock;
+    return true;
+}
+
+bool ArmKinematics::stopTrial( std_srvs::Empty::Request &req, std_srvs::Empty::Response &res )
+{
+    _present_trial.stop_time = (uint32_t)_clock;
+    _trial_data_publisher.publish( _present_trial );
+    return true;
 }

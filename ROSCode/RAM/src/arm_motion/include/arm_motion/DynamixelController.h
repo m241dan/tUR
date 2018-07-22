@@ -51,7 +51,7 @@ class DynamixelController
          */
         ros::NodeHandle node_handle;
         /* Publishers */
-        ros::Publisher servo_info_publishers[MAX_SERVO];
+        ros::Publisher servo_info_publisher;
         ros::Publisher servo_joint_publisher;
         /* Timers */
         ros::Timer servo_info_timer;
@@ -60,7 +60,7 @@ class DynamixelController
          * Dynamixel Stuff
          */
         DynamixelWorkbench _bench;
-        dynamixel_workbench_msgs::XH servo_info[MAX_SERVO];
+        std::vector<dynamixel_workbench_msgs::XH> servo_info;
         sensor_msgs::JointState joints;
         bool _valid;
 

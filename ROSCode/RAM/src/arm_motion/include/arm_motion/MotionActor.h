@@ -54,6 +54,9 @@ class MotionActor
         std::vector<sensor_msgs::JointState> joint_goals;
         uint8_t goal_step;
         uint8_t goal_max;
+
+        ros::ServiceClient _start_motion;
+        ros::ServiceClient _stop_motion;
 };
 
 

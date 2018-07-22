@@ -135,6 +135,27 @@ struct trial_packet
     uint32_t trial_time_end = 0;
 };
 
+struct motion_packet
+{
+    uint8_t header = '\x37';
+    uint32_t start_time = 0;
+    uint32_t stop_time = 0;
+    uint16_t joint_one_start = 0;
+    uint16_t joint_one_stop = 0;
+    uint16_t joint_two_start = 0;
+    uint16_t joint_two_stop = 0;
+    uint16_t joint_three_start = 0;
+    uint16_t joint_three_stop = 0;
+    uint16_t joint_four_start = 0;
+    uint16_t joint_four_stop = 0;
+    uint16_t joint_five_start = 0;
+    uint16_t joint_five_stop = 0;
+    uint16_t joint_six_start = 0;
+    uint16_t joint_six_stop = 0;
+
+
+};
+
 struct network_packet
 {
     uint8_t header = '\x36';

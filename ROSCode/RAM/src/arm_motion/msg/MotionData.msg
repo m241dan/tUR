@@ -1,0 +1,26 @@
+uint32 start_time
+uint32 stop_time
+
+float64 start_x
+float64 start_y
+float64 start_z
+float64 start_e
+
+float64 stop_x
+float64 stop_y
+float64 stop_z
+float64 stop_e
+
+uint16 servo_one_start_pos
+uint16 servo_two_start_pos
+uint16 servo_three_start_pos
+uint16 servo_four_start_pos
+uint16 servo_five_start_pos
+uint16 servo_six_start_pos
+
+uint16 servo_one_stop_pos
+uint16 servo_two_stop_pos
+uint16 servo_three_stop_pos
+uint16 servo_four_stop_pos
+uint16 servo_five_stop_pos
+uint16 servo_six_stop_pos

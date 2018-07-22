@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   apriltags_ros
   geometry_msgs
+  std_srvs
 )
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -58,12 +59,15 @@ add_message_files(
    ManualWaypoint.msg
    ServoChange.msg
    TrialData.msg
+   ArmInfo.msg
+   MotionData.msg
 )
 
 # Generate services in the 'srv' folder
  add_service_files(
    FILES
    PathService.srv
+   StartTrial.srv
 )
 
 ## Generate actions in the 'action' folder

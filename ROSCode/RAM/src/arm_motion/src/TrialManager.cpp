@@ -10,6 +10,7 @@ TrialManager::TrialManager( std::string name )
     setupSubscribers();
     setupTimers();
     setupLua();
+
 }
 
 void TrialManager::setupSubscribers()
@@ -21,8 +22,6 @@ void TrialManager::setupSubscribers()
     _decrement_servo = _node_handle.subscribe( "ram_network_master/trial/servo_decrement", 10, &TrialManager::servoDecrement, this );
     _reset_trial_queue = _node_handle.subscribe( "ram_network_master/trial/queue_reset", 10, &TrialManager::resetTrialQueue, this );
     _mode_change = _node_handle.subscribe( "ram_network_master/trial/arm_mode", 10, &TrialManager::modeChange, this );
-    _clock_sub = _node_handle.subscribe( "/clock", 10, &TrialManager::clockCallback, this );
-
 }
 
 void TrialManager::setupPublishers()
@@ -53,7 +52,7 @@ void TrialManager::enqueueTrial( const std_msgs::UInt8ConstPtr &msg )
     {
         if( _trial_queue.size() == 1 )  //only trial in the queue, start trial and start monitor ( theoretically they should both be paused )
         {
-            _trial_queue.front()->start( _clock );
+            _trial_queue.front()->start(   );
             resumeMonitor();     //start regardless, if its already started, this does nothing
         }
     }
@@ -82,7 +81,7 @@ void TrialManager::trialMonitor( const ros::TimerEvent &event )
         }
         else if( !active )
         {
-            if( !_trial_queue.at(0)->start( _clock ) )   //if it fails to start, go to the next trial
+            if( !_trial_queue.at(0)->start(   ) )   //if it fails to start, go to the next trial
             {
                 nextTrial();
             }
@@ -97,11 +96,6 @@ void TrialManager::trialMonitor( const ros::TimerEvent &event )
 
 bool TrialManager::nextTrial()
 {
-    arm_motion::TrialData data;
-    data.trial_name = _trial_queue.front()->_trial_name;
-    data.start_time = _trial_queue.front()->_start_time;
-    data.stop_time = _clock;
-    _trial_data_pub.publish( data );
     _trial_queue.erase( _trial_queue.begin() );
     return !_trial_queue.empty();
 }
@@ -124,7 +118,7 @@ void TrialManager::manualWaypoint( const arm_motion::ManualWaypointConstPtr &msg
     {
         if( _trial_queue.size() == 1 )  //only trial in the queue, start trial and start monitor ( theoretically they should both be paused )
         {
-            _trial_queue.front()->start( _clock );
+            _trial_queue.front()->start(   );
             resumeMonitor();     //start regardless, if its already started, this does nothing
         }
     }
@@ -143,7 +137,7 @@ void TrialManager::servoIncrement( const arm_motion::ServoChangeConstPtr &msg )
     {
         if( _trial_queue.size() == 1 )  //only trial in the queue, start trial and start monitor ( theoretically they should both be paused )
         {
-            _trial_queue.front()->start( _clock );
+            _trial_queue.front()->start(   );
             resumeMonitor();     //start regardless, if its already started, this does nothing
         }
     }
@@ -164,7 +158,7 @@ void TrialManager::servoDecrement( const arm_motion::ServoChangeConstPtr &msg )
     {
         if( _trial_queue.size() == 1 )  //only trial in the queue, start trial and start monitor ( theoretically they should both be paused )
         {
-            _trial_queue.front()->start( _clock );
+            _trial_queue.front()->start(   );
             resumeMonitor();     //start regardless, if its already started, this does nothing
         }
     }
@@ -184,9 +178,4 @@ void TrialManager::resetTrialQueue( const std_msgs::UInt8ConstPtr &msg )
 void TrialManager::modeChange( const std_msgs::UInt8ConstPtr &msg )
 {
 
-}
-
-void TrialManager::clockCallback( const rosgraph_msgs::ClockConstPtr &msg )
-{
-    _clock = (int)msg->clock.sec;
 }

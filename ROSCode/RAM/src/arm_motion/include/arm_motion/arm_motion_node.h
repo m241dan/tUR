@@ -14,6 +14,11 @@
 #include <arm_motion/ManualWaypoint.h>
 #include <arm_motion/ServoChange.h>
 #include <rosgraph_msgs/Clock.h>
+#include <arm_motion/ArmInfo.h>
+#include <arm_motion/MotionData.h>
+#include <arm_motion/TrialData.h>
+#include <arm_motion/StartTrial.h>
+#include <std_srvs/Empty.h>
 
 
 /*

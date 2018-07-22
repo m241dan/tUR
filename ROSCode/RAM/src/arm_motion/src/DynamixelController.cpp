@@ -37,6 +37,7 @@ DynamixelController::DynamixelController( std::string bus )
     {
         ROS_ERROR( "%s: Failed to startup Dynamixel Bus %s", __FUNCTION__, bus.c_str());
     }
+    servo_info = std::vector<dynamixel_workbench_msgs::XH>( 6, dynamixel_workbench_msgs::XH() );
 }
 bool DynamixelController::benchWrite( ServoCommand com )
 {
@@ -281,8 +282,7 @@ bool DynamixelController::validCommand( ServoCommand com )
 
 void DynamixelController::setupPublishers()
 {
-    for( int i = 0; i < MAX_SERVO; i++ )
-        servo_info_publishers[i] = node_handle.advertise<dynamixel_workbench_msgs::XH>( servo_topic_names[i].c_str(), 10 );
+    servo_info_publisher = node_handle.advertise<arm_motion::ArmInfo>( "kinematics/servo_info", 10 );
     servo_joint_publisher = node_handle.advertise<sensor_msgs::JointState>( "kinematics/joints_in_radians", 10 );
 
 }
@@ -326,10 +326,10 @@ inline void DynamixelController::updateServos()
 
 inline void DynamixelController::publishServoInfo()
 {
-    for( int i = 0; i < MAX_SERVO; i++ )
-    {
-        servo_info_publishers[i].publish( servo_info[i] );
-    }
+    arm_motion::ArmInfo info;
+    info.servos = servo_info;
+
+    servo_info_publisher.publish( info );
     servo_joint_publisher.publish( joints );
 
 }

@@ -33,12 +33,10 @@ class ArmTrial
         ArmTrial( arm_motion::ServoChange sc, geometry_msgs::Pose &pose, bool *success );
         ArmTrial( arm_motion::ManualWaypoint wp, geometry_msgs::Pose &pose, bool *success );
         ArmTrial( std::string trial_name, lua_State *lua, geometry_msgs::Pose &pose, bool *success );
-        ~ArmTrial() = default;
+        ~ArmTrial();
         bool isActive();
         bool isComplete();
-        bool start( int start_time );
-        int _start_time;
-        std::string _trial_name;
+        bool start();
 
     protected:
         /*
@@ -61,6 +59,8 @@ class ArmTrial
         ros::NodeHandle _node_handle;
         ros::Subscriber _servo_based_fk_subscriber;
         ros::ServiceClient _path_service;
+        ros::ServiceClient _start_trial;
+        ros::ServiceClient _stop_trial;
         actionlib::SimpleActionClient<arm_motion::ArmMotionAction> _action_client;
         actionlib::SimpleActionClient<arm_motion::ServoMotionAction> _servo_client;
 
@@ -70,6 +70,8 @@ class ArmTrial
         bool _complete;
         std::vector<arm_motion::MotionMsg> _motions;
         unsigned long _on_motion;
+        std::string _trial_name;
+
 };
 
 
