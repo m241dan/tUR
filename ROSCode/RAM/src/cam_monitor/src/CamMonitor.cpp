@@ -11,7 +11,7 @@ CamMonitor::CamMonitor() : _node_handle("~"), _throttle_count(0)
     _node_handle.param( "snap_location", _snap_location, std::string( "" ) );
     _node_handle.param( "throttle", _throttle, 0 );
     _image_sub  = _node_handle.subscribe( _img_topic, 10, &CamMonitor::imageCallback, this );
-    _time_sub   = _node_handle.subscribe( "/clock", 10, &CamMonitor::timeCallback, this );
+    _time_sub   = _node_handle.subscribe( "ram_network_master/clock", 10, &CamMonitor::timeCallback, this );
     _take_snap  = _node_handle.advertiseService( ( ros::this_node::getName() + "/takeSnap" ), &CamMonitor::serviceCallback, this );
 }
 

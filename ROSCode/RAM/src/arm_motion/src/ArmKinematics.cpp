@@ -22,7 +22,7 @@ void ArmKinematics::setupSubscribers()
     _servo_info_sub = _node_handle.subscribe( "kinematics/servo_info", 10, &ArmKinematics::updateServos, this );
     _joints_sub = _node_handle.subscribe( "kinematics/joints_in_radians", 10, &ArmKinematics::servoInfoHandler, this );
     _camera_one_tags = _node_handle.subscribe( "apriltag_detections_one", 10, &ArmKinematics::camOneTagHandler, this );
-    _clock_sub = _node_handle.subscribe( "clock", 10, &ArmKinematics::clockCallback, this );
+    _clock_sub = _node_handle.subscribe( "ram_network_master/clock", 10, &ArmKinematics::clockCallback, this );
 
 }
 
