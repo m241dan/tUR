@@ -122,7 +122,7 @@ void GroundNode::outputCallback( const std_msgs::UInt8MultiArray::ConstPtr &msg 
                     case '\x35':
                     {
                         //pathlog
-                        pathlog_packet packet = extractPacket<pathlog_packet>( data, offset );
+                        trial_packet packet = extractPacket<trial_packet>( data, offset );
                         publishPathLog( packet );
                         break;
                     }
@@ -219,7 +219,7 @@ void GroundNode::publishArmStatus( arm_packet &packet )
 
 }
 
-void GroundNode::publishPathLog( pathlog_packet &packet )
+void GroundNode::publishPathLog( trial_packet &packet )
 {
     ground_station::PathLog msg;
 }

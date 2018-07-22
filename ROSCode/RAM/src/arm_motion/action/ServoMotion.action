@@ -1,0 +1,12 @@
+uint8 type
+uint32 velocity
+int32 servo_one
+int32 servo_two
+int32 servo_three
+int32 servo_four
+int32 servo_five
+int32 servo_six
+---
+bool success
+---
+uint8 on_step

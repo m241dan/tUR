@@ -10,6 +10,8 @@
 #include "arm_motion/DynamixelController.h"
 #include <vector>
 #include "arm_motion/ArmMotionAction.h"
+#include "arm_motion/ServoMotionAction.h"
+
 
 
 class MotionActor
@@ -29,11 +31,19 @@ class MotionActor
         /* Action Server */
         actionlib::SimpleActionServer<arm_motion::ArmMotionAction> action_server;
         std::string action_name;
-        arm_motion::ArmMotionGoal goal;
         arm_motion::ArmMotionFeedback feedback;
         arm_motion::ArmMotionResult result;
         /* Action Timer */
         ros::Timer action_timer;
+        ros::Timer servo_timer;
+
+        actionlib::SimpleActionServer<arm_motion::ServoMotionAction> servo_server;
+        arm_motion::ServoMotionGoal _goal;
+        void servoGoalCallback();
+        void servoPreemptCallback();
+        void servoMonitor( const ros::TimerEvent &event );
+        bool checkServoStep();
+        bool performServoStep();
 
         /*
          * Dynamixel Controller

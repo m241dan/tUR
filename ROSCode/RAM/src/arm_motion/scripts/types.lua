@@ -7,6 +7,8 @@
 --
 
 
+SERVO_ABSOLUTE = 4
+SERVO_R = 3;
 VISION = 2;
 DISCRETE_R = 1;
 DISCRETE_W = 0;

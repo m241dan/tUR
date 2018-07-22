@@ -9,8 +9,7 @@
 #include "arm_motion/ArmTrial.h"
 #include <vector>
 #include <memory>
-#include <arm_motion/ManualWaypoint.h>
-#include <arm_motion/ServoChange.h>
+
 
 extern "C" {
 #include "lua.h"
@@ -43,6 +42,7 @@ class TrialManager
         void servoDecrement( const arm_motion::ServoChangeConstPtr &msg );
         void resetTrialQueue( const std_msgs::UInt8ConstPtr &msg );
         void modeChange( const std_msgs::UInt8ConstPtr &msg );
+        void clockCallback( const rosgraph_msgs::ClockConstPtr &msg );
 
         /*
          * Variables
@@ -57,12 +57,15 @@ class TrialManager
         ros::Subscriber _decrement_servo;
         ros::Subscriber _reset_trial_queue;
         ros::Subscriber _mode_change;
+        ros::Subscriber _clock_sub;
+        int _clock = 0;
 
         ros::Timer _trial_monitor;
 
         /* Lua Specific */
         lua_State *_lua_handle;
         std::vector<std::unique_ptr<ArmTrial>> _trial_queue;
+        ros::Publisher _trial_data_pub;
 };
 
 

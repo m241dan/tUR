@@ -109,6 +109,12 @@ struct arm_packet
     int16_t wrist_posi = 0;
     bool wrist_onoff = false;
 
+    int8_t wrot_temp = 0;
+    uint8_t wrot_velo = 0;
+    int16_t wrot_goal = 0;
+    int16_t wrot_posi = 0;
+    bool wrot_onoff = false;
+
     int8_t gripper_temp = 0;
     uint8_t gripper_velo = 0;
     int16_t gripper_goal = 0;
@@ -121,23 +127,12 @@ struct arm_packet
     int16_t armorientation_in_rads = 0;
 };
 
-struct pathlog_packet
+struct trial_packet
 {
     uint8_t header = '\x35';
-    double target_pos_x = 0.;
-    double target_pos_y = 0.;
-    double target_pos_z = 0.;
-    double target_pos_angle = 0.;
-    uint16_t current_pos_joint1 = 0;
-    uint16_t current_pos_joint2 = 0;
-    uint16_t current_pos_joint3 = 0;
-    uint16_t current_pos_joint4 = 0;
-    uint16_t current_pos_joint5 = 0;
-    uint16_t total_trial_count = 0;
-    uint16_t trial_ID = 0;
-    uint32_t pathstep_time_start = 0;
-    uint32_t pathstep_time_end = 0;
-    uint16_t gripper_position = 0;
+    char trial_name[20] = { 0 };
+    uint32_t trial_time_start = 0;
+    uint32_t trial_time_end = 0;
 };
 
 struct network_packet

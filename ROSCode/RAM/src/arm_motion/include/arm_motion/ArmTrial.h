@@ -13,6 +13,9 @@
 #include <tuple>
 #include <cmath>
 #include "arm_motion/PathService.h"
+#include "arm_motion/ServoMotionAction.h"
+#include "arm_motion/TrialData.h"
+
 
 extern "C" {
     #include "lua.h"
@@ -27,23 +30,29 @@ typedef std::vector<geometry_msgs::Pose> Path;
 class ArmTrial
 {
     public:
+        ArmTrial( arm_motion::ServoChange sc, geometry_msgs::Pose &pose, bool *success );
+        ArmTrial( arm_motion::ManualWaypoint wp, geometry_msgs::Pose &pose, bool *success );
         ArmTrial( std::string trial_name, lua_State *lua, geometry_msgs::Pose &pose, bool *success );
         ~ArmTrial() = default;
         bool isActive();
         bool isComplete();
-        bool start();
+        bool start( int start_time );
+        int _start_time;
+        std::string _trial_name;
 
     protected:
         /*
          * Functions
          */
         void setupServiceClient();
-        void setupTimers();
-        void trialOperation( const ros::TimerEvent &event );
+
         void servoBasedFK( const geometry_msgs::Pose::ConstPtr &pose );
         void generateMotion();
         void motionCompleteCallback( const actionlib::SimpleClientGoalState &state, const arm_motion::ArmMotionResultConstPtr &result );
         void motionFeedbackCallback( const arm_motion::ArmMotionActionFeedbackConstPtr &feedback );
+
+        void servoCompleteCallback( const actionlib::SimpleClientGoalState &state, const arm_motion::ServoMotionResultConstPtr &result );
+        void servoFeedbackCallback( const arm_motion::ServoMotionActionFeedbackConstPtr &feedback );
 
         /*
          * Variables
@@ -52,10 +61,9 @@ class ArmTrial
         ros::NodeHandle _node_handle;
         ros::Subscriber _servo_based_fk_subscriber;
         ros::ServiceClient _path_service;
-        ros::Timer _run_timer;
         actionlib::SimpleActionClient<arm_motion::ArmMotionAction> _action_client;
+        actionlib::SimpleActionClient<arm_motion::ServoMotionAction> _servo_client;
 
-        std::string _trial_name;
         geometry_msgs::Pose &_servo_based_fk_pose;
 
         bool _active;

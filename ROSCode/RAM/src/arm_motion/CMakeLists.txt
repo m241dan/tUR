@@ -57,6 +57,7 @@ add_message_files(
    MotionMsg.msg
    ManualWaypoint.msg
    ServoChange.msg
+   TrialData.msg
 )
 
 # Generate services in the 'srv' folder
@@ -69,6 +70,7 @@ add_message_files(
 add_action_files(
    FILES
    ArmMotion.action
+   ServoMotion.action
 )
 
 ## Generate added messages and services with any dependencies listed here
@@ -134,7 +136,7 @@ include_directories(
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
@@ -152,10 +154,10 @@ add_executable( ${PROJECT_NAME}_path src/path_planning.cpp src/PathPlanner.cpp s
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(${PROJECT_NAME}_driver ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(${PROJECT_NAME}_kinematics ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(${PROJECT_NAME}_trial ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(${PROJECT_NAME}_path ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_driver ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_generate_messages_cpp )
+add_dependencies(${PROJECT_NAME}_kinematics ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_generate_messages_cpp  )
+add_dependencies(${PROJECT_NAME}_trial ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_generate_messages_cpp  )
+add_dependencies(${PROJECT_NAME}_path ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_generate_messages_cpp )
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_driver

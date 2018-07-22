@@ -6,6 +6,7 @@
 
 MotionActor::MotionActor( std::string name, DynamixelController &controller ) :
         action_server( node_handle, name, false ),
+        servo_server( node_handle, name + "_servo", false ),
         action_name(name),
         _controller(controller)
 {
@@ -13,6 +14,11 @@ MotionActor::MotionActor( std::string name, DynamixelController &controller ) :
     action_server.registerPreemptCallback( boost::bind( &MotionActor::preemptCallBack, this ) );
     action_server.start();
     action_timer = node_handle.createTimer( ros::Duration(0.05), boost::bind( &MotionActor::motionMonitor, this, _1 ), false, false );
+
+    servo_server.registerGoalCallback( boost::bind( &MotionActor::servoGoalCallback, this ) );
+    servo_server.registerPreemptCallback( boost::bind( &MotionActor::servoPreemptCallback, this ) );
+    servo_server.start();
+    servo_timer = node_handle.createTimer( ros::Duration( 0.05 ), boost::bind( &MotionActor::servoMonitor, this, _1 ), false, false );
 }
 
 void MotionActor::goalCallBack()
@@ -114,5 +120,176 @@ bool MotionActor::performMotionStep()
     {
         success = false;
     }
+    return success;
+}
+
+void MotionActor::servoGoalCallback()
+{
+    /*setup the new motion*/
+    _goal = *servo_server.acceptNewGoal();
+    goal_step = 0;
+    goal_max = 1;
+    performServoStep(); //the first, as soon as it receives the goal
+    servo_timer.start();
+}
+
+void MotionActor::servoPreemptCallback()
+{
+    arm_motion::ServoMotionResult res;
+    result.success = 0;
+    servo_server.setPreempted( res );
+}
+
+void MotionActor::servoMonitor( const ros::TimerEvent &event )
+{
+    if( servo_server.isActive() )
+    {
+        if( checkServoStep() ) // check for arrival
+        {
+            arm_motion::ServoMotionResult res;
+            res.success = 1;
+            servo_server.setSucceeded( res );
+        }
+    }
+    else
+    {
+        /* we got preempted */
+        action_timer.stop();
+    }
+}
+
+bool MotionActor::checkServoStep()
+{
+    bool arrived = true;
+    std::vector<int32_t> servo_positions = _controller.getServoPositions();
+    std::vector<int32_t> servo_goals = _controller.getServoGoals();
+
+    for( int i = 0; i < MAX_ARM_SERVO; i++ )
+    {
+        if( abs( servo_positions[i] - servo_goals[i] ) > 2 )
+        {
+            arrived = false;
+            break;
+        }
+    }
+    return arrived;
+}
+
+bool MotionActor::performServoStep()
+{
+    bool success = true;
+    uint32_t velocity = _goal.velocity;
+    if( _goal.type == SERVO_R )
+    {
+        std::vector<int32_t> servo_positions = _controller.getServoPositions();
+        //velocity
+        if( _goal.servo_one != 0 )
+        {
+            if( !_controller.changeVelocity( 1, velocity ) )
+            {
+                success = false;
+            }
+        }
+        if( _goal.servo_two != 0 )
+        {
+            if( !_controller.changeVelocity( 2, velocity ) )
+            {
+                success = false;
+            }
+        }
+        if( _goal.servo_three != 0 )
+        {
+            if( !_controller.changeVelocity( 3, velocity ) )
+            {
+                success = false;
+            }
+        }
+        if( _goal.servo_four != 0 )
+        {
+            if( !_controller.changeVelocity( 4, velocity ) )
+            {
+                success = false;
+            }
+        }
+        if( _goal.servo_five != 0 )
+        {
+            if( !_controller.changeVelocity( 5, velocity ) )
+            {
+                success = false;
+            }
+        }
+        if( _goal.servo_six != 0 )
+        {
+            if( !_controller.changeVelocity( 6, velocity ) )
+            {
+                success = false;
+            }
+        }
+
+        //position
+        if( _goal.servo_one != 0 )
+        {
+            int32_t new_position = servo_positions[0] + _goal.servo_one;
+            if( !_controller.changePosition( 1, new_position ) )
+            {
+                success = false;
+            }
+        }
+        if( _goal.servo_two != 0 )
+        {
+            int32_t new_position = servo_positions[1] + _goal.servo_two;
+            if( !_controller.changePosition( 2, new_position ) )
+            {
+                success = false;
+            }
+        }
+        if( _goal.servo_three != 0 )
+        {
+            int32_t new_position = servo_positions[2] + _goal.servo_three;
+            if( !_controller.changePosition( 3, new_position ) )
+            {
+                success = false;
+            }
+        }
+        if( _goal.servo_four != 0 )
+        {
+            int32_t new_position = servo_positions[3] + _goal.servo_four;
+            if( !_controller.changePosition( 4, new_position ) )
+            {
+                success = false;
+            }
+        }
+        if( _goal.servo_five != 0 )
+        {
+            int32_t new_position = servo_positions[4] + _goal.servo_five;
+            if( !_controller.changePosition( 5, new_position ) )
+            {
+                success = false;
+            }
+        }
+        if( _goal.servo_six != 0 )
+        {
+            int32_t new_position = servo_positions[5] + _goal.servo_six;
+            if( !_controller.changePosition( 6, new_position ) )
+            {
+                success = false;
+            }
+        }
+    }
+    else
+    {
+        for( uint8_t x = 0; x < MAX_SERVO; x++ )
+        {
+            _controller.changeVelocity( x+1, _goal.velocity );
+        }
+        _controller.changePosition( 1, (int32_t )_goal.servo_one );
+        _controller.changePosition( 2, (int32_t )_goal.servo_two );
+        _controller.changePosition( 3, (int32_t )_goal.servo_three );
+        _controller.changePosition( 4, (int32_t )_goal.servo_four );
+        _controller.changePosition( 5, (int32_t )_goal.servo_five );
+        _controller.changePosition( 6, (int32_t )_goal.servo_six );
+
+    }
+
     return success;
 }

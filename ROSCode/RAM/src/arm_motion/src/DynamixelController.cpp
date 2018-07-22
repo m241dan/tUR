@@ -121,7 +121,7 @@ bool DynamixelController::holdPosition()
     return analyzeServoResponse( __FUNCTION__, servo_response );
 }
 
-bool DynamixelController::changePosition( uint8_t id, uint32_t position)
+bool DynamixelController::changePosition( uint8_t id, int32_t position)
 {
     ServoCommand com;
     com.id = id;
@@ -134,19 +134,15 @@ bool DynamixelController::changePosition( uint8_t id, uint32_t position)
 bool DynamixelController::changePosition( uint8_t id, double radian )
 {
     ServoCommand com;
-    ROS_INFO( "%s: ID[%d] Position[%f]", __FUNCTION__, (int)id, radian );
 
     if( id == 4 )
         radian *= -1;
 
     std::cout << std::endl;
-    std::cout << "ID[" << (int)id << "] Present[" << servo_info[id-1].Present_Position << "] Goal[" << servo_info[id-1].Goal_Position << "]" << std::endl;
 
-    std::cout << "Radian Goal[" << radian << "]" << std::endl;
     com.id = id;
     com.command = "Goal_Position";
     com.value = _bench.convertRadian2Value( id, (float)radian );
-    std::cout << "New Goal[" << (int)com.value << "]" << std::endl;
 
     return benchWrite( com );
 }

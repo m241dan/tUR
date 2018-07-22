@@ -45,7 +45,7 @@ class GroundNode
         void publishAmbient( ambient_packet &packet );
         void publishBBox( bbox_packet &packet );
         void publishArmStatus( arm_packet &packet );
-        void publishPathLog( pathlog_packet &packet );
+        void publishPathLog( trial_packet &packet );
         void publishNetworkStatus( network_packet &packet );
 };
 

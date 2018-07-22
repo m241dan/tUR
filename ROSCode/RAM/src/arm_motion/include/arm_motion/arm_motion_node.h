@@ -11,6 +11,10 @@
 #include <apriltags_ros/AprilTagDetectionArray.h>
 #include <std_msgs/UInt8.h>
 #include <dynamixel_workbench_msgs/XH.h>
+#include <arm_motion/ManualWaypoint.h>
+#include <arm_motion/ServoChange.h>
+#include <rosgraph_msgs/Clock.h>
+
 
 /*
  * Servo Info
@@ -28,7 +32,7 @@ enum
 
 enum
 {
-    DISCRETE_W, DISCRETE_R, VISION
+    DISCRETE_W, DISCRETE_R, VISION, SERVO_R, SERVO_ABSOLUTE
 };
 
 const std::string servo_topic_names[MAX_SERVO] = {
