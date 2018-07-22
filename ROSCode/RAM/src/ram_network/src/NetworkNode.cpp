@@ -18,9 +18,9 @@ NetworkNode::NetworkNode() : _downlink_when( (uint8_t)(2.00 / serialLoop ) ), _d
 
 void NetworkNode::setupSubscribers()
 {
-    _trial_data_sub = _node_handle.subscribe( "kinematics/trial_data", 10, &NetworkNode::trialDataCallback, this );
-    _arm_info_sub = _node_handle.subscribe( "kinematics/servo_info", 10, &NetworkNode::armInfoCallback, this );
-    _motion_data_sub = _node_handle.subscribe( "kinematics/motion_data", 10, &NetworkNode::motionDataCallback, this );
+    _trial_data_sub = _node_handle.subscribe( "/kinematics/trial_data", 10, &NetworkNode::trialDataCallback, this );
+    _arm_info_sub = _node_handle.subscribe( "/kinematics/servo_info", 10, &NetworkNode::armInfoCallback, this );
+    _motion_data_sub = _node_handle.subscribe( "/kinematics/motion_data", 10, &NetworkNode::motionDataCallback, this );
 }
 void NetworkNode::setupServices()
 {
