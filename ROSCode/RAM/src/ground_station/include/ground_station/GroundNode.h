@@ -10,11 +10,11 @@
 #include <chrono>
 #include <ground_station/Ambient.h>
 #include <ground_station/BBox.h>
-#include <ground_station/PathLog.h>
-#include <ground_station/ArmStatus.h>
 #include <ground_station/NetworkHealth.h>
 #include <fstream>
-
+#include <arm_motion/ArmInfo.h>
+#include <arm_motion/TrialData.h>
+#include <arm_motion/MotionData.h>
 class GroundNode
 {
     public:
@@ -39,13 +39,15 @@ class GroundNode
         ros::Publisher _ambient;
         ros::Publisher _bbox;
         ros::Publisher _arm_status;
-        ros::Publisher _arm_path;
+        ros::Publisher _arm_trial;
+        ros::Publisher _arm_motion;
         ros::Publisher _network_status;
 
         void publishAmbient( ambient_packet &packet );
         void publishBBox( bbox_packet &packet );
         void publishArmStatus( arm_packet &packet );
-        void publishPathLog( trial_packet &packet );
+        void publishTrialData( trial_packet &packet );
+        void publishMotionData( motion_packet &packet );
         void publishNetworkStatus( network_packet &packet );
 };
 

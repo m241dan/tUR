@@ -50,11 +50,9 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
         FILES
         Ambient.msg
-        ArmStatus.msg
         BBox.msg
         HaspCommand.msg
         NetworkHealth.msg
-        PathLog.msg
 )
 
 ## Generate services in the 'srv' folder

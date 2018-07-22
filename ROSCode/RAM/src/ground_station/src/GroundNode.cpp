@@ -15,8 +15,9 @@ GroundNode::GroundNode() : _node_handle("~")
 
     _ambient = _node_handle.advertise<ground_station::Ambient> ("/ambient", 10 );
     _bbox = _node_handle.advertise<ground_station::BBox> ("/bbox", 10 );
-    _arm_status = _node_handle.advertise<ground_station::ArmStatus> ("/arm_status", 10 );
-    _arm_path = _node_handle.advertise<ground_station::PathLog> ( "/arm_path", 10 );
+    _arm_status = _node_handle.advertise<arm_motion::ArmInfo> ( "/arm_status", 10 );
+    _arm_trial = _node_handle.advertise<arm_motion::TrialData> ( "/trial_data", 10 );
+    _arm_motion = _node_handle.advertise<arm_motion::MotionData> ( "/motion_data", 10 );
     _network_status = _node_handle.advertise<ground_station::NetworkHealth> ( "/network_status", 10 );
     std::chrono::system_clock::time_point chrono_now = std::chrono::system_clock::now();
     time_t now = std::chrono::system_clock::to_time_t( chrono_now );
@@ -121,9 +122,15 @@ void GroundNode::outputCallback( const std_msgs::UInt8MultiArray::ConstPtr &msg 
                     }
                     case '\x35':
                     {
-                        //pathlog
+                        //trial pack
                         trial_packet packet = extractPacket<trial_packet>( data, offset );
-                        publishPathLog( packet );
+                        publishTrialData( packet );
+                        break;
+                    }
+                    case '\x37':
+                    {
+                        motion_packet packet = extractPacket<motion_packet>( data, offset );
+                        publishMotionData( packet );
                         break;
                     }
                     case '\x36':
@@ -215,15 +222,99 @@ void GroundNode::publishBBox( bbox_packet &packet )
 
 void GroundNode::publishArmStatus( arm_packet &packet )
 {
-    ground_station::ArmStatus msg;
+    arm_motion::ArmInfo msg;
 
+    dynamixel_workbench_msgs::XH servo;
+    servo.Torque_Enable = (uint8_t)packet.turntable_onoff;
+    servo.Present_Position = packet.turntable_posi;
+    servo.Present_Velocity = packet.turntable_velo;
+    servo.Goal_Position = (uint32_t )packet.turntable_goal;
+    servo.Present_Temperature = (uint8_t)packet.turntable_temp;
+    msg.servos.push_back( servo );
+
+    servo.Torque_Enable = (uint8_t)packet.shoulder_onoff;
+    servo.Present_Position = packet.shoulder_posi;
+    servo.Present_Velocity = packet.shoulder_velo;
+    servo.Goal_Position = (uint32_t )packet.shoulder_goal;
+    servo.Present_Temperature = (uint8_t)packet.shoulder_temp;
+    msg.servos.push_back( servo );
+
+    servo.Torque_Enable = (uint8_t)packet.elbow_onoff;
+    servo.Present_Position = packet.elbow_posi;
+    servo.Present_Velocity = packet.elbow_velo;
+    servo.Goal_Position = (uint32_t )packet.elbow_goal;
+    servo.Present_Temperature = (uint8_t)packet.elbow_temp;
+    msg.servos.push_back( servo );
+
+    servo.Torque_Enable = (uint8_t)packet.wrist_onoff;
+    servo.Present_Position = packet.wrist_posi;
+    servo.Present_Velocity = packet.wrist_velo;
+    servo.Goal_Position = (uint32_t )packet.wrist_goal;
+    servo.Present_Temperature = (uint8_t)packet.wrist_temp;
+    msg.servos.push_back( servo );
+
+    servo.Torque_Enable = (uint8_t)packet.wrot_onoff;
+    servo.Present_Position = packet.wrot_posi;
+    servo.Present_Velocity = packet.wrot_velo;
+    servo.Goal_Position = (uint32_t )packet.wrot_goal;
+    servo.Present_Temperature = (uint8_t)packet.wrot_temp;
+    msg.servos.push_back( servo );
+
+    servo.Torque_Enable = (uint8_t)packet.gripper_onoff;
+    servo.Present_Position = packet.gripper_posi;
+    servo.Present_Velocity = packet.gripper_velo;
+    servo.Goal_Position = (uint32_t )packet.gripper_goal;
+    servo.Present_Temperature = (uint8_t)packet.gripper_temp;
+    msg.servos.push_back( servo );
+
+
+    _arm_status.publish( msg );
 }
 
-void GroundNode::publishPathLog( trial_packet &packet )
+void GroundNode::publishTrialData( trial_packet &packet )
 {
-    ground_station::PathLog msg;
+    arm_motion::TrialData msg;
+
+    msg.trial_name = std::string( packet.trial_name );
+    msg.start_time = packet.trial_time_start;
+    msg.stop_time = packet.trial_time_end;
+
+    _arm_trial.publish( msg );
 }
 
+
+void GroundNode::publishMotionData( motion_packet &packet )
+{
+    arm_motion::MotionData msg;
+
+    msg.start_time = packet.start_time;
+    msg.stop_time = packet.stop_time;
+    msg.servo_one_start_pos = packet.joint_one_start;
+    msg.servo_two_start_pos = packet.joint_two_start;
+    msg.servo_three_start_pos = packet.joint_three_start;
+    msg.servo_four_start_pos = packet.joint_four_start;
+    msg.servo_five_start_pos = packet.joint_five_start;
+    msg.servo_six_start_pos = packet.joint_six_start;
+
+    msg.servo_one_stop_pos = packet.joint_one_stop;
+    msg.servo_two_stop_pos = packet.joint_two_stop;
+    msg.servo_three_stop_pos = packet.joint_three_stop;
+    msg.servo_four_stop_pos = packet.joint_four_stop;
+    msg.servo_five_stop_pos = packet.joint_five_stop;
+    msg.servo_six_stop_pos = packet.joint_six_stop;
+
+    msg.start_x = packet.start_x;
+    msg.start_y = packet.start_y;
+    msg.start_z = packet.start_z;
+    msg.start_e = packet.start_e;
+
+    msg.stop_x = packet.stop_x;
+    msg.stop_y = packet.stop_y;
+    msg.stop_z = packet.stop_z;
+    msg.stop_e = packet.stop_e;
+
+
+}
 void GroundNode::publishNetworkStatus( network_packet &packet )
 {
     ground_station::NetworkHealth msg;
