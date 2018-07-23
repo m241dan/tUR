@@ -94,6 +94,7 @@ bool MotionActor::checkMotionStep()
         auto tolerance = (int32_t)joint_goals[goal_step].effort[i]; //oddly this works out that we can use the same i for all three
         if( abs( servo_positions[i] - servo_goals[i] ) > tolerance )
         {
+            ROS_INFO( "Servo[%d] not arrived.", i+1 );
             arrived = false;
             break;
         }
@@ -161,6 +162,7 @@ void MotionActor::servoMonitor( const ros::TimerEvent &event )
     {
         if( checkServoStep() ) // check for arrival
         {
+            ROS_INFO( "Servo Motion Complete" );
             arm_motion::ServoMotionResult res;
             res.success = 1;
             servo_server.setSucceeded( res );
@@ -171,7 +173,7 @@ void MotionActor::servoMonitor( const ros::TimerEvent &event )
     else
     {
         /* we got preempted */
-        action_timer.stop();
+        servo_timer.stop();
     }
 }
 
@@ -181,11 +183,11 @@ bool MotionActor::checkServoStep()
     std::vector<int32_t> servo_positions = _controller.getServoPositions();
     std::vector<int32_t> servo_goals = _controller.getServoGoals();
 
-    for( int i = 0; i < MAX_ARM_SERVO; i++ )
+    for( int i = 0; i < MAX_SERVO; i++ )
     {
+        ROS_INFO( "Servo[%d] Position[%d] Goal[%d]", i+1, servo_positions[i], servo_goals[i] );
         if( abs( servo_positions[i] - servo_goals[i] ) > 2 )
         {
-            ROS_INFO( "Servo[%d] has not arrived.", i+1 );
             arrived = false;
             break;
         }
@@ -300,12 +302,18 @@ bool MotionActor::performServoStep()
         {
             _controller.changeVelocity( x+1, _goal.velocity );
         }
-        _controller.changePosition( 1, (int32_t )_goal.servo_one );
-        _controller.changePosition( 2, (int32_t )_goal.servo_two );
-        _controller.changePosition( 3, (int32_t )_goal.servo_three );
-        _controller.changePosition( 4, (int32_t )_goal.servo_four );
-        _controller.changePosition( 5, (int32_t )_goal.servo_five );
-        _controller.changePosition( 6, (int32_t )_goal.servo_six );
+        if( (int32_t)_goal.servo_one != 0 )
+            _controller.changePosition( 1, (int32_t )_goal.servo_one );
+        if( (int32_t)_goal.servo_two != 0 )
+            _controller.changePosition( 2, (int32_t )_goal.servo_two );
+        if( (int32_t)_goal.servo_three != 0 )
+            _controller.changePosition( 3, (int32_t )_goal.servo_three );
+        if( (int32_t)_goal.servo_four != 0 )
+            _controller.changePosition( 4, (int32_t )_goal.servo_four );
+        if( (int32_t)_goal.servo_five != 0 )
+            _controller.changePosition( 5, (int32_t )_goal.servo_five );
+        if( (int32_t)_goal.servo_six != 0 )
+            _controller.changePosition( 6, (int32_t )_goal.servo_six );
 
     }
 

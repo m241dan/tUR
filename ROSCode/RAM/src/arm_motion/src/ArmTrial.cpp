@@ -188,6 +188,7 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, geometry_msgs::Pose 
                     break;
                 }
                 case SERVO_R:
+                case SERVO_ABSOLUTE:
                 {
                     lua_pushstring( lua, "s1" );
                     lua_gettable( lua, -2 );
@@ -212,7 +213,7 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, geometry_msgs::Pose 
                     lua_pushstring( lua, "s6" );
                     lua_gettable( lua, -2 );
                     motion.servo_six = (int16_t) lua_tointeger( lua, -1 );
-                    lua_pop( lua, 1 );
+                    lua_pop( lua, 2 );
                     _motions.push_back( motion );
                     *success = _servo_client.waitForServer( ros::Duration( 10 ));
                     break;
