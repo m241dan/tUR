@@ -24,7 +24,7 @@ void NetworkNode::setupSubscribers()
 }
 void NetworkNode::setupServices()
 {
-    _snap_one = _node_handle.serviceClient<ram_network::Snap>( _cam_mons[0] + "/takeSnap" );
+    _snap_one = _node_handle.serviceClient<ram_network::Snap>( "/" + _cam_mons[0] + "/takeSnap" );
     _snap_two = _node_handle.serviceClient<ram_network::Snap>("/" + _cam_mons[1] + "/takeSnap" );
     _snap_three = _node_handle.serviceClient<ram_network::Snap>( "/" + _cam_mons[2] + "/takeSnap" );
     _snap_four = _node_handle.serviceClient<ram_network::Snap>( "/" +_cam_mons[3] + "/takeSnap" );
@@ -57,12 +57,12 @@ void NetworkNode::startSerialAndI2C()
 void NetworkNode::setupPublishers()
 {
     _clock_publisher            = _node_handle.advertise<rosgraph_msgs::Clock> ( "clock", 10 );
-    _trial_publisher            = _node_handle.advertise<std_msgs::UInt8>( "trial/selector", 10 );
-    _manual_waypoint_publisher  = _node_handle.advertise<ram_network::ManualWaypoint>( "trial/manual_waypoint", 10 );
-    _servo_increment_publisher  = _node_handle.advertise<ram_network::ServoChange>( "trial/servo_increment", 10 );
+    _trial_publisher            = _node_handle.advertise<std_msgs::UInt8>( "/trial/selector", 10 );
+    _manual_waypoint_publisher  = _node_handle.advertise<ram_network::ManualWaypoint>( "/trial/manual_waypoint", 10 );
+    _servo_increment_publisher  = _node_handle.advertise<ram_network::ServoChange>( "/trial/servo_increment", 10 );
     _servo_decrement_publisher  = _node_handle.advertise<ram_network::ServoChange>( "trial/servo_decrement", 10 );
-    _arm_mode_publisher         = _node_handle.advertise<std_msgs::UInt8>( "trial/arm_mode", 10 );
-    _trial_queue_reset_publisher= _node_handle.advertise<std_msgs::UInt8>( "trial/queue_reset", 10 );
+    _arm_mode_publisher         = _node_handle.advertise<std_msgs::UInt8>( "/trial/arm_mode", 10 );
+    _trial_queue_reset_publisher= _node_handle.advertise<std_msgs::UInt8>( "/trial/queue_reset", 10 );
 }
 void NetworkNode::setupTimers()
 {
