@@ -72,7 +72,7 @@
         <param name="framerate" value="1"/>
     </node>
 
-    <node name="$(arg cam_node_one)" pkg="usb_cam" type="usb_cam_node" >
+    <node name="$(arg cam_node_four)" pkg="usb_cam" type="usb_cam_node" >
         <param name="video_device" value="$(arg dev4)"/>
         <param name="image_width" value="720"/>
         <param name="image_height" value="480"/>
