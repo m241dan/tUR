@@ -18,19 +18,19 @@
     </node>
 
     <node name="obs_cam_one" pkg="usb_cam_sim" type="usb_cam_sim_node" output="screen" >
-        <param name="img_location" value="/home/ubuntu/tUR/ROSCode/RAM/sim_imgs/cam_one.png" />
+        <param name="img_location" value="$(env HOME)/tUR/ROSCode/RAM/sim_imgs/cam_one.png" />
     </node>
 
     <node name="obs_cam_two" pkg="usb_cam_sim" type="usb_cam_sim_node" output="screen" >
-        <param name="img_location" value="/home/ubuntu/tUR/ROSCode/RAM/sim_imgs/cam_two.png" />
+        <param name="img_location" value="$(env HOME)/tUR/ROSCode/RAM/sim_imgs/cam_two.png" />
     </node>
 
     <node name="obs_cam_three" pkg="usb_cam_sim" type="usb_cam_sim_node" output="screen" >
-        <param name="img_location" value="/home/ubuntu/tUR/ROSCode/RAM/sim_imgs/cam_three.png" />
+        <param name="img_location" value="$(env HOME)/tUR/ROSCode/RAM/sim_imgs/cam_three.png" />
     </node>
 
     <node name="obs_cam_four" pkg="usb_cam_sim" type="usb_cam_sim_node" output="screen" >
-        <param name="img_location" value="/home/ubuntu/tUR/ROSCode/RAM/sim_imgs/cam_four.png" />
+        <param name="img_location" value="$(env HOME)/tUR/ROSCode/RAM/sim_imgs/cam_four.png" />
     </node>
 
     <node name="cam_one_mon" pkg="cam_monitor" type="cam_monitor_node">
