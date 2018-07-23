@@ -13,15 +13,15 @@
 
     <!-- CAMERA SECTION -->
     <node name="obs_cam_five" pkg="usb_cam_sim" type="usb_cam_sim_node" output="screen" >
-        <param name="img_location" value="/home/ubuntu/tUR/ROSCode/RAM/sim_imgs/cam_five.png" />
+        <param name="img_location" value="$(env HOME)/tUR/ROSCode/RAM/sim_imgs/cam_five.png" />
     </node>
 
     <node name="obs_cam_six" pkg="usb_cam_sim" type="usb_cam_sim_node" output="screen" >
-        <param name="img_location" value="/home/ubuntu/tUR/ROSCode/RAM/sim_imgs/cam_six.png" />
+        <param name="img_location" value="$(env HOME)/tUR/ROSCode/RAM/sim_imgs/cam_six.png" />
     </node>
 
     <node name="obs_cam_seven" pkg="usb_cam_sim" type="usb_cam_sim_node" output="screen" >
-        <param name="img_location" value="/home/ubuntu/tUR/ROSCode/RAM/sim_imgs/cam_seven.png" />
+        <param name="img_location" value="$(env HOME)/tUR/ROSCode/RAM/sim_imgs/cam_seven.png" />
     </node>
 
 </launch>
