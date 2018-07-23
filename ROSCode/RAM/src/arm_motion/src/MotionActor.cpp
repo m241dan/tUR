@@ -41,6 +41,7 @@ void MotionActor::preemptCallBack()
 {
     result.success = 0;
     action_server.setPreempted( result );
+    _controller.holdPosition();
 }
 
 void MotionActor::motionMonitor( const ros::TimerEvent &event )
@@ -57,6 +58,7 @@ void MotionActor::motionMonitor( const ros::TimerEvent &event )
                 {
                     result.success = 0;
                     action_server.setAborted( result );
+                    _controller.holdPosition();
                 }
                 else
                 {
@@ -105,6 +107,9 @@ bool MotionActor::performMotionStep()
     if( goal_step != goal_max )
     {
         uint8_t id = 0;
+        for( int x = 0; x < MAX_SERVO; x++ )
+            _controller.loadDefault( ++id );
+        id = 0;
         for( auto velocity : joint_goals[goal_step].velocity )
         {
             id++;
@@ -180,6 +185,7 @@ bool MotionActor::checkServoStep()
     {
         if( abs( servo_positions[i] - servo_goals[i] ) > 2 )
         {
+            ROS_INFO( "Servo[%d] has not arrived.", i+1 );
             arrived = false;
             break;
         }
