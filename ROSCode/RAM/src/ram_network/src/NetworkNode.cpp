@@ -60,7 +60,7 @@ void NetworkNode::setupPublishers()
     _trial_publisher            = _node_handle.advertise<std_msgs::UInt8>( "/trial/selector", 10 );
     _manual_waypoint_publisher  = _node_handle.advertise<ram_network::ManualWaypoint>( "/trial/manual_waypoint", 10 );
     _servo_increment_publisher  = _node_handle.advertise<ram_network::ServoChange>( "/trial/servo_increment", 10 );
-    _servo_decrement_publisher  = _node_handle.advertise<ram_network::ServoChange>( "trial/servo_decrement", 10 );
+    _servo_decrement_publisher  = _node_handle.advertise<ram_network::ServoChange>( "/trial/servo_decrement", 10 );
     _arm_mode_publisher         = _node_handle.advertise<std_msgs::UInt8>( "/trial/arm_mode", 10 );
     _trial_queue_reset_publisher= _node_handle.advertise<std_msgs::UInt8>( "/trial/queue_reset", 10 );
 }
