@@ -18,15 +18,15 @@ int main( int argc, char *argv[] )
         // rate 5 Hz
         // filter serial read/writes at 1 Hz (so once every 5 times)
             // service call to do serial loop
-        // service call to do servo loop
         // service call to do i2c loop
+        // service call to do servo loop
 
     ros::init( argc, argv, "arm_synchronizer" );
     ros::NodeHandle node_handle;
     ros::ServiceClient serial_service = node_handle.serviceClient<std_srvs::Trigger>( serial_service_string );
     ros::ServiceClient servo_loop = node_handle.serviceClient<std_srvs::Trigger>( servo_loop_string );
     ros::ServiceClient i2c_loop = node_handle.serviceClient<std_srvs::Trigger>( i2c_loop_string );
-    ros::Rate rate(1.25); // 5Hz, rate takes Hertz
+    ros::Rate rate(1.0); // 5Hz, rate takes Hertz
     std_srvs::Trigger trigger;
 
     int serial_filter = 0;
@@ -59,7 +59,7 @@ int main( int argc, char *argv[] )
             }
         }
 
-        if( serial_filter == 3)
+        if( serial_filter == 4)
         {
             if( ros::service::exists( servo_loop_string, true ) )
             {
@@ -73,7 +73,7 @@ int main( int argc, char *argv[] )
         }
 
         rate.sleep();
-        if( serial_filter >= 3 )
+        if( serial_filter >= 5 )
             serial_filter = 0;
     }
 
