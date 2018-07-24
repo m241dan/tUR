@@ -45,7 +45,7 @@
     </node>
 
     <!-- Arm Motion Nodes -->
-    <node name="arm_motion_driver" pkg="arm_motion" type="arm_motion_driver" />
+    <node name="arm_motion_driver" pkg="arm_motion" type="arm_motion_driver" output="screen" />
     <node name="arm_motion_kinematics" pkg="arm_motion" type="arm_motion_kinematics" />
     <node name="arm_motion_trial" pkg="arm_motion" type="arm_motion_trial" />
     <node name="arm_motion_path" pkg="arm_motion" type="arm_motion_path" />
@@ -63,6 +63,9 @@
 
         <param name="camera_frame_id" value="raspicam"/>
     </node>
+    <node name="synchronizer" pkg="ram_synchronizer" type="ram_synchronizer_node" output="screen" />
+
+
     <!--
 
     <node name="apriltag_detector_one" pkg="apriltags_ros" type="apriltag_detector_node" >

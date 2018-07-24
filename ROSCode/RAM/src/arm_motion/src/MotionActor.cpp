@@ -60,6 +60,7 @@ void MotionActor::motionMonitor()
     {
         if( goal_step == -1 )
         {
+            goal_step = 0;
             performMotionStep();
         }
         else
@@ -153,7 +154,7 @@ void MotionActor::servoGoalCallback()
 {
     /*setup the new motion*/
     _goal = *servo_server.acceptNewGoal();
-    goal_step = 0;
+    goal_step = -1;
     goal_max = 1;
 
     std_srvs::Empty empty;
@@ -173,6 +174,7 @@ void MotionActor::servoMonitor()
     {
         if( goal_step == -1 )
         {
+            goal_step = 0;
             performServoStep();
         }
         else

@@ -28,41 +28,51 @@ int main( int argc, char *argv[] )
     ros::Rate rate(5); // 5Hz, rate takes Hertz
     std_srvs::Trigger trigger;
 
-    uint8_t serial_filter = 0;
+    int serial_filter = 0;
 
     while( ros::ok() )
     {
-        if( ++serial_filter >= 5 )
+        serial_filter++;
+        if( serial_filter == 1 )
         {
             if( ros::service::exists( serial_service_string, true ))
             {
+                trigger.response.success = false;
                 serial_service.call( trigger );
                 if( !trigger.response.success )
                 {
                     ROS_ERROR( "Synchronizer failed to run Serial Loop" );
                 }
             }
-            serial_filter = 0;
         }
-
-        if( ros::service::exists( servo_loop_string, true ) )
+        if( serial_filter == 14 )
         {
-            servo_loop.call( trigger );
-            if( !trigger.response.success )
+            if( ros::service::exists( servo_loop_string, true ) )
             {
-                ROS_ERROR( "Synchronizer failed to run Servo Loop" );
+                trigger.response.success = false;
+                servo_loop.call( trigger );
+                if( !trigger.response.success )
+                {
+                    ROS_ERROR( "Synchronizer failed to run Servo Loop" );
+                }
             }
         }
 
-        if( ros::service::exists( i2c_loop_string, true ) )
+        if( serial_filter == 8 )
         {
-            i2c_loop.call( trigger );
-            if( !trigger.response.success )
+            if( ros::service::exists( i2c_loop_string, true ) )
             {
-                ROS_ERROR( "Synchronizer failed to run I2C Loop" );
+                trigger.response.success = false;
+                i2c_loop.call( trigger );
+                if( !trigger.response.success )
+                {
+                    ROS_ERROR( "Synchronizer failed to run I2C Loop" );
+                }
             }
         }
         rate.sleep();
+        if( serial_filter > 18 )
+            serial_filter = 0;
     }
 
     return 0;

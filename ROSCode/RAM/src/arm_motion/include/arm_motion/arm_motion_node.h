@@ -89,7 +89,7 @@ const std::string valid_commands[MAX_COMMAND] = {
 };
 
 const std::string serial_service_string( "/synchronizer/serial" );
-const std::string servo_loop_string( "/synchronizer/servos" );
-const std::string i2c_loop_string( "/synchronizer/i2c" );
+const std::string servo_loop_string    ( "/synchronizer/servos" );
+const std::string i2c_loop_string      ( "/synchronizer/i2c" );
 
 #endif //ARM_MOTION_ARM_MOTION_NODE_H
