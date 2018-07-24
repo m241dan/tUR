@@ -665,6 +665,7 @@ void NetworkNode::rpiCommanding( const ros::TimerEvent &event )
 
 void NetworkNode::doArmCommand()
 {
+    ram_network::Snap snap;
     ground_command com = _arm_commands.front();
     _arm_commands.pop();
 
@@ -804,6 +805,27 @@ void NetworkNode::doArmCommand()
             change.servo_change = com.command[1];
             _servo_decrement_publisher.publish( change );
         }
+            break;
+        case ARM_CAM_ONE[0]:
+            if( com.command[1] == ARM_CAM_ONE[1] )
+            {
+                _snap_one.call(snap);
+                packetizeImage( snap.response.location );
+            }
+            break;
+        case ARM_CAM_TWO[0]:
+            if( com.command[1] == ARM_CAM_TWO[1] )
+            {
+                _snap_one.call(snap);
+                packetizeImage( snap.response.location );
+            }
+            break;
+        case ARM_CAM_THR[0]:
+            if( com.command[1] == ARM_CAM_THR[1] )
+            {
+                _snap_one.call(snap);
+                packetizeImage( snap.response.location );
+            }
             break;
 
     }
