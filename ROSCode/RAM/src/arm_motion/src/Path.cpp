@@ -6,7 +6,6 @@
 
 Path::Path( arm_motion::MotionMsg motion, geometry_msgs::Pose pose ) : _motion_guidelines(std::move(motion)), _present_pose(pose), _A(0.), _B(0.), _C(0.), _D(0.)
 {
-    ROS_INFO( "_motion_guidelines.x[%f]", _motion_guidelines.x );
     generateFinalPose();
     generatePathConstants();
     generatePath();
@@ -32,11 +31,8 @@ void Path::generateFinalPose()
         }
         case DISCRETE_W:
             _final_pose.position.x = _motion_guidelines.x;
-            ROS_INFO( "_final_pose_x[%f]", _final_pose.position.x );
             _final_pose.position.y = _motion_guidelines.y;
-            ROS_INFO( "_final_pose_y[%f]", _final_pose.position.y );
             _final_pose.position.z = _motion_guidelines.z;
-            ROS_INFO( "_final_pose_z[%f]", _final_pose.position.z );
             _final_pose.orientation.w = _motion_guidelines.eeo;
             break;
     }
@@ -45,15 +41,12 @@ void Path::generateFinalPose()
 void Path::generatePathConstants()
 {
     auto t = (double)_motion_guidelines.precision;
-    ROS_INFO( "t[%f]",t );
-    ROS_INFO( "fp[%f] pp[%f]", _final_pose.position.x, _present_pose.position.x );
+
     _A = ( _final_pose.position.x - _present_pose.position.x ) / t;
     _B = ( _final_pose.position.y - _present_pose.position.y ) / t;
     _C = ( _final_pose.position.z - _present_pose.position.z ) / t;
     _D = ( _final_pose.orientation.w - _present_pose.orientation.w ) / t;
-    ROS_INFO( "A[%f]", _A );
-    ROS_INFO( "B[%f]", _B );
-    ROS_INFO( "C[%f]", _C );
+
 }
 
 void Path::generatePath()
@@ -128,9 +121,11 @@ void Path::setJointPositionVelocities()
         {
             double velocity_mutiplier = position / max_travel;
             //This ensures that we always have a joint velocity of at least 2. Which is really slow, so plenty of time to interrupt
-            double velocity = 2.0 + fabs( (double)_motion_guidelines.velocity * velocity_mutiplier );
+            double velocity = fabs( (double)_motion_guidelines.velocity * velocity_mutiplier );
             if( velocity > MAX_VELOCITY )
                 velocity = MAX_VELOCITY;
+            else if( velocity <= 1.0 )
+                velocity = 1.0;
             joint.velocity.push_back( velocity );
         }
     }
@@ -140,7 +135,6 @@ void Path::setJointPositionEffort()
 {
     for( auto &joint : _output_joint_states )
     {
-        ROS_INFO( "Smoothness[%d]", (int)_motion_guidelines.smoothness );
         joint.effort = std::vector<double>( joint.position.size(), (double)_motion_guidelines.smoothness );
     }
     auto &last_effort = _output_joint_states.back().effort;
@@ -163,7 +157,7 @@ sensor_msgs::JointState Path::inverseKinematics( geometry_msgs::Pose &pose )
     double w = pose.orientation.w;
 
     /* new kinematics by hand minus the theta_4 part */
-    ROS_INFO( "PK: X[%f] Y[%f] Z[%f] E[%f]", _present_pose.position.x, _present_pose.position.y, _present_pose.position.z, _present_pose.orientation.w );
+    //ROS_INFO( "PK: X[%f] Y[%f] Z[%f] E[%f]", _present_pose.position.x, _present_pose.position.y, _present_pose.position.z, _present_pose.orientation.w );
     ROS_INFO( "X[%f] Y[%f] Z[%f] E[%f]", x, y, z, w );
     double X_new = sqrt( x * x + y * y );
     //ROS_INFO( "X_new: %f", X_new );
@@ -208,6 +202,23 @@ sensor_msgs::JointState Path::inverseKinematics( geometry_msgs::Pose &pose )
 
 
     double theta_4 = w - theta_2 - theta_3;
+    if( theta_1 > M_PI )
+        theta_1 -= M_PI;
+    else if( theta_1 < -M_PI )
+        theta_1 += M_PI;
+    if( theta_2 > M_PI )
+        theta_2 -= M_PI;
+    else if( theta_2 < -M_PI )
+        theta_2 += M_PI;
+    if( theta_3 > M_PI )
+        theta_3 -= M_PI;
+    else if( theta_3 < -M_PI )
+        theta_3 += M_PI;
+    if( theta_4 > M_PI )
+        theta_4 -= M_PI;
+    else if( theta_4 < -M_PI )
+        theta_4 += M_PI;
+
     ROS_INFO( "Theta_2: %f", theta_2 );
     ROS_INFO( "Theta_3: %f", theta_3 );
     ROS_INFO( "Theta_4: %f", theta_4 );

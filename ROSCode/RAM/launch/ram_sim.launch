@@ -6,22 +6,22 @@
 
     <!-- ARM MOTION SECTION -->
 
-    <node launch-prefix="xterm -e gdb -ex run --args" name="arm_motion_driver" pkg="arm_motion" type="arm_motion_driver" />
-    <node launch-prefix="xterm -e gdb -ex run --args" name="arm_motion_kinematics" pkg="arm_motion" type="arm_motion_kinematics" />
-    <node launch-prefix="xterm -e gdb -ex run --args" name="arm_motion_trial" pkg="arm_motion" type="arm_motion_trial" />
-    <node launch-prefix="xterm -e gdb -ex run --args" name="arm_motion_path" pkg="arm_motion" type="arm_motion_path" />
+    <node name="arm_motion_driver" pkg="arm_motion" type="arm_motion_driver" output="screen" />
+    <node name="arm_motion_kinematics" pkg="arm_motion" type="arm_motion_kinematics" output="screen" />
+    <node name="arm_motion_trial" pkg="arm_motion" type="arm_motion_trial" output="screen" />
+    <node name="arm_motion_path" pkg="arm_motion" type="arm_motion_path" output="screen" />
 
     <!-- CAMERA SECTION -->
     <node name="obs_cam_five" pkg="usb_cam_sim" type="usb_cam_sim_node" output="screen" >
-        <param name="img_location" value="/home/ubuntu/tUR/ROSCode/RAM/sim_imgs/cam_five.png" />
+        <param name="img_location" value="$(env HOME)/tUR/ROSCode/RAM/sim_imgs/cam_five.png" />
     </node>
 
     <node name="obs_cam_six" pkg="usb_cam_sim" type="usb_cam_sim_node" output="screen" >
-        <param name="img_location" value="/home/ubuntu/tUR/ROSCode/RAM/sim_imgs/cam_six.png" />
+        <param name="img_location" value="$(env HOME)/tUR/ROSCode/RAM/sim_imgs/cam_six.png" />
     </node>
 
     <node name="obs_cam_seven" pkg="usb_cam_sim" type="usb_cam_sim_node" output="screen" >
-        <param name="img_location" value="/home/ubuntu/tUR/ROSCode/RAM/sim_imgs/cam_seven.png" />
+        <param name="img_location" value="$(env HOME)/tUR/ROSCode/RAM/sim_imgs/cam_seven.png" />
     </node>
 
 </launch>

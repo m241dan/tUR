@@ -14,22 +14,22 @@ ArmTrial::ArmTrial( arm_motion::ServoChange sc, geometry_msgs::Pose &pose, bool 
     motion.type = SERVO_R;
     switch( sc.servo_id )
     {
-        case 0:
+        case 1:
             motion.servo_one = sc.servo_change;
             break;
-        case 1:
+        case 2:
             motion.servo_two = sc.servo_change;
             break;
-        case 2:
+        case 3:
             motion.servo_three = sc.servo_change;
             break;
-        case 3:
+        case 4:
             motion.servo_four = sc.servo_change;
             break;
-        case 4:
+        case 5:
             motion.servo_five = sc.servo_change;
             break;
-        case 5:
+        case 6:
             motion.servo_six = sc.servo_change;
             break;
     }
@@ -113,72 +113,112 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, geometry_msgs::Pose 
             motion.type = (uint8_t)lua_tointeger( lua, -1 );
             lua_pop( lua, 1 );
 
-            /*
-             * Precision
-             */
-            lua_pushstring( lua, "precision" );
-            lua_gettable( lua, -2 );
-            motion.precision = (uint8_t)lua_tointeger( lua, -1 );
-            lua_pop( lua, 1 );
+            switch( motion.type )
+            {
+                case VISION:
+                case DISCRETE_W:
+                case DISCRETE_R:
+                {
+                    /*
+                     * Precision
+                     */
+                    lua_pushstring( lua, "precision" );
+                    lua_gettable( lua, -2 );
+                    motion.precision = (uint8_t) lua_tointeger( lua, -1 );
+                    lua_pop( lua, 1 );
 
-            /*
-             * Smoothness
-             */
-            lua_pushstring( lua, "smoothness" );
-            lua_gettable( lua, -2 );
-            motion.smoothness = (uint16_t)lua_tointeger( lua, -1 );
-            ROS_INFO( "Smoothness[%d]", (int)motion.smoothness );
-            lua_pop( lua, 1 );
+                    /*
+                     * Smoothness
+                     */
+                    lua_pushstring( lua, "smoothness" );
+                    lua_gettable( lua, -2 );
+                    motion.smoothness = (uint16_t) lua_tointeger( lua, -1 );
+                    ROS_INFO( "Smoothness[%d]", (int) motion.smoothness );
+                    lua_pop( lua, 1 );
 
-            /*
-             * Tolerance
-             */
-            lua_pushstring( lua, "tolerance" );
-            lua_gettable( lua, -2 );
-            motion.tolerance = (uint16_t)lua_tointeger( lua, - 1 );
-            lua_pop( lua, 1 );
+                    /*
+                     * Tolerance
+                     */
+                    lua_pushstring( lua, "tolerance" );
+                    lua_gettable( lua, -2 );
+                    motion.tolerance = (uint16_t) lua_tointeger( lua, -1 );
+                    lua_pop( lua, 1 );
 
-            /*
-             * Shape
-             */
-            lua_pushstring( lua, "shape" );
-            lua_gettable( lua, -2 );
-            motion.shape = std::string( lua_tostring( lua, -1 ) );
-            lua_pop( lua, 1 );
+                    /*
+                     * Shape
+                     */
+                    lua_pushstring( lua, "shape" );
+                    lua_gettable( lua, -2 );
+                    motion.shape = std::string( lua_tostring( lua, -1 ));
+                    lua_pop( lua, 1 );
 
-            /*
-             * EEO
-             */
-            lua_pushstring( lua, "eeo" );
-            lua_gettable( lua, -2 );
-            motion.eeo = lua_tonumber( lua, -1 );
-            lua_pop( lua, 1 );
+                    /*
+                     * EEO
+                     */
+                    lua_pushstring( lua, "eeo" );
+                    lua_gettable( lua, -2 );
+                    motion.eeo = lua_tonumber( lua, -1 );
+                    lua_pop( lua, 1 );
 
-            /*
-             * X
-             */
-            lua_pushstring( lua, "x" );
-            lua_gettable( lua, -2 );
-            motion.x = lua_tonumber( lua, -1 );
-            lua_pop( lua, 1 );
+                    /*
+                     * X
+                     */
+                    lua_pushstring( lua, "x" );
+                    lua_gettable( lua, -2 );
+                    motion.x = lua_tonumber( lua, -1 );
+                    lua_pop( lua, 1 );
 
-            /*
-             * Y
-             */
-            lua_pushstring( lua, "y" );
-            lua_gettable( lua, -2 );
-            motion.y = lua_tonumber( lua, -1 );
-            lua_pop( lua, 1 );
+                    /*
+                     * Y
+                     */
+                    lua_pushstring( lua, "y" );
+                    lua_gettable( lua, -2 );
+                    motion.y = lua_tonumber( lua, -1 );
+                    lua_pop( lua, 1 );
 
-            /*
-             * Z
-             */
-            lua_pushstring( lua, "z" );
-            lua_gettable( lua, -2 );
-            motion.z = lua_tonumber( lua, -1 );
-            lua_pop( lua, 2 ); /* pop the number and the motion off */
-            /* stack: trial table */
-            _motions.push_back( motion );
+                    /*
+                     * Z
+                     */
+                    lua_pushstring( lua, "z" );
+                    lua_gettable( lua, -2 );
+                    motion.z = lua_tonumber( lua, -1 );
+                    lua_pop( lua, 2 ); /* pop the number and the motion off */
+                    /* stack: trial table */
+                    _motions.push_back( motion );
+                    break;
+                }
+                case SERVO_R:
+                case SERVO_ABSOLUTE:
+                {
+                    lua_pushstring( lua, "s1" );
+                    lua_gettable( lua, -2 );
+                    motion.servo_one = (int16_t) lua_tointeger( lua, -1 );
+                    lua_pop( lua, 1 );
+                    lua_pushstring( lua, "s2" );
+                    lua_gettable( lua, -2 );
+                    motion.servo_two = (int16_t) lua_tointeger( lua, -1 );
+                    lua_pop( lua, 1 );
+                    lua_pushstring( lua, "s3" );
+                    lua_gettable( lua, -2 );
+                    motion.servo_three = (int16_t) lua_tointeger( lua, -1 );
+                    lua_pop( lua, 1 );
+                    lua_pushstring( lua, "s4" );
+                    lua_gettable( lua, -2 );
+                    motion.servo_four = (int16_t) lua_tointeger( lua, -1 );
+                    lua_pop( lua, 1 );
+                    lua_pushstring( lua, "s5" );
+                    lua_gettable( lua, -2 );
+                    motion.servo_five = (int16_t) lua_tointeger( lua, -1 );
+                    lua_pop( lua, 1 );
+                    lua_pushstring( lua, "s6" );
+                    lua_gettable( lua, -2 );
+                    motion.servo_six = (int16_t) lua_tointeger( lua, -1 );
+                    lua_pop( lua, 2 );
+                    _motions.push_back( motion );
+                    *success = _servo_client.waitForServer( ros::Duration( 10 ));
+                    break;
+                }
+            }
         }
         lua_pop( lua, 1 );
         /* stack: nil */

@@ -7,7 +7,7 @@
 /*
  * Public
  */
-DynamixelController::DynamixelController( std::string bus )
+DynamixelController::DynamixelController( std::string bus ) : _data_fresh(false)
 {
     _valid = _bench.begin( bus.c_str());
 
@@ -23,7 +23,7 @@ DynamixelController::DynamixelController( std::string bus )
             setupPublishers();
             setupTimer();
             changePosition( WRIST_ROT_SERVO+1, 0.0 );
-            changePosition( GRIPPER_SERVO+1, M_PI_4 );
+            changePosition( GRIPPER_SERVO+1, 2510 );
         }
         for( int i = 0; i < MAX_SERVO; i++ )
         {
@@ -43,6 +43,7 @@ bool DynamixelController::benchWrite( ServoCommand com )
 {
     bool success = false;
 
+    ROS_INFO( "Attempting to Write %d %s %d", com.id, com.command.c_str(), com.value );
     if( _valid )
     {
         if( validCommand( com ))
@@ -139,8 +140,7 @@ bool DynamixelController::changePosition( uint8_t id, double radian )
     if( id == 4 )
         radian *= -1;
 
-    std::cout << std::endl;
-
+    ROS_INFO( "Sending %f to Servo[%d]", radian, id );
     com.id = id;
     com.command = "Goal_Position";
     com.value = _bench.convertRadian2Value( id, (float)radian );
@@ -219,28 +219,39 @@ bool DynamixelController::verifyServos( int expected_number )
 void DynamixelController::initializeServos()
 {
     ServoCommand max_vel;
-    ServoCommand pid_i_gain;
-    ServoCommand pro_vel;
+    ServoCommand mode;
+    ServoCommand max_current;
+    ServoCommand shutdown;
 
-    /* this part can be possible wrapped up with some Lua config files */
+
     max_vel.command = "Velocity_Limit";
     max_vel.value = MAX_VELOCITY;
-    pid_i_gain.command = "Position_I_Gain";
-    pid_i_gain.value = PID_I_GAIN;
-    pro_vel.command = "Profile_Velocity";
-    pro_vel.value = MAX_VELOCITY;
+
+    mode.command = "Operating_Mode";
+    mode.value = 3;
+
+
+    max_current.command = "Goal_Current";
+    max_current.value = 648;
+
+    shutdown.command = "Shutdown";
+    shutdown.value = 20;
+
 
     for( int i = 0; i < MAX_SERVO; i++ )
     {
         uint8_t id = (uint8_t)(i + 1);
         max_vel.id = id;
-        pid_i_gain.id = id;
-        pro_vel.id = id;
+        mode.id = id;
+        max_current.id = id;
+        shutdown.id = id;
 
         _bench.reboot( id );
         benchWrite( max_vel );
-        benchWrite( pro_vel );
-        benchWrite( pid_i_gain );
+        benchWrite( max_current );
+        benchWrite( mode );
+        benchWrite( shutdown );
+        loadDefault( id );
     }
     ROS_INFO( "%s: complete", __FUNCTION__ );
 }
@@ -300,13 +311,13 @@ void DynamixelController::updateAndPublishServoInfo( const ros::TimerEvent &even
 
 inline void DynamixelController::updateServos()
 {
-    for( int i = 0; i < MAX_SERVO; i++ )
+    for( uint8_t i = 0; i < MAX_SERVO; i++ )
     {
         /*
          * This is going to be very explicit but slightly slower in the growth department.
          * However, since this doesn't really have to deal with success checking, it should be fine.
          */
-        uint8_t id = i + 1;
+        uint8_t id = i + (uint8_t)1;
         servo_info[i].ID = id;
         servo_info[i].Torque_Enable = (uint8_t)  _bench.itemRead(id, "Torque_Enable");
         servo_info[i].Goal_Position = (uint32_t) _bench.itemRead(id, "Goal_Position");
@@ -316,12 +327,14 @@ inline void DynamixelController::updateServos()
         servo_info[i].Present_Temperature = (uint8_t) _bench.itemRead(id, "Present_Temperature");
         servo_info[i].Present_Current = (int16_t) _bench.itemRead( id, "Present_Current" );
         servo_info[i].Current_Limit = (uint16_t) _bench.itemRead( id, "Current_Limit" );
+        servo_info[i].Position_D_Gain = (uint16_t)_bench.itemRead( id, "Position_D_Gain" );
 
         joints.position[i] = _bench.convertValue2Radian( id, servo_info[i].Present_Position );
         joints.velocity[i] = servo_info[i].Present_Velocity;
         joints.effort[i] = servo_info[i].Present_Current;
     }
     joints.position[3] *= (-1); //specific to our arm
+    _data_fresh = true;
 }
 
 inline void DynamixelController::publishServoInfo()
@@ -367,3 +380,79 @@ bool DynamixelController::analyzeServoResponse( std::string fun_name, bool *resp
     return result;
 }
 
+bool DynamixelController::loadDefault( uint8_t id )
+{
+    ServoCommand pid_p;
+    ServoCommand pid_i;
+    ServoCommand pid_d;
+    ServoCommand v_pid_p;
+    ServoCommand v_pid_i;
+    ServoCommand profile_acceleration;
+
+    pid_p.id = id;
+    pid_p.command = "Position_P_Gain";
+    pid_p.value = 900;
+
+    pid_i.id = id;
+    pid_i.command = "Position_I_Gain";
+    pid_i.value = PID_I_GAIN;
+
+    pid_d.id = id;
+    pid_d.command = "Position_D_Gain";
+    pid_d.value = 0;
+
+    v_pid_p.id = id;
+    v_pid_p.command = "Velocity_P_Gain";
+    v_pid_p.value = 1920;
+
+    v_pid_i.id = id;
+    v_pid_i.command = "Velocity_I_Gain";
+    v_pid_i.value = 100;
+
+    profile_acceleration.id = id;
+    profile_acceleration.command = "Profile_Acceleration";
+    profile_acceleration.value = 1;
+
+    bool success = false;
+    success = benchWrite( pid_p );
+    if( !success )
+    {
+        ROS_INFO( "Failed to write PID_P" );
+        return success;
+    }
+    success = benchWrite( pid_i );
+    if( !success )
+    {
+        ROS_INFO( "Failed to write PID_I" );
+        return success;
+    }
+    success = benchWrite( pid_d );
+    if( !success )
+    {
+        ROS_INFO( "Failed to write PID_D" );
+        return success;
+    }
+    success = benchWrite( v_pid_p );
+    if( !success )
+    {
+        ROS_INFO( "Failed to write V_PID_P" );
+        return success;
+    }
+    success = benchWrite( v_pid_i );
+    if( !success )
+    {
+        ROS_INFO( "Failed to write V_PID_I" );
+        return success;
+    }
+    return success;
+}
+
+bool DynamixelController::isDataFresh()
+{
+    return _data_fresh;
+}
+
+bool DynamixelController::setDataSeen()
+{
+    _data_fresh = false;
+}

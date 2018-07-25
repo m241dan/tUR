@@ -31,7 +31,7 @@ constexpr uint8_t ARM_MAN_E[2]              = { '\x21', '\x00' };
 constexpr uint8_t ARM_EXEC_MAN[2]           = { '\x22', '\x01' };
 constexpr uint8_t ARM_MODE[2]               = { '\x23', '\x00' };
 constexpr uint8_t ARM_ADD_TRIAL[2]          = { '\x24', '\x00' };
-constexpr uint8_t ARM_RESET_TRIAL[2]        = { '\x26', '\x00' };
+constexpr uint8_t ARM_RESET_TRIAL[2]        = { '\x26', '\x01' };
 constexpr uint8_t ARM_ROT_INC[2]            = { '\x27', '\x00' };
 constexpr uint8_t ARM_ROT_DEC[2]            = { '\x28', '\x00' };
 constexpr uint8_t ARM_SHO_INC[2]            = { '\x29', '\x00' };
@@ -44,10 +44,10 @@ constexpr uint8_t ARM_WRR_INC[2]            = { '\x2F', '\x00' };
 constexpr uint8_t ARM_WRR_DEC[2]            = { '\x30', '\x00' };
 constexpr uint8_t ARM_GRP_INC[2]            = { '\x31', '\x00' };
 constexpr uint8_t ARM_GRP_DEC[2]            = { '\x32', '\x00' };
-constexpr uint8_t ARM_CAM_ONE[2]            = { '\x33', '\x00' };
-constexpr uint8_t ARM_CAM_TWO[2]            = { '\x34', '\x00' };
-constexpr uint8_t ARM_CAM_THR[2]            = { '\x35', '\x00' };
-constexpr uint8_t ARM_E_STOP[2]             = { '\x40', '\x00' };
+constexpr uint8_t ARM_CAM_ONE[2]            = { '\x33', '\x01' };
+constexpr uint8_t ARM_CAM_TWO[2]            = { '\x34', '\x02' };
+constexpr uint8_t ARM_CAM_THR[2]            = { '\x35', '\x03' };
+constexpr uint8_t ARM_E_STOP[2]             = { '\x40', '\x01' };
 constexpr uint8_t ARM_RESET[2]              = {static_cast<uint8_t>('\xFF'), static_cast<uint8_t>('\x31') };
 
 #endif

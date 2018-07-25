@@ -24,7 +24,7 @@ void NetworkNode::setupSubscribers()
 }
 void NetworkNode::setupServices()
 {
-    _snap_one = _node_handle.serviceClient<ram_network::Snap>( _cam_mons[0] + "/takeSnap" );
+    _snap_one = _node_handle.serviceClient<ram_network::Snap>( "/" + _cam_mons[0] + "/takeSnap" );
     _snap_two = _node_handle.serviceClient<ram_network::Snap>("/" + _cam_mons[1] + "/takeSnap" );
     _snap_three = _node_handle.serviceClient<ram_network::Snap>( "/" + _cam_mons[2] + "/takeSnap" );
     _snap_four = _node_handle.serviceClient<ram_network::Snap>( "/" +_cam_mons[3] + "/takeSnap" );
@@ -57,12 +57,12 @@ void NetworkNode::startSerialAndI2C()
 void NetworkNode::setupPublishers()
 {
     _clock_publisher            = _node_handle.advertise<rosgraph_msgs::Clock> ( "clock", 10 );
-    _trial_publisher            = _node_handle.advertise<std_msgs::UInt8>( "trial/selector", 10 );
-    _manual_waypoint_publisher  = _node_handle.advertise<ram_network::ManualWaypoint>( "trial/manual_waypoint", 10 );
-    _servo_increment_publisher  = _node_handle.advertise<ram_network::ServoChange>( "trial/servo_increment", 10 );
-    _servo_decrement_publisher  = _node_handle.advertise<ram_network::ServoChange>( "trial/servo_decrement", 10 );
-    _arm_mode_publisher         = _node_handle.advertise<std_msgs::UInt8>( "trial/arm_mode", 10 );
-    _trial_queue_reset_publisher= _node_handle.advertise<std_msgs::UInt8>( "trial/queue_reset", 10 );
+    _trial_publisher            = _node_handle.advertise<std_msgs::UInt8>( "/trial/selector", 10 );
+    _manual_waypoint_publisher  = _node_handle.advertise<ram_network::ManualWaypoint>( "/trial/manual_waypoint", 10 );
+    _servo_increment_publisher  = _node_handle.advertise<ram_network::ServoChange>( "/trial/servo_increment", 10 );
+    _servo_decrement_publisher  = _node_handle.advertise<ram_network::ServoChange>( "/trial/servo_decrement", 10 );
+    _arm_mode_publisher         = _node_handle.advertise<std_msgs::UInt8>( "/trial/arm_mode", 10 );
+    _trial_queue_reset_publisher= _node_handle.advertise<std_msgs::UInt8>( "/trial/queue_reset", 10 );
 }
 void NetworkNode::setupTimers()
 {
@@ -665,6 +665,7 @@ void NetworkNode::rpiCommanding( const ros::TimerEvent &event )
 
 void NetworkNode::doArmCommand()
 {
+    ram_network::Snap snap;
     ground_command com = _arm_commands.front();
     _arm_commands.pop();
 
@@ -712,7 +713,7 @@ void NetworkNode::doArmCommand()
         case ARM_ROT_INC[0]:
         {
             ram_network::ServoChange change;
-            change.servo_id = 0;
+            change.servo_id = 1;
             change.servo_change = com.command[1];
             _servo_increment_publisher.publish( change );
         }
@@ -720,7 +721,7 @@ void NetworkNode::doArmCommand()
         case ARM_ROT_DEC[0]:
         {
             ram_network::ServoChange change;
-            change.servo_id = 0;
+            change.servo_id = 1;
             change.servo_change = com.command[1];
             _servo_decrement_publisher.publish( change );
         }
@@ -728,7 +729,7 @@ void NetworkNode::doArmCommand()
         case ARM_SHO_INC[0]:
         {
             ram_network::ServoChange change;
-            change.servo_id = 1;
+            change.servo_id = 2;
             change.servo_change = com.command[1];
             _servo_increment_publisher.publish( change );
         }
@@ -736,7 +737,7 @@ void NetworkNode::doArmCommand()
         case ARM_SHO_DEC[0]:
         {
             ram_network::ServoChange change;
-            change.servo_id = 1;
+            change.servo_id = 2;
             change.servo_change = com.command[1];
             _servo_decrement_publisher.publish( change );
         }
@@ -744,7 +745,7 @@ void NetworkNode::doArmCommand()
         case ARM_ELB_INC[0]:
         {
             ram_network::ServoChange change;
-            change.servo_id = 2;
+            change.servo_id = 3;
             change.servo_change = com.command[1];
             _servo_increment_publisher.publish( change );
         }
@@ -752,7 +753,7 @@ void NetworkNode::doArmCommand()
         case ARM_ELB_DEC[0]:
         {
             ram_network::ServoChange change;
-            change.servo_id = 2;
+            change.servo_id = 3;
             change.servo_change = com.command[1];
             _servo_decrement_publisher.publish( change );
         }
@@ -760,7 +761,7 @@ void NetworkNode::doArmCommand()
         case ARM_WRI_INC[0]:
         {
             ram_network::ServoChange change;
-            change.servo_id = 3;
+            change.servo_id = 4;
             change.servo_change = com.command[1];
             _servo_increment_publisher.publish( change );
         }
@@ -768,7 +769,7 @@ void NetworkNode::doArmCommand()
         case ARM_WRI_DEC[0]:
         {
             ram_network::ServoChange change;
-            change.servo_id = 3;
+            change.servo_id = 4;
             change.servo_change = com.command[1];
             _servo_decrement_publisher.publish( change );
         }
@@ -776,7 +777,7 @@ void NetworkNode::doArmCommand()
         case ARM_WRR_INC[0]:
         {
             ram_network::ServoChange change;
-            change.servo_id = 4;
+            change.servo_id = 5;
             change.servo_change = com.command[1];
             _servo_increment_publisher.publish( change );
         }
@@ -784,7 +785,7 @@ void NetworkNode::doArmCommand()
         case ARM_WRR_DEC[0]:
         {
             ram_network::ServoChange change;
-            change.servo_id = 4;
+            change.servo_id = 5;
             change.servo_change = com.command[1];
             _servo_decrement_publisher.publish( change );
         }
@@ -792,7 +793,7 @@ void NetworkNode::doArmCommand()
         case ARM_GRP_INC[0]:
         {
             ram_network::ServoChange change;
-            change.servo_id = 5;
+            change.servo_id = 6;
             change.servo_change = com.command[1];
             _servo_increment_publisher.publish( change );
         }
@@ -800,10 +801,31 @@ void NetworkNode::doArmCommand()
         case ARM_GRP_DEC[0]:
         {
             ram_network::ServoChange change;
-            change.servo_id = 5;
+            change.servo_id = 6;
             change.servo_change = com.command[1];
             _servo_decrement_publisher.publish( change );
         }
+            break;
+        case ARM_CAM_ONE[0]:
+            if( com.command[1] == ARM_CAM_ONE[1] )
+            {
+                _snap_one.call(snap);
+                packetizeImage( snap.response.location );
+            }
+            break;
+        case ARM_CAM_TWO[0]:
+            if( com.command[1] == ARM_CAM_TWO[1] )
+            {
+                _snap_one.call(snap);
+                packetizeImage( snap.response.location );
+            }
+            break;
+        case ARM_CAM_THR[0]:
+            if( com.command[1] == ARM_CAM_THR[1] )
+            {
+                _snap_one.call(snap);
+                packetizeImage( snap.response.location );
+            }
             break;
 
     }
