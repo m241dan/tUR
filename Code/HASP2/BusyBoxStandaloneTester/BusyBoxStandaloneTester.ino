@@ -12,8 +12,8 @@ byte x = 0;
 const int BUTTON_BLU      = 24;     //blue button pin
 const int ROCKER_HORIZ    = 23;   //horizontal rocker switch (black)
 const int ROCKER_VERTI    = 22;   //vertical rocker switch (black)
-const int TOGGLE_HORIZ    = 0;   //horizontal toggle switch (metal)
-const int TOGGLE_VERTI    = 1;   //vertical toggle switch (metal)
+const int TOGGLE_HORIZ    = 5;   //horizontal toggle switch (metal)
+const int TOGGLE_VERTI    = 6;   //vertical toggle switch (metal)
 const int POTENTIOM_LEVER = A0;        //potentiometer (ANALOG pin, not digital)
 const int POTENTIOM_KNOB  = A5;         //potentiometer (ANALOG pin, not digital)
 

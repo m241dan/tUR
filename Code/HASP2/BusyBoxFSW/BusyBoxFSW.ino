@@ -13,14 +13,14 @@ ArduinoSysClock         sys_clock( output_register.time_register );
 const int               BUTTON_BLU      = 24;           //blue button pin
 const int               ROCKER_HORIZ    = 23;           //horizontal rocker switch (black)
 const int               ROCKER_VERTI    = 22;           //vertical rocker switch (black)
-const int               TOGGLE_HORIZ    = 5;            //horizontal toggle switch (metal)
-const int               TOGGLE_VERTI    = 6;            //vertical toggle switch (metal)
+const int               TOGGLE_HORIZ    = 0;            //horizontal toggle switch (metal)
+const int               TOGGLE_VERTI    = 1;            //vertical toggle switch (metal)
 const int               POTENTIOM_LEVER = A0;           //potentiometer (ANALOG pin, not digital)
 const int               POTENTIOM_KNOB  = A1;           //potentiometer (ANALOG pin, not digital)
-const int               POTENTIOM_TRUNC = 1023;         //potentiometer truncator
+const float             POTENTIOM_TRUNC = 10.23;         //potentiometer truncator
 const int               SD_CARD         = 4;            //"pin" for the SD card
 void                 (*resetFunc)(void) = 0;            //calling this function will crash and reset the Arduino
-int                     write_rate      = 5000;         // 0.20 Hz or 5 Seconds
+int                     write_rate      = 1000;         // 0.20 Hz or 5 Seconds
 uint32_t                last_write      = 0;
 char log_name[15]                       = { 0 };
 
@@ -96,34 +96,39 @@ void setup()
     Wire.begin( I2CADDRESS_BBOX );
     Wire.onRequest( readRegisters );
     Wire.onReceive( writeRegisters );
+    Serial.begin( 9600 );
 
     pinMode(BUTTON_BLU,     INPUT_PULLUP);
     pinMode(ROCKER_HORIZ,   INPUT_PULLUP);
     pinMode(ROCKER_VERTI,   INPUT_PULLUP);
     pinMode(TOGGLE_HORIZ,   INPUT_PULLUP);
     pinMode(TOGGLE_VERTI,   INPUT_PULLUP);
-    pinMode(POTENTIOM_LEVER,INPUT_PULLUP);
-    pinMode(POTENTIOM_KNOB, INPUT_PULLUP);
+    pinMode(POTENTIOM_LEVER,INPUT);
+    pinMode(POTENTIOM_KNOB, INPUT);
   
     sys_clock.syncClock( 1234470131, millis() );
     if( !SD.begin( SD_CARD ) )
+    {
         output_register.sd_fault = 1;
+        Serial.println( "SD NO INIT!!! POURQUE!?!?" );
+    }
     else
         snprintf( log_name, sizeof( log_name ), "%s", getNextFile( "log", ".csv" ).c_str() );
  }
 
 void loop()
 {
+    Serial.println( "SD Fault: " + String( output_register.sd_fault ) );
     output_register.rocker_horiz       = digitalRead( ROCKER_HORIZ     );
     output_register.rocker_verti       = digitalRead( ROCKER_VERTI     );
     output_register.toggle_horiz       = digitalRead( TOGGLE_HORIZ     );
     output_register.toggle_verti       = digitalRead( TOGGLE_VERTI     );
     output_register.button_blu         = digitalRead( BUTTON_BLU       );
-    output_register.potentiometer_lever= ( (int)( analogRead( POTENTIOM_LEVER  ) * 10.0 ) / POTENTIOM_TRUNC ) / 10;
-    output_register.potentiometer_knob = ( (int)( analogRead( POTENTIOM_KNOB   ) * 10.0 ) / POTENTIOM_TRUNC ) / 10;
+    output_register.potentiometer_lever= (int)( analogRead( POTENTIOM_LEVER  ) / POTENTIOM_TRUNC );
+    output_register.potentiometer_knob = (int)( analogRead( POTENTIOM_KNOB   ) / POTENTIOM_TRUNC );
 
     // call millis() each time for "most accurate" timing ;P
-    sys_clock.updateClock( millis());
+    sys_clock.updateClock( millis() );
     
     if( !output_register.sd_fault && millis() - last_write > write_rate )
     {
