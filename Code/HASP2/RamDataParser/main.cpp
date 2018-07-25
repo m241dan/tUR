@@ -221,7 +221,10 @@ int main( int argc, char *argv[] )
                                 std::ofstream trial_file( ss.str(), std::ofstream::app );
                                 if( trial_file )
                                 {
-
+                                    trial_file << t_packet.trial_name << ",";
+                                    trial_file << t_packet.trial_time_start << ",";
+                                    trial_file << t_packet.trial_time_end << ",";
+                                    trial_file << std::endl;
                                 }
                                 else
                                 {
@@ -233,6 +236,43 @@ int main( int argc, char *argv[] )
                             case '\x37':
                             {
                                 motion_packet m_packet = extractPacket<motion_packet>( packet, offset );
+                                std::stringstream ss;
+                                ss << info.output_directory << "/motion.csv";
+                                std::ofstream motion_file( ss.str(), std::ofstream::app );
+                                if( motion_file )
+                                {
+                                    motion_file << m_packet.start_time << ",";
+                                    motion_file << m_packet.stop_time << ",";
+
+                                    motion_file << m_packet.start_x << ",";
+                                    motion_file << m_packet.start_y << ",";
+                                    motion_file << m_packet.start_z << ",";
+                                    motion_file << m_packet.start_e << ",";
+
+                                    motion_file << m_packet.stop_x << ",";
+                                    motion_file << m_packet.stop_y << ",";
+                                    motion_file << m_packet.stop_z << ",";
+                                    motion_file << m_packet.stop_e << ",";
+
+                                    motion_file << m_packet.joint_one_start << ",";
+                                    motion_file << m_packet.joint_one_stop << ",";
+                                    motion_file << m_packet.joint_two_start << ",";
+                                    motion_file << m_packet.joint_two_stop << ",";
+                                    motion_file << m_packet.joint_three_start << ",";
+                                    motion_file << m_packet.joint_three_stop << ",";
+                                    motion_file << m_packet.joint_four_start << ",";
+                                    motion_file << m_packet.joint_four_stop << ",";
+                                    motion_file << m_packet.joint_five_start << ",";
+                                    motion_file << m_packet.joint_five_stop << ",";
+                                    motion_file << m_packet.joint_six_start << ",";
+                                    motion_file << m_packet.joint_six_stop << ",";
+                                    motion_file << std::endl;
+
+                                }
+                                else
+                                {
+                                    std::cout << __FUNCTION__ << ": cannot open motion file" << std::endl;
+                                }
                                 // publishMotionData( packet );
                                 break;
                             }
@@ -240,6 +280,49 @@ int main( int argc, char *argv[] )
                             {
                                 //network status
                                 network_packet n_packet = extractPacket<network_packet>( packet, offset );
+                                std::stringstream ss;
+                                ss << info.output_directory << "network.csv";
+                                std::ofstream network_file( ss.str(), std::ofstream::app );
+                                if( network_file )
+                                {
+                                    network_file << n_packet.time_recorded << ",";
+                                    network_file << n_packet.serial_commands_received << ",";
+                                    network_file << n_packet.serial_gtp_received << ",";
+                                    network_file << n_packet.serial_bad_reads << ",";
+                                    network_file << n_packet.serial_connection_fault << ",";
+
+                                    network_file << n_packet.ada_commands_received << ",";
+                                    network_file << n_packet.ada_command_faults << ",";
+                                    network_file << n_packet.ada_writes_received << ",";
+                                    network_file << n_packet.ada_write_faults << ",";
+                                    network_file << n_packet.ada_reads_received << ",";
+                                    network_file << n_packet.ada_read_faults << ",";
+                                    network_file << n_packet.ada_sd_fault << ",";
+                                    network_file << n_packet.ada_connection_fault << ",";
+                                    network_file << n_packet.ada_bme01_fault << ",";
+                                    network_file << n_packet.ada_bme02_fault << ",";
+                                    network_file << n_packet.ada_eng_sys_msg << ",";
+
+                                    network_file << n_packet.bbox_commands_received << ",";
+                                    network_file << n_packet.bbox_command_faults << ",";
+                                    network_file << n_packet.bbox_writes_received << ",";
+                                    network_file << n_packet.bbox_write_faults << ",";
+                                    network_file << n_packet.bbox_reads_received << ",";
+                                    network_file << n_packet.bbox_read_faults << ",";
+                                    network_file << n_packet. bbox_sd_fault << ",";
+                                    network_file << n_packet. bbox_connection_fault << ",";
+                                    network_file << n_packet. bbox_eng_sys_msg << ",";
+
+                                    network_file << n_packet. ada_commands << ",";
+                                    network_file << n_packet. bbox_commands << ",";
+                                    network_file << n_packet. cam_commands << ",";
+                                    network_file << n_packet. arm_commands << ",";
+                                    network_file << n_packet. netw_commands << ",";
+                                }
+                                else
+                                {
+                                    std::cout << __FUNCTION__ << ": cannot open network file" << std::endl;
+                                }
                                 // publishNetworkStatus( packet );
                                 break;
                             }
