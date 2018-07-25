@@ -11,7 +11,6 @@
 #include <ground_station/Ambient.h>
 #include <ground_station/BBox.h>
 #include <ground_station/NetworkHealth.h>
-#include <fstream>
 #include <arm_motion/ArmInfo.h>
 #include <arm_motion/TrialData.h>
 #include <arm_motion/MotionData.h>

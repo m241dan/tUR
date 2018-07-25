@@ -157,8 +157,6 @@ struct motion_packet
     uint16_t joint_five_stop = 0;
     uint16_t joint_six_start = 0;
     uint16_t joint_six_stop = 0;
-
-
 };
 
 struct network_packet

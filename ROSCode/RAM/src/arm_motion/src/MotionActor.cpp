@@ -35,6 +35,7 @@ void MotionActor::goalCallBack()
 
     std_srvs::Empty empty;
     _start_motion.call(empty);
+    _controller.setDataSeen();
 }
 
 void MotionActor::preemptCallBack()
@@ -147,6 +148,7 @@ void MotionActor::servoGoalCallback()
     servo_timer.start();
     std_srvs::Empty empty;
     _start_motion.call(empty);
+    _controller.setDataSeen();
 }
 
 void MotionActor::servoPreemptCallback()
@@ -183,14 +185,22 @@ bool MotionActor::checkServoStep()
     std::vector<int32_t> servo_positions = _controller.getServoPositions();
     std::vector<int32_t> servo_goals = _controller.getServoGoals();
 
-    for( int i = 0; i < MAX_SERVO; i++ )
+    if( _controller.isDataFresh() )
     {
-        ROS_INFO( "Servo[%d] Position[%d] Goal[%d]", i+1, servo_positions[i], servo_goals[i] );
-        if( abs( servo_positions[i] - servo_goals[i] ) > 2 )
+        for( int i = 0; i < MAX_SERVO; i++ )
         {
-            arrived = false;
-            break;
+            ROS_INFO( "Servo[%d] Position[%d] Goal[%d]", i + 1, servo_positions[i], servo_goals[i] );
+            if( abs( servo_positions[i] - servo_goals[i] ) > 2 )
+            {
+                arrived = false;
+                break;
+            }
         }
+        _controller.setDataSeen();
+    }
+    else
+    {
+        arrived = false''
     }
     return arrived;
 }

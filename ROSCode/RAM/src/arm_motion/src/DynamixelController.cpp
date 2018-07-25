@@ -7,7 +7,7 @@
 /*
  * Public
  */
-DynamixelController::DynamixelController( std::string bus )
+DynamixelController::DynamixelController( std::string bus ) : _data_fresh(false)
 {
     _valid = _bench.begin( bus.c_str());
 
@@ -311,13 +311,13 @@ void DynamixelController::updateAndPublishServoInfo( const ros::TimerEvent &even
 
 inline void DynamixelController::updateServos()
 {
-    for( int i = 0; i < MAX_SERVO; i++ )
+    for( uint8_t i = 0; i < MAX_SERVO; i++ )
     {
         /*
          * This is going to be very explicit but slightly slower in the growth department.
          * However, since this doesn't really have to deal with success checking, it should be fine.
          */
-        uint8_t id = i + 1;
+        uint8_t id = i + (uint8_t)1;
         servo_info[i].ID = id;
         servo_info[i].Torque_Enable = (uint8_t)  _bench.itemRead(id, "Torque_Enable");
         servo_info[i].Goal_Position = (uint32_t) _bench.itemRead(id, "Goal_Position");
@@ -327,13 +327,14 @@ inline void DynamixelController::updateServos()
         servo_info[i].Present_Temperature = (uint8_t) _bench.itemRead(id, "Present_Temperature");
         servo_info[i].Present_Current = (int16_t) _bench.itemRead( id, "Present_Current" );
         servo_info[i].Current_Limit = (uint16_t) _bench.itemRead( id, "Current_Limit" );
-        servo_info[i].Position_D_Gain = _bench.itemRead( id, "Position_D_Gain" );
+        servo_info[i].Position_D_Gain = (uint16_t)_bench.itemRead( id, "Position_D_Gain" );
 
         joints.position[i] = _bench.convertValue2Radian( id, servo_info[i].Present_Position );
         joints.velocity[i] = servo_info[i].Present_Velocity;
         joints.effort[i] = servo_info[i].Present_Current;
     }
     joints.position[3] *= (-1); //specific to our arm
+    _data_fresh = true;
 }
 
 inline void DynamixelController::publishServoInfo()
@@ -446,3 +447,12 @@ bool DynamixelController::loadDefault( uint8_t id )
     return success;
 }
 
+bool DynamixelController::isDataFresh()
+{
+    return _data_fresh;
+}
+
+bool DynamixelController::setDataSeen()
+{
+    _data_fresh = false;
+}
