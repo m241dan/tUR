@@ -1,6 +1,6 @@
 #include <Wire.h>
 #include <ram_funcs.h>
-#include <ram_registers.h>
+//#include <ram_registers.h>
 #include <hasp_arduino_sysclock.h>
 #include <DallasTemperature.h>
 #include <OneWire.h>
@@ -14,12 +14,11 @@
 #define THERMO_BANK_11 11
 #define THERMO_BANK_12 12
 #define THERMO_BANK_13 13
-#define BME_SCK        24
-#define BME_MISO       22
-#define BME_MOSI       23 
-#define BME_CS          0
-#define BME_DS          1
-// I hear this indentation scheme is used by robot rocket scientists. At NASA.
+#define BME_SCK        4
+#define BME_MISO       2
+#define BME_MOSI       3
+#define BME_CS         5 //Analog2
+#define BME_DS         6 //Analog3 for test
 
 ADA_output_register output_register;
 ADA_input_register  input_register;
@@ -98,8 +97,8 @@ void writeRegisters( int num_bytes )
         }
         /*
          * Check the Data:
-         *  - If its good, reset our fault flag
-         *  - If its bad, set out fault flag
+         *  - If it's good, reset our fault flag
+         *  - If it's bad, set our fault flag
          */
         if( input_register.verifyCheckSums() )
         {
@@ -213,6 +212,22 @@ void loop()
     output_register.bme02_temp = bme01.readTemperature();
     output_register.bme02_humi = bme02.readHumidity();
     output_register.bme02_pres = bme02.readPressure() / 100.0F;
+
+//Debug code for BMEs:
+    Serial.print("BME01 (O.R.)= ");
+    Serial.print(String(output_register.bme01_temp) + "C,\t");
+    Serial.print(String(output_register.bme01_pres) + " hPa\t");
+    Serial.print(String(output_register.bme01_humi) + "%,\t");
+
+    Serial.print("BME02 (O.R.)= ");
+    Serial.print(String(output_register.bme02_temp) + "C,\t");
+    Serial.print(String(output_register.bme02_pres) + " hPa\t");
+    Serial.println(String(output_register.bme02_humi) + "%,\t");
+
+    Serial.print("BME01 (direct)= ");
+    Serial.print(String(bme01.readTemperature()) + "C,\t");
+    Serial.print(String(bme01.readHumidity()) + " hPa\t");
+    Serial.print(String(bme01.readPressure() / 100.0F) + "%,\t\n");
     
     sys_clock.updateClock( millis() );
 
