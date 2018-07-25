@@ -200,7 +200,7 @@ bool MotionActor::checkServoStep()
     }
     else
     {
-        arrived = false''
+        arrived = false;
     }
     return arrived;
 }

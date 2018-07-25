@@ -40,7 +40,14 @@ void Path::generateFinalPose()
 
 void Path::generatePathConstants()
 {
-    auto t = (double)_motion_guidelines.precision;
+    auto linear_dist = sqrt( pow( _final_pose.position.x - _present_pose.position.x, 2 ) +
+                             pow( _final_pose.position.y - _present_pose.position.y, 2 ) +
+                             pow( _final_pose.position.z - _present_pose.position.z, 2 ) );
+    _motion_guidelines.precision = linear_dist / _motion_guidelines.precision;
+
+    if( _motion_guidelines.precision < 1 )
+        _motion_guidelines.precision = 1.0;
+    double t = _motion_guidelines.precision;
 
     _A = ( _final_pose.position.x - _present_pose.position.x ) / t;
     _B = ( _final_pose.position.y - _present_pose.position.y ) / t;

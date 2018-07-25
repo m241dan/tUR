@@ -51,7 +51,7 @@ ArmTrial::ArmTrial( arm_motion::ManualWaypoint wp, geometry_msgs::Pose &pose, bo
     motion.z = wp.z;
     motion.eeo = wp.eeo;
     motion.velocity = 5;
-    motion.precision = 1;
+    motion.precision = 2;
     motion.smoothness = 2;
     motion.tolerance = 2;
     _motions.push_back( motion );
@@ -124,7 +124,7 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, geometry_msgs::Pose 
                      */
                     lua_pushstring( lua, "precision" );
                     lua_gettable( lua, -2 );
-                    motion.precision = (uint8_t) lua_tointeger( lua, -1 );
+                    motion.precision = (uint8_t) lua_tonumber( lua, -1 );
                     lua_pop( lua, 1 );
 
                     /*

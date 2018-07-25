@@ -7,7 +7,7 @@ float64 eeo
 float64 gripper_rot
 float64 gripper_lin
 uint8 velocity
-uint8 precision
+float64 precision
 uint16 smoothness
 uint16 tolerance
 string shape
