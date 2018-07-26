@@ -10,6 +10,8 @@ require('types')
 
 --trial 6 "Blue Button from Home"
 return {
-[1] = { x = 22.00, y = -5.00, z = 20.5, eeo = 0, velocity = 5, type = DISCRETE_W, precision = 20, shape = "linear", smoothness = 20, tolerance = 2},
-[2] = { x = 23.4, y = -5.1, z = 20.6, eeo = 0, velocity = 5, type = DISCRETE_W, precision = 5, shape = "linear", smoothness = 20, tolerance = 2 },
+    [1] = { velocity = 5, type = SERVO_ABSOLUTE, s1 = 0, s2 = 0, s3 = 0, s4 = 0, s5 = 0, s6 = GRIPPER_CLOSED},
+    [2] = { x = 22.00, y = -5.00, z = 20.5, eeo = 0, velocity = 5, type = DISCRETE_W, precision = 1, shape = "linear", smoothness = 20, tolerance = 2},
+    [3] = { x = 23.4, y = -5.1, z = 20.6, eeo = 0, velocity = 5, type = DISCRETE_W, precision = 1, shape = "linear", smoothness = 20, tolerance = 2 },
+    [4] = { x = 22.00, y =-5.00, z = 20.5, eeo = 0, velocity = 5, type = DISCRETE_W, precision = 1 }
 }
