@@ -3,8 +3,6 @@
     <arg name="dynamixel_bus" default="/dev/ttyUSB0" />
     <env name="RAM_SCRIPTS" value="/home/ubuntu/tUR/ROSCode/RAM/src/arm_motion/scripts/" />
 
-    <arg name="cam_node_seven" default="rpi_cam" />
-
     <arg name="mon_one" default="cam_one_mon" />
     <arg name="mon_two" default="cam_two_mon" />
     <arg name="mon_three" default="cam_three_mon" />
@@ -67,8 +65,8 @@
     </node>
 
     <node name="apriltag_detector_one" pkg="apriltags_ros" type="apriltag_detector_node" >
-        <remap from="camera_info" to="/$(arg cam_node_seven)/camera_info" />
-        <remap from="image_rect" to="/$(arg cam_node_seven)/image_raw" />
+        <remap from="camera_info" to="/raspi_cam/camera_info" />
+        <remap from="image_rect" to="/raspi_cam/image_raw" />
         <remap from="tag_detections_image" to="/detections_three_img" />
         <remap from="tag_detections" to="/detections_three_tags" />
         <param name="tag_family" type="str" value="36h11" />
