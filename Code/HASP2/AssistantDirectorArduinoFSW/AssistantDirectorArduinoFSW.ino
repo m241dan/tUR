@@ -14,11 +14,11 @@
 #define THERMO_BANK_11 11
 #define THERMO_BANK_12 12
 #define THERMO_BANK_13 13
-#define BME_SCK        4
-#define BME_MISO       2
-#define BME_MOSI       3
-#define BME_CS         5 //Analog2
-#define BME_DS         6 //Analog3 for test
+#define BME_SCK        24
+#define BME_MISO       22
+#define BME_MOSI       23
+#define BME_CS         1 //Analog2
+#define BME_DS         0 //Analog3 for test
 
 ADA_output_register output_register;
 ADA_input_register  input_register;
@@ -146,19 +146,21 @@ void readRegisters()
 
 void setup()
 {
+    Serial.begin( 9600 );
     Wire.begin( I2CADDRESS_ADA );
     Wire.onRequest( readRegisters );
     Wire.onReceive( writeRegisters );
     if( !bme01.begin() )
         output_register.bme01_fault = 1;
+
     if( !bme02.begin() )
         output_register.bme02_fault = 1;
         
     sys_clock.syncClock( 1234470131, millis() );
-    if( !SD.begin( SD_CARD ) )
-        output_register.sd_fault = 1;
-    else
-        snprintf( log_name, sizeof( log_name ), "%s", getNextFile( "log", ".csv" ).c_str() );
+ //   if( !SD.begin( SD_CARD ) )
+        //output_register.sd_fault = 1;
+    //else
+        //snprintf( log_name, sizeof( log_name ), "%s", getNextFile( "log", ".csv" ).c_str() );
 }
 
 void loop()
@@ -213,37 +215,29 @@ void loop()
     output_register.bme02_humi = bme02.readHumidity();
     output_register.bme02_pres = bme02.readPressure() / 100.0F;
 
-//Debug code for BMEs:
-    Serial.print("BME01 (O.R.)= ");
-    Serial.print(String(output_register.bme01_temp) + "C,\t");
-    Serial.print(String(output_register.bme01_pres) + " hPa\t");
-    Serial.print(String(output_register.bme01_humi) + "%,\t");
+    Serial.println( "BME 1 Temp: " + String( bme01.readTemperature() ) );
+    Serial.println( "BME 1 Humi: " + String( bme01.readHumidity() ) );
+    Serial.println( "BME 1 Pres: " + String( bme01.readPressure() / 100.0F ) );
 
-    Serial.print("BME02 (O.R.)= ");
-    Serial.print(String(output_register.bme02_temp) + "C,\t");
-    Serial.print(String(output_register.bme02_pres) + " hPa\t");
-    Serial.println(String(output_register.bme02_humi) + "%,\t");
-
-    Serial.print("BME01 (direct)= ");
-    Serial.print(String(bme01.readTemperature()) + "C,\t");
-    Serial.print(String(bme01.readHumidity()) + " hPa\t");
-    Serial.print(String(bme01.readPressure() / 100.0F) + "%,\t\n");
-    
+    Serial.println( "BME 2 Temp: " + String( bme02.readTemperature() ) );
+    Serial.println( "BME 2 Humi: " + String( bme02.readHumidity() ) );
+    Serial.println( "BME 2 Pres: " + String( bme02.readPressure() / 100.0F ) );
     sys_clock.updateClock( millis() );
 
-    if( !output_register.sd_fault && millis() - last_write > write_rate )
-    {
-        File log_file = SD.open( log_name, FILE_WRITE );
-        if( !log_file )
-        {
-            output_register.sd_fault = 1;
-        }
-        else
-        {
-            log_file.println( output_register.serialize_csv() );
-            output_register.sd_fault = 0;
-            log_file.close();
-        }
-        last_write = millis();
-    }
+    //if( !output_register.sd_fault && millis() - last_write > write_rate )
+    //{
+        //File log_file = SD.open( log_name, FILE_WRITE );
+        //if( !log_file )
+        //{
+            //output_register.sd_fault = 1;
+        //}
+        //else
+        //{
+            //log_file.println( output_register.serialize_csv() );
+            //output_register.sd_fault = 0;
+            //log_file.close();
+        //}
+        
+        //last_write = millis();
+    //}
 }
