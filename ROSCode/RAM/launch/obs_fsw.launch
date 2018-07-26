@@ -39,30 +39,6 @@
 
     </node>
 
-    <node name="$(arg mon_one)" pkg="cam_monitor" type="cam_monitor_node">
-        <param name="img_topic" value="/$(arg cam_node_one)/image_raw"/>
-        <param name="video_location" value="/home/ubuntu/RamVideos/$(arg mon_one)/videos/"/>
-        <param name="snap_location" value="/home/ubuntu/RamVideos/$(arg mon_one)/snap/"/>
-    </node>
-
-    <node name="$(arg mon_two)" pkg="cam_monitor" type="cam_monitor_node">
-        <param name="img_topic" value="/$(arg cam_node_two/image_raw"/>
-        <param name="video_location" value="/home/ubuntu/RamVideos/$(arg mon_two)/videos/"/>
-        <param name="snap_location" value="/home/ubuntu/RamVideos/$(arg mon_two)/snap/"/>
-    </node>
-
-    <node name="$(arg mon_three)" pkg="cam_monitor" type="cam_monitor_node">
-        <param name="img_topic" value="/$(arg cam_node_three)/image_raw"/>
-        <param name="video_location" value="/home/ubuntu/RamVideos/$(arg mon_three)/videos/"/>
-        <param name="snap_location" value="/home/ubuntu/RamVideos/$(arg mon_three)/snap/"/>
-    </node>
-
-    <node name="$(arg mon_four)" pkg="cam_monitor" type="cam_monitor_node">
-        <param name="img_topic" value="/$(arg cam_node_four)/image_raw"/>
-        <param name="video_location" value="/home/ubuntu/RamVideos/$(arg mon_four)/videos/"/>
-        <param name="snap_location" value="/home/ubuntu/RamVideos/$(arg mon_four)/snap/"/>
-    </node>
-
     <node name="$(arg mon_five)" pkg="cam_monitor" type="cam_monitor_node">
         <param name="img_topic" value="/$(arg cam_node_five)/image_raw"/>
         <param name="video_location" value="/home/ubuntu/RamVideos/$(arg mon_five)/videos/"/>
