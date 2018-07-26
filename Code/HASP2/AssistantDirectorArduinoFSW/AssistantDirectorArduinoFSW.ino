@@ -1,6 +1,6 @@
 #include <Wire.h>
 #include <ram_funcs.h>
-//#include <ram_registers.h>
+#include <ram_registers.h>
 #include <hasp_arduino_sysclock.h>
 #include <DallasTemperature.h>
 #include <OneWire.h>
