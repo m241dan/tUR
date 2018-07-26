@@ -1,0 +1,95 @@
+<launch>
+    <arg name="peeper_config" default="file:///home/ubuntu/tUR/ROSCode/RAM/camera_info/peeper.yaml"/>
+    <arg name="dynamixel_bus" default="/dev/ttyUSB0" />
+    <env name="RAM_SCRIPTS" value="/home/ubuntu/tUR/ROSCode/RAM/src/arm_motion/scripts/" />
+
+    <arg name="cam_node_seven" default="rpi_cam" />
+
+    <arg name="mon_one" default="cam_one_mon" />
+    <arg name="mon_two" default="cam_two_mon" />
+    <arg name="mon_three" default="cam_three_mon" />
+    <arg name="mon_four" default="cam_four_mon" />
+    <arg name="mon_five" default="cam_five_mon" />
+    <arg name="mon_six" default="cam_six_mon" />
+    <arg name="mon_seven" default="cam_seven_mon"/>
+
+    <arg name="cam_node_one" default="usb_cam_one" />
+    <arg name="cam_node_two" default="usb_cam_two" />
+    <arg name="cam_node_three" default="usb_cam_three" />
+    <arg name="cam_node_four" default="usb_cam_four" />
+    <arg name="cam_node_five" default="usb_cam_five" />
+    <arg name="cam_node_six" default="usb_cam_six" />
+    <arg name="cam_node_seven" default="rpi_cam" />
+
+    <!-- Network Nodes -->
+    <node name="ram_network_master" pkg="ram_network" type="ram_network_node" >
+        <param name="mon_one" value="$(arg mon_one)" />
+        <param name="mon_two" value="$(arg mon_two)" />
+        <param name="mon_three" value="$(arg mon_three)" />
+        <param name="mon_four" value="$(arg mon_four)" />
+        <param name="mon_five" value="$(arg mon_five)" />
+        <param name="mon_six" value="$(arg mon_six)" />
+        <param name="mon_seven" value="$(arg mon_seven)" />
+
+        <param name="cam_node_one" value="$(arg cam_node_one)" />
+        <param name="cam_node_two" value="$(arg cam_node_two)" />
+        <param name="cam_node_three" value="$(arg cam_node_three)" />
+        <param name="cam_node_four" value="$(arg cam_node_four)" />
+        <param name="cam_node_five" value="$(arg cam_node_five)" />
+        <param name="cam_node_six" value="$(arg cam_node_six)" />
+
+    </node>
+
+    <node name="$(arg mon_seven)" pkg="cam_monitor" type="cam_monitor_node">
+        <param name="img_topic" value="/$(arg cam_node_six)/image_raw"/>
+        <param name="video_location" value="/home/ubuntu/RamVideos/$(arg mon_six/videos/"/>
+        <param name="snap_location" value="/home/ubuntu/RamVideos/$(arg mon_six)/snap/"/>
+    </node>
+
+    <!-- Arm Motion Nodes -->
+    <node name="arm_motion_driver" pkg="arm_motion" type="arm_motion_driver" />
+    <node name="arm_motion_kinematics" pkg="arm_motion" type="arm_motion_kinematics" />
+    <node name="arm_motion_trial" pkg="arm_motion" type="arm_motion_trial" />
+    <node name="arm_motion_path" pkg="arm_motion" type="arm_motion_path" />
+
+
+    <!-- Camera Nodes -->
+    <node type="raspicam_node" pkg="raspicam_node" name="rpi_cam" >
+        <param name="camera_info_url" value="package://raspicam_node/camera_info/camerav2_410x308.yaml"/>
+        <param name="width" value="410"/>
+        <param name="height" value="308"/>
+
+        <param name="framerate" value="5"/>
+        <param name="exposure_mode" value="antishake"/>
+        <param name="shutter_speed" value="0"/>
+
+        <param name="camera_frame_id" value="raspicam"/>
+    </node>
+
+    <node name="apriltag_detector_one" pkg="apriltags_ros" type="apriltag_detector_node" >
+        <remap from="camera_info" to="/$(arg cam_node_seven)/camera_info" />
+        <remap from="image_rect" to="/$(arg cam_node_seven)/image_raw" />
+        <remap from="tag_detections_image" to="/detections_three_img" />
+        <remap from="tag_detections" to="/detections_three_tags" />
+        <param name="tag_family" type="str" value="36h11" />
+        <rosparam param="tag_descriptions">[
+            {id:  0,  size: 0.0175},
+            {id:  1,  size: 0.0175},
+            {id:  2,  size: 0.0175},
+            {id:  3,  size: 0.0175},
+            {id:  5,  size: 0.0175},
+            {id:  6,  size: 0.0175},
+            {id:  7,  size: 0.0175},
+            {id:  8,  size: 0.0175},
+            {id:  9,  size: 0.0175},
+            {id:  10,  size: 0.0175},
+            {id:  12,  size: 0.0175},
+            {id:  20,  size: 0.0175},
+            {id:  21,  size: 0.0175},
+            {id:  22,  size: 0.0175},
+            {id:  23,  size: 0.0175},
+            {id:  24,  size: 0.0175} ]
+        </rosparam>
+        <param name="projected_optics" type="bool" value="true" />
+    </node>
+</launch>
