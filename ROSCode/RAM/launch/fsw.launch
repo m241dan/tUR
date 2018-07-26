@@ -39,9 +39,9 @@
     </node>
 
     <node name="$(arg mon_seven)" pkg="cam_monitor" type="cam_monitor_node">
-        <param name="img_topic" value="/$(arg cam_node_six)/image_raw"/>
-        <param name="video_location" value="/home/ubuntu/RamVideos/$(arg mon_six/videos/"/>
-        <param name="snap_location" value="/home/ubuntu/RamVideos/$(arg mon_six)/snap/"/>
+        <param name="img_topic" value="/$(arg cam_node_seven)/image_raw"/>
+        <param name="video_location" value="/home/ubuntu/RamVideos/$(arg mon_seven/videos/"/>
+        <param name="snap_location" value="/home/ubuntu/RamVideos/$(arg mon_seven)/snap/"/>
     </node>
 
     <!-- Arm Motion Nodes -->
@@ -52,7 +52,6 @@
 
 
     <!-- Camera Nodes -->
-    <!--
     <node type="raspicam_node" pkg="raspicam_node" name="rpi_cam" >
         <param name="camera_info_url" value="package://raspicam_node/camera_info/camerav2_410x308.yaml"/>
         <param name="width" value="410"/>
@@ -64,6 +63,7 @@
 
         <param name="camera_frame_id" value="raspicam"/>
     </node>
+    <!--
 
     <node name="apriltag_detector_one" pkg="apriltags_ros" type="apriltag_detector_node" >
         <remap from="camera_info" to="/raspi_cam/camera_info" />

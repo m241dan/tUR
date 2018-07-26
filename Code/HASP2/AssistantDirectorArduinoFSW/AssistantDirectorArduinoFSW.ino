@@ -146,7 +146,6 @@ void readRegisters()
 
 void setup()
 {
-    Serial.begin( 9600 );
     Wire.begin( I2CADDRESS_ADA );
     Wire.onRequest( readRegisters );
     Wire.onReceive( writeRegisters );
@@ -215,13 +214,6 @@ void loop()
     output_register.bme02_humi = bme02.readHumidity();
     output_register.bme02_pres = bme02.readPressure() / 100.0F;
 
-    Serial.println( "BME 1 Temp: " + String( bme01.readTemperature() ) );
-    Serial.println( "BME 1 Humi: " + String( bme01.readHumidity() ) );
-    Serial.println( "BME 1 Pres: " + String( bme01.readPressure() / 100.0F ) );
-
-    Serial.println( "BME 2 Temp: " + String( bme02.readTemperature() ) );
-    Serial.println( "BME 2 Humi: " + String( bme02.readHumidity() ) );
-    Serial.println( "BME 2 Pres: " + String( bme02.readPressure() / 100.0F ) );
     sys_clock.updateClock( millis() );
 
     //if( !output_register.sd_fault && millis() - last_write > write_rate )

@@ -24,27 +24,27 @@ void NetworkNode::setupSubscribers()
 }
 void NetworkNode::setupServices()
 {
-    _snap_one = _node_handle.serviceClient<ram_network::Snap>( "/" + _cam_mons[0] + "/takeSnap" );
-    _snap_two = _node_handle.serviceClient<ram_network::Snap>("/" + _cam_mons[1] + "/takeSnap" );
-    _snap_three = _node_handle.serviceClient<ram_network::Snap>( "/" + _cam_mons[2] + "/takeSnap" );
-    _snap_four = _node_handle.serviceClient<ram_network::Snap>( "/" +_cam_mons[3] + "/takeSnap" );
-    _snap_five = _node_handle.serviceClient<ram_network::Snap>( "/" + _cam_mons[4] + "/takeSnap" );
-    _snap_six = _node_handle.serviceClient<ram_network::Snap>( "/" + _cam_mons[5] + "/takeSnap" );
+   // _snap_one = _node_handle.serviceClient<ram_network::Snap>( "/" + _cam_mons[0] + "/takeSnap" );
+   // _snap_two = _node_handle.serviceClient<ram_network::Snap>("/" + _cam_mons[1] + "/takeSnap" );
+   // _snap_three = _node_handle.serviceClient<ram_network::Snap>( "/" + _cam_mons[2] + "/takeSnap" );
+   // _snap_four = _node_handle.serviceClient<ram_network::Snap>( "/" +_cam_mons[3] + "/takeSnap" );
+    //_snap_five = _node_handle.serviceClient<ram_network::Snap>( "/" + _cam_mons[4] + "/takeSnap" );
+    //_snap_six = _node_handle.serviceClient<ram_network::Snap>( "/" + _cam_mons[5] + "/takeSnap" );
     _snap_seven = _node_handle.serviceClient<ram_network::Snap>( "/" + _cam_mons[6] + "/takeSnap" );
 
-    _start_vid_one = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[0] + "/start_capture" );
-    _start_vid_two = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[1] + "/start_capture" );
-    _start_vid_three = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[2] + "/start_capture" );
-    _start_vid_four = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[3] + "/start_capture" );
-    _start_vid_five = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[4] + "/start_capture" );
-    _start_vid_six = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[5] + "/start_capture" );
+   // _start_vid_one = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[0] + "/start_capture" );
+//    _start_vid_two = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[1] + "/start_capture" );
+//    _start_vid_three = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[2] + "/start_capture" );
+//    _start_vid_four = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[3] + "/start_capture" );
+//    _start_vid_five = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[4] + "/start_capture" );
+//    _start_vid_six = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[5] + "/start_capture" );
 
-    _stop_vid_one = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[0] + "/stop_capture" );
-    _stop_vid_two = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[1] + "/stop_capture" );
-    _stop_vid_three = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[2] + "/stop_capture" );
-    _stop_vid_four = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[3] + "/stop_capture" );
-    _stop_vid_five = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[4] + "/stop_capture" );
-    _stop_vid_six = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[5] + "/stop_capture" );
+//    _stop_vid_one = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[0] + "/stop_capture" );
+//    _stop_vid_two = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[1] + "/stop_capture" );
+//    _stop_vid_three = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[2] + "/stop_capture" );
+//    _stop_vid_four = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[3] + "/stop_capture" );
+//    _stop_vid_five = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[4] + "/stop_capture" );
+//    _stop_vid_six = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[5] + "/stop_capture" );
 
 }
 void NetworkNode::startSerialAndI2C()
@@ -809,21 +809,21 @@ void NetworkNode::doArmCommand()
         case ARM_CAM_ONE[0]:
             if( com.command[1] == ARM_CAM_ONE[1] )
             {
-                _snap_one.call(snap);
+//                _snap_one.call(snap);
                 packetizeImage( snap.response.location );
             }
             break;
         case ARM_CAM_TWO[0]:
             if( com.command[1] == ARM_CAM_TWO[1] )
             {
-                _snap_one.call(snap);
+       //         _snap_one.call(snap);
                 packetizeImage( snap.response.location );
             }
             break;
         case ARM_CAM_THR[0]:
             if( com.command[1] == ARM_CAM_THR[1] )
             {
-                _snap_one.call(snap);
+                _snap_seven.call(snap);
                 packetizeImage( snap.response.location );
             }
             break;
@@ -843,28 +843,28 @@ void NetworkNode::doCamCommand()
         case CAMERA_CAM_1_PIC[0]:
             if( com.command[1] == CAMERA_CAM_1_PIC[1] )
             {
-               _snap_one.call(snap);
+//               _snap_one.call(snap);
                 packetizeImage( snap.response.location );
             }
             break;
         case CAMERA_CAM_2_PIC[0]:
             if( com.command[1] == CAMERA_CAM_2_PIC[1] )
             {
-                _snap_two.call(snap);
+//                _snap_two.call(snap);
                 packetizeImage( snap.response.location );
             }
             break;
         case CAMERA_CAM_3_PIC[0]:
             if( com.command[1] == CAMERA_CAM_3_PIC[1] )
             {
-                _snap_three.call(snap);
+//                _snap_three.call(snap);
                 packetizeImage( snap.response.location );
             }
             break;
         case CAMERA_CAM_4_PIC[0]:
             if( com.command[1] == CAMERA_CAM_4_PIC[1] )
             {
-                _snap_four.call(snap);
+//                _snap_four.call(snap);
                 packetizeImage( snap.response.location );
             }
             break;
@@ -878,7 +878,7 @@ void NetworkNode::doCamCommand()
                 {
                     com.command[0] = sub++;
                     com.command[1] = param++;
-                    _cam_commands.push( com );
+  //                  _cam_commands.push( com );
                 }
             }
             break;
@@ -887,17 +887,17 @@ void NetworkNode::doCamCommand()
         case CAMERA_VIDEO_TOGGLE[0]:
             if( com.command[1] == CAMERA_VIDEO_OFF[1] )
             {
-                _stop_vid_one.call( empty );
-                _stop_vid_two.call( empty );
-                _stop_vid_three.call( empty );
-                _stop_vid_four.call( empty );
+    //            _stop_vid_one.call( empty );
+//                _stop_vid_two.call( empty );
+//                _stop_vid_three.call( empty );
+//                _stop_vid_four.call( empty );
             }
             else if( com.command[1] == CAMERA_VIDEO_ON[1] )
             {
-                _start_vid_one.call( empty );
-                _start_vid_two.call( empty );
-                _start_vid_three.call( empty );
-                _start_vid_four.call( empty );
+//                _start_vid_one.call( empty );
+//                _start_vid_two.call( empty );
+//                _start_vid_three.call( empty );
+//                _start_vid_four.call( empty );
 
             }
             break;
