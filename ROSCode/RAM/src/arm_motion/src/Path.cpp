@@ -126,9 +126,10 @@ void Path::setJointPositionVelocities()
         double max_travel = *std::max_element( joint.position.begin(), joint.position.end());
         for( auto position : joint.position )
         {
-            double velocity_mutiplier = position / max_travel;
+            //double velocity_mutiplier = position / max_travel;
             //This ensures that we always have a joint velocity of at least 2. Which is really slow, so plenty of time to interrupt
-            double velocity = fabs( (double)_motion_guidelines.velocity * velocity_mutiplier );
+           // double velocity = fabs( (double)_motion_guidelines.velocity * velocity_mutiplier );
+            double velocity = fabs( _motion_guidelines.velocity );
             if( velocity > MAX_VELOCITY )
                 velocity = MAX_VELOCITY;
             else if( velocity <= 1.0 )

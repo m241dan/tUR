@@ -124,7 +124,7 @@ ArmTrial::ArmTrial( std::string trial_name, lua_State *lua, geometry_msgs::Pose 
                      */
                     lua_pushstring( lua, "precision" );
                     lua_gettable( lua, -2 );
-                    motion.precision = (uint8_t) lua_tonumber( lua, -1 );
+                    motion.precision = (double) lua_tonumber( lua, -1 );
                     lua_pop( lua, 1 );
 
                     /*
