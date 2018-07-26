@@ -13,12 +13,12 @@ MotionActor::MotionActor( std::string name, DynamixelController &controller ) :
     action_server.registerGoalCallback( boost::bind( &MotionActor::goalCallBack, this ) );
     action_server.registerPreemptCallback( boost::bind( &MotionActor::preemptCallBack, this ) );
     action_server.start();
-    action_timer = node_handle.createTimer( ros::Duration(0.05), boost::bind( &MotionActor::motionMonitor, this, _1 ), false, false );
+    action_timer = node_handle.createTimer( ros::Duration(0.5), boost::bind( &MotionActor::motionMonitor, this, _1 ), false, false );
 
     servo_server.registerGoalCallback( boost::bind( &MotionActor::servoGoalCallback, this ) );
     servo_server.registerPreemptCallback( boost::bind( &MotionActor::servoPreemptCallback, this ) );
     servo_server.start();
-    servo_timer = node_handle.createTimer( ros::Duration( 0.05 ), boost::bind( &MotionActor::servoMonitor, this, _1 ), false, false );
+    servo_timer = node_handle.createTimer( ros::Duration( 0.5 ), boost::bind( &MotionActor::servoMonitor, this, _1 ), false, false );
 
     _start_motion = node_handle.serviceClient<std_srvs::Empty>( "kinematics/start_motion" );
     _stop_motion = node_handle.serviceClient<std_srvs::Empty>("kinematics/stop_motion" );

@@ -300,7 +300,7 @@ void DynamixelController::setupPublishers()
 
 void DynamixelController::setupTimer()
 {
-    servo_info_timer = node_handle.createTimer( ros::Duration( 0.1 ), boost::bind( &DynamixelController::updateAndPublishServoInfo, this, _1 ) );
+    servo_info_timer = node_handle.createTimer( ros::Duration( 3 ), boost::bind( &DynamixelController::updateAndPublishServoInfo, this, _1 ) );
 }
 
 void DynamixelController::updateAndPublishServoInfo( const ros::TimerEvent &event )
