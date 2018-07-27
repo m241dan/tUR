@@ -51,11 +51,9 @@ const char *const   serialAddress   = "/dev/ttyAMA0";
 const int           serialBaud      = 4800;
 const int           serialLimit     = 100; // amount of times to attempt opening a serial connection before failing
 
-const double        i2cLoop         = 1.0; // 1Hz
-const double        serialLoop      = 0.5; // 2Hz
-const double        healthRate      = 1.5; // .66Hz
-const double        rpiComRate      = 1.25; // .8Hz
-const double        registerRate     = 4.8; // .208 Hz
+const double        healthRate      = 1./5.; // 0.2Hz
+const double        rpiComRate      = 1; // 1 Hz
+const double        registerRate     = 1./3.; // 0.33 Hz
 
 struct gtp
 {

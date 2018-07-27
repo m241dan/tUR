@@ -42,9 +42,8 @@ class NetworkNode
         void handleAda                  ();
         void handleBBox                 ();
         void handleDownlink             ();
-        uint8_t                         _downlink_counter;
-        const uint8_t                   _downlink_when;
 
+        void checkUplink                ();
         void downlinkPacket             ();
         data_packet buildPacket         ();
         bool hasPackets                 ();

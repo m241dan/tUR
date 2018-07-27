@@ -4,7 +4,7 @@
 #include <ram_network/NetworkNode.h>
 #include <bits/ios_base.h>
 
-NetworkNode::NetworkNode() : _downlink_when( (uint8_t)(2.00 / serialLoop ) ), _downlink_counter(1), _img_counter(0), _node_handle("~")
+NetworkNode::NetworkNode() : _img_counter(0), _node_handle("~")
 {
     setupSubscribers();
     startSerialAndI2C();
@@ -127,52 +127,8 @@ bool NetworkNode::serialLoopCallback( std_srvs::TriggerRequest &req, std_srvs::T
 {
     if( _handles.serial != -1 )
     {
-        _health.serial_connection_fault = 0;
-        if( serialDataAvail( _handles.serial ) )
-        {
-            ROS_INFO( "Available: %d", serialDataAvail( _handles.serial ) );
-            while( serialDataAvail( _handles.serial ) )
-            {
-                _buffer[_buffer_index++] = (char)serialGetchar( _handles.serial );
-                ROS_INFO( "Index[%d]: %c", _buffer_index-1, _buffer[_buffer_index-1] );
-
-                if( _buffer_index > 3 )
-                {
-                    //remember its already been indexed by one, so have to look at least 1 back to start
-                    if( possiblePacket() )
-                    {
-                        if( isCommand() )
-                        {
-                            ground_command com;
-                            std::memcpy( &com, &_buffer[_buffer_index-sizeof(ground_command)], sizeof( ground_command ) );
-                            handleCommand( com );
-                        }
-                        else if( isGTP() )
-                        {
-                            gtp gps;
-                            std::memcpy( &gps, &_buffer[_buffer_index-sizeof(gtp)], sizeof( gtp ) );
-                            handleGTP( gps );
-                        }
-                        else
-                        {
-                            resetBuffer();
-                            _health.serial_bad_reads++;
-                        }
-                        resetBuffer();
-                    }
-                    else if( _buffer_index >= MAX_BUF )
-                    {
-                        resetBuffer();
-                        _health.serial_bad_reads++;
-                    }
-                }
-            }
-        }
-        if( _downlink_when <= _downlink_counter++ )
-        {
-            downlinkPacket();
-            _downlink_counter = 1;
-        }
+        checkUplink();
+        downlinkPacket();
     }
     else
     {
@@ -349,7 +305,50 @@ void NetworkNode::handleGTP( gtp &time )
     _registers.ada_input_register.new_sync = 1;
 
 }
+void NetworkNode::checkUplink()
+{
+    _health.serial_connection_fault = 0;
+    if( serialDataAvail( _handles.serial ) )
+    {
+        ROS_INFO( "Available: %d", serialDataAvail( _handles.serial ) );
+        while( serialDataAvail( _handles.serial ) )
+        {
+            _buffer[_buffer_index++] = (char)serialGetchar( _handles.serial );
+            ROS_INFO( "Index[%d]: %c", _buffer_index-1, _buffer[_buffer_index-1] );
 
+            if( _buffer_index > 3 )
+            {
+                //remember its already been indexed by one, so have to look at least 1 back to start
+                if( possiblePacket() )
+                {
+                    if( isCommand() )
+                    {
+                        ground_command com;
+                        std::memcpy( &com, &_buffer[_buffer_index-sizeof(ground_command)], sizeof( ground_command ) );
+                        handleCommand( com );
+                    }
+                    else if( isGTP() )
+                    {
+                        gtp gps;
+                        std::memcpy( &gps, &_buffer[_buffer_index-sizeof(gtp)], sizeof( gtp ) );
+                        handleGTP( gps );
+                    }
+                    else
+                    {
+                        resetBuffer();
+                        _health.serial_bad_reads++;
+                    }
+                    resetBuffer();
+                }
+                else if( _buffer_index >= MAX_BUF )
+                {
+                    resetBuffer();
+                    _health.serial_bad_reads++;
+                }
+            }
+        }
+    }
+}
 void NetworkNode::downlinkPacket()
 {
     data_packet data = buildPacket();
