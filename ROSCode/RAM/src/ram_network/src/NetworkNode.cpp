@@ -24,28 +24,9 @@ void NetworkNode::setupSubscribers()
 }
 void NetworkNode::setupServices()
 {
-   // _snap_one = _node_handle.serviceClient<ram_network::Snap>( "/" + _cam_mons[0] + "/takeSnap" );
-   // _snap_two = _node_handle.serviceClient<ram_network::Snap>("/" + _cam_mons[1] + "/takeSnap" );
-   // _snap_three = _node_handle.serviceClient<ram_network::Snap>( "/" + _cam_mons[2] + "/takeSnap" );
-   // _snap_four = _node_handle.serviceClient<ram_network::Snap>( "/" +_cam_mons[3] + "/takeSnap" );
-    //_snap_five = _node_handle.serviceClient<ram_network::Snap>( "/" + _cam_mons[4] + "/takeSnap" );
-    //_snap_six = _node_handle.serviceClient<ram_network::Snap>( "/" + _cam_mons[5] + "/takeSnap" );
     _snap_seven = _node_handle.serviceClient<ram_network::Snap>( "/" + _cam_mons[6] + "/takeSnap" );
-
-   // _start_vid_one = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[0] + "/start_capture" );
-//    _start_vid_two = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[1] + "/start_capture" );
-//    _start_vid_three = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[2] + "/start_capture" );
-//    _start_vid_four = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[3] + "/start_capture" );
-//    _start_vid_five = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[4] + "/start_capture" );
-//    _start_vid_six = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[5] + "/start_capture" );
-
-//    _stop_vid_one = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[0] + "/stop_capture" );
-//    _stop_vid_two = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[1] + "/stop_capture" );
-//    _stop_vid_three = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[2] + "/stop_capture" );
-//    _stop_vid_four = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[3] + "/stop_capture" );
-//    _stop_vid_five = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[4] + "/stop_capture" );
-//    _stop_vid_six = _node_handle.serviceClient<std_srvs::Empty>( "/" + _vid_srvs[5] + "/stop_capture" );
-
+    _serial_loop = _node_handle.advertiseService( serial_service_string, &NetworkNode::serialLoopCallback, this );
+    _i2c_loop = _node_handle.advertiseService( i2c_loop_string, &NetworkNode::i2cLoopCallback, this );
 }
 void NetworkNode::startSerialAndI2C()
 {
@@ -66,8 +47,6 @@ void NetworkNode::setupPublishers()
 }
 void NetworkNode::setupTimers()
 {
-    _i2c_loop               = _node_handle.createTimer( ros::Duration( i2cLoop ), boost::bind( &NetworkNode::i2cLoopCallback, this, _1 ) );
-    _serial_loop            = _node_handle.createTimer( ros::Duration( serialLoop ), boost::bind( &NetworkNode::serialLoopCallback, this, _1 ) );
     _network_health_timer   = _node_handle.createTimer( ros::Duration( healthRate ), boost::bind( &NetworkNode::networkHealth, this, _1 ) );
     _rpi_commanding         = _node_handle.createTimer( ros::Duration( rpiComRate ), boost::bind( &NetworkNode::rpiCommanding, this, _1 ) );
     _register_sample        = _node_handle.createTimer( ros::Duration( registerRate ), boost::bind( &NetworkNode::registerSample, this, _1 ) );
@@ -144,7 +123,7 @@ int NetworkNode::openBBoxI2C()
 }
 
 
-void NetworkNode::serialLoopCallback( const ros::TimerEvent &event )
+bool NetworkNode::serialLoopCallback( std_srvs::TriggerRequest &req, std_srvs::TriggerResponse &res )
 {
     if( _handles.serial != -1 )
     {
@@ -204,6 +183,8 @@ void NetworkNode::serialLoopCallback( const ros::TimerEvent &event )
             _health.serial_connection_fault = openSerialConnection() == -1 ? (uint8_t)1 : (uint8_t)0;
         }
     }
+    res.success = 1;
+    return true;
 }
 
 void NetworkNode::handleAda()
@@ -577,11 +558,14 @@ bool NetworkNode::isGTP()
     return result;
 }
 
-void NetworkNode::i2cLoopCallback( const ros::TimerEvent &event )
+bool NetworkNode::i2cLoopCallback( std_srvs::TriggerRequest &req, std_srvs::TriggerResponse &res )
 {
     handleAda();
     handleBBox();
     _health.system_time = _registers.ard_time_sync;
+    res.success = 1;
+    return true;
+
 }
 
 void NetworkNode::networkHealth( const ros::TimerEvent &event )

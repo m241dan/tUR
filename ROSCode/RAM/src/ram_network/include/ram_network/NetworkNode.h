@@ -79,11 +79,11 @@ class NetworkNode
          */
         ros::NodeHandle                 _node_handle;
         /* Main Operation */
-        ros::Timer                      _i2c_loop;
-        void i2cLoopCallback            ( const ros::TimerEvent &event );
+        ros::ServiceServer              _i2c_loop;
+        bool i2cLoopCallback            ( std_srvs::TriggerRequest &req, std_srvs::TriggerResponse &res );
 
-        ros::Timer                      _serial_loop;
-        void serialLoopCallback         ( const ros::TimerEvent &event );
+        ros::ServiceServer              _serial_loop;
+        bool serialLoopCallback         ( std_srvs::TriggerRequest &req, std_srvs::TriggerResponse &res );
 
         /* Network Health */
         ros::Timer                      _network_health_timer;

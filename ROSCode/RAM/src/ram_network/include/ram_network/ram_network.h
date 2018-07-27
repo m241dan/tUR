@@ -24,6 +24,10 @@
 
 const int MAX_BUF = 2048;
 
+const std::string serial_service_string( "/synchronizer/serial" );
+const std::string servo_loop_string( "/synchronizer/servos" );
+const std::string i2c_loop_string( "/synchronizer/i2c" );
+
 struct ArduinoRegisters
 {
     uint32_t                &gps_time_sync;

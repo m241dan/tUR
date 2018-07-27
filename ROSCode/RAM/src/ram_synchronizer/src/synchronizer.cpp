@@ -25,7 +25,7 @@ int main( int argc, char *argv[] )
     ros::ServiceClient serial_service = node_handle.serviceClient<std_srvs::Trigger>( serial_service_string );
     ros::ServiceClient servo_loop = node_handle.serviceClient<std_srvs::Trigger>( servo_loop_string );
     ros::ServiceClient i2c_loop = node_handle.serviceClient<std_srvs::Trigger>( i2c_loop_string );
-    ros::Rate rate(0.2); // 5Hz
+    ros::Rate rate(5); // 5Hz, rate takes Hertz
     std_srvs::Trigger trigger;
 
     uint8_t serial_filter = 0;
@@ -45,18 +45,23 @@ int main( int argc, char *argv[] )
             serial_filter = 0;
         }
 
-        servo_loop.call( trigger );
-        if( !trigger.response.success )
+        if( ros::service::exists( servo_loop_string, true ) )
         {
-            ROS_ERROR( "Syncrhonizer failed to run Servo Loop" );
+            servo_loop.call( trigger );
+            if( !trigger.response.success )
+            {
+                ROS_ERROR( "Synchronizer failed to run Servo Loop" );
+            }
         }
 
-        i2c_loop.call( trigger );
-        if( !trigger.response.success )
+        if( ros::service::exists( i2c_loop_string, true ) )
         {
-            ROS_ERROR( "Synchronizer failed to run I2C Loop" );
+            i2c_loop.call( trigger );
+            if( !trigger.response.success )
+            {
+                ROS_ERROR( "Synchronizer failed to run I2C Loop" );
+            }
         }
-
         rate.sleep();
     }
 
