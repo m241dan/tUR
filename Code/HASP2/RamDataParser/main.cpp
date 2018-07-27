@@ -91,31 +91,31 @@ int main( int argc, char *argv[] )
                                 std::ofstream amb_file( ss.str(), std::ofstream::app );
                                 if( amb_file )
                                 {
-                                    amb_file << amb_packet.time_recorded << ",";
-                                    amb_file << amb_packet.bme01_temp << ",";
-                                    amb_file << amb_packet.bme01_pres << ",";
-                                    amb_file << amb_packet.bme01_humi << ",";
+                                    amb_file << (int)amb_packet.time_recorded << ",";
+                                    amb_file << (int)amb_packet.bme01_temp << ",";
+                                    amb_file << (int)amb_packet.bme01_pres << ",";
+                                    amb_file << (int)amb_packet.bme01_humi << ",";
 
-                                    amb_file << amb_packet.bme02_temp << ",";
-                                    amb_file << amb_packet.bme02_pres << ",";
-                                    amb_file << amb_packet.bme02_humi << ",";
+                                    amb_file << (int)amb_packet.bme02_temp << ",";
+                                    amb_file << (int)amb_packet.bme02_pres << ",";
+                                    amb_file << (int)amb_packet.bme02_humi << ",";
 
-                                    amb_file << amb_packet.dallas01_temp << ",";
-                                    amb_file << amb_packet.dallas02_temp << ",";
-                                    amb_file << amb_packet.dallas03_temp << ",";
-                                    amb_file << amb_packet.dallas04_temp << ",";
-                                    amb_file << amb_packet.dallas05_temp << ",";
-                                    amb_file << amb_packet.dallas06_temp << ",";
-                                    amb_file << amb_packet.dallas07_temp << ",";
-                                    amb_file << amb_packet.dallas08_temp << ",";
-                                    amb_file << amb_packet.dallas09_temp << ",";
-                                    amb_file << amb_packet.dallas10_temp << ",";
-                                    amb_file << amb_packet.dallas11_temp << ",";
-                                    amb_file << amb_packet.dallas12_temp << ",";
-                                    amb_file << amb_packet.dallas13_temp << ",";
-                                    amb_file << amb_packet.dallas14_temp << ",";
-                                    amb_file << amb_packet.dallas15_temp << ",";
-                                    amb_file << amb_packet.dallas16_temp << ",";
+                                    amb_file << (int)amb_packet.dallas01_temp << ",";
+                                    amb_file << (int)amb_packet.dallas02_temp << ",";
+                                    amb_file << (int)amb_packet.dallas03_temp << ",";
+                                    amb_file << (int)amb_packet.dallas04_temp << ",";
+                                    amb_file << (int)amb_packet.dallas05_temp << ",";
+                                    amb_file << (int)amb_packet.dallas06_temp << ",";
+                                    amb_file << (int)amb_packet.dallas07_temp << ",";
+                                    amb_file << (int)amb_packet.dallas08_temp << ",";
+                                    amb_file << (int)amb_packet.dallas09_temp << ",";
+                                    amb_file << (int)amb_packet.dallas10_temp << ",";
+                                    amb_file << (int)amb_packet.dallas11_temp << ",";
+                                    amb_file << (int)amb_packet.dallas12_temp << ",";
+                                    amb_file << (int)amb_packet.dallas13_temp << ",";
+                                    amb_file << (int)amb_packet.dallas14_temp << ",";
+                                    amb_file << (int)amb_packet.dallas15_temp << ",";
+                                    amb_file << (int)amb_packet.dallas16_temp << ",";
                                     amb_file << std::endl;
 
 
@@ -137,16 +137,16 @@ int main( int argc, char *argv[] )
                                 std::ofstream bbox_file( ss.str(), std::ofstream::app );
                                 if( bbox_file )
                                 {
-                                    bbox_file << b_packet.time_recorded << ",";
-                                    bbox_file << b_packet.rocker_horiz << ",";
-                                    bbox_file << b_packet.rocker_verti << ",";
-                                    bbox_file << b_packet.toggle_horiz << ",";
-                                    bbox_file << b_packet.toggle_verti << ",";
-                                    bbox_file << b_packet.button_blu << ",";
-                                    bbox_file << b_packet.button_blu_press_recorded << ",";
-                                    bbox_file << b_packet.flap << ",";
-                                    bbox_file << b_packet.potentiometer_lever << ",";
-                                    bbox_file << b_packet.potentiometer_knob << ",";
+                                    bbox_file << (int)b_packet.time_recorded << ",";
+                                    bbox_file << (int)b_packet.rocker_horiz << ",";
+                                    bbox_file << (int)b_packet.rocker_verti << ",";
+                                    bbox_file << (int)b_packet.toggle_horiz << ",";
+                                    bbox_file << (int)b_packet.toggle_verti << ",";
+                                    bbox_file << (int)b_packet.button_blu << ",";
+                                    bbox_file << (int)b_packet.button_blu_press_recorded << ",";
+                                    bbox_file << (int)b_packet.flap << ",";
+                                    bbox_file << (int)b_packet.potentiometer_lever << ",";
+                                    bbox_file << (int)b_packet.potentiometer_knob << ",";
                                     bbox_file << std::endl;
                                 }
                                 else
@@ -168,41 +168,41 @@ int main( int argc, char *argv[] )
                                 {
                                     arm_file << a_packet.time_recorded << ",";
 
-                                    arm_file << a_packet.turntable_temp << ",";
-                                    arm_file << a_packet.turntable_velo << ",";
-                                    arm_file << a_packet.turntable_goal << ",";
-                                    arm_file << a_packet.turntable_posi << ",";
-                                    arm_file << a_packet.turntable_onoff << ",";
+                                    arm_file << (int)a_packet.turntable_temp << ",";
+                                    arm_file << (int)a_packet.turntable_velo << ",";
+                                    arm_file << (int)a_packet.turntable_goal << ",";
+                                    arm_file << (int)a_packet.turntable_posi << ",";
+                                    arm_file << (int)a_packet.turntable_onoff << ",";
 
-                                    arm_file << a_packet.shoulder_temp << ",";
-                                    arm_file << a_packet.shoulder_velo << ",";
-                                    arm_file << a_packet.shoulder_goal << ",";
-                                    arm_file << a_packet.shoulder_posi << ",";
-                                    arm_file << a_packet.shoulder_onoff << ",";
+                                    arm_file << (int)a_packet.shoulder_temp << ",";
+                                    arm_file << (int)a_packet.shoulder_velo << ",";
+                                    arm_file << (int)a_packet.shoulder_goal << ",";
+                                    arm_file << (int)a_packet.shoulder_posi << ",";
+                                    arm_file << (int)a_packet.shoulder_onoff << ",";
 
-                                    arm_file << a_packet.elbow_temp << ",";
-                                    arm_file << a_packet.elbow_velo << ",";
-                                    arm_file << a_packet.elbow_goal << ",";
-                                    arm_file << a_packet.elbow_posi << ",";
-                                    arm_file << a_packet.elbow_onoff << ",";
+                                    arm_file << (int)a_packet.elbow_temp << ",";
+                                    arm_file << (int)a_packet.elbow_velo << ",";
+                                    arm_file << (int)a_packet.elbow_goal << ",";
+                                    arm_file << (int)a_packet.elbow_posi << ",";
+                                    arm_file << (int)a_packet.elbow_onoff << ",";
 
-                                    arm_file << a_packet.wrist_temp << ",";
-                                    arm_file << a_packet.wrist_velo << ",";
-                                    arm_file << a_packet.wrist_goal << ",";
-                                    arm_file << a_packet.wrist_posi << ",";
-                                    arm_file << a_packet.wrist_onoff << ",";
+                                    arm_file << (int)a_packet.wrist_temp << ",";
+                                    arm_file << (int)a_packet.wrist_velo << ",";
+                                    arm_file << (int)a_packet.wrist_goal << ",";
+                                    arm_file << (int)a_packet.wrist_posi << ",";
+                                    arm_file << (int)a_packet.wrist_onoff << ",";
 
-                                    arm_file << a_packet.wrot_temp << ",";
-                                    arm_file << a_packet.wrot_velo << ",";
-                                    arm_file << a_packet.wrot_goal << ",";
-                                    arm_file << a_packet.wrot_posi << ",";
-                                    arm_file << a_packet.wrot_onoff << ",";
+                                    arm_file << (int)a_packet.wrot_temp << ",";
+                                    arm_file << (int)a_packet.wrot_velo << ",";
+                                    arm_file << (int)a_packet.wrot_goal << ",";
+                                    arm_file << (int)a_packet.wrot_posi << ",";
+                                    arm_file << (int)a_packet.wrot_onoff << ",";
 
-                                    arm_file << a_packet.gripper_temp << ",";
-                                    arm_file << a_packet.gripper_velo << ",";
-                                    arm_file << a_packet.gripper_goal << ",";
-                                    arm_file << a_packet.gripper_posi << ",";
-                                    arm_file << a_packet.gripper_onoff << ",";
+                                    arm_file << (int)a_packet.gripper_temp << ",";
+                                    arm_file << (int)a_packet.gripper_velo << ",";
+                                    arm_file << (int)a_packet.gripper_goal << ",";
+                                    arm_file << (int)a_packet.gripper_posi << ",";
+                                    arm_file << (int)a_packet.gripper_onoff << ",";
                                     arm_file << std::endl;
                                 }
                                 else
@@ -222,8 +222,8 @@ int main( int argc, char *argv[] )
                                 if( trial_file )
                                 {
                                     trial_file << t_packet.trial_name << ",";
-                                    trial_file << t_packet.trial_time_start << ",";
-                                    trial_file << t_packet.trial_time_end << ",";
+                                    trial_file << (int)t_packet.trial_time_start << ",";
+                                    trial_file << (int)t_packet.trial_time_end << ",";
                                     trial_file << std::endl;
                                 }
                                 else
@@ -241,8 +241,8 @@ int main( int argc, char *argv[] )
                                 std::ofstream motion_file( ss.str(), std::ofstream::app );
                                 if( motion_file )
                                 {
-                                    motion_file << m_packet.start_time << ",";
-                                    motion_file << m_packet.stop_time << ",";
+                                    motion_file << (int)m_packet.start_time << ",";
+                                    motion_file << (int)m_packet.stop_time << ",";
 
                                     motion_file << m_packet.start_x << ",";
                                     motion_file << m_packet.start_y << ",";
@@ -254,18 +254,18 @@ int main( int argc, char *argv[] )
                                     motion_file << m_packet.stop_z << ",";
                                     motion_file << m_packet.stop_e << ",";
 
-                                    motion_file << m_packet.joint_one_start << ",";
-                                    motion_file << m_packet.joint_one_stop << ",";
-                                    motion_file << m_packet.joint_two_start << ",";
-                                    motion_file << m_packet.joint_two_stop << ",";
-                                    motion_file << m_packet.joint_three_start << ",";
-                                    motion_file << m_packet.joint_three_stop << ",";
-                                    motion_file << m_packet.joint_four_start << ",";
-                                    motion_file << m_packet.joint_four_stop << ",";
-                                    motion_file << m_packet.joint_five_start << ",";
-                                    motion_file << m_packet.joint_five_stop << ",";
-                                    motion_file << m_packet.joint_six_start << ",";
-                                    motion_file << m_packet.joint_six_stop << ",";
+                                    motion_file << (int)m_packet.joint_one_start << ",";
+                                    motion_file << (int)m_packet.joint_one_stop << ",";
+                                    motion_file << (int)m_packet.joint_two_start << ",";
+                                    motion_file << (int)m_packet.joint_two_stop << ",";
+                                    motion_file << (int)m_packet.joint_three_start << ",";
+                                    motion_file << (int)m_packet.joint_three_stop << ",";
+                                    motion_file << (int)m_packet.joint_four_start << ",";
+                                    motion_file << (int)m_packet.joint_four_stop << ",";
+                                    motion_file << (int)m_packet.joint_five_start << ",";
+                                    motion_file << (int)m_packet.joint_five_stop << ",";
+                                    motion_file << (int)m_packet.joint_six_start << ",";
+                                    motion_file << (int)m_packet.joint_six_stop << ",";
                                     motion_file << std::endl;
 
                                 }
@@ -285,39 +285,40 @@ int main( int argc, char *argv[] )
                                 std::ofstream network_file( ss.str(), std::ofstream::app );
                                 if( network_file )
                                 {
-                                    network_file << n_packet.time_recorded << ",";
-                                    network_file << n_packet.serial_commands_received << ",";
-                                    network_file << n_packet.serial_gtp_received << ",";
-                                    network_file << n_packet.serial_bad_reads << ",";
-                                    network_file << n_packet.serial_connection_fault << ",";
+                                    network_file << (int)n_packet.time_recorded << ",";
+                                    network_file << (int)n_packet.serial_commands_received << ",";
+                                    network_file << (int)n_packet.serial_gtp_received << ",";
+                                    network_file << (int)n_packet.serial_bad_reads << ",";
+                                    network_file << (int)n_packet.serial_connection_fault << ",";
 
-                                    network_file << n_packet.ada_commands_received << ",";
-                                    network_file << n_packet.ada_command_faults << ",";
-                                    network_file << n_packet.ada_writes_received << ",";
-                                    network_file << n_packet.ada_write_faults << ",";
-                                    network_file << n_packet.ada_reads_received << ",";
-                                    network_file << n_packet.ada_read_faults << ",";
-                                    network_file << n_packet.ada_sd_fault << ",";
-                                    network_file << n_packet.ada_connection_fault << ",";
-                                    network_file << n_packet.ada_bme01_fault << ",";
-                                    network_file << n_packet.ada_bme02_fault << ",";
+                                    network_file << (int)n_packet.ada_commands_received << ",";
+                                    network_file << (int)n_packet.ada_command_faults << ",";
+                                    network_file << (int)n_packet.ada_writes_received << ",";
+                                    network_file << (int)n_packet.ada_write_faults << ",";
+                                    network_file << (int)n_packet.ada_reads_received << ",";
+                                    network_file << (int)n_packet.ada_read_faults << ",";
+                                    network_file << (int)n_packet.ada_sd_fault << ",";
+                                    network_file << (int)n_packet.ada_connection_fault << ",";
+                                    network_file << (int)n_packet.ada_bme01_fault << ",";
+                                    network_file << (int)n_packet.ada_bme02_fault << ",";
                                     network_file << n_packet.ada_eng_sys_msg << ",";
 
-                                    network_file << n_packet.bbox_commands_received << ",";
-                                    network_file << n_packet.bbox_command_faults << ",";
-                                    network_file << n_packet.bbox_writes_received << ",";
-                                    network_file << n_packet.bbox_write_faults << ",";
-                                    network_file << n_packet.bbox_reads_received << ",";
-                                    network_file << n_packet.bbox_read_faults << ",";
-                                    network_file << n_packet. bbox_sd_fault << ",";
-                                    network_file << n_packet. bbox_connection_fault << ",";
-                                    network_file << n_packet. bbox_eng_sys_msg << ",";
+                                    network_file << (int)n_packet.bbox_commands_received << ",";
+                                    network_file << (int)n_packet.bbox_command_faults << ",";
+                                    network_file << (int)n_packet.bbox_writes_received << ",";
+                                    network_file << (int)n_packet.bbox_write_faults << ",";
+                                    network_file << (int)n_packet.bbox_reads_received << ",";
+                                    network_file << (int)n_packet.bbox_read_faults << ",";
+                                    network_file << (int)n_packet.bbox_sd_fault << ",";
+                                    network_file << (int)n_packet.bbox_connection_fault << ",";
+                                    network_file << n_packet.bbox_eng_sys_msg << ",";
 
-                                    network_file << n_packet. ada_commands << ",";
-                                    network_file << n_packet. bbox_commands << ",";
-                                    network_file << n_packet. cam_commands << ",";
-                                    network_file << n_packet. arm_commands << ",";
-                                    network_file << n_packet. netw_commands << ",";
+                                    network_file << (int)n_packet.ada_commands << ",";
+                                    network_file << (int)n_packet.bbox_commands << ",";
+                                    network_file << (int)n_packet.cam_commands << ",";
+                                    network_file << (int)n_packet.arm_commands << ",";
+                                    network_file << (int)n_packet.netw_commands << ",";
+                                    network_file << std::endl;
                                 }
                                 else
                                 {
