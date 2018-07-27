@@ -15,8 +15,8 @@ files parse_args( int argc, char *argv[] )
 {
     files info;
 
-    info.input_file = std::string( argv[1] );
-    info.output_directory = std::string( argv[2] );
+    info.output_directory = std::string( argv[1] );
+    info.input_file = std::string( argv[2] );
 
     return info;
 }
