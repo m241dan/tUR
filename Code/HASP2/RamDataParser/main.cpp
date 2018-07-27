@@ -100,22 +100,22 @@ int main( int argc, char *argv[] )
                                     amb_file << (int)amb_packet.bme02_pres << ",";
                                     amb_file << (int)amb_packet.bme02_humi << ",";
 
-                                    amb_file << (int)amb_packet.dallas01_temp << ",";
-                                    amb_file << (int)amb_packet.dallas02_temp << ",";
-                                    amb_file << (int)amb_packet.dallas03_temp << ",";
-                                    amb_file << (int)amb_packet.dallas04_temp << ",";
-                                    amb_file << (int)amb_packet.dallas05_temp << ",";
-                                    amb_file << (int)amb_packet.dallas06_temp << ",";
-                                    amb_file << (int)amb_packet.dallas07_temp << ",";
-                                    amb_file << (int)amb_packet.dallas08_temp << ",";
-                                    amb_file << (int)amb_packet.dallas09_temp << ",";
-                                    amb_file << (int)amb_packet.dallas10_temp << ",";
-                                    amb_file << (int)amb_packet.dallas11_temp << ",";
-                                    amb_file << (int)amb_packet.dallas12_temp << ",";
-                                    amb_file << (int)amb_packet.dallas13_temp << ",";
-                                    amb_file << (int)amb_packet.dallas14_temp << ",";
-                                    amb_file << (int)amb_packet.dallas15_temp << ",";
-                                    amb_file << (int)amb_packet.dallas16_temp << ",";
+                                    amb_file << (int)amb_packet.dallas01_temp / 100 << ",";
+                                    amb_file << (int)amb_packet.dallas02_temp / 100 << ",";
+                                    amb_file << (int)amb_packet.dallas03_temp / 100 << ",";
+                                    amb_file << (int)amb_packet.dallas04_temp / 100 << ",";
+                                    amb_file << (int)amb_packet.dallas05_temp / 100 << ",";
+                                    amb_file << (int)amb_packet.dallas06_temp / 100 << ",";
+                                    amb_file << (int)amb_packet.dallas07_temp / 100 << ",";
+                                    amb_file << (int)amb_packet.dallas08_temp / 100 << ",";
+                                    amb_file << (int)amb_packet.dallas09_temp / 100 << ",";
+                                    amb_file << (int)amb_packet.dallas10_temp / 100 << ",";
+                                    amb_file << (int)amb_packet.dallas11_temp / 100 << ",";
+                                    amb_file << (int)amb_packet.dallas12_temp / 100 << ",";
+                                    amb_file << (int)amb_packet.dallas13_temp / 100 << ",";
+                                    amb_file << (int)amb_packet.dallas14_temp / 100 << ",";
+                                    amb_file << (int)amb_packet.dallas15_temp / 100 << ",";
+                                    amb_file << (int)amb_packet.dallas16_temp / 100 << ",";
                                     amb_file << std::endl;
 
 
