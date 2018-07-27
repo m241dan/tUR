@@ -103,9 +103,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+   INCLUDE_DIRS include
 #  LIBRARIES ram_synchronizer
-#  CATKIN_DEPENDS roscpp std_msgs std_srvs
+   CATKIN_DEPENDS roscpp std_msgs std_srvs
 #  DEPENDS system_lib
 )
 
@@ -116,7 +116,8 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  include
+  include/ram_synchronizer
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -133,7 +134,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/ram_synchronizer_node.cpp)
+add_executable(${PROJECT_NAME}_node src/synchronizer.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
