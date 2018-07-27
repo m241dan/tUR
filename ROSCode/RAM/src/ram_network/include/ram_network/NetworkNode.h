@@ -10,6 +10,7 @@
 #include <fstream>
 #include <ram_network/Snap.h>
 #include <std_srvs/Empty.h>
+#include <std_srvs/Trigger.h>
 #include <ram_network/ManualWaypoint.h>
 #include <ram_network/ServoChange.h>
 #include <arm_motion/ArmInfo.h>
