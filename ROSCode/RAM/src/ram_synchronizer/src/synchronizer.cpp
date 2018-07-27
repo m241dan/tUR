@@ -11,6 +11,10 @@ const std::string i2c_loop_string( "/synchronizer/i2c" );
 
 int main( int argc, char *argv[] )
 {
+    ros::init( argc, argv, "arm_synchronizer" );
+    ros::NodeHandle node_handle;
+    ros::ServiceClient serial_service = node_handle.serviceClient<std_srvs::Trigger>( "/synchronizer/serial" );
+    ros::ServiceClient
     // setup services for calling the processes that are synchtonized
     // setup serial loop counter for scaling the 5 Hz to 1 in the same loop
     // while loop
