@@ -1,1 +1,0 @@
-/usr/bin/c++  -g   CMakeFiles/RamDataParser.dir/main.cpp.o  -o RamDataParser 

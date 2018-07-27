@@ -1,3 +1,0 @@
-/home/korisd/tUR/Code/HASP2/RamDataParser/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/korisd/tUR/Code/HASP2/RamDataParser/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/korisd/tUR/Code/HASP2/RamDataParser/cmake-build-debug/CMakeFiles/RamDataParser.dir
