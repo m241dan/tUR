@@ -107,18 +107,10 @@ void setup()
     pinMode(POTENTIOM_KNOB, INPUT);
   
     sys_clock.syncClock( 1234470131, millis() );
-    if( !SD.begin( SD_CARD ) )
-    {
-        output_register.sd_fault = 1;
-        Serial.println( "SD NO INIT!!! POURQUE!?!?" );
-    }
-    else
-        snprintf( log_name, sizeof( log_name ), "%s", getNextFile( "log", ".csv" ).c_str() );
  }
 
 void loop()
 {
-    Serial.println( "SD Fault: " + String( output_register.sd_fault ) );
     output_register.rocker_horiz       = digitalRead( ROCKER_HORIZ     );
     output_register.rocker_verti       = digitalRead( ROCKER_VERTI     );
     output_register.toggle_horiz       = digitalRead( TOGGLE_HORIZ     );
@@ -127,22 +119,15 @@ void loop()
     output_register.potentiometer_lever= (int)( analogRead( POTENTIOM_LEVER  ) / POTENTIOM_TRUNC );
     output_register.potentiometer_knob = (int)( analogRead( POTENTIOM_KNOB   ) / POTENTIOM_TRUNC );
 
+    Serial.println( "Rocker Horiz: " + String( output_register.rocker_horiz ) );
+    Serial.println( "Rocker Verti: " + String( output_register.rocker_verti ) );
+    Serial.println( "Toggle Horiz: " + String( output_register.toggle_horiz ) );
+    Serial.println( "Toggle Verti: " + String( output_register.toggle_verti ) );
+    Serial.println( "Pot Level   : " + String( output_register.potentiometer_lever ) );
+    Serial.println( "Pot Knob    : " + String( output_register.potentiometer_knob ) );
+    Serial.println( "Blu Button  : " + String( output_register.button_blu ) );
+
     // call millis() each time for "most accurate" timing ;P
     sys_clock.updateClock( millis() );
-    
-    if( !output_register.sd_fault && millis() - last_write > write_rate )
-    {
-        File log_file = SD.open( log_name, FILE_WRITE );
-        if( !log_file )
-        {
-            output_register.sd_fault = 1;
-        }
-        else
-        {
-            log_file.println( output_register.serialize_csv() );
-            output_register.sd_fault = 0;
-            log_file.close();
-        }
-        last_write = millis();
-    }
+    delay(1000);
 }
