@@ -117,168 +117,168 @@ int main( int argc, char *argv[] )
                                     amb_file << (int)amb_packet.bme02_humi << ",";
 
 									/*
-									if ( ((int)amb_packet.dallas00_temp / 100) < -25000)
+									if ( ((double)amb_packet.dallas00_temp / 100.0) < -200.0)
 									{
 										amb_file << "bad,";
 									}
 									else
 									{
-										amb_file << (int)amb_packet.dallas00_temp / 100 << ",";
+										amb_file << (double)amb_packet.dallas00_temp / 100.0 << ",";
 									}
 									*/
 									
-                                    if ( ((int)amb_packet.dallas01_temp / 100) < -25000)
+                                    if ( ((double)amb_packet.dallas01_temp / 100.0) < -200.0)
 									{
 										amb_file << "bad,";
 									}
 									else
 									{
-										amb_file << (int)amb_packet.dallas01_temp / 100 << ",";
+										amb_file << (double)amb_packet.dallas01_temp / 100.0 << ",";
 									}
 									
-                                    if ( ((int)amb_packet.dallas02_temp / 100) < -25000)
+                                    if ( ((double)amb_packet.dallas02_temp / 100.0) < -200.0)
 									{
 										amb_file << "bad,";
 									}
 									else
 									{
-										amb_file << (int)amb_packet.dallas02_temp / 100 << ",";
+										amb_file << (double)amb_packet.dallas02_temp / 100.0 << ",";
 									}
 									
-									if ( ((int)amb_packet.dallas03_temp / 100) < -25000)
+									if ( ((double)amb_packet.dallas03_temp / 100.0) < -200.0)
 									{
 										amb_file << "bad,";
 									}
 									else
 									{
-										amb_file << (int)amb_packet.dallas03_temp / 100 << ",";
+										amb_file << (double)amb_packet.dallas03_temp / 100.0 << ",";
 									}
                                     
-                                    if ( ((int)amb_packet.dallas04_temp / 100) < -25000)
+                                    if ( ((double)amb_packet.dallas04_temp / 100.0) < -200.0)
 									{
 										amb_file << "bad,";
 									}
 									else
 									{
-										amb_file << (int)amb_packet.dallas04_temp / 100 << ",";
+										amb_file << (double)amb_packet.dallas04_temp / 100.0 << ",";
 									}
 									
-                                    if ( ((int)amb_packet.dallas05_temp / 100) < -25000)
+                                    if ( ((double)amb_packet.dallas05_temp / 100.0) < -200.0)
 									{
 										amb_file << "bad,";
 									}
 									else
 									{
-										amb_file << (int)amb_packet.dallas05_temp / 100 << ",";
+										amb_file << (double)amb_packet.dallas05_temp / 100.0 << ",";
 									}
 									
-                                    if ( ((int)amb_packet.dallas06_temp / 100) < -25000)
+                                    if ( ((double)amb_packet.dallas06_temp / 100.0) < -200.0)
 									{
 										amb_file << "bad,";
 									}
 									else
 									{
-										amb_file << (int)amb_packet.dallas06_temp / 100 << ",";
+										amb_file << (double)amb_packet.dallas06_temp / 100.0 << ",";
 									}
 									
-                                    if ( ((int)amb_packet.dallas07_temp / 100) < -25000)
+                                    if ( ((double)amb_packet.dallas07_temp / 100.0) < -200.0)
 									{
 										amb_file << "bad,";
 									}
 									else
 									{
-										amb_file << (int)amb_packet.dallas07_temp / 100 << ",";
+										amb_file << (double)amb_packet.dallas07_temp / 100.0 << ",";
 									}
 									
-                                    if ( ((int)amb_packet.dallas08_temp / 100) < -25000)
+                                    if ( ((double)amb_packet.dallas08_temp / 100.0) < -200.0)
 									{
 										amb_file << "bad,";
 									}
 									else
 									{
-										amb_file << (int)amb_packet.dallas08_temp / 100 << ",";
+										amb_file << (double)amb_packet.dallas08_temp / 100.0 << ",";
 									}
 									
-                                    if ( ((int)amb_packet.dallas09_temp / 100) < -25000)
+                                    if ( ((double)amb_packet.dallas09_temp / 100.0) < -200.0)
 									{
 										amb_file << "bad,";
 									}
 									else
 									{
-										amb_file << (int)amb_packet.dallas09_temp / 100 << ",";
+										amb_file << (double)amb_packet.dallas09_temp / 100.0 << ",";
 									}
 									
-                                    if ( ((int)amb_packet.dallas10_temp / 100) < -25000)
+                                    if ( ((double)amb_packet.dallas10_temp / 100.0) < -200.0)
 									{
 										amb_file << "bad,";
 									}
 									else
 									{
-										amb_file << (int)amb_packet.dallas10_temp / 100 << ",";
+										amb_file << (double)amb_packet.dallas10_temp / 100.0 << ",";
 									}
 									
-                                    if ( ((int)amb_packet.dallas11_temp / 100) < -25000)
+                                    if ( ((double)amb_packet.dallas11_temp / 100.0) < -200.0)
 									{
 										amb_file << "bad,";
 									}
 									else
 									{
-										amb_file << (int)amb_packet.dallas11_temp / 100 << ",";
+										amb_file << (double)amb_packet.dallas11_temp / 100.0 << ",";
 									}
 									
-                                    if ( ((int)amb_packet.dallas12_temp / 100) < -25000)
+                                    if ( ((double)amb_packet.dallas12_temp / 100.0) < -200.0)
 									{
 										amb_file << "bad,";
 									}
 									else
 									{
-										amb_file << (int)amb_packet.dallas12_temp / 100 << ",";
+										amb_file << (double)amb_packet.dallas12_temp / 100.0 << ",";
 									}
 									
-                                    if ( ((int)amb_packet.dallas13_temp / 100) < -25000)
+                                    if ( ((double)amb_packet.dallas13_temp / 100.0) < -200.0)
 									{
 										amb_file << "bad,";
 									}
 									else
 									{
-										amb_file << (int)amb_packet.dallas13_temp / 100 << ",";
+										amb_file << (double)amb_packet.dallas13_temp / 100.0 << ",";
 									}
 									
-                                    if ( ((int)amb_packet.dallas14_temp / 100) < -25000)
+                                    if ( ((double)amb_packet.dallas14_temp / 100.0) < -200.0)
 									{
 										amb_file << "bad,";
 									}
 									else
 									{
-										amb_file << (int)amb_packet.dallas14_temp / 100 << ",";
+										amb_file << (double)amb_packet.dallas14_temp / 100.0 << ",";
 									}
 									
-                                    if ( ((int)amb_packet.dallas15_temp / 100) < -25000)
+                                    if ( ((double)amb_packet.dallas15_temp / 100.0) < -200.0)
 									{
 										amb_file << "bad,";
 									}
 									else
 									{
-										amb_file << (int)amb_packet.dallas15_temp / 100 << ",";
+										amb_file << (double)amb_packet.dallas15_temp / 100.0 << ",";
 									}
 									
-                                    if ( ((int)amb_packet.dallas16_temp / 100) < -25000)
+                                    if ( ((double)amb_packet.dallas16_temp / 100.0) < -200.0)
 									{
 										amb_file << "bad,";
 									}
 									else
 									{
-										amb_file << (int)amb_packet.dallas16_temp / 100 << ",";
+										amb_file << (double)amb_packet.dallas16_temp / 100.0 << ",";
 									}
 									
 									/*
-									if ( ((int)amb_packet.dallas17_temp / 100) < -25000)
+									if ( ((double)amb_packet.dallas17_temp / 100.0) < -200.0)
 									{
 										amb_file << "bad,";
 									}
 									else
 									{
-										amb_file << (int)amb_packet.dallas17_temp / 100 << ",";
+										amb_file << (double)amb_packet.dallas17_temp / 100.0 << ",";
 									}
 									*/
                                     amb_file << std::endl;
