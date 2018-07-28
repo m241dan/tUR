@@ -8,7 +8,7 @@ TrialManager::TrialManager( std::string name ) : _state(NOMINAL)
 {
     setupPublishers();
     setupSubscribers();
-    setupTimers();
+    //setupTimers();
     setupLua();
 
 }
@@ -38,7 +38,6 @@ void TrialManager::setupLua()
 
 void TrialManager::setupTimers()
 {
-    _trial_monitor = _node_handle.createTimer( ros::Duration( 2 ), boost::bind( &TrialManager::trialMonitor, this, _1 ) );
 }
 
 void TrialManager::enqueueTrial( const std_msgs::UInt8ConstPtr &msg )
@@ -114,7 +113,6 @@ void TrialManager::trialMonitor( const std_msgs::UInt8ConstPtr &msg )
                 {
                     _trial_queue.at(0)->abort();
                     _trial_queue.clear();
-
                 }
             }
             break;
