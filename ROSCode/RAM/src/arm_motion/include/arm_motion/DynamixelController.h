@@ -24,6 +24,7 @@ class DynamixelController
         bool changePosition( uint8_t id, double radian );
         bool changeVelocity( uint8_t id, uint32_t velocity );
         bool loadDefault( uint8_t id );
+        bool armMoving();
 
 
     protected:

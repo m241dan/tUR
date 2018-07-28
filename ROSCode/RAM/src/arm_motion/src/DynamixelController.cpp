@@ -222,6 +222,10 @@ void DynamixelController::initializeServos()
     ServoCommand mode;
     ServoCommand max_current;
     ServoCommand shutdown;
+    ServoCommand moving_threshold;
+
+    moving_threshold.command = "Moving_Threshold";
+    moving_threshold.value = 1;
 
 
     max_vel.command = "Velocity_Limit";
@@ -245,12 +249,14 @@ void DynamixelController::initializeServos()
         mode.id = id;
         max_current.id = id;
         shutdown.id = id;
+        moving_threshold.id = id;
 
         _bench.reboot( id );
         benchWrite( max_vel );
         benchWrite( max_current );
         benchWrite( mode );
         benchWrite( shutdown );
+        benchWrite( moving_threshold );
         loadDefault( id );
     }
     ROS_INFO( "%s: complete", __FUNCTION__ );
@@ -332,6 +338,8 @@ inline void DynamixelController::updateServos()
         servo_info[i].Current_Limit = (uint16_t) _bench.itemRead( id, "Current_Limit" ); // can probably take this out
         servo_info[i].Position_D_Gain = (uint16_t)_bench.itemRead( id, "Position_D_Gain" ); //can probably take this out too
         servo_info[i].Hardware_Error_Status = (uint8_t)_bench.itemRead( id, "Hardware_Error_status" );
+        servo_info[i].Moving = (uint8_t)_bench.itemRead( id, "Moving" );
+        servo_info[i].Moving_Status = (uint8_t)_bench.itemRead( id, "Moving_Status" );
 
         joints.position[i] = _bench.convertValue2Radian( id, servo_info[i].Present_Position );
         joints.velocity[i] = servo_info[i].Present_Velocity;
@@ -492,4 +500,19 @@ bool DynamixelController::loadDefault( uint8_t id )
         return success;
     }
     return success;
+}
+
+bool DynamixelController::armMoving()
+{
+    bool moving = false;
+
+    for( auto servo : servo_info )
+    {
+        if( servo.Moving )
+        {
+            moving = true;
+            break;
+        }
+    }
+    return moving;
 }

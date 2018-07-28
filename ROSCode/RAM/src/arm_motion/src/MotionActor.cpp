@@ -64,7 +64,8 @@ void MotionActor::motionMonitor()
         }
         else
         {
-            if( checkMotionStep()) // check for arrival
+          //  if( checkMotionStep()) // check for arrival
+            if( !_controller.armMoving() )
             {
                 goal_step++;
                 if( goal_step < goal_max )
@@ -177,7 +178,8 @@ void MotionActor::servoMonitor()
         }
         else
         {
-            if( checkServoStep()) // check for arrival
+           // if( checkServoStep()) // check for arrival
+            if( !_controller.armMoving() )
             {
                 ROS_INFO( "Servo Motion Complete" );
                 arm_motion::ServoMotionResult res;
