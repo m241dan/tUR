@@ -2,7 +2,7 @@
 #define ram_registers
 
 #include <ram_funcs.h>
-#include <cstring>
+//#include <cstring>
 
 struct NetworkHealth
 {
@@ -34,27 +34,11 @@ struct NetworkHealth
     uint8_t  bbox_connection_fault = 0;
     char     bbox_eng_sys_msg[30] = { 0 };
 
-    uint8_t  ada_commands = 0;
-    uint8_t  bbox_commands = 0;
-    uint8_t  cam_commands = 0;
-    uint8_t  arm_commands = 0;
-    uint8_t  netw_commands = 0;
-
-    char *serialize_csv()
-    {
-        static char buf[512];
-        memset( &buf[0], 0, sizeof( buf ) );
-
-        snprintf( buf, sizeof( buf ), "%d,%d,%d,%d,%d,%d,%d,%lu,%d,%lu,%d,%d,%d,%d,%d,%s,%d,%d,%lu,%d,%lu,%d,%d,%d,%s,%d,%d,%d,%d,%d",
-                  system_time,serial_commands_received, serial_gtp_received, serial_bad_reads, serial_connection_fault,
-                  ada_commands_received, ada_command_faults, ada_writes_received, ada_write_faults, ada_reads_received,
-                  ada_read_faults, ada_sd_fault, ada_connection_fault, ada_bme01_fault, ada_bme02_fault, ada_eng_sys_msg,
-                  bbox_commands_received, bbox_command_faults, bbox_writes_received, bbox_write_faults, bbox_reads_received,
-                  bbox_read_faults, bbox_sd_fault, bbox_connection_fault, bbox_eng_sys_msg, ada_commands, bbox_commands,
-                  cam_commands, arm_commands, netw_commands
-        );
-        return buf;
-    }
+    uint8_t ada_commands = 0;
+    uint8_t bbox_commands = 0;
+    uint8_t cam_commands = 0;
+    uint8_t arm_commands = 0;
+    uint8_t netw_commands = 0;
 };
 
 struct ADA_output_register
@@ -99,6 +83,7 @@ struct ADA_output_register
     uint8_t sd_fault = 0;
     char english_sys_msg[30];
 
+<<<<<<< HEAD
     char *serialize_csv()
     {
         static char buf[512];
@@ -113,6 +98,8 @@ struct ADA_output_register
 
     }
 
+=======
+>>>>>>> b10249e... okay, got blu button ready for testing
     void setCheckSums()
     {
         check_one = '\xDE';
@@ -120,7 +107,7 @@ struct ADA_output_register
         check_three = '\xAF';
     }
     bool verifyCheckSums()
-    {
+w    {
         bool verified = false;
 
         if( check_one == '\xDE' &&
@@ -177,7 +164,7 @@ struct BBOX_output_register
     uint8_t toggle_horiz = 0;
     uint8_t toggle_verti = 0;
     uint8_t check_two = 0;
-    uint8_t button_blu = 0;
+    uint32_t button_blu = 0;
     uint8_t potentiometer_lever = 0;
     uint8_t potentiometer_knob = 0;
     uint8_t write_received = 0; // this will roll over, and that's okay
@@ -187,19 +174,6 @@ struct BBOX_output_register
     uint8_t sd_fault = 0;
     uint8_t check_three = 0;
     char english_sys_msg[30];
-
-    char *serialize_csv()
-    {
-        static char buf[512];
-        memset( &buf[0], 0, sizeof( buf ) );
-
-        snprintf( buf, sizeof( buf ), "%d,%d,%d,%d,%d,%d,%d,%d",
-                  time_register, rocker_horiz, rocker_verti,
-                  toggle_horiz, toggle_verti, button_blu,
-                  potentiometer_lever, potentiometer_knob );
-        return buf;
-
-    }
 
     void setCheckSums()
     {
@@ -259,3 +233,4 @@ struct BBOX_input_register
 };
 
 #endif
+

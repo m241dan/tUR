@@ -75,8 +75,7 @@ struct bbox_packet
     uint8_t rocker_verti = 0;
     uint8_t toggle_horiz = 0;
     uint8_t toggle_verti = 0;
-    uint8_t button_blu = 0;
-    uint32_t button_blu_press_recorded = 0;
+    uint32_t button_blu = 0;
     uint8_t flap = 0;
     uint8_t potentiometer_lever = 0;
     uint8_t potentiometer_knob = 0;
