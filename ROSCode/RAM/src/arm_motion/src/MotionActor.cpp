@@ -39,7 +39,10 @@ void MotionActor::kinematicsTick( const geometry_msgs::Pose::ConstPtr &pose )
 void MotionActor::goalCallBack()
 {
     /*setup the new motion*/
-    joint_goals = action_server.acceptNewGoal()->joints;
+    arm_motion::ArmMotionGoalConstPtr goal = action_server.acceptNewGoal();
+
+    joint_goals = goal->joints;
+    _with_force = goal->force;
     goal_step = -1;
     goal_max = (int16_t)joint_goals.size();
 
@@ -90,6 +93,7 @@ void MotionActor::motionMonitor()
                     action_server.setSucceeded( result );
                     std_srvs::Empty empty;
                     _stop_motion.call( empty );
+                    ROS_INFO( "Motion Complete" );
                 }
             }
         }
@@ -99,18 +103,26 @@ void MotionActor::motionMonitor()
 bool MotionActor::checkMotionStep()
 {
     bool arrived = true;
-    std::vector<int32_t> servo_positions = _controller.getServoPositions();
-    std::vector<int32_t> servo_goals = _controller.getServoGoals();
 
-    for( int i = 0; i < MAX_ARM_SERVO; i++ )
+    if( _with_force )
     {
-        auto tolerance = (int32_t)joint_goals[goal_step].effort[i]; //oddly this works out that we can use the same i for all three
-        if( abs( servo_positions[i] - servo_goals[i] ) > tolerance )
+        std::vector<int32_t> servo_positions = _controller.getServoPositions();
+        std::vector<int32_t> servo_goals = _controller.getServoGoals();
+
+        for( int i = 0; i < MAX_ARM_SERVO; i++ )
         {
-            ROS_INFO( "Servo[%d] not arrived.", i+1 );
-            arrived = false;
-            break;
+            auto tolerance = (int32_t) joint_goals[goal_step].effort[i]; //oddly this works out that we can use the same i for all three
+            if( abs( servo_positions[i] - servo_goals[i] ) > tolerance )
+            {
+                ROS_INFO( "Servo[%d] not arrived.", i + 1 );
+                arrived = false;
+                break;
+            }
         }
+    }
+    else
+    {
+        arrived = !_controller.armMoving();
     }
     return arrived;
 }
@@ -193,17 +205,25 @@ void MotionActor::servoMonitor()
 bool MotionActor::checkServoStep()
 {
     bool arrived = true;
-    std::vector<int32_t> servo_positions = _controller.getServoPositions();
-    std::vector<int32_t> servo_goals = _controller.getServoGoals();
 
-    for( int i = 0; i < MAX_SERVO; i++ )
+    if( _with_force )
     {
-        ROS_INFO( "Servo[%d] Position[%d] Goal[%d]", i + 1, servo_positions[i], servo_goals[i] );
-        if( abs( servo_positions[i] - servo_goals[i] ) > 2 )
+        std::vector<int32_t> servo_positions = _controller.getServoPositions();
+        std::vector<int32_t> servo_goals = _controller.getServoGoals();
+
+        for( int i = 0; i < MAX_SERVO; i++ )
         {
-            arrived = false;
-            break;
+            ROS_INFO( "Servo[%d] Position[%d] Goal[%d]", i + 1, servo_positions[i], servo_goals[i] );
+            if( abs( servo_positions[i] - servo_goals[i] ) > 2 )
+            {
+                arrived = false;
+                break;
+            }
         }
+    }
+    else
+    {
+        arrived = !_controller.armMoving();
     }
     return arrived;
 }

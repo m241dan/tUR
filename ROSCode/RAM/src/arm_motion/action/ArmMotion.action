@@ -1,5 +1,6 @@
 #goal definition
 sensor_msgs/JointState[] joints
+bool force
 ---
 #result definition
 bool success

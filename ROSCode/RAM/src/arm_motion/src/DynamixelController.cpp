@@ -218,19 +218,39 @@ bool DynamixelController::verifyServos( int expected_number )
 
 void DynamixelController::initializeServos()
 {
+    ServoCommand max_vel;
+    ServoCommand mode;
+    ServoCommand max_current;
+    ServoCommand moving_threshold;
 
+    moving_threshold.command = "Moving_Threshold";
+    moving_threshold.value = 1;
+
+
+    max_vel.command = "Velocity_Limit";
+    max_vel.value = MAX_VELOCITY;
+
+    mode.command = "Operating_Mode";
+    mode.value = 3;
+
+
+    max_current.command = "Goal_Current";
+    max_current.value = 648;
 
     for( int i = 0; i < MAX_SERVO; i++ )
     {
         uint8_t id = (uint8_t)(i + 1);
+        max_vel.id = id;
+        mode.id = id;
+        max_current.id = id;
+        moving_threshold.id = id;
 
         _bench.reboot( id );
-        _bench.itemWrite( id, "Operating_Mode", 3 );
-        _bench.itemWrite( id, "Current_Limit", 648 );
-        _bench.itemWrite( id, "Velocity_Limit", 20 );
-        _bench.itemWrite( id, "Moving_Threshold", 2 );
+        benchWrite( max_vel );
+        benchWrite( max_current );
+        benchWrite( mode );
+        benchWrite( moving_threshold );
         loadDefaults( id );
-
     }
     ROS_INFO( "%s: complete", __FUNCTION__ );
 }
@@ -308,6 +328,8 @@ inline void DynamixelController::updateServos()
         servo_info[i].Present_Temperature = (uint8_t) _bench.itemRead(id, "Present_Temperature");
         servo_info[i].Present_Current = (int16_t) _bench.itemRead( id, "Present_Current" );
         servo_info[i].Hardware_Error_Status = (uint8_t)_bench.itemRead( id, "Hardware_Error_Status" );
+        servo_info[i].Moving = (uint8_t)_bench.itemRead( id, "Moving" );
+        servo_info[i].Moving_Status = (uint8_t)_bench.itemRead( id, "Moving_Status" );
 
         joints.position[i] = _bench.convertValue2Radian( id, servo_info[i].Present_Position );
         joints.velocity[i] = servo_info[i].Present_Velocity;
@@ -427,4 +449,19 @@ bool DynamixelController::loadDefaults( uint8_t id )
     _bench.itemWrite( id, "Profile_Acceleration", PROFILE_ACC );
 
     return true;
+}
+
+bool DynamixelController::armMoving()
+{
+    bool moving = false;
+
+    for( auto servo : servo_info )
+    {
+        if( servo.Moving )
+        {
+            moving = true;
+            break;
+        }
+    }
+    return moving;
 }
