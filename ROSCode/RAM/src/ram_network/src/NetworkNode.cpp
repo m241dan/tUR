@@ -151,11 +151,9 @@ void NetworkNode::serialLoopCallback( const ros::TimerEvent &event )
         _health.serial_connection_fault = 0;
         if( serialDataAvail( _handles.serial ) )
         {
-            ROS_INFO( "Available: %d", serialDataAvail( _handles.serial ) );
             while( serialDataAvail( _handles.serial ) )
             {
                 _buffer[_buffer_index++] = (char)serialGetchar( _handles.serial );
-                ROS_INFO( "Index[%d]: %c", _buffer_index-1, _buffer[_buffer_index-1] );
 
                 if( _buffer_index > 3 )
                 {
@@ -420,15 +418,11 @@ data_packet NetworkNode::buildPacket()
     memset( &data, 0, sizeof( data_packet ) );
     if( hasPackets() )
     {
-        while( !_image_packets.empty() )
+        if( !_image_packets.empty() )
         {
             if( data.addPacket( _image_packets.front() ) )
             {
                 _image_packets.pop();
-            }
-            else
-            {
-                break;
             }
         }
 
@@ -500,7 +494,17 @@ data_packet NetworkNode::buildPacket()
             {
                 break;
             }
-
+        }
+        while( !_image_packets.empty() )
+        {
+            if( data.addPacket( _image_packets.front() ) )
+            {
+                _image_packets.pop();
+            }
+            else
+            {
+                break;
+            }
         }
     }
 
