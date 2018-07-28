@@ -53,6 +53,7 @@ class DynamixelController
         /* Publishers */
         ros::Publisher servo_info_publisher;
         ros::Publisher servo_joint_publisher;
+        ros::Publisher fault_publisher;
         /* Timers */
         ros::ServiceServer _servo_info;
 
