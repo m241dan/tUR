@@ -18,11 +18,11 @@ struct NetworkHealth
     uint32_t ada_write_faults = 0;
     uint64_t ada_reads_received = 0;
     uint32_t ada_read_faults = 0;
-    uint8_t ada_sd_fault = 0;
-    uint8_t ada_connection_fault = 0;
-    uint8_t ada_bme01_fault = 0;
-    uint8_t ada_bme02_fault = 0;
-    char ada_eng_sys_msg[30] = { 0 };
+    uint8_t  ada_sd_fault = 0;
+    uint8_t  ada_connection_fault = 0;
+    uint8_t  ada_bme01_fault = 0;
+    uint8_t  ada_bme02_fault = 0;
+    char     ada_eng_sys_msg[30] = { 0 };
 
     uint32_t bbox_commands_received = 0;
     uint32_t bbox_command_faults = 0;
@@ -30,15 +30,15 @@ struct NetworkHealth
     uint32_t bbox_write_faults = 0;
     uint64_t bbox_reads_received = 0;
     uint32_t bbox_read_faults = 0;
-    uint8_t bbox_sd_fault = 0;
-    uint8_t bbox_connection_fault = 0;
-    char bbox_eng_sys_msg[30] = { 0 };
+    uint8_t  bbox_sd_fault = 0;
+    uint8_t  bbox_connection_fault = 0;
+    char     bbox_eng_sys_msg[30] = { 0 };
 
-    uint8_t ada_commands = 0;
-    uint8_t bbox_commands = 0;
-    uint8_t cam_commands = 0;
-    uint8_t arm_commands = 0;
-    uint8_t netw_commands = 0;
+    uint8_t  ada_commands = 0;
+    uint8_t  bbox_commands = 0;
+    uint8_t  cam_commands = 0;
+    uint8_t  arm_commands = 0;
+    uint8_t  netw_commands = 0;
 
     char *serialize_csv()
     {
@@ -73,8 +73,7 @@ struct ADA_output_register
     uint8_t bme02_fault = 0;
 
     uint8_t check_two = 0;
-    int16_t dallas00_temp = 0; //HI DAN I MADE THIS EXTRA FOR YOU <3 <3 <3
-	int16_t dallas01_temp = 0;
+    int16_t dallas01_temp = 0;
     int16_t dallas02_temp = 0;
     int16_t dallas03_temp = 0;
     int16_t dallas04_temp = 0;
@@ -90,7 +89,8 @@ struct ADA_output_register
     int16_t dallas14_temp = 0;
     int16_t dallas15_temp = 0;
     int16_t dallas16_temp = 0;
-	int16_t dallas17_temp = 0; //HI DAN I MADE THIS EXTRA FOR YOU <3 <3 <3
+	int16_t dallas17_temp = 0;
+	int16_t dallas18_temp = 0;
     uint8_t check_three = 0;
     uint8_t write_received = 0;
     uint8_t command_received = 0;
@@ -104,11 +104,11 @@ struct ADA_output_register
         static char buf[512];
         memset( &buf[0], 0, sizeof( buf ) );
 
-        snprintf( buf, sizeof( buf ), "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
+        snprintf( buf, sizeof( buf ), "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
             time_register, bme01_pres, bme01_temp, bme01_humi, bme02_pres, bme02_temp, bme02_humi,
             dallas01_temp, dallas02_temp, dallas03_temp, dallas04_temp, dallas05_temp, dallas06_temp,
             dallas07_temp, dallas08_temp, dallas09_temp, dallas10_temp, dallas11_temp, dallas12_temp,
-            dallas13_temp, dallas14_temp, dallas15_temp, dallas16_temp );
+            dallas13_temp, dallas14_temp, dallas15_temp, dallas16_temp, dallas17_temp, dallas18_temp );
         return buf;
 
     }

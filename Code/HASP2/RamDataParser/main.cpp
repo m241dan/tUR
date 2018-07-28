@@ -271,7 +271,6 @@ int main( int argc, char *argv[] )
 										amb_file << (double)amb_packet.dallas16_temp / 100.0 << ",";
 									}
 									
-									/*
 									if ( ((double)amb_packet.dallas17_temp / 100.0) < -200.0)
 									{
 										amb_file << "bad,";
@@ -280,7 +279,15 @@ int main( int argc, char *argv[] )
 									{
 										amb_file << (double)amb_packet.dallas17_temp / 100.0 << ",";
 									}
-									*/
+									
+									if ( ((double)amb_packet.dallas18_temp / 100.0) < -200.0)
+									{
+										amb_file << "bad,";
+									}
+									else
+									{
+										amb_file << (double)amb_packet.dallas18_temp / 100.0 << ",";
+									}									
                                     amb_file << std::endl;
 
 
