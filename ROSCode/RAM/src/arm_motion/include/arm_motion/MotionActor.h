@@ -21,7 +21,7 @@ class MotionActor
     protected:
         void goalCallBack();
         void preemptCallBack();
-        void motionMonitor( const ros::TimerEvent &event );
+        void motionMonitor();
         bool checkMotionStep();
         bool performMotionStep();
         /*
@@ -34,16 +34,16 @@ class MotionActor
         arm_motion::ArmMotionFeedback feedback;
         arm_motion::ArmMotionResult result;
         /* Action Timer */
-        ros::Timer action_timer;
-        ros::Timer servo_timer;
+        ros::Subscriber _kinematics_subscriber;
 
         actionlib::SimpleActionServer<arm_motion::ServoMotionAction> servo_server;
         arm_motion::ServoMotionGoal _goal;
         void servoGoalCallback();
         void servoPreemptCallback();
-        void servoMonitor( const ros::TimerEvent &event );
+        void servoMonitor();
         bool checkServoStep();
         bool performServoStep();
+        void kinematicsTick( const geometry_msgs::Pose::ConstPtr &pose );
 
         /*
          * Dynamixel Controller

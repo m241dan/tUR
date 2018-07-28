@@ -19,18 +19,18 @@ ArmKinematics::ArmKinematics( std::string test )
 
 void ArmKinematics::setupSubscribers()
 {
-    _servo_info_sub = _node_handle.subscribe( "kinematics/servo_info", 10, &ArmKinematics::updateServos, this );
-    _joints_sub = _node_handle.subscribe( "kinematics/joints_in_radians", 10, &ArmKinematics::servoInfoHandler, this );
-    _camera_one_tags = _node_handle.subscribe( "apriltag_detections_one", 10, &ArmKinematics::camOneTagHandler, this );
-    _clock_sub = _node_handle.subscribe( "ram_network_master/clock", 10, &ArmKinematics::clockCallback, this );
+    _servo_info_sub = _node_handle.subscribe( "/kinematics/servo_info", 10, &ArmKinematics::updateServos, this );
+    _joints_sub = _node_handle.subscribe( "/kinematics/joints_in_radians", 10, &ArmKinematics::servoInfoHandler, this );
+    _camera_one_tags = _node_handle.subscribe( "/apriltag_detections_one", 10, &ArmKinematics::camOneTagHandler, this );
+    _clock_sub = _node_handle.subscribe( "/ram_network_master/clock", 10, &ArmKinematics::clockCallback, this );
 
 }
 
 void ArmKinematics::setupPublishers()
 {
-    _servo_fk_publisher = _node_handle.advertise<geometry_msgs::Pose> ( "kinematics/servo_based_fk", 10 );
-    _motion_data_publisher = _node_handle.advertise<arm_motion::MotionData> ( "kinematics/motion_data", 10 );
-    _trial_data_publisher = _node_handle.advertise<arm_motion::TrialData> ( "kinematics/trial_data", 10 );
+    _servo_fk_publisher = _node_handle.advertise<geometry_msgs::Pose> ( "/kinematics/servo_based_fk", 10 );
+    _motion_data_publisher = _node_handle.advertise<arm_motion::MotionData> ( "/kinematics/motion_data", 10 );
+    _trial_data_publisher = _node_handle.advertise<arm_motion::TrialData> ( "/kinematics/trial_data", 10 );
 }
 
 void ArmKinematics::servoInfoHandler( const sensor_msgs::JointState::ConstPtr &joints )

@@ -7,7 +7,7 @@
 /*
  * Public
  */
-DynamixelController::DynamixelController( std::string bus ) : _data_fresh(false)
+DynamixelController::DynamixelController( std::string bus )
 {
     _valid = _bench.begin( bus.c_str());
 
@@ -337,7 +337,6 @@ inline void DynamixelController::updateServos()
         joints.effort[i] = servo_info[i].Present_Current;
     }
     joints.position[3] *= (-1); //specific to our arm
-    _data_fresh = true;
 }
 
 inline void DynamixelController::publishServoInfo()
@@ -448,14 +447,4 @@ bool DynamixelController::loadDefault( uint8_t id )
         return success;
     }
     return success;
-}
-
-bool DynamixelController::isDataFresh()
-{
-    return _data_fresh;
-}
-
-bool DynamixelController::setDataSeen()
-{
-    _data_fresh = false;
 }

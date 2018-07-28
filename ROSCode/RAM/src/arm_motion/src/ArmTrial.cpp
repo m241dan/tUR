@@ -236,13 +236,8 @@ ArmTrial::~ArmTrial()
 void ArmTrial::setupServiceClient()
 {
     _path_service = _node_handle.serviceClient<arm_motion::PathService>("plan_a_path");
-    _start_trial = _node_handle.serviceClient<arm_motion::StartTrial>("kinematics/start_trial");
-    _stop_trial = _node_handle.serviceClient<std_srvs::Empty>("kinematics/stop_trial");
-}
-
-void ArmTrial::servoBasedFK( const geometry_msgs::Pose::ConstPtr &pose )
-{
-    _servo_based_fk_pose = *pose;
+    _start_trial = _node_handle.serviceClient<arm_motion::StartTrial>("/kinematics/start_trial");
+    _stop_trial = _node_handle.serviceClient<std_srvs::Empty>("/kinematics/stop_trial");
 }
 
 bool ArmTrial::isActive()

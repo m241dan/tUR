@@ -24,8 +24,7 @@ class DynamixelController
         bool changePosition( uint8_t id, double radian );
         bool changeVelocity( uint8_t id, uint32_t velocity );
         bool loadDefault( uint8_t id );
-        bool isDataFresh();
-        bool setDataSeen();
+
 
     protected:
         /*
@@ -64,9 +63,6 @@ class DynamixelController
         std::vector<dynamixel_workbench_msgs::XH> servo_info;
         sensor_msgs::JointState joints;
         bool _valid;
-
-        bool _data_fresh;
-
 };
 
 
