@@ -23,6 +23,7 @@ void ArmKinematics::setupSubscribers()
     _joints_sub = _node_handle.subscribe( "/kinematics/joints_in_radians", 10, &ArmKinematics::servoInfoHandler, this );
     _camera_one_tags = _node_handle.subscribe( "/apriltag_detections_one", 10, &ArmKinematics::camOneTagHandler, this );
     _clock_sub = _node_handle.subscribe( "/ram_network_master/clock", 10, &ArmKinematics::clockCallback, this );
+    _fault_subscriber = _node_handle.subscribe( "/servo_fault", 10, &ArmKinematics::faultCallback, this );
 
 }
 
@@ -36,8 +37,11 @@ void ArmKinematics::setupPublishers()
 void ArmKinematics::servoInfoHandler( const sensor_msgs::JointState::ConstPtr &joints )
 {
     _joints = *joints;
-    updateServoForwardKinematics();
-    publishServoForwardKinematics();
+    if( !_fault )
+    {
+        updateServoForwardKinematics();
+        publishServoForwardKinematics();
+    }
 }
 
 void ArmKinematics::camOneTagHandler( const apriltags_ros::AprilTagDetectionArrayConstPtr &tags )
@@ -243,4 +247,9 @@ bool ArmKinematics::stopTrial( std_srvs::Empty::Request &req, std_srvs::Empty::R
     _present_trial.stop_time = (uint32_t)_clock;
     _trial_data_publisher.publish( _present_trial );
     return true;
+}
+
+void ArmKinematics::faultCallback( const std_msgs::UInt8ConstPtr &msg )
+{
+    _fault = msg->data;
 }

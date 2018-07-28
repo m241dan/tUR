@@ -45,6 +45,8 @@ class ArmKinematics
         bool stopMotion( std_srvs::Empty::Request &req, std_srvs::Empty::Response &res );
         bool startTrial( arm_motion::StartTrial::Request &req, arm_motion::StartTrial::Response &res );
         bool stopTrial( std_srvs::Empty::Request &req, std_srvs::Empty::Response &res );
+
+        void faultCallback( const std_msgs::UInt8ConstPtr &msg );
         /*
          * Variables
          */
@@ -62,6 +64,7 @@ class ArmKinematics
         ros::ServiceServer _stop_trial;
         ros::Publisher _motion_data_publisher;
         ros::Publisher _trial_data_publisher;
+        ros::Subscriber _fault_subscriber;
 
         /* Kinematics */
         geometry_msgs::Pose _servo_based_fk;
@@ -75,6 +78,7 @@ class ArmKinematics
         void clockCallback( const rosgraph_msgs::ClockConstPtr &msg );
         ros::Subscriber _clock_sub;
         int _clock = 0;
+        bool _fault;
 
 
 
