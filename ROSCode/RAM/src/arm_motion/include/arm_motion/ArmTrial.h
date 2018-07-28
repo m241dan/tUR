@@ -37,6 +37,7 @@ class ArmTrial
         bool isActive();
         bool isComplete();
         bool start();
+        bool abort();
 
     protected:
         /*
@@ -63,7 +64,6 @@ class ArmTrial
         ros::ServiceClient _stop_trial;
         actionlib::SimpleActionClient<arm_motion::ArmMotionAction> _action_client;
         actionlib::SimpleActionClient<arm_motion::ServoMotionAction> _servo_client;
-
         geometry_msgs::Pose &_servo_based_fk_pose;
 
         bool _active;

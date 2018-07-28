@@ -269,6 +269,12 @@ bool ArmTrial::start()
     return success;
 }
 
+bool ArmTrial::abort()
+{
+    _action_client.cancelAllGoals();
+    _servo_client.cancelAllGoals();
+}
+
 void ArmTrial::generateMotion()
 {
     arm_motion::PathService srv;
