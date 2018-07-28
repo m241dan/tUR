@@ -4,7 +4,7 @@
 
 #include "arm_motion/TrialManager.h"
 
-TrialManager::TrialManager( std::string name )
+TrialManager::TrialManager( std::string name ) : _state(NOMINAL)
 {
     setupPublishers();
     setupSubscribers();
@@ -22,6 +22,7 @@ void TrialManager::setupSubscribers()
     _decrement_servo = _node_handle.subscribe( "/trial/servo_decrement", 10, &TrialManager::servoDecrement, this );
     _reset_trial_queue = _node_handle.subscribe( "/trial/queue_reset", 10, &TrialManager::resetTrialQueue, this );
     _mode_change = _node_handle.subscribe( "/trial/arm_mode", 10, &TrialManager::modeChange, this );
+    _trial_monitor = _node_handle.subscribe( "/servo_fault", 10, &TrialManager::trialMonitor, this );
 }
 
 void TrialManager::setupPublishers()
@@ -53,12 +54,11 @@ void TrialManager::enqueueTrial( const std_msgs::UInt8ConstPtr &msg )
         if( _trial_queue.size() == 1 )  //only trial in the queue, start trial and start monitor ( theoretically they should both be paused )
         {
             _trial_queue.front()->start(   );
-            resumeMonitor();     //start regardless, if its already started, this does nothing
         }
     }
     else
     {
-        ROS_INFO( "%s: failed to enqueue %s", __FUNCTION__, ss.str().c_str() );
+        ROS_ERROR( "%s: failed to enqueue %s", __FUNCTION__, ss.str().c_str() );
         _trial_queue.pop_back();    //trial on there is a dead trial, so get rid of it
     }
 }
@@ -68,29 +68,58 @@ void TrialManager::servoFK( const geometry_msgs::PoseConstPtr &msg )
     _servo_based_fk = *msg;
 }
 
-void TrialManager::trialMonitor( const ros::TimerEvent &event )
+void TrialManager::trialMonitor( const std_msgs::UInt8ConstPtr &msg )
 {
-    if( _trial_queue.size() != 0 )
+    // transition
+    if( msg->data == 0 )
     {
-        bool active = _trial_queue.at(0)->isActive();
-        bool complete = _trial_queue.at(0)->isComplete();
-
-        if( complete )
-        {
-            nextTrial();
-        }
-        else if( !active )
-        {
-            if( !_trial_queue.at(0)->start(   ) )   //if it fails to start, go to the next trial
-            {
-                nextTrial();
-            }
-        }
-
+        if( _state == FAULT )
+            _state = FAULT_RECOVERY;
+        else if( _state == FAULT_RECOVERY )
+            _state = NOMINAL;
     }
     else
     {
-        pauseMonitor();
+        _state = FAULT;
+    }
+    // state action
+
+    switch( _state )
+    {
+        case NOMINAL:
+            if( !_trial_queue.empty() )
+            {
+                bool active = _trial_queue.at(0)->isActive();
+                bool complete = _trial_queue.at(0)->isComplete();
+
+                if( complete )
+                {
+                    nextTrial();
+                }
+                else if( !active )
+                {
+                    if( !_trial_queue.at(0)->start(   ) )   //if it fails to start, go to the next trial
+                    {
+                        nextTrial();
+                    }
+                }
+
+            }
+            break;
+        case FAULT:
+            if( !_trial_queue.empty() )
+            {
+                bool active = _trial_queue.at(0)->isActive();
+                if( active )
+                {
+                    _trial_queue.at(0)->abort();
+                    _trial_queue.clear();
+
+                }
+            }
+            break;
+        case FAULT_RECOVERY:
+            break;
     }
 }
 
@@ -98,16 +127,6 @@ bool TrialManager::nextTrial()
 {
     _trial_queue.erase( _trial_queue.begin() );
     return !_trial_queue.empty();
-}
-
-void TrialManager::pauseMonitor()
-{
-    _trial_monitor.stop();
-}
-
-void TrialManager::resumeMonitor()
-{
-    _trial_monitor.start();
 }
 
 void TrialManager::manualWaypoint( const arm_motion::ManualWaypointConstPtr &msg )
@@ -119,12 +138,11 @@ void TrialManager::manualWaypoint( const arm_motion::ManualWaypointConstPtr &msg
         if( _trial_queue.size() == 1 )  //only trial in the queue, start trial and start monitor ( theoretically they should both be paused )
         {
             _trial_queue.front()->start(   );
-            resumeMonitor();     //start regardless, if its already started, this does nothing
         }
     }
     else
     {
-        ROS_INFO( "%s: failed to enqueue incremenet trial", __FUNCTION__ );
+        ROS_ERROR( "%s: failed to enqueue incremenet trial", __FUNCTION__ );
         _trial_queue.pop_back();    //trial on there is a dead trial, so get rid of it
     }
 }
@@ -138,12 +156,11 @@ void TrialManager::servoIncrement( const arm_motion::ServoChangeConstPtr &msg )
         if( _trial_queue.size() == 1 )  //only trial in the queue, start trial and start monitor ( theoretically they should both be paused )
         {
             _trial_queue.front()->start(   );
-            resumeMonitor();     //start regardless, if its already started, this does nothing
         }
     }
     else
     {
-        ROS_INFO( "%s: failed to enqueue incremenet trial", __FUNCTION__ );
+        ROS_ERROR( "%s: failed to enqueue incremenet trial", __FUNCTION__ );
         _trial_queue.pop_back();    //trial on there is a dead trial, so get rid of it
     }
 }
@@ -159,19 +176,21 @@ void TrialManager::servoDecrement( const arm_motion::ServoChangeConstPtr &msg )
         if( _trial_queue.size() == 1 )  //only trial in the queue, start trial and start monitor ( theoretically they should both be paused )
         {
             _trial_queue.front()->start(   );
-            resumeMonitor();     //start regardless, if its already started, this does nothing
         }
     }
     else
     {
-        ROS_INFO( "%s: failed to enqueue incremenet trial", __FUNCTION__ );
+        ROS_ERROR( "%s: failed to enqueue incremenet trial", __FUNCTION__ );
         _trial_queue.pop_back();    //trial on there is a dead trial, so get rid of it
     }
 }
 
 void TrialManager::resetTrialQueue( const std_msgs::UInt8ConstPtr &msg )
 {
-    pauseMonitor();
+    if( !_trial_queue.empty() )
+    {
+        _trial_queue.at(0)->abort();
+    }
     _trial_queue.clear();
 }
 

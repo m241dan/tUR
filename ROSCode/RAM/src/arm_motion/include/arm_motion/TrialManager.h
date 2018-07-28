@@ -10,6 +10,9 @@
 #include <vector>
 #include <memory>
 
+enum ManagerState {
+    NOMINAL, FAULT, FAULT_RECOVERY
+};
 
 extern "C" {
 #include "lua.h"
@@ -32,10 +35,8 @@ class TrialManager
 
         void enqueueTrial( const std_msgs::UInt8ConstPtr &msg );
         void servoFK( const geometry_msgs::PoseConstPtr &msg );
-        void trialMonitor( const ros::TimerEvent &event );
+        void trialMonitor( const std_msgs::UInt8ConstPtr &msg );
         bool nextTrial();
-        void pauseMonitor();
-        void resumeMonitor();
 
         void manualWaypoint( const arm_motion::ManualWaypointConstPtr &msg );
         void servoIncrement( const arm_motion::ServoChangeConstPtr &msg );
@@ -56,8 +57,9 @@ class TrialManager
         ros::Subscriber _decrement_servo;
         ros::Subscriber _reset_trial_queue;
         ros::Subscriber _mode_change;
+        ros::Subscriber _trial_monitor;
 
-        ros::Timer _trial_monitor;
+        ManagerState _state;
 
         /* Lua Specific */
         lua_State *_lua_handle;
