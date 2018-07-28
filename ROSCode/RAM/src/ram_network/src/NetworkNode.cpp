@@ -1098,11 +1098,11 @@ void NetworkNode::armSample()
     packet.wrot_posi = (uint16_t)_arm_info[4].Present_Position;
     packet.wrot_onoff = (bool)_arm_info[4].Torque_Enable;
 
-    packet.gripper_temp = _arm_info[5].Present_Temperature;
-    packet.gripper_velo = (uint8_t)_arm_info[5].Present_Velocity;
-    packet.gripper_goal = (uint16_t)_arm_info[5].Goal_Position;
-    packet.gripper_posi = (uint16_t)_arm_info[5].Present_Position;
-    packet.gripper_onoff = (bool)_arm_info[5].Torque_Enable;
+    packet.gripper_temp = 0; //_arm_info[5].Present_Temperature;
+    packet.gripper_velo = 0; //(uint8_t)_arm_info[5].Present_Velocity;
+    packet.gripper_goal = 0; //(uint16_t)_arm_info[5].Goal_Position;
+    packet.gripper_posi = 0; //(uint16_t)_arm_info[5].Present_Position;
+    packet.gripper_onoff = 0; //(bool)_arm_info[5].Torque_Enable;
 
     _arm_packets.push( packet );
 
