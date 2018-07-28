@@ -295,6 +295,7 @@ void DynamixelController::setupPublishers()
 {
     servo_info_publisher = node_handle.advertise<arm_motion::ArmInfo>( "kinematics/servo_info", 10 );
     servo_joint_publisher = node_handle.advertise<sensor_msgs::JointState>( "kinematics/joints_in_radians", 10 );
+    fault_publisher = node_handle.advertise<std_msgs::UInt8>( "/servo_fault", 10 );
 
 }
 
@@ -342,8 +343,52 @@ inline void DynamixelController::updateServos()
 inline void DynamixelController::publishServoInfo()
 {
     arm_motion::ArmInfo info;
+    std_msgs::UInt8 fault;
     info.servos = servo_info;
+    fault.data = 0;
 
+    for( auto servo : servo_info )
+    {
+        if( servo.Hardware_Error_Status )
+        {
+            fault.data = 1;
+            break;
+        }
+    }
+
+    fault_publisher.publish( fault );
+    for( auto servo : servo_info ) //weird to do it here, but I want to publish that we have a fault before starting the reboot cycle
+    {
+        if( servo.Hardware_Error_Status )
+        {
+            ServoCommand max_vel;
+            ServoCommand mode;
+            ServoCommand max_current;
+            ServoCommand shutdown;
+
+            max_vel.id = servo.ID;
+            max_vel.command = "Velocity_Limit";
+            max_vel.value = MAX_VELOCITY;
+
+            mode.id = servo.ID;
+            mode.command = "Operating_Mode";
+            mode.value = 3;
+
+            max_current.id = servo.ID;
+            max_current.command = "Goal_Current";
+            max_current.value = 648;
+
+            shutdown.id = servo.ID;
+            shutdown.command = "Shutdown";
+            shutdown.value = 20;
+            _bench.reboot( servo.ID );
+            benchWrite( max_vel );
+            benchWrite( max_current );
+            benchWrite( mode );
+            benchWrite( shutdown );
+            loadDefault( servo.ID );
+        }
+    }
     servo_info_publisher.publish( info );
     servo_joint_publisher.publish( joints );
 
