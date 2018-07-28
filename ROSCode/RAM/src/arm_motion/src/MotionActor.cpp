@@ -92,6 +92,7 @@ void MotionActor::motionMonitor()
                     action_server.setSucceeded( result );
                     std_srvs::Empty empty;
                     _stop_motion.call( empty );
+                    ROS_INFO( "Motion Complete" );
                 }
             }
         }
