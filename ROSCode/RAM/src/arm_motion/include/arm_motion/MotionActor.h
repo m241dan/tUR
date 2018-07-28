@@ -57,6 +57,8 @@ class MotionActor
 
         ros::ServiceClient _start_motion;
         ros::ServiceClient _stop_motion;
+
+        bool _with_force;
 };
 
 
