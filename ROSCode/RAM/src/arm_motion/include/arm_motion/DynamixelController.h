@@ -37,8 +37,8 @@ class DynamixelController
         void initializeServos();
         bool validCommand( ServoCommand com );
         void setupPublishers();
-        void setupTimer();
-        void updateAndPublishServoInfo( const ros::TimerEvent &event );
+        void setupService();
+        bool updateAndPublishServoInfo( std_srvs::TriggerRequest &req, std_srvs::TriggerResponse &res );
         void updateServos();
         void publishServoInfo();
         bool changeTorqueEnable( uint8_t value );
@@ -55,7 +55,7 @@ class DynamixelController
         ros::Publisher servo_info_publisher;
         ros::Publisher servo_joint_publisher;
         /* Timers */
-        ros::Timer servo_info_timer;
+        ros::ServiceServer _servo_info;
 
         /*
          * Dynamixel Stuff

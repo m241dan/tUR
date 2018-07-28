@@ -19,6 +19,7 @@
 #include <arm_motion/TrialData.h>
 #include <arm_motion/StartTrial.h>
 #include <std_srvs/Empty.h>
+#include <std_srvs/Trigger.h>
 
 
 /*
@@ -86,4 +87,9 @@ const std::string valid_commands[MAX_COMMAND] = {
         "Present_Velocity", "Present_Position", "Velocity_Trajectory",
         "Position_Trajectory", "Present_Input_Voltage", "Present_Temperature"
 };
+
+const std::string serial_service_string( "/synchronizer/serial" );
+const std::string servo_loop_string( "/synchronizer/servos" );
+const std::string i2c_loop_string( "/synchronizer/i2c" );
+
 #endif //ARM_MOTION_ARM_MOTION_NODE_H

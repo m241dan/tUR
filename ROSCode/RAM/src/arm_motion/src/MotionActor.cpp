@@ -28,10 +28,8 @@ void MotionActor::goalCallBack()
 {
     /*setup the new motion*/
     joint_goals = action_server.acceptNewGoal()->joints;
-    goal_step = 0;
-    goal_max = (uint8_t)joint_goals.size();
-    performMotionStep(); //the first, as soon as it receives the goal
-    action_timer.start();
+    goal_step = -1;
+    goal_max = (int16_t)joint_goals.size();
 
     std_srvs::Empty empty;
     _start_motion.call(empty);
@@ -49,38 +47,40 @@ void MotionActor::motionMonitor( const ros::TimerEvent &event )
 {
     if( action_server.isActive() )
     {
-        if( checkMotionStep() ) // check for arrival
+        if( goal_step == -1 )
         {
-            goal_step++;
-            if( goal_step < goal_max )
+            performMotionStep();
+        }
+        else
+        {
+            if( checkMotionStep()) // check for arrival
             {
-                /* if we haven't completed motion */
-                if( !performMotionStep() )
+                goal_step++;
+                if( goal_step < goal_max )
                 {
-                    result.success = 0;
-                    action_server.setAborted( result );
-                    _controller.holdPosition();
+                    /* if we haven't completed motion */
+                    if( !performMotionStep())
+                    {
+                        result.success = 0;
+                        action_server.setAborted( result );
+                        _controller.holdPosition();
+                    }
+                    else
+                    {
+                       // feedback.on_step = goal_step;
+                        action_server.publishFeedback( feedback );
+                    }
                 }
                 else
                 {
-                    feedback.on_step = goal_step;
-                    action_server.publishFeedback( feedback );
+                    /* motion is completed */
+                    result.success = 1;
+                    action_server.setSucceeded( result );
+                    std_srvs::Empty empty;
+                    _stop_motion.call( empty );
                 }
             }
-            else
-            {
-                /* motion is completed */
-                result.success = 1;
-                action_server.setSucceeded( result );
-                std_srvs::Empty empty;
-                _stop_motion.call( empty );
-            }
         }
-    }
-    else
-    {
-        /* we got preempted */
-        action_timer.stop();
     }
 }
 
@@ -144,11 +144,9 @@ void MotionActor::servoGoalCallback()
     _goal = *servo_server.acceptNewGoal();
     goal_step = 0;
     goal_max = 1;
-    performServoStep(); //the first, as soon as it receives the goal
-    servo_timer.start();
+
     std_srvs::Empty empty;
     _start_motion.call(empty);
-    _controller.setDataSeen();
 }
 
 void MotionActor::servoPreemptCallback()
@@ -162,20 +160,22 @@ void MotionActor::servoMonitor( const ros::TimerEvent &event )
 {
     if( servo_server.isActive() )
     {
-        if( checkServoStep() ) // check for arrival
+        if( goal_step == -1 )
         {
-            ROS_INFO( "Servo Motion Complete" );
-            arm_motion::ServoMotionResult res;
-            res.success = 1;
-            servo_server.setSucceeded( res );
-            std_srvs::Empty empty;
-            _stop_motion.call( empty );
+            performServoStep();
         }
-    }
-    else
-    {
-        /* we got preempted */
-        servo_timer.stop();
+        else
+        {
+            if( checkServoStep()) // check for arrival
+            {
+                ROS_INFO( "Servo Motion Complete" );
+                arm_motion::ServoMotionResult res;
+                res.success = 1;
+                servo_server.setSucceeded( res );
+                std_srvs::Empty empty;
+                _stop_motion.call( empty );
+            }
+        }
     }
 }
 
@@ -185,22 +185,14 @@ bool MotionActor::checkServoStep()
     std::vector<int32_t> servo_positions = _controller.getServoPositions();
     std::vector<int32_t> servo_goals = _controller.getServoGoals();
 
-    if( _controller.isDataFresh() )
+    for( int i = 0; i < MAX_SERVO; i++ )
     {
-        for( int i = 0; i < MAX_SERVO; i++ )
+        ROS_INFO( "Servo[%d] Position[%d] Goal[%d]", i + 1, servo_positions[i], servo_goals[i] );
+        if( abs( servo_positions[i] - servo_goals[i] ) > 2 )
         {
-            ROS_INFO( "Servo[%d] Position[%d] Goal[%d]", i + 1, servo_positions[i], servo_goals[i] );
-            if( abs( servo_positions[i] - servo_goals[i] ) > 2 )
-            {
-                arrived = false;
-                break;
-            }
+            arrived = false;
+            break;
         }
-        _controller.setDataSeen();
-    }
-    else
-    {
-        arrived = false;
     }
     return arrived;
 }

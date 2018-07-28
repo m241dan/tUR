@@ -21,7 +21,7 @@ DynamixelController::DynamixelController( std::string bus ) : _data_fresh(false)
             initializeServos();
             torqueOn();
             setupPublishers();
-            setupTimer();
+            setupService();
             changePosition( WRIST_ROT_SERVO+1, 0.0 );
       //      changePosition( GRIPPER_SERVO+1, 2510 );
         }
@@ -298,15 +298,17 @@ void DynamixelController::setupPublishers()
 
 }
 
-void DynamixelController::setupTimer()
+void DynamixelController::setupService()
 {
-    servo_info_timer = node_handle.createTimer( ros::Duration( 3 ), boost::bind( &DynamixelController::updateAndPublishServoInfo, this, _1 ) );
+    _servo_info = node_handle.advertiseService( servo_loop_string, &DynamixelController::updateAndPublishServoInfo, this );
 }
 
-void DynamixelController::updateAndPublishServoInfo( const ros::TimerEvent &event )
+bool DynamixelController::updateAndPublishServoInfo( std_srvs::TriggerRequest &req, std_srvs::TriggerResponse &res )
 {
     updateServos();
     publishServoInfo();
+    res.success = 1;
+    return true;
 }
 
 inline void DynamixelController::updateServos()
@@ -326,8 +328,9 @@ inline void DynamixelController::updateServos()
         servo_info[i].Profile_Velocity = (uint32_t) _bench.itemRead(id, "Profile_Velocity");
         servo_info[i].Present_Temperature = (uint8_t) _bench.itemRead(id, "Present_Temperature");
         servo_info[i].Present_Current = (int16_t) _bench.itemRead( id, "Present_Current" );
-        servo_info[i].Current_Limit = (uint16_t) _bench.itemRead( id, "Current_Limit" );
-        servo_info[i].Position_D_Gain = (uint16_t)_bench.itemRead( id, "Position_D_Gain" );
+        servo_info[i].Current_Limit = (uint16_t) _bench.itemRead( id, "Current_Limit" ); // can probably take this out
+        servo_info[i].Position_D_Gain = (uint16_t)_bench.itemRead( id, "Position_D_Gain" ); //can probably take this out too
+        servo_info[i].Hardware_Error_Status = (uint8_t)_bench.itemRead( id, "Hardware_Error_status" );
 
         joints.position[i] = _bench.convertValue2Radian( id, servo_info[i].Present_Position );
         joints.velocity[i] = servo_info[i].Present_Velocity;
