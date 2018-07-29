@@ -1,4 +1,5 @@
 //
+
 // Created by korisd on 7/27/18.
 //
 
@@ -47,9 +48,21 @@ int main( int argc, char *argv[] )
         }
         if( serial_filter == 2 )
         {
+            if( ros::service::exists( i2c_loop_string, true ) )
+            {
+                trigger.response.success = false;
+                i2c_loop.call( trigger );
+                if( !trigger.response.success )
+                {
+                    ROS_ERROR( "Synchronizer failed to run I2C Loop" );
+                }
+            }
+        }
+
+        if( serial_filter == 3)
+        {
             if( ros::service::exists( servo_loop_string, true ) )
             {
-                ROS_INFO( "Firing Servo Loop" );
                 trigger.response.success = false;
                 servo_loop.call( trigger );
                 if( !trigger.response.success )
@@ -59,22 +72,8 @@ int main( int argc, char *argv[] )
             }
         }
 
-        if( serial_filter == 3 )
-        {
-            if( ros::service::exists( i2c_loop_string, true ) )
-            {
-                ROS_INFO( "Firing I2C Loop" );
-                trigger.response.success = false;
-                i2c_loop.call( trigger );
-                if( !trigger.response.success )
-                {
-                    ROS_ERROR( "Synchronizer failed to run I2C Loop" );
-                }
-            }
-            serial_filter = 0;
-        }
         rate.sleep();
-        if( serial_filter > 5 )
+        if( serial_filter >= 3 )
             serial_filter = 0;
     }
 
