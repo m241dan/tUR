@@ -120,9 +120,8 @@ bool MotionActor::performMotionStep()
     bool success = true;
     if( goal_step != goal_max )
     {
+        _controller.loadDefaults();
         uint8_t id = 0;
-        for( int x = 0; x < MAX_SERVO; x++ )
-            _controller.loadDefault( ++id );
         id = 0;
         for( auto velocity : joint_goals[goal_step].velocity )
         {

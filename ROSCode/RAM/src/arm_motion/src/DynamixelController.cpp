@@ -218,41 +218,20 @@ bool DynamixelController::verifyServos( int expected_number )
 
 void DynamixelController::initializeServos()
 {
-    ServoCommand max_vel;
-    ServoCommand mode;
-    ServoCommand max_current;
-    ServoCommand shutdown;
-
-
-    max_vel.command = "Velocity_Limit";
-    max_vel.value = MAX_VELOCITY;
-
-    mode.command = "Operating_Mode";
-    mode.value = 3;
-
-
-    max_current.command = "Goal_Current";
-    max_current.value = 648;
-
-    shutdown.command = "Shutdown";
-    shutdown.value = 20;
 
 
     for( int i = 0; i < MAX_SERVO; i++ )
     {
         uint8_t id = (uint8_t)(i + 1);
-        max_vel.id = id;
-        mode.id = id;
-        max_current.id = id;
-        shutdown.id = id;
 
         _bench.reboot( id );
-        benchWrite( max_vel );
-        benchWrite( max_current );
-        benchWrite( mode );
-        benchWrite( shutdown );
-        loadDefault( id );
     }
+    _bench.itemWrite( shadow_id, "Operating_Mode", 3 );
+    _bench.itemWrite( shadow_id, "Current_Limit", 648 );
+    _bench.itemWrite( shadow_id, "Velocity_Limit", 20 );
+    _bench.itemWrite( shadow_id, "Moving_Threshold", 2 );
+    loadDefaults();
+
     ROS_INFO( "%s: complete", __FUNCTION__ );
 }
 
@@ -321,15 +300,12 @@ inline void DynamixelController::updateServos()
          */
         uint8_t id = i + (uint8_t)1;
         servo_info[i].ID = id;
-        servo_info[i].Torque_Enable = (uint8_t)  _bench.itemRead(id, "Torque_Enable");
-        servo_info[i].Goal_Position = (uint32_t) _bench.itemRead(id, "Goal_Position");
+        servo_info[i].Torque_Enable = (uint8_t)_bench.itemRead(id, "Torque_Enable");
+        servo_info[i].Goal_Position = (uint32_t)_bench.itemRead(id, "Goal_Position");
         servo_info[i].Present_Position = _bench.itemRead(id, "Present_Position");
         servo_info[i].Present_Velocity = _bench.itemRead(id, "Present_Velocity");
-        servo_info[i].Profile_Velocity = (uint32_t) _bench.itemRead(id, "Profile_Velocity");
         servo_info[i].Present_Temperature = (uint8_t) _bench.itemRead(id, "Present_Temperature");
         servo_info[i].Present_Current = (int16_t) _bench.itemRead( id, "Present_Current" );
-        servo_info[i].Current_Limit = (uint16_t) _bench.itemRead( id, "Current_Limit" ); // can probably take this out
-        servo_info[i].Position_D_Gain = (uint16_t)_bench.itemRead( id, "Position_D_Gain" ); //can probably take this out too
         servo_info[i].Hardware_Error_Status = (uint8_t)_bench.itemRead( id, "Hardware_Error_Status" );
 
         joints.position[i] = _bench.convertValue2Radian( id, servo_info[i].Present_Position );
@@ -382,7 +358,7 @@ bool DynamixelController::analyzeServoResponse( std::string fun_name, bool *resp
     return result;
 }
 
-bool DynamixelController::loadDefault( uint8_t id )
+bool DynamixelController::loadDefaults()
 {
     ServoCommand pid_p;
     ServoCommand pid_i;
@@ -391,60 +367,12 @@ bool DynamixelController::loadDefault( uint8_t id )
     ServoCommand v_pid_i;
     ServoCommand profile_acceleration;
 
-    pid_p.id = id;
-    pid_p.command = "Position_P_Gain";
-    pid_p.value = 900;
+    _bench.itemWrite( shadow_id, "Position_P_Gain", PID_P_GAIN );
+    _bench.itemWrite( shadow_id, "Position_I_Gain", PID_I_GAIN );
+    _bench.itemWrite( shadow_id, "Position_D_Gain", PID_D_GAIN );
+    _bench.itemWrite( shadow_id, "Velocity_P_Gain", VELOCITY_PID_P_GAIN );
+    _bench.itemWrite( shadow_id, "Velocity_I_Gain", VELOCITY_PID_I_GAIN );
+    _bench.itemWrite( shadow_id, "Profile_Acceleration", PROFILE_ACC );
 
-    pid_i.id = id;
-    pid_i.command = "Position_I_Gain";
-    pid_i.value = PID_I_GAIN;
-
-    pid_d.id = id;
-    pid_d.command = "Position_D_Gain";
-    pid_d.value = 0;
-
-    v_pid_p.id = id;
-    v_pid_p.command = "Velocity_P_Gain";
-    v_pid_p.value = 1920;
-
-    v_pid_i.id = id;
-    v_pid_i.command = "Velocity_I_Gain";
-    v_pid_i.value = 100;
-
-    profile_acceleration.id = id;
-    profile_acceleration.command = "Profile_Acceleration";
-    profile_acceleration.value = 1;
-
-    bool success = false;
-    success = benchWrite( pid_p );
-    if( !success )
-    {
-        ROS_INFO( "Failed to write PID_P" );
-        return success;
-    }
-    success = benchWrite( pid_i );
-    if( !success )
-    {
-        ROS_INFO( "Failed to write PID_I" );
-        return success;
-    }
-    success = benchWrite( pid_d );
-    if( !success )
-    {
-        ROS_INFO( "Failed to write PID_D" );
-        return success;
-    }
-    success = benchWrite( v_pid_p );
-    if( !success )
-    {
-        ROS_INFO( "Failed to write V_PID_P" );
-        return success;
-    }
-    success = benchWrite( v_pid_i );
-    if( !success )
-    {
-        ROS_INFO( "Failed to write V_PID_I" );
-        return success;
-    }
-    return success;
+    return true;
 }
