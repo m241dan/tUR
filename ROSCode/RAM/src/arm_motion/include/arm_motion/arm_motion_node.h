@@ -63,8 +63,8 @@ const int32_t MAX_VELOCITY = 20;
 const int32_t PID_P_GAIN = 900;
 const int32_t PID_I_GAIN = 300;
 const int32_t PID_D_GAIN = 0;
-const int32_t VELOCITY_PID_P_GAIN = 1920;
-const int32_t VELOCITY_PID_I_GAIN = 100;
+const int32_t VELOCITY_PID_P_GAIN = 100;
+const int32_t VELOCITY_PID_I_GAIN = 1920;
 const int32_t PROFILE_ACC = 1;
 
 typedef struct servo_command

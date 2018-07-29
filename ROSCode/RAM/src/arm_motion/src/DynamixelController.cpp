@@ -225,13 +225,13 @@ void DynamixelController::initializeServos()
         uint8_t id = (uint8_t)(i + 1);
 
         _bench.reboot( id );
-    }
-    _bench.itemWrite( shadow_id, "Operating_Mode", 3 );
-    _bench.itemWrite( shadow_id, "Current_Limit", 648 );
-    _bench.itemWrite( shadow_id, "Velocity_Limit", 20 );
-    _bench.itemWrite( shadow_id, "Moving_Threshold", 2 );
-    loadDefaults();
+        _bench.itemWrite( id, "Operating_Mode", 3 );
+        _bench.itemWrite( id, "Current_Limit", 648 );
+        _bench.itemWrite( id, "Velocity_Limit", 20 );
+        _bench.itemWrite( id, "Moving_Threshold", 2 );
+        loadDefaults( id );
 
+    }
     ROS_INFO( "%s: complete", __FUNCTION__ );
 }
 
@@ -307,6 +307,12 @@ inline void DynamixelController::updateServos()
         servo_info[i].Present_Temperature = (uint8_t) _bench.itemRead(id, "Present_Temperature");
         servo_info[i].Present_Current = (int16_t) _bench.itemRead( id, "Present_Current" );
         servo_info[i].Hardware_Error_Status = (uint8_t)_bench.itemRead( id, "Hardware_Error_Status" );
+        servo_info[i].Position_I_Gain = (uint16_t)_bench.itemRead( id, "Position_I_Gain" );
+        servo_info[i].Secondary_ID = (uint8_t)_bench.itemRead( id, "Secondary_ID" );
+        servo_info[i].Position_P_Gain = (uint16_t)_bench.itemRead( id, "Position_P_Gain" );
+        servo_info[i].Velocity_P_Gain = (uint16_t)_bench.itemRead( id, "Velocity_P_Gain" );
+        servo_info[i].Velocity_I_Gain = (uint16_t)_bench.itemRead( id, "Velocity_I_Gain" );
+        servo_info[i].Position_D_Gain = (uint16_t)_bench.itemRead( id, "Position_D_Gain" );
 
         joints.position[i] = _bench.convertValue2Radian( id, servo_info[i].Present_Position );
         joints.velocity[i] = servo_info[i].Present_Velocity;
@@ -358,21 +364,14 @@ bool DynamixelController::analyzeServoResponse( std::string fun_name, bool *resp
     return result;
 }
 
-bool DynamixelController::loadDefaults()
+bool DynamixelController::loadDefaults( uint8_t id )
 {
-    ServoCommand pid_p;
-    ServoCommand pid_i;
-    ServoCommand pid_d;
-    ServoCommand v_pid_p;
-    ServoCommand v_pid_i;
-    ServoCommand profile_acceleration;
-
-    _bench.itemWrite( shadow_id, "Position_P_Gain", PID_P_GAIN );
-    _bench.itemWrite( shadow_id, "Position_I_Gain", PID_I_GAIN );
-    _bench.itemWrite( shadow_id, "Position_D_Gain", PID_D_GAIN );
-    _bench.itemWrite( shadow_id, "Velocity_P_Gain", VELOCITY_PID_P_GAIN );
-    _bench.itemWrite( shadow_id, "Velocity_I_Gain", VELOCITY_PID_I_GAIN );
-    _bench.itemWrite( shadow_id, "Profile_Acceleration", PROFILE_ACC );
+    _bench.itemWrite( id, "Position_P_Gain", PID_P_GAIN );
+    _bench.itemWrite( id, "Position_I_Gain", PID_I_GAIN );
+    _bench.itemWrite( id, "Position_D_Gain", PID_D_GAIN );
+    _bench.itemWrite( id, "Velocity_P_Gain", VELOCITY_PID_P_GAIN );
+    _bench.itemWrite( id, "Velocity_I_Gain", VELOCITY_PID_I_GAIN );
+    _bench.itemWrite( id, "Profile_Acceleration", PROFILE_ACC );
 
     return true;
 }
