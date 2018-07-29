@@ -9,7 +9,7 @@
  */
 DynamixelController::DynamixelController( std::string bus )
 {
-    _valid = _bench.begin( bus.c_str());
+    _valid = _bench.begin( bus.c_str(), 3000000 );
 
     if( _valid )
     {
