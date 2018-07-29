@@ -45,8 +45,8 @@ int main( int argc, char *argv[] )
                 }
             }
         }
-        if( serial_filter == 14 )
-        {
+//        if( serial_filter == 14 )
+//        {
             if( ros::service::exists( servo_loop_string, true ) )
             {
                 trigger.response.success = false;
@@ -56,10 +56,10 @@ int main( int argc, char *argv[] )
                     ROS_ERROR( "Synchronizer failed to run Servo Loop" );
                 }
             }
-        }
+//        }
 
-        if( serial_filter == 8 )
-        {
+//        if( serial_filter == 8 )
+//        {
             if( ros::service::exists( i2c_loop_string, true ) )
             {
                 trigger.response.success = false;
@@ -69,9 +69,9 @@ int main( int argc, char *argv[] )
                     ROS_ERROR( "Synchronizer failed to run I2C Loop" );
                 }
             }
-        }
+//        }
         rate.sleep();
-        if( serial_filter > 18 )
+        if( serial_filter > 5 )
             serial_filter = 0;
     }
 
