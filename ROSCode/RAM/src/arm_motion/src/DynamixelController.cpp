@@ -307,12 +307,6 @@ inline void DynamixelController::updateServos()
         servo_info[i].Present_Temperature = (uint8_t) _bench.itemRead(id, "Present_Temperature");
         servo_info[i].Present_Current = (int16_t) _bench.itemRead( id, "Present_Current" );
         servo_info[i].Hardware_Error_Status = (uint8_t)_bench.itemRead( id, "Hardware_Error_Status" );
-        servo_info[i].Position_I_Gain = (uint16_t)_bench.itemRead( id, "Position_I_Gain" );
-        servo_info[i].Secondary_ID = (uint8_t)_bench.itemRead( id, "Secondary_ID" );
-        servo_info[i].Position_P_Gain = (uint16_t)_bench.itemRead( id, "Position_P_Gain" );
-        servo_info[i].Velocity_P_Gain = (uint16_t)_bench.itemRead( id, "Velocity_P_Gain" );
-        servo_info[i].Velocity_I_Gain = (uint16_t)_bench.itemRead( id, "Velocity_I_Gain" );
-        servo_info[i].Position_D_Gain = (uint16_t)_bench.itemRead( id, "Position_D_Gain" );
 
         joints.position[i] = _bench.convertValue2Radian( id, servo_info[i].Present_Position );
         joints.velocity[i] = servo_info[i].Present_Velocity;
