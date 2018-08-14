@@ -323,10 +323,11 @@ inline void DynamixelController::publishServoInfo()
     info.servos = servo_info;
     fault.data = 0;
 
-    for( auto servo : servo_info )
+    for( auto &servo : servo_info )
     {
-        if( servo.Hardware_Error_Status )
+        if( servo.Torque_Enable == 0 && servo.Goal_Position == 0 && servo.Present_Position == 0 )
         {
+            servo.Hardware_Error_Status = 1;
             fault.data = 1;
             break;
         }
@@ -340,7 +341,8 @@ inline void DynamixelController::publishServoInfo()
             ServoCommand max_vel;
             ServoCommand mode;
             ServoCommand max_current;
-            ServoCommand shutdown;
+           // ServoCommand shutdown;
+            ServoCommand torque_on;
 
             max_vel.id = servo.ID;
             max_vel.command = "Velocity_Limit";
@@ -354,17 +356,29 @@ inline void DynamixelController::publishServoInfo()
             max_current.command = "Goal_Current";
             max_current.value = 648;
 
-            shutdown.id = servo.ID;
-            shutdown.command = "Shutdown";
-            shutdown.value = 20;
+           // shutdown.id = servo.ID;
+          //  shutdown.command = "Shutdown";
+          //  shutdown.value = 20;
+
+            torque_on.id = servo.ID;
+            torque_on.command = "Torque_Enable";
+            torque_on.value = 1;
+
             _bench.reboot( servo.ID );
             benchWrite( max_vel );
             benchWrite( max_current );
             benchWrite( mode );
-            benchWrite( shutdown );
+           // benchWrite( shutdown );
+            benchWrite( torque_on );
             loadDefaults( servo.ID );
         }
     }
+    if( fault.data == 1 )
+    {
+        updateServos();
+        info.servos = servo_info;
+    }
+
     servo_info_publisher.publish( info );
     servo_joint_publisher.publish( joints );
 
