@@ -232,7 +232,6 @@ ArmTrial::~ArmTrial()
     std_srvs::Empty empty;
     _stop_trial.call( empty );
     _action_client.cancelAllGoals();
-    ROS_ERROR( "TRIAL BEING DELETED" );
 }
 
 void ArmTrial::setupServiceClient()
