@@ -39,10 +39,10 @@ int                 write_rate  = 5000;     // 0.20 Hz or 5 seconds
 unsigned long       last_write  = 0;
 char log_name[15]               = { 0 };
 
-int temperature_00, temperature_01, temperature_02, temperature_03, temperature_04 = 0;
+int temperature_01, temperature_02, temperature_03, temperature_04 = 0;
 int temperature_05, temperature_06, temperature_07, temperature_08, temperature_09 = 0;
 int temperature_10, temperature_11, temperature_12, temperature_13, temperature_14 = 0;
-int temperature_15, temperature_16, temperature_17 = 0;
+int temperature_15, temperature_16, temperature_17, temperature_18 = 0;
 
 //Living document in a more organized format exists here:
 // https://docs.google.com/spreadsheets/d/1mdHR0mqF5xlRaGpWdMslQofoupi8QpfvprQK8RxCKrY/edit#gid=0
@@ -60,7 +60,7 @@ int temperature_15, temperature_16, temperature_17 = 0;
     DeviceAddress thermometer_09 = {0x28, 0xFF, 0x8A, 0x74, 0x87, 0x16, 0x05, 0xF9};
 
 // *-------------------- Bank 12 --------------------*
-    DeviceAddress thermometer_00 = {0x28, 0xFF, 0xAB, 0xBD, 0xC1, 0x16, 0x04, 0xD8};
+    DeviceAddress thermometer_18 = {0x28, 0xFF, 0xAB, 0xBD, 0xC1, 0x16, 0x04, 0xD8}; //Formerly therm_00
     DeviceAddress thermometer_01 = {0x28, 0xFF, 0x49, 0x30, 0xB3, 0x16, 0x05, 0x3B};
     DeviceAddress thermometer_02 = {0x28, 0xFF, 0x4E, 0x7E, 0x87, 0x16, 0x05, 0xDF};
     DeviceAddress thermometer_03 = {0x28, 0xFF, 0x9A, 0x32, 0xB3, 0x16, 0x05, 0x2C};
@@ -175,7 +175,7 @@ void loop()
     thermbank_11.requestTemperaturesByAddress(thermometer_07); 
     thermbank_11.requestTemperaturesByAddress(thermometer_09); 
     
-    thermbank_12.requestTemperaturesByAddress(thermometer_00);
+    thermbank_12.requestTemperaturesByAddress(thermometer_18);
     thermbank_12.requestTemperaturesByAddress(thermometer_01);
     thermbank_12.requestTemperaturesByAddress(thermometer_02);
     thermbank_12.requestTemperaturesByAddress(thermometer_03);
@@ -196,7 +196,7 @@ void loop()
     output_register.dallas07_temp = (thermbank_11.getTempC(thermometer_07) * 100);
     output_register.dallas09_temp = (thermbank_11.getTempC(thermometer_09) * 100);
     
-    output_register.dallas00_temp = (thermbank_12.getTempC(thermometer_00) * 100);
+    output_register.dallas18_temp = (thermbank_12.getTempC(thermometer_18) * 100); //Formerly therm 00
     output_register.dallas01_temp = (thermbank_12.getTempC(thermometer_01) * 100);
     output_register.dallas02_temp = (thermbank_12.getTempC(thermometer_02) * 100);
     output_register.dallas03_temp = (thermbank_12.getTempC(thermometer_03) * 100);

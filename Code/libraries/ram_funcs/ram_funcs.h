@@ -62,6 +62,8 @@ struct ambient_packet
     int16_t dallas14_temp = 0;
     int16_t dallas15_temp = 0;
     int16_t dallas16_temp = 0;
+	int16_t dallas17_temp = 0;
+	int16_t dallas18_temp = 0;
 };
 
 struct bbox_packet
