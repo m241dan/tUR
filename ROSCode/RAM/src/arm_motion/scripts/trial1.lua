@@ -8,55 +8,13 @@
 
 require('types')
 
---trial 1
-return {
-    [1] =  { x = 17.0, y =  5.0, z = 20.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [2] =  { x = 17.0, y =  -5.0, z = 20.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [3] =  { x = 17.0, y =  -5.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [4] =  { x = 17.0, y =  5.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [5] =  { x = 17.0, y =  5.0, z = 20.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [6] =  { x = 17.0, y =  -5.0, z = 20.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [7] =  { x = 17.0, y =  -5.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [8] =  { x = 17.0, y =  5.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [9] =  { x = 17.0, y =  5.0, z = 20.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [10] =  { x = 17.0, y =  -5.0, z = 20.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [11] =  { x = 17.0, y =  -5.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [12] =  { x = 17.0, y =  5.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [13] =  { x = 17.0, y =  5.0, z = 20.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [14] =  { x = 17.0, y =  -5.0, z = 20.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [15] =  { x = 17.0, y =  -5.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [16] =  { x = 17.0, y =  5.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [17] =  { x = 17.0, y =  5.0, z = 20.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [18] =  { x = 17.0, y =  -5.0, z = 20.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [19] =  { x = 17.0, y =  -5.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [20] =  { x = 17.0, y =  5.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [21] =  { x = 17.0, y =  5.0, z = 20.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [22] =  { x = 17.0, y =  -5.0, z = 20.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [23] =  { x = 17.0, y =  -5.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [24] =  { x = 17.0, y =  5.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [25] =  { x = 17.0, y =  5.0, z = 20.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [26] =  { x = 17.0, y =  -5.0, z = 20.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [27] =  { x = 17.0, y =  -5.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [28] =  { x = 17.0, y =  5.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [29] =  { x = 17.0, y =  5.0, z = 20.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [30] =  { x = 17.0, y =  -5.0, z = 20.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [31] =  { x = 17.0, y =  -5.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [32] =  { x = 17.0, y =  5.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [33] =  { x = 17.0, y =  5.0, z = 20.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [34] =  { x = 17.0, y =  -5.0, z = 20.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [35] =  { x = 17.0, y =  -5.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [36] =  { x = 17.0, y =  5.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [37] =  { x = 17.0, y =  5.0, z = 20.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [38] =  { x = 17.0, y =  -5.0, z = 20.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [39] =  { x = 17.0, y =  -5.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [40] =  { x = 17.0, y =  5.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [41] =  { x = 17.0, y =  5.0, z = 20.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [42] =  { x = 17.0, y =  -5.0, z = 20.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [43] =  { x = 17.0, y =  -5.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
-    [44] =  { x = 17.0, y =  5.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_W, precision = 1, shape = "linear", smoothness=200, tolerance=2 };
+-- Trial 1: Leave Stump
+-- Starting position X: 20.42, Y: 14.33, Z: 5.73
 
-    --    [1] = { x = 12.0, y = 12.0, z = 10.0, eeo = 0.0, velocity = 20, type = DISCRETE_W, precision = 2, shape = "linear" };
---    [2] = { x = 12.0, y = -12.0, z = 10.0, eeo = 0.0, velocity = 20, type = DISCRETE_W, precision = 2, shape = "linear" };
---    [3] = { x = 12.0, y = -12.0, z = 20.0, eeo = 0.0, velocity = 20, type = DISCRETE_W, precision = 2, shape = "linear" };
---    [4] = { x = 12.0, y = 12.0, z = 20.0, eeo = 0.0, velocity = 20, type = DISCRETE_W, precision = 2, shape = "linear" };
+return {
+    [1] = { velocity = 5, type = SERVO_ABSOLUTE, s1 = 0, s2 = 0, s3 = 0, s4 = 0, s5 = 2048, s6 = GRIPPER_OPEN },
+    [2] = { velocity = 5, type = SERVO_R, s1 = 0, s2 = 200, s3 = 0, s4 = 0, s5 = 0, s6 = 0 },
+    [3] = { x =  17.0, y =  0.0, z = 12, eeo = 0, velocity = 5, type = DISCRETE_W,precision = 1, shape = "linear", smoothness=10, tolerance=2 };
+    [4] = { velocity = 5, type = SERVO_ABSOLUTE, s1 = 0, s2 = 0, s3 = 0, s4 = 0, s5 = 2048, s6 = GRIPPER_CLOSED},
+
 }

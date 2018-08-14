@@ -16,15 +16,8 @@
 
 require('types')
 
---trial 1
+-- Trial 3: Home Position
 return {
-    -- [1] =  { x = 0.0, y = 0.0, z = 5.0, eeo = 0, velocity = 20, type = DISCRETE_R, precision = 5, shape = "linear", smoothness=200, tolerance=2 };
     [1] =  { x =  17.0, y =  0.0, z = 12, eeo = 0, velocity = 5, type = DISCRETE_W,precision = 1, shape = "linear", smoothness=10, tolerance=2 };
-    --  [3] =  { x =  10.0, y =  0.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_R, precision = 20, shape = "linear", smoothness=200, tolerance=2 };
-    -- [4] =  { x =  10.0, y =  0.0, z = 15.0, eeo = 0, velocity = 20, type = DISCRETE_R, precision = 20, shape = "linear", smoothness=200, tolerance=2 };
-
-    --    [1] = { x = 12.0, y = 12.0, z = 10.0, eeo = 0.0, velocity = 20, type = DISCRETE_W, precision = 2, shape = "linear" };
-    --    [2] = { x = 12.0, y = -12.0, z = 10.0, eeo = 0.0, velocity = 20, type = DISCRETE_W, precision = 2, shape = "linear" };
-    --    [3] = { x = 12.0, y = -12.0, z = 20.0, eeo = 0.0, velocity = 20, type = DISCRETE_W, precision = 2, shape = "linear" };
-    --    [4] = { x = 12.0, y = 12.0, z = 20.0, eeo = 0.0, velocity = 20, type = DISCRETE_W, precision = 2, shape = "linear" };
+    [2] = { velocity = 5, type = SERVO_ABSOLUTE, s1 = 0, s2 = 0, s3 = 0, s4 = 0, s5 = 2048, s6 = GRIPPER_CLOSED},
 }
