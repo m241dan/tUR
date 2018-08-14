@@ -57,7 +57,6 @@ class ArmTrial
          */
         /* ROS Specific */
         ros::NodeHandle _node_handle;
-        ros::Subscriber _servo_based_fk_subscriber;
         ros::ServiceClient _path_service;
         ros::ServiceClient _start_trial;
         ros::ServiceClient _stop_trial;

@@ -42,6 +42,7 @@ class TrialManager
         void servoDecrement( const arm_motion::ServoChangeConstPtr &msg );
         void resetTrialQueue( const std_msgs::UInt8ConstPtr &msg );
         void modeChange( const std_msgs::UInt8ConstPtr &msg );
+        void faultHandler( const std_msgs::UInt8ConstPtr &msg );
 
         /*
          * Variables
@@ -56,6 +57,8 @@ class TrialManager
         ros::Subscriber _decrement_servo;
         ros::Subscriber _reset_trial_queue;
         ros::Subscriber _mode_change;
+        ros::Subscriber _fault_subscriber;
+
 
         ros::Timer _trial_monitor;
 

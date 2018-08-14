@@ -22,6 +22,7 @@ void TrialManager::setupSubscribers()
     _decrement_servo = _node_handle.subscribe( "/trial/servo_decrement", 10, &TrialManager::servoDecrement, this );
     _reset_trial_queue = _node_handle.subscribe( "/trial/queue_reset", 10, &TrialManager::resetTrialQueue, this );
     _mode_change = _node_handle.subscribe( "/trial/arm_mode", 10, &TrialManager::modeChange, this );
+    _fault_subscriber = _node_handle.subscribe( "/servo_fault", 10, &TrialManager::faultHandler, this );
 }
 
 void TrialManager::setupPublishers()
@@ -37,7 +38,7 @@ void TrialManager::setupLua()
 
 void TrialManager::setupTimers()
 {
-    _trial_monitor = _node_handle.createTimer( ros::Duration( 2 ), boost::bind( &TrialManager::trialMonitor, this, _1 ) );
+    _trial_monitor = _node_handle.createTimer( ros::Duration( .5 ), boost::bind( &TrialManager::trialMonitor, this, _1 ) );
 }
 
 void TrialManager::enqueueTrial( const std_msgs::UInt8ConstPtr &msg )
@@ -70,7 +71,7 @@ void TrialManager::servoFK( const geometry_msgs::PoseConstPtr &msg )
 
 void TrialManager::trialMonitor( const ros::TimerEvent &event )
 {
-    if( _trial_queue.size() != 0 )
+    if( !_trial_queue.empty() )
     {
         bool active = _trial_queue.at(0)->isActive();
         bool complete = _trial_queue.at(0)->isComplete();
@@ -178,4 +179,17 @@ void TrialManager::resetTrialQueue( const std_msgs::UInt8ConstPtr &msg )
 void TrialManager::modeChange( const std_msgs::UInt8ConstPtr &msg )
 {
 
+}
+
+void TrialManager::faultHandler( const std_msgs::UInt8ConstPtr &msg )
+{
+    if( msg->data == 1 )
+    {
+        pauseMonitor();
+        nextTrial();
+    }
+    else
+    {
+        resumeMonitor();
+    }
 }
