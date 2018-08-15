@@ -115,7 +115,7 @@ void loop()
     output_register.rocker_verti       = digitalRead( ROCKER_VERTI     );
     output_register.toggle_horiz       = digitalRead( TOGGLE_HORIZ     );
     output_register.toggle_verti       = digitalRead( TOGGLE_VERTI     );
-    output_register.button_blu         = digitalRead( BUTTON_BLU       ); // != 1 ? output_register.time_register;
+    output_register.button_blu         = digitalRead( BUTTON_BLU       )  != 1 ? output_register.time_register : output_register.button_blu;
     output_register.potentiometer_lever= (int)( analogRead( POTENTIOM_LEVER  ) / POTENTIOM_TRUNC );
     output_register.potentiometer_knob = (int)( analogRead( POTENTIOM_KNOB   ) / POTENTIOM_TRUNC );
 

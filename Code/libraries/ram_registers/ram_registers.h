@@ -83,23 +83,6 @@ struct ADA_output_register
     uint8_t sd_fault = 0;
     char english_sys_msg[30];
 
-<<<<<<< HEAD
-    char *serialize_csv()
-    {
-        static char buf[512];
-        memset( &buf[0], 0, sizeof( buf ) );
-
-        snprintf( buf, sizeof( buf ), "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
-            time_register, bme01_pres, bme01_temp, bme01_humi, bme02_pres, bme02_temp, bme02_humi,
-            dallas01_temp, dallas02_temp, dallas03_temp, dallas04_temp, dallas05_temp, dallas06_temp,
-            dallas07_temp, dallas08_temp, dallas09_temp, dallas10_temp, dallas11_temp, dallas12_temp,
-            dallas13_temp, dallas14_temp, dallas15_temp, dallas16_temp, dallas17_temp, dallas18_temp );
-        return buf;
-
-    }
-
-=======
->>>>>>> b10249e... okay, got blu button ready for testing
     void setCheckSums()
     {
         check_one = '\xDE';
