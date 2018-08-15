@@ -4,7 +4,7 @@
 #include <ram_network/NetworkNode.h>
 #include <bits/ios_base.h>
 
-NetworkNode::NetworkNode() : _img_counter(0), _node_handle("~")
+NetworkNode::NetworkNode() : _img_counter(0), _node_handle("~"),  _registers()
 {
     setupSubscribers();
     startSerialAndI2C();
