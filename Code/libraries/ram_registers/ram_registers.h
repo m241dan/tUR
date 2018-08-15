@@ -90,7 +90,7 @@ struct ADA_output_register
         check_three = '\xAF';
     }
     bool verifyCheckSums()
-w    {
+    {
         bool verified = false;
 
         if( check_one == '\xDE' &&
