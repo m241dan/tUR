@@ -39,11 +39,7 @@
 
     </node>
 
-    <node name="$(arg mon_seven)" pkg="cam_monitor" type="cam_monitor_node">
-        <param name="img_topic" value="/$(arg cam_node_seven)/image_raw"/>
-        <param name="video_location" value="/home/ubuntu/RamVideos/$(arg mon_seven/videos/"/>
-        <param name="snap_location" value="/home/ubuntu/RamVideos/$(arg mon_seven)/snap/"/>
-    </node>
+
 
     <!-- Arm Motion Nodes -->
     <node name="arm_motion_driver" pkg="arm_motion" type="arm_motion_driver" output="screen" />
@@ -52,7 +48,7 @@
     <node name="arm_motion_path" pkg="arm_motion" type="arm_motion_path" />
 
 
-    <!-- Camera Nodes -->
+    <!-- Camera Nodes + Monitors -->
     <node type="raspicam_node" pkg="raspicam_node" name="$(arg cam_node_seven)" >
         <param name="camera_info_url" value="package://raspicam_node/camera_info/camerav2_410x308.yaml"/>
         <param name="width" value="410"/>
@@ -65,6 +61,12 @@
         <param name="camera_frame_id" value="raspicam"/>
     </node>
 
+    <node name="$(arg mon_seven)" pkg="cam_monitor" type="cam_monitor_node">
+        <param name="img_topic" value="/$(arg cam_node_seven)/image_raw"/>
+        <param name="video_location" value="/home/ubuntu/RamVideos/$(arg mon_seven/videos/"/>
+        <param name="snap_location" value="/home/ubuntu/RamVideos/$(arg mon_seven)/snap/"/>
+    </node>
+
     <node name="$(arg cam_node_one)" pkg="usb_cam" type="usb_cam_node">
         <param name="video_device" value="$(arg dev1)"/>
         <param name="image_width" value="720"/>
@@ -74,6 +76,12 @@
         <param name="io_method" value="mmap"/>
         <param name="camera_info_url" value="$(arg peeper_config)"/>
         <param name="framerate" value="1"/>
+    </node>
+
+    <node name="$(arg mon_one)" pkg="cam_monitor" type="cam_monitor_node">
+        <param name="img_topic" value="/$(arg cam_node_one)/image_raw"/>
+        <param name="video_location" value="/home/ubuntu/RamVideos/$(arg mon_one/videos/"/>
+        <param name="snap_location" value="/home/ubuntu/RamVideos/$(arg mon_one)/snap/"/>
     </node>
 
     <!-- Synchronizer -->
