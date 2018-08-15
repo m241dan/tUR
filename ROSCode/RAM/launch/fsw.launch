@@ -1,7 +1,7 @@
 <launch>
     <arg name="peeper_config" default="file:///home/ubuntu/tUR/ROSCode/RAM/camera_info/peeper.yaml"/>
     <arg name="dynamixel_bus" default="/dev/ttyUSB0" />
-    <arg name="dev1" default="/dev/video0" />
+    <arg name="dev1" default="/dev/video1" />
     <env name="RAM_SCRIPTS" value="/home/ubuntu/tUR/ROSCode/RAM/src/arm_motion/scripts/" />
 
     <arg name="mon_one" default="cam_one_mon" />
