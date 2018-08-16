@@ -97,7 +97,10 @@ void TrialManager::trialMonitor( const ros::TimerEvent &event )
 
 bool TrialManager::nextTrial()
 {
-    _trial_queue.erase( _trial_queue.begin() );
+    if( !_trial_queue.empty() )
+    {
+        _trial_queue.erase( _trial_queue.begin());
+    }
     return !_trial_queue.empty();
 }
 
