@@ -160,6 +160,8 @@ class NetworkNode
         void motionDataCallback         ( const arm_motion::MotionDataConstPtr &msg );
         void armSample                  ();
 
+        uint32_t                        _packet_counter;
+
 };
 
 

@@ -4,7 +4,7 @@
 #include <ram_network/NetworkNode.h>
 #include <bits/ios_base.h>
 
-NetworkNode::NetworkNode() : _img_counter(0), _node_handle("~"),  _registers()
+NetworkNode::NetworkNode() : _img_counter(0), _node_handle("~"),  _registers(), _packet_counter(0)
 {
     setupSubscribers();
     startSerialAndI2C();
@@ -354,12 +354,19 @@ void NetworkNode::downlinkPacket()
     data_packet data = buildPacket();
     if( data.num_data_chunks != 0 )
     {
+        std::ofstream packet_log;
+        std::stringstream file_name;
+        file_name << std::getenv( "HOME" ) << "/packet" << ++_packet_counter;
+        packet_log.open( file_name.str(), std::ofstream::out );
+
         data.time_sent_to_HASP = _registers.ard_time_sync;
         data.setCheckSums();
 
         auto *ptr = (uint8_t *)&data;
         for( int x = 0; x < sizeof( data_packet ); x++ )
         {
+            if( packet_log )
+                packet_log << *ptr;
             serialPutchar( _handles.serial, *ptr++ );
         }
     }
@@ -400,6 +407,61 @@ data_packet NetworkNode::buildPacket()
     memset( &data, 0, sizeof( data_packet ) );
     if( hasPackets() )
     {
+        //initial fill
+        if( !_image_packets.empty() )
+        {
+            if( data.addPacket( _image_packets.front() ) )
+            {
+                _image_packets.pop();
+            }
+        }
+
+        if( !_arm_packets.empty() )
+        {
+            if( data.addPacket( _arm_packets.front() ) )
+            {
+                _arm_packets.pop();
+            }
+        }
+
+        if( !_motion_packets.empty() )
+        {
+            if( data.addPacket( _motion_packets.front() ) )
+            {
+                _motion_packets.pop();
+            }
+        }
+
+        if( !_trial_packets.empty() )
+        {
+            if( data.addPacket( _trial_packets.front() ) )
+            {
+                _trial_packets.pop();
+            }
+        }
+
+        if( !_ambient_packets.empty() )
+        {
+            if( data.addPacket( _ambient_packets.front() ) )
+            {
+                _ambient_packets.pop();
+            }
+        }
+        if( !_bbox_packets.empty() )
+        {
+            if( data.addPacket( _bbox_packets.front() ) )
+            {
+                _bbox_packets.pop();
+            }
+        }
+        if( !_network_packets.empty() )
+        {
+            if( data.addPacket( _network_packets.front() ) )
+            {
+                _network_packets.pop();
+            }
+        }
+        //back file
         while( !_image_packets.empty() )
         {
             if( data.addPacket( _image_packets.front() ) )
@@ -480,10 +542,8 @@ data_packet NetworkNode::buildPacket()
             {
                 break;
             }
-
         }
     }
-
     return data;
 }
 
