@@ -315,7 +315,6 @@ int main( int argc, char *argv[] )
                                     bbox_file << (int)b_packet.toggle_horiz << ",";
                                     bbox_file << (int)b_packet.toggle_verti << ",";
                                     bbox_file << (int)b_packet.button_blu << ",";
-                                    bbox_file << (int)b_packet.button_blu_press_recorded << ",";
                                     bbox_file << (int)b_packet.flap << ",";
                                     bbox_file << (int)b_packet.potentiometer_lever << ",";
                                     bbox_file << (int)b_packet.potentiometer_knob << ",";
