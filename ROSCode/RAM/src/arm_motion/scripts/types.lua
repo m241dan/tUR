@@ -19,7 +19,7 @@ GRIPPER_CLOSED = 2510
 
 function addObjective( trial, objective )
     for _, v in ipairs( objective ) do
-        table.insert( trial, #trial+1, v )
+        table.insert( trial, v )
     end
 end
 
