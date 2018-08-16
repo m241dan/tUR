@@ -6,7 +6,7 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-require( 'trial' )
+require( 'types' )
 require( 'motions' )
 
 trial = {}
