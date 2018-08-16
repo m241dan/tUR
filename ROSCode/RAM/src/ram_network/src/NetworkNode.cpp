@@ -922,7 +922,7 @@ void NetworkNode::doCamCommand()
     //                com.command[0] = sub++;
     //                com.command[1] = param++;
   //                  _cam_commands.push( com );
-                }
+    //            }
             }
             break;
         case CAMERA_RESET[0]:
