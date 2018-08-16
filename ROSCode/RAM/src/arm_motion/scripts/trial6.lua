@@ -10,7 +10,7 @@ require( "types" )
 
 trial = {}
 
-addObjective( trial, "blu_button" )
+addObjective( trial, blu_button )
 
 return trial
 
