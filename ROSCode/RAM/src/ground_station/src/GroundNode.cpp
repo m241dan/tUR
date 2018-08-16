@@ -143,7 +143,7 @@ void GroundNode::outputCallback( const std_msgs::UInt8MultiArray::ConstPtr &msg 
                     default:
                     {
                         ROS_ERROR( "Bad packet header: %d", data.meat[offset] );
-                        ROS_ERROR( "Packet size: %d expected %d", sizeof( data_packet ), PACKET_SIZE );
+                      //  ROS_ERROR( "Packet size: %d expected %d", sizeof( data_packet ), PACKET_SIZE );
                         break;
                     }
                 }

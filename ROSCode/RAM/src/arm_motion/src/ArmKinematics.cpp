@@ -10,10 +10,10 @@ ArmKinematics::ArmKinematics( std::string test )
     setupPublishers();
     _servos = std::vector<dynamixel_workbench_msgs::XH>( 6, dynamixel_workbench_msgs::XH() );
 
-    _start_motion = _node_handle.advertiseService( "start_motion", &ArmKinematics::startMotion, this );
-    _stop_motion = _node_handle.advertiseService( "stop_motion", &ArmKinematics::stopMotion, this );
-    _start_trial = _node_handle.advertiseService( "start_trial", &ArmKinematics::startTrial, this );
-    _stop_trial = _node_handle.advertiseService( "stop_trial", &ArmKinematics::stopTrial, this );
+    _start_motion = _node_handle.advertiseService( "/kinematics/start_motion", &ArmKinematics::startMotion, this );
+    _stop_motion = _node_handle.advertiseService( "/kinematics/stop_motion", &ArmKinematics::stopMotion, this );
+    _start_trial = _node_handle.advertiseService( "/kinematics/start_trial", &ArmKinematics::startTrial, this );
+    _stop_trial = _node_handle.advertiseService( "/kinematics/stop_trial", &ArmKinematics::stopTrial, this );
 
 }
 

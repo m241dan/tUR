@@ -18,8 +18,8 @@ MotionActor::MotionActor( std::string name, DynamixelController &controller ) :
     servo_server.registerPreemptCallback( boost::bind( &MotionActor::servoPreemptCallback, this ) );
     servo_server.start();
 
-    _start_motion = node_handle.serviceClient<std_srvs::Empty>( "kinematics/start_motion" );
-    _stop_motion = node_handle.serviceClient<std_srvs::Empty>("kinematics/stop_motion" );
+    _start_motion = node_handle.serviceClient<std_srvs::Empty>( "/kinematics/start_motion" );
+    _stop_motion = node_handle.serviceClient<std_srvs::Empty>("/kinematics/stop_motion" );
     _kinematics_subscriber = node_handle.subscribe( "/kinematics/servo_based_fk", 10, &MotionActor::kinematicsTick, this );
 }
 
