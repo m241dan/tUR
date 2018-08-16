@@ -24,7 +24,7 @@ void NetworkNode::setupSubscribers()
 }
 void NetworkNode::setupServices()
 {
-    _snap_seven = _node_handle.serviceClient<ram_network::Snap>( "/" + _cam_mons[6] + "/takeSnap" );
+    _snap_one = _node_handle.serviceClient<ram_network::Snap>( "/" + _cam_mons[0] + "/takeSnap" );
     _serial_loop = _node_handle.advertiseService( serial_service_string, &NetworkNode::serialLoopCallback, this );
     _i2c_loop = _node_handle.advertiseService( i2c_loop_string, &NetworkNode::i2cLoopCallback, this );
 }
@@ -356,7 +356,7 @@ void NetworkNode::downlinkPacket()
     {
         std::ofstream packet_log;
         std::stringstream file_name;
-        file_name << std::getenv( "HOME" ) << "/packet" << ++_packet_counter;
+        file_name << "/home/ubuntu/packet" << ++_packet_counter;
         packet_log.open( file_name.str(), std::ofstream::out );
 
         data.time_sent_to_HASP = _registers.ard_time_sync;
@@ -886,7 +886,7 @@ void NetworkNode::doCamCommand()
         case CAMERA_CAM_1_PIC[0]:
             if( com.command[1] == CAMERA_CAM_1_PIC[1] )
             {
-//               _snap_one.call(snap);
+               _snap_one.call(snap);
                 packetizeImage( snap.response.location );
             }
             break;
@@ -894,33 +894,33 @@ void NetworkNode::doCamCommand()
             if( com.command[1] == CAMERA_CAM_2_PIC[1] )
             {
 //                _snap_two.call(snap);
-                packetizeImage( snap.response.location );
+//                packetizeImage( snap.response.location );
             }
             break;
         case CAMERA_CAM_3_PIC[0]:
             if( com.command[1] == CAMERA_CAM_3_PIC[1] )
             {
 //                _snap_three.call(snap);
-                packetizeImage( snap.response.location );
+ //               packetizeImage( snap.response.location );
             }
             break;
         case CAMERA_CAM_4_PIC[0]:
             if( com.command[1] == CAMERA_CAM_4_PIC[1] )
             {
 //                _snap_four.call(snap);
-                packetizeImage( snap.response.location );
+ //               packetizeImage( snap.response.location );
             }
             break;
         case CAMERA_CAM_ALL_PIC[0]:
             if( com.command[1] == CAMERA_CAM_ALL_PIC[1] )
             {
-                uint8_t sub = CAMERA_CAM_1_PIC[0];
-                uint8_t param = CAMERA_CAM_1_PIC[1];
-
-                for( int x = 0; x < 4; x++ )
-                {
-                    com.command[0] = sub++;
-                    com.command[1] = param++;
+//                uint8_t sub = CAMERA_CAM_1_PIC[0];
+  //              uint8_t param = CAMERA_CAM_1_PIC[1];
+//
+   //             for( int x = 0; x < 4; x++ )
+   //             {
+    //                com.command[0] = sub++;
+    //                com.command[1] = param++;
   //                  _cam_commands.push( com );
                 }
             }
