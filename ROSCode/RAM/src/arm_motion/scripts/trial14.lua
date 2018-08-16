@@ -7,7 +7,7 @@
 --
 
 require( 'trial' )
-require( 'motion' )
+require( 'motions' )
 
 trial = {}
 
