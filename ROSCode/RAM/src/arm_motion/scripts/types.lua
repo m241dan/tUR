@@ -23,4 +23,3 @@ function addObjective( trial, objective )
     end
 end
 
-blu_button = require( "blu_button" )

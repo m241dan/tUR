@@ -7,6 +7,7 @@
 --
 
 require( "types" )
+require( "motions" )
 
 trial = {}
 
