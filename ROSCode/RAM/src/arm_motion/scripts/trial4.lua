@@ -16,7 +16,7 @@
 
 require('types')
 
---trial 1
+--trial 4: free trial for development / testing
 return {
     -- [1] =  { x = 0.0, y = 0.0, z = 5.0, eeo = 0, velocity = 20, type = DISCRETE_R, precision = 5, shape = "linear", smoothness=200, tolerance=2 };
     [1] =  { x =  24.00, y =  7.0, z = 15.78, eeo = 0, velocity = 20, type = DISCRETE_W ,precision = 20, shape = "linear", smoothness=200, tolerance=2 };

@@ -8,7 +8,7 @@
 
 require('types')
 
---trial 6 "Blue Button from Home"
+-- "Blue Button from Home"
 return {
     [1] = { velocity = 5, type = SERVO_ABSOLUTE, s1 = 0, s2 = 0, s3 = 0, s4 = 0, s5 = 0, s6 = GRIPPER_CLOSED},
     [2] = { x = 22.00, y = -5.00, z = 20.7, eeo = 0, velocity = 5, type = DISCRETE_W, precision = .5, shape = "linear", smoothness = 2, tolerance = 2},
