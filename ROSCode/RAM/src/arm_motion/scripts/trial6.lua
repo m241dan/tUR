@@ -10,7 +10,7 @@ require( "types" )
 
 trial = {}
 
-addObjective( trial, dofile( "blu_button" ) )
+addObjective( trial, "blu_button.lua" )
 
 return trial
 

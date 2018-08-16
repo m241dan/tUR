@@ -18,7 +18,10 @@ GRIPPER_POT = 2000
 GRIPPER_CLOSED = 2510
 
 function addObjective( trial, objective )
-    for _, v in ipairs( objective ) do
-        table.insert( trial, #trial+1, objective )
+    objective = dofile( objective .. ".lua" )
+    if objective ~= nil and type( objective ) == "table" then
+        for _, v in ipairs( objective ) do
+           table.insert( trial, #trial+1, v )
+        end
     end
 end
