@@ -62,59 +62,11 @@
     </node>
 
     <node name="$(arg mon_seven)" pkg="cam_monitor" type="cam_monitor_node">
-        <param name="img_topic" value="/$(arg cam_node_seven)/image_raw"/>
+        <param name="img_topic" value="/$(arg cam_node_seven)/image/compressed"/>
         <param name="video_location" value="/home/ubuntu/RamVideos/$(arg mon_seven)/videos/"/>
         <param name="snap_location" value="/home/ubuntu/RamVideos/$(arg mon_seven)/snap/"/>
     </node>
 
-    <node name="$(arg cam_node_one)" pkg="usb_cam" type="usb_cam_node">
-        <param name="video_device" value="$(arg dev1)"/>
-        <param name="image_width" value="720"/>
-        <param name="image_height" value="480"/>
-        <param name="pixel_format" value="yuyv"/>
-        <param name="camera_frame_id" value="usb_cam"/>
-        <param name="io_method" value="mmap"/>
-        <param name="camera_info_url" value="$(arg peeper_config)"/>
-        <param name="framerate" value="1"/>
-    </node>
-
-    <node name="$(arg mon_one)" pkg="cam_monitor" type="cam_monitor_node">
-        <param name="img_topic" value="/$(arg cam_node_one)/image_raw"/>
-        <param name="video_location" value="/home/ubuntu/RamVideos/$(arg mon_one)/videos/"/>
-        <param name="snap_location" value="/home/ubuntu/RamVideos/$(arg mon_one)/snap/"/>
-    </node>
-
     <!-- Synchronizer -->
     <node name="synchronizer" pkg="ram_synchronizer" type="ram_synchronizer_node" output="screen" />
-
-
-    <!--
-
-    <node name="apriltag_detector_one" pkg="apriltags_ros" type="apriltag_detector_node" >
-        <remap from="camera_info" to="/raspi_cam/camera_info" />
-        <remap from="image_rect" to="/raspi_cam/image_raw" />
-        <remap from="tag_detections_image" to="/detections_three_img" />
-        <remap from="tag_detections" to="/detections_three_tags" />
-        <param name="tag_family" type="str" value="36h11" />
-        <rosparam param="tag_descriptions">[
-            {id:  0,  size: 0.0175},
-            {id:  1,  size: 0.0175},
-            {id:  2,  size: 0.0175},
-            {id:  3,  size: 0.0175},
-            {id:  5,  size: 0.0175},
-            {id:  6,  size: 0.0175},
-            {id:  7,  size: 0.0175},
-            {id:  8,  size: 0.0175},
-            {id:  9,  size: 0.0175},
-            {id:  10,  size: 0.0175},
-            {id:  12,  size: 0.0175},
-            {id:  20,  size: 0.0175},
-            {id:  21,  size: 0.0175},
-            {id:  22,  size: 0.0175},
-            {id:  23,  size: 0.0175},
-            {id:  24,  size: 0.0175} ]
-        </rosparam>
-        <param name="projected_optics" type="bool" value="true" />
-    </node>
-    -->
 </launch>

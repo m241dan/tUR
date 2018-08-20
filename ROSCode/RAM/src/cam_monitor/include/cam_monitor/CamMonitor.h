@@ -26,7 +26,7 @@ class CamMonitor
         int                     _throttle_count;
 
         void timeCallback( const rosgraph_msgs::Clock::ConstPtr &msg );
-        void imageCallback( const sensor_msgs::Image::ConstPtr &msg );
+        void imageCallback( const sensor_msgs::CompressedImage::ConstPtr &msg );
         bool serviceCallback( cam_monitor::SnapRequest &request, cam_monitor::SnapResponse &response );
 
 };

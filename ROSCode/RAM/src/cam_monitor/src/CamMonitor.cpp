@@ -20,7 +20,7 @@ void CamMonitor::timeCallback( const rosgraph_msgs::Clock::ConstPtr &msg )
     _clock = (int)msg->clock.sec;
 }
 
-void CamMonitor::imageCallback( const sensor_msgs::Image::ConstPtr &msg )
+void CamMonitor::imageCallback( const sensor_msgs::CompressedImage::ConstPtr &msg )
 {
     if( _throttle == 0 || _throttle_count++ >= _throttle )
     {
