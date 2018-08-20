@@ -659,11 +659,11 @@ void NetworkNode::networkHealth( const ros::TimerEvent &event )
     packet.bbox_connection_fault       = _health.bbox_connection_fault;
     memcpy( packet.bbox_eng_sys_msg, _health.bbox_eng_sys_msg, sizeof( packet.bbox_eng_sys_msg ) );
 
-    packet.ada_commands                = (uint8_t)_ada_commands.size();
-    packet.bbox_commands               = (uint8_t)_bbox_commands.size();
-    packet.cam_commands                = (uint8_t)_cam_commands.size();
-    packet.arm_commands                = (uint8_t)_arm_commands.size();
-    packet.netw_commands               = (uint8_t)_netw_commands.size();
+    packet.ada_commands                = (uint8_t)_ambient_packets.size();
+    packet.bbox_commands               = (uint8_t)_bbox_packets.size();
+    packet.cam_commands                = (uint8_t)_image_packets.size();
+    packet.arm_commands                = (uint8_t)_motion_packets.size();
+    packet.netw_commands               = (uint8_t)_trial_packets.size();
 
     if( !_network_packets.empty() )
         _network_packets.pop();
