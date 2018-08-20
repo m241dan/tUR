@@ -63,8 +63,8 @@
 
     <node name="$(arg mon_seven)" pkg="cam_monitor" type="cam_monitor_node">
         <param name="img_topic" value="/$(arg cam_node_seven)/image/compressed"/>
-        <param name="video_location" value="/home/ubuntu/RamVideos/$(arg mon_seven)/videos/"/>
-        <param name="snap_location" value="/home/ubuntu/RamVideos/$(arg mon_seven)/snap/"/>
+        <param name="video_location" value="/media/ubuntu/RAMStorage/RamVideos/$(arg mon_seven)/videos/"/>
+        <param name="snap_location" value="/media/ubuntu/RAMStorage/RamVideos/$(arg mon_seven)/snap/"/>
     </node>
 
     <!-- Synchronizer -->
