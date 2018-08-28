@@ -54,7 +54,7 @@
         <param name="width" value="410"/>
         <param name="height" value="308"/>
 
-        <param name="framerate" value="1"/>
+        <param name="framerate" value="5"/>
         <param name="exposure_mode" value="antishake"/>
         <param name="shutter_speed" value="0"/>
 
