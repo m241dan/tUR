@@ -65,7 +65,7 @@
         <param name="img_topic" value="/$(arg cam_node_one)/image/compressed"/>
         <param name="video_location" value="/home/ubuntu/RAMStorage/RamVideos/$(arg mon_one)/videos/"/>
         <param name="snap_location" value="/home/ubuntu/RAMStorage/RamVideos/$(arg mon_one)/snap/"/>
-        <param name="throttle" value="15" />
+        <param name="throttle" value="75" />
     </node>
 
     <!-- Synchronizer -->
