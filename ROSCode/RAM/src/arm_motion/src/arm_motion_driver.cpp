@@ -8,7 +8,7 @@
 
 int main( int argc, char **argv )
 {
-    std::string bus = "/dev/ttyUSB0";
+    std::string bus = "/dev/dynamixel";
     ros::init( argc, argv, "arm_driver" );
     ros::NodeHandle node_handle;
 
